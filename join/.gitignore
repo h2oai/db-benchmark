@@ -1,0 +1,6 @@
+figure/*
+metastore_db/*
+join.md
+*.log
+*.html
+*.csv
