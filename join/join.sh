@@ -8,7 +8,7 @@ set -e
 # h2o
 
 ## Requirements:
-# 1. passwordless ssh from mr-0xd6 to mr-0xd1:10
+# 1. passwordless ssh from mr-0xd6 to mr-0xd1:10 and mr-0xd2-precise1
 # 2. ensure you are not running h2o or spark cluster already, those will be started during script
 # 3. run one-time setup-spark.sh to copy spark binaries to all nodes and create ~/tmp
 # 4. run one-time setup-h2o.sh to copy h2o jar to all nodes
@@ -18,31 +18,28 @@ set -e
 # 8. impala cluster should be already running, connection available on mr-0xd2-precise1
 # 9. optionally adjust memory limits in join-spark.sh and join-h2o.sh
 # 10. optionally set ports join-spark.sh and join-h2o.sh
-# 11. chmod a+x join.sh join-h2o.sh join-impala.sh join-spark.sh join-data.table.R join-h2o.R
+# 11. chmod a+x join.sh join-h2o.sh join-impala.sh join-spark.sh join-data.table.R join-h2o.R join-impala-write.log.R
 # 12. source filenames X1e7_2c.csv should start with single letter followed by 1e7 notation to catch row count correctly on which data.table is conditionally processed
+# 13. source path must be generally starts with /datasets/mattd
 
 export CSV_TIME_FILE="time.csv"
 export SRC_X="hdfs://mr-0xd6/datasets/mattd/X1e8_2c.csv" # see req.12
 export SRC_Y="hdfs://mr-0xd6/datasets/mattd/Y1e8_2c.csv"
 
-# - [ ] Spark
-
+# - [x] Spark
 ./join-spark.sh
 sleep 5
 
-# - [ ] Impala
-
+# - [x] Impala
 ./join-impala.sh
 sleep 5
 
-# - [ ] data.table
-
+# - [x] data.table
 ./join-data.table.R
 sleep 5
 
-# - [ ] h2o
-
+# - [x] h2o
 ./join-h2o.sh
 
-# - [ ] publish
+# - [x] publish
 Rscript -e 'knitr::knit2html("join.Rmd")'

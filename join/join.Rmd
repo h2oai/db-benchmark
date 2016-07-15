@@ -1,8 +1,23 @@
 
+Setup:
+
 - h2o on 10 nodes
 - spark on 9 executor nodes and 1 master
 - data.table on 1 node
 - impala on 8 impala daemons, 1 state store and catalog server
+
+Time includes the actual query, materializing its results on the query engine side, and time of count rows on it.
+
+tunings made:
+
+- impala: `STRAIGHT_JOIN` and `SHUFFLE` hint, see [Query Hints in Impala SELECT Statements](http://www.cloudera.com/documentation/enterprise/latest/topics/impala_hints.html)
+
+Software version:
+
+- h2o 3.9.1.99999
+- data.table 1.9.7
+- spark 2.0.0 preview
+- impala 2.5.0
 
 ```{r join, echo=FALSE, message=FALSE, fig.width=12, fig.height=6}
 library(data.table)
@@ -11,6 +26,7 @@ dt = fread(log.file, sep=",")
 setNumericRounding(0)
 byv = setdiff(names(dt), c("timestamp","time_sec","mem_gb"))
 dt = dt[order(-timestamp), head(.SD, 1L), by=byv] # recent measurement only
+dt = dt[in_rows==max(in_rows)] # only takes biggest benchmark for now
 # dt[grepl(".", fun, fixed=TRUE), "fun" := gsub(".", " ", fun, fixed=TRUE)] # required for barplot?
 imin = dt[, .I[which.min(time_sec)], keyby=setdiff(byv, "run")]$V1 # take which.min
 op = par(mfrow=c(1,2), 
@@ -19,10 +35,10 @@ dt[imin, barplot(height=time_sec,
              names.arg=solution,
              col=.I+1L,
              ylab="seconds",
-             main="min time of 3 runs")] -> nul
+             main="min timing from 3 runs")] -> nul
 boxplot(time_sec ~ solution,
         data=dt,
-        main="time of 3 runs",
+        main="timing of all 3 runs",
         ylab="seconds")
 # dt[, barplot(height=mem_gb,
 #              names.arg=solution,
