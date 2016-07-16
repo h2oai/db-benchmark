@@ -1,51 +1,68 @@
 
-Setup:
+Time includes the actual query, materializing results on the query engine side, and time of the count rows of result.
+
+## Setup
 
 - h2o on 9 nodes
 - spark on 8 executor nodes and 1 master
 - data.table on 1 node
 - impala on 8 impala daemons, 1 state store and catalog server
 
-Time includes the actual query, materializing its results on the query engine side, and time of count rows on it.
+32 cores and 200GB memory each node.
 
-tunings made:
-
-- impala: `STRAIGHT_JOIN` and `SHUFFLE` hint, see [Query Hints in Impala SELECT Statements](http://www.cloudera.com/documentation/enterprise/latest/topics/impala_hints.html)
-
-Software version:
+## Software version
 
 - h2o 3.9.1.99999
 - data.table 1.9.7
 - spark 2.0.0 preview
 - impala 2.5.0
 
-```{r join, echo=FALSE, message=FALSE, fig.width=12, fig.height=6}
+## Tuning
+
+- impala
+  - `STRAIGHT_JOIN` and `SHUFFLE` hint, see [Query Hints in Impala SELECT Statements](http://www.cloudera.com/documentation/enterprise/latest/topics/impala_hints.html)
+  
+- spark
+  - `spark.driver.maxResultSize=200g`
+  - `increate spark.network.timeout=1800`
+  - `spark.executor.heartbeatInterval=600`
+
+## Timing
+
+Big join NxN
+
+```{r join, echo=FALSE, message=FALSE, fig.width=6, fig.height=6}
 library(data.table)
 log.file = Sys.getenv("CSV_TIME_FILE", "time.csv")
 dt = fread(log.file, sep=",")
 setNumericRounding(0)
 byv = setdiff(names(dt), c("timestamp","time_sec","mem_gb"))
 dt = dt[order(-timestamp), head(.SD, 1L), by=byv] # recent measurement only
-dt = dt[in_rows==max(in_rows)] # only takes biggest benchmark for now
-# dt[grepl(".", fun, fixed=TRUE), "fun" := gsub(".", " ", fun, fixed=TRUE)] # required for barplot?
-imin = dt[, .I[which.min(time_sec)], keyby=setdiff(byv, "run")]$V1 # take which.min
-op = par(mfrow=c(1,2), 
-         oma=c(0,0,2,0))
-dt[imin, barplot(height=time_sec,
-             names.arg=solution,
-             col=.I+1L,
-             ylab="seconds",
-             main="min timing from 3 runs")] -> nul
+dt[order(solution), col := .GRP+1L, .(solution)] # assign colors to solutions
+
+maxnrow = dt[in_rows==max(in_rows)] # subset for only bigger NROW
+imin = maxnrow[, .I[which.min(time_sec)], keyby=setdiff(byv, "run")]$V1 # take which.min
 boxplot(time_sec ~ solution,
-        data=dt,
-        main="timing of all 3 runs",
+        data=maxnrow,
+        main=sprintf("timing of all 3 runs on %.e rows", maxnrow$in_rows[1L]),
         ylab="seconds")
-# dt[, barplot(height=mem_gb,
-#              names.arg=solution,
-#              col=.I+1L,
-#              ylab="GB",
-#              main="memory (not reliable)")] -> nul
-dt[, title(sprintf("join NxN on %.e rows", head(in_rows, 1L)), outer=TRUE)] -> nul
-par(op)
-print(dt[order(timestamp)])
+maxnrow[imin, barplot(height=time_sec,
+             names.arg=solution,
+             col=col,
+             ylab="seconds",
+             main=sprintf("min timing from 3 runs on %.e rows", in_rows[1L]))] -> nul
+
+iimin = dt[, .I[which.min(time_sec)], keyby=setdiff(byv, "run")]$V1 # take which.min
+dt[iimin, plot(in_rows, time_sec, 
+          type="n", xlab="rows", ylab="seconds",
+          main="min join timing over volume",
+          xaxt="n",
+          log="xy")] -> nul
+axis(side = 1, at = unique(dt$in_rows))
+lapply(split(dt[iimin], by="solution"),
+       function(x) x[,lines(in_rows, time_sec, col=col)]) -> nul
+dt[, .(col=col[1L]), solution][, legend("topleft", legend=solution, col=col, lty=1)] -> nul
+print(dt[order(timestamp)
+         ][, datetime := as.POSIXct(timestamp, origin="1970-01-01") # just for the visual confirmation
+           ][])
 ```

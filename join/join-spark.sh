@@ -33,7 +33,7 @@ for i in $SPARK_WORKER_IP; do cmd="ssh $USER@$i \""$cmdall"\""; echo $cmd; eval 
 sleep 15
 
 # execute scala benchmark script
-$SPARK_HOME/bin/spark-shell --master $SPARK_MASTER --packages com.databricks:spark-csv_2.10:1.3.0 --num-executors 9 --executor-memory 220G --driver-memory 220G --conf spark.driver.maxResultSize=0 -i join-spark.scala
+$SPARK_HOME/bin/spark-shell --master $SPARK_MASTER --packages com.databricks:spark-csv_2.10:1.3.0 --num-executors 9 --executor-memory 200g --driver-memory 200g --conf spark.driver.maxResultSize=200g --conf spark.network.timeout=1800 --conf spark.executor.heartbeatInterval=600 -i join-spark.scala
 sleep 5
 
 # stop workers

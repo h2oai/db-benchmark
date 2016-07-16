@@ -13,5 +13,6 @@ echo $SRC_Y_LOCAL
 # run
 echo "Running impala benchmark..."
 $HOME/impala/bin/impala-shell -i mr-0xd2-precise1 --var=SRC_X_DIR=${SRC_X_LOCAL%.csv} --var=SRC_Y_DIR=${SRC_Y_LOCAL%.csv} -B --output_delimiter ',' -V -f join-impala.sql &> join-impala.log
+cat join-impala.log
 # parse sql log and write timing
 ./join-impala-write.log.R "join-impala.log"

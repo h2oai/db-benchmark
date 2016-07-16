@@ -14,9 +14,11 @@ write.log = function(
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
 ) {
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
-  write.table(data.frame(timestamp=as.numeric(timestamp), 
-                         task=task, data=data, in_rows=as.integer(in_rows), out_rows=as.integer(out_rows),
-                         solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb),
+  df=data.frame(timestamp=as.numeric(timestamp), 
+                task=task, data=data, in_rows=as.integer(in_rows), out_rows=as.integer(out_rows),
+                solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb)
+  cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
+  write.table(df,
               file=log.file,
               append=file.exists(log.file),
               col.names=!file.exists(log.file),

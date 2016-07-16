@@ -23,8 +23,8 @@ set -e
 # 13. source path must be generally starts with /datasets/mattd
 
 export CSV_TIME_FILE="time.csv"
-export SRC_X="hdfs://mr-0xd6/datasets/mattd/X1e7_2c.csv" # see req.12
-export SRC_Y="hdfs://mr-0xd6/datasets/mattd/Y1e7_2c.csv"
+export SRC_X="hdfs://mr-0xd6/datasets/mattd/X1e9_2c.csv" # see req.12
+export SRC_Y="hdfs://mr-0xd6/datasets/mattd/Y1e9_2c.csv"
 
 # - [x] Spark
 ./join-spark.sh

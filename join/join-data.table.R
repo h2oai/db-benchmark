@@ -12,9 +12,11 @@ write.log = function(
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
 ) {
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
-  write.table(data.frame(timestamp=as.numeric(timestamp), 
-                         task=task, data=data, in_rows=as.integer(in_rows), out_rows=as.integer(out_rows),
-                         solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb),
+  df=data.frame(timestamp=as.numeric(timestamp), 
+                task=task, data=data, in_rows=as.integer(in_rows), out_rows=as.integer(out_rows),
+                solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb)
+  cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
+  write.table(df,
               file=log.file,
               append=file.exists(log.file),
               col.names=!file.exists(log.file),
@@ -31,11 +33,14 @@ get.nrow = function(x) {
   # get total sum of row count from X and Y
   Reduce("+", as.integer(substr(tmp<-sapply(strsplit(sapply(strsplit(x, "/", fixed=TRUE), function(x) x[length(x)]), "_", fixed=TRUE), `[`, 1L), 2L, nchar(tmp))))
 }
-if (get.nrow(c(src_x,src_y)) > 2e8L) quit("no", status=0) # datasets > 1e8 too big to try load on single machine
+if (get.nrow(c(src_x,src_y)) > 2e9L) {
+  cat("# join with data.table skipped due data volume cap for single machine set to total 2e9 rows")
+  quit("no", status=0) # datasets > 1e9 too big to try load on single machine
+}
 
 library(data.table)
-X = fread(sprintf("hadoop fs -cat %s", src_x))
-Y = fread(sprintf("hadoop fs -cat %s", src_y))
+X = fread(if(file.exists(src_x)) src_x else sprintf("hadoop fs -cat %s", src_x)) # csv can be provided in local dir for faster import
+Y = fread(if(file.exists(src_y)) src_y else sprintf("hadoop fs -cat %s", src_y))
 
 t = system.time(dim(dt<-X[Y, on="KEY", nomatch=0L]))[["elapsed"]]
 m = memory_usage()

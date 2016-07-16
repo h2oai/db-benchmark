@@ -5,7 +5,7 @@ set -e
 # 1. exported vars SRC_X and SRC_Y, see join.sh
 
 export HOSTS="mr-0xd1 mr-0xd2 mr-0xd3 mr-0xd4 mr-0xd5 mr-0xd7 mr-0xd8 mr-0xd9 mr-0xd10"
-export MEM="-Xmx220G -Xms220G"
+export MEM="-Xmx200G -Xms200G"
 export H2O_HOST="mr-0xd8"
 export H2O_PORT=55888
 export H2O_NAME=$USER"H2O"
