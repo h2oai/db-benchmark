@@ -1,11 +1,11 @@
 Tasks:
-  - [ ] join
+  - [x] join
   - [ ] groupby
   - [ ] import
   - [ ] subset
 
 Tools:
   - [x] spark
-  - [ ] impala
+  - [x] impala
   - [x] data.table
   - [x] h2o

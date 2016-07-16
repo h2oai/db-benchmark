@@ -50,7 +50,7 @@ ans.count
 val t_end = DateTime.now()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join.orderBy", run=1:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
+write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join", run=1:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
 System.gc()
 
@@ -61,7 +61,7 @@ ans.count
 val t_end = DateTime.now()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join.orderBy", run=2:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
+write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join", run=2:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
 System.gc()
 
@@ -72,7 +72,7 @@ ans.count
 val t_end = DateTime.now()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join.orderBy", run=3:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
+write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=X.count, out_rows=ans.count, solution="spark", fun=".join", run=3:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
 System.gc()
 

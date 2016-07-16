@@ -31,7 +31,7 @@ get.nrow = function(x) {
   # get total sum of row count from X and Y
   Reduce("+", as.integer(substr(tmp<-sapply(strsplit(sapply(strsplit(x, "/", fixed=TRUE), function(x) x[length(x)]), "_", fixed=TRUE), `[`, 1L), 2L, nchar(tmp))))
 }
-if (get.nrow(c(src_x,src_y)) > 2e8L) quit(status=0) # datasets > 1e8 too big to try load on single machine
+if (get.nrow(c(src_x,src_y)) > 2e8L) quit("no", status=0) # datasets > 1e8 too big to try load on single machine
 
 library(data.table)
 X = fread(sprintf("hadoop fs -cat %s", src_x))

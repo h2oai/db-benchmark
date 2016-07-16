@@ -27,30 +27,25 @@ DROP STATS x;
 DROP STATS y;
 REFRESH x;
 REFRESH y;
-CREATE TABLE r STORED AS PARQUET AS SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key;
-SELECT COUNT(*) FROM r;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, r.out_rows out_rows, 'impala' solution, 'INNER JOIN' fun, 1 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x CROSS JOIN (SELECT COUNT(*) out_rows FROM r) r;
-DROP TABLE r;
+SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 1 run, NULL time_sec, NULL mem_gb
+FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 DROP STATS y;
 REFRESH x;
 REFRESH y;
-CREATE TABLE r STORED AS PARQUET AS SELECT STRAIGHT_JOIN  x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key;
-SELECT COUNT(*) FROM r;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, r.out_rows out_rows, 'impala' solution, 'INNER JOIN' fun, 2 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x CROSS JOIN (SELECT COUNT(*) out_rows FROM r) r;
-DROP TABLE r;
+SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 2 run, NULL time_sec, NULL mem_gb
+FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 DROP STATS y;
 REFRESH x;
 REFRESH y;
-CREATE TABLE r STORED AS PARQUET AS SELECT STRAIGHT_JOIN  x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key;
-SELECT COUNT(*) FROM r;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, r.out_rows out_rows, 'impala' solution, 'INNER JOIN' fun, 3 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x CROSS JOIN (SELECT COUNT(*) out_rows FROM r) r;
+SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 3 run, NULL time_sec, NULL mem_gb
+FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 USE default;
 DROP DATABASE benchmark CASCADE;

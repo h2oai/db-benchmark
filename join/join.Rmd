@@ -1,8 +1,8 @@
 
 Setup:
 
-- h2o on 10 nodes
-- spark on 9 executor nodes and 1 master
+- h2o on 9 nodes
+- spark on 8 executor nodes and 1 master
 - data.table on 1 node
 - impala on 8 impala daemons, 1 state store and catalog server
 
