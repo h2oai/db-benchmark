@@ -9,3 +9,4 @@ Tools:
   - [x] impala
   - [x] data.table
   - [x] h2o
+  - [x] pandas

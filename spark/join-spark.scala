@@ -44,6 +44,7 @@ new Duration(t_start, DateTime.now())
 
 /** join */
 
+System.gc()
 val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
 ans.cache
@@ -53,8 +54,8 @@ val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=in_rows, out_rows=out_rows, solution="spark", fun=".join", run=1:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
-System.gc()
 
+System.gc()
 val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
 ans.cache 
@@ -64,8 +65,8 @@ val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=in_rows, out_rows=out_rows, solution="spark", fun=".join", run=2:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
-System.gc()
 
+System.gc()
 val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
 ans.cache
@@ -75,12 +76,10 @@ val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(timestamp=System.currentTimeMillis/1000, task="join", data="", in_rows=in_rows, out_rows=out_rows, solution="spark", fun=".join", run=3:Int, time_sec=t, mem_gb=m, log_file=log_file.toString)
 ans.unpersist(blocking=true)
-System.gc()
 
 /** cleanup and exit */
 
 X.unpersist(blocking=true)
 Y.unpersist(blocking=true)
-System.gc()
 
 sys.exit(0)

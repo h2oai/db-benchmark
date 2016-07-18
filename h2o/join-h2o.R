@@ -28,7 +28,7 @@ write.log = function(
 }
 
 library(h2o, warn.conflicts=FALSE, quietly=TRUE)
-h2o.init(ip=Sys.getenv("H2O_HOST", "mr-0xd8"), port=as.integer(Sys.getenv("H2O_PORT","54321")), strict_version_check=FALSE, startH2O=FALSE)
+h2o.init(ip=Sys.getenv("H2O_HOST","localhost"), port=as.integer(Sys.getenv("H2O_PORT","54321")), strict_version_check=FALSE, startH2O=FALSE)
 h2o.removeAll()
 
 src_x = Sys.getenv("SRC_X")

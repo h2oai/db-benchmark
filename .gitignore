@@ -1,6 +1,6 @@
 figure/*
 metastore_db/*
-join.md
+time.md
 *.log
 *.html
 *.csv

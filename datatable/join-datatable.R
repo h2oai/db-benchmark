@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-cat("# join-data.table.R\n")
+cat("# join-datatable.R\n")
 
 memory_usage = function() {
   as.numeric(system(paste("ps -o rss", Sys.getpid(), "| tail -1"), intern=TRUE)) / (1024^2)
@@ -39,19 +39,23 @@ if (get.nrow(c(src_x,src_y)) > 2e9L) {
 }
 
 library(data.table)
+cat("loading datasets\n")
 X = fread(if(file.exists(src_x)) src_x else sprintf("hadoop fs -cat %s", src_x)) # csv can be provided in local dir for faster import
 Y = fread(if(file.exists(src_y)) src_y else sprintf("hadoop fs -cat %s", src_y))
 
+cat("join 1...\n")
 t = system.time(dim(dt<-X[Y, on="KEY", nomatch=0L]))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task="join", data="", in_rows=nrow(X), out_rows=nrow(dt), solution="data.table", fun="[.data.table", time_sec=round(t, 3), mem_gb=round(m, 3))
 rm(dt)
 
+cat("join 2...\n")
 t = system.time(dim(dt<-X[Y, on="KEY", nomatch=0L]))[["elapsed"]]
 m = memory_usage()
 write.log(run=2L, task="join", data="", in_rows=nrow(X), out_rows=nrow(dt), solution="data.table", fun="[.data.table", time_sec=round(t, 3), mem_gb=round(m, 3))
 rm(dt)
 
+cat("join 3...\n")
 t = system.time(dim(dt<-X[Y, on="KEY", nomatch=0L]))[["elapsed"]]
 m = memory_usage()
 write.log(run=3L, task="join", data="", in_rows=nrow(X), out_rows=nrow(dt), solution="data.table", fun="[.data.table", time_sec=round(t, 3), mem_gb=round(m, 3))
