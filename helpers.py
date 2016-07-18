@@ -1,7 +1,9 @@
+import time
 import csv
 import math
 
-def write_log(timestamp, task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_gb):
+def write_log(task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_gb):
+   timestamp = time.time()
    csv_file = os.environ['CSV_TIME_FILE']
    if math.isnan(time_sec):
       time_sec = ""

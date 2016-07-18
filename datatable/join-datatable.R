@@ -9,11 +9,7 @@ memory_usage = function() {
 
 src_x = Sys.getenv("SRC_X", NA_character_)
 src_y = Sys.getenv("SRC_Y", NA_character_)
-get.nrow = function(x) {
-  if(any(is.na(x))) stop("env vars SRC_X and SRC_Y must be defined, see join.sh")
-  # get total sum of row count from X and Y
-  Reduce("+", as.integer(substr(tmp<-sapply(strsplit(sapply(strsplit(x, "/", fixed=TRUE), function(x) x[length(x)]), "_", fixed=TRUE), `[`, 1L), 2L, nchar(tmp))))
-}
+
 if (get.nrow(c(src_x,src_y)) > 2e9L) {
   cat("# join with data.table skipped due data volume cap for single machine set to total 2e9 rows")
   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
