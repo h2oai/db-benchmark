@@ -1,4 +1,6 @@
 #!/bin/bash
 set -e
 
-# install python, pandas and pydoop.hdfs on client machine
+# Required only on client machine
+
+# install python, pandas and pydoop.hdfs
