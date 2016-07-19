@@ -3,7 +3,7 @@ shell echo "# join-impala.sql";
 
 USE default;
 DROP DATABASE IF EXISTS benchmark CASCADE;
-CREATE DATABASE benchmark COMMENT 'part of H2O h2oai/speed-benchmark';
+CREATE DATABASE benchmark COMMENT 'part of H2O h2oai/db-benchmark';
 USE benchmark;
 
 shell echo "${var:SRC_X_DIR}";

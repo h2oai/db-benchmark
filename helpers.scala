@@ -6,7 +6,7 @@ def write_log(task:String, data:String, in_rows:Long, out_rows:Long, solution:St
     val some_batch = sys.env.get("BATCH")
     val batch = some_batch.getOrElse("")
     val timestamp = System.currentTimeMillis.toDouble / 1000.toDouble
-    val comment = "" /** placeholder for updated to timing data */
+    val comment = "" /** placeholder for updates to timing data */
     val some_log_file = sys.env.get("CSV_TIME_FILE")
     val log_file = some_log_file.getOrElse("time.csv")
     val log_file_exists = Files.exists(Paths.get(log_file.toString))
