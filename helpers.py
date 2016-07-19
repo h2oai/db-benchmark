@@ -19,11 +19,11 @@ def write_log(task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_g
    print('# ' + ','.join(str(x) for x in log_row))
    if append:
       with open(csv_file, 'a') as f:
-         w = csv.writer(f)
+         w = csv.writer(f, lineterminator='\n')
          w.writerow(log_row)
    else:
       with open(csv_file, 'w+') as f:
-         w = csv.writer(f)
+         w = csv.writer(f, lineterminator='\n')
          w.writerow(log_header)
          w.writerow(log_row)
    return True
