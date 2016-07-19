@@ -4,6 +4,9 @@ set -e
 # get config
 source run.conf
 
+# set batch
+export BATCH=$(date +%s)
+
 # spark
 ./spark/spark.sh
 

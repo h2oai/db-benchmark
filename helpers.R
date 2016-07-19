@@ -1,13 +1,18 @@
 write.log = function(
-  timestamp=Sys.time(), # this has to be here to support timestamp providing after parsing impala sql logs
+  timestamp=Sys.time(), # this has to be here to support timestamp provided when parsing impala sql logs
   task=NA_character_, data=NA_character_, in_rows=NA_integer_, out_rows=NA_integer_,
   solution=NA_character_, fun=NA_character_, run=NA_integer_, time_sec=NA_real_, mem_gb=NA_real_
 ) {
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
-  df=data.frame(timestamp=as.numeric(timestamp), 
+  batch=Sys.getenv("BATCH", NA)
+  comment = "" # placeholder for updated to timing data
+  time_sec = round(time_sec, 3)
+  mem_gb = round(mem_gb, 3)
+  df=data.frame(batch=as.integer(batch), timestamp=as.numeric(timestamp), 
                 task=task, data=data, in_rows=as.integer(in_rows), out_rows=as.integer(out_rows),
-                solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb)
+                solution=solution, fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb,
+                comment=comment)
   cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
   write.table(df,
               file=log.file,
@@ -15,6 +20,7 @@ write.log = function(
               col.names=!file.exists(log.file),
               row.names=FALSE,
               quote=FALSE,
+              na="",
               sep=",")
 }
 

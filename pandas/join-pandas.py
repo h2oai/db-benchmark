@@ -29,7 +29,7 @@ ans.shape[0]
 t_end = timeit.default_timer()
 t = t_end - t_start
 m = float('nan')
-write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=1, time_sec=round(t, 3), mem_gb=round(m, 3))
+write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=1, time_sec=t, mem_gb=m)
 del ans
 gc.collect()
 
@@ -40,7 +40,7 @@ ans.shape[0]
 t_end = timeit.default_timer()
 t = t_end - t_start
 m = float('NaN')
-write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=2, time_sec=round(t, 3), mem_gb=round(m, 3))
+write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=2, time_sec=t, mem_gb=m)
 del ans
 gc.collect()
 
@@ -51,7 +51,7 @@ ans.shape[0]
 t_end = timeit.default_timer()
 t = t_end - t_start
 m = float('NaN')
-write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=3, time_sec=round(t, 3), mem_gb=round(m, 3))
+write_log(task="join", data="", in_rows=x.shape[0], out_rows=ans.shape[0], solution="pandas", fun="merge", run=3, time_sec=t, mem_gb=m)
 del ans
 
 exit(0)

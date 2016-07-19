@@ -20,17 +20,17 @@ Y = h2o.importFile(src_y)
 
 t = system.time(dim(hf<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=1L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=round(t, 3), mem_gb=round(m, 3))
+write.log(run=1L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=t, mem_gb=m)
 h2o.rm(hf)
 
 t = system.time(dim(hf<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=2L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=round(t, 3), mem_gb=round(m, 3))
+write.log(run=2L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=t, mem_gb=m)
 h2o.rm(hf)
 
 t = system.time(dim(hf<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=3L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=round(t, 3), mem_gb=round(m, 3))
+write.log(run=3L, task="join", data="", in_rows=nrow(X), out_rows=nrow(hf), solution="h2o", fun="h2o.merge", time_sec=t, mem_gb=m)
 h2o.rm(hf)
 
 if( !interactive() ) q("no", status=0)
