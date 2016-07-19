@@ -37,7 +37,7 @@ Time includes the actual query, materializing results on the query engine side, 
 
 ```{r init, echo=FALSE, message=FALSE}
 library(data.table)
-dt = fread(Sys.getenv("CSV_TIME_FILE", "time.csv"), sep=",") # file stores multiple batches of benchmark run, so the filtering below
+dt = fread(Sys.getenv("CSV_TIME_FILE", "time.csv"), na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", comment="character")) # file stores multiple batches of benchmark run, so the filtering below
 dt[order(solution), col := .GRP+1L, .(solution)] # assign colors to solutions
 
 # impala compute stats
