@@ -14,6 +14,8 @@ src_x = os.environ['SRC_X_LOCAL']
 src_y = os.environ['SRC_Y_LOCAL']
 # TODO skip for total row count > 2e8 as data volume cap due to pandas scalability, currently just comment out in run.sh
 
+print(pd.__version__)
+
 print("loading datasets...")
 
 with hd.open(src_x) as f:
