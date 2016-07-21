@@ -2,7 +2,7 @@ import time
 import csv
 import math
 
-def write_log(task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_gb):
+def write_log(task, data, in_rows, out_rows, solution, version, fun, run, time_sec, mem_gb):
    batch = os.getenv('BATCH', "") 
    timestamp = time.time()
    csv_file = os.getenv('CSV_TIME_FILE', "time.csv")
@@ -13,8 +13,9 @@ def write_log(task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_g
       time_sec = ""
    if math.isnan(mem_gb):
       mem_gb = ""
-   log_row = [batch, timestamp, task, data, in_rows, out_rows, solution, fun, run, time_sec, mem_gb, comment]
-   log_header = ["batch","timestamp","task","data","in_rows","out_rows","solution","fun","run","time_sec","mem_gb","comment"]
+   git = ""
+   log_row = [batch, timestamp, task, data, in_rows, out_rows, solution, version, git, fun, run, time_sec, mem_gb, comment]
+   log_header = ["batch","timestamp","task","data","in_rows","out_rows","solution","version","git","fun","run","time_sec","mem_gb","comment"]
    append = os.path.isfile(csv_file)
    print('# ' + ','.join(str(x) for x in log_row))
    if append:
