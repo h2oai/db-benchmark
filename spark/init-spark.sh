@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+[ -z "$SPARK_WORKER_IP" ] && echo "Need to set SPARK_WORKER_IP" && exit 1;
+
 rm -rf ~/tmp/spark # cleanup in case previous
 
 echo "Starting master..."

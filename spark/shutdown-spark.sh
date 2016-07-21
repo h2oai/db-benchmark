@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+[ -z "$SPARK_WORKER_IP" ] && echo "Need to set SPARK_WORKER_IP" && exit 1;
+
 # stop workers
 echo "Stopping workers..."
 cmdall="$SPARK_HOME/sbin/stop-slave.sh $SPARK_MASTER"
