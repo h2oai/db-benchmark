@@ -3,9 +3,7 @@
 cat("# join-datatable.R\n")
 
 source("./helpers.R")
-memory_usage = function() {
-  as.numeric(system(paste("ps -o rss", Sys.getpid(), "| tail -1"), intern=TRUE)) / (1024^2)
-}
+source("./datatable/helpers-datatable.R")
 
 src_x = Sys.getenv("SRC_X", NA_character_)
 src_y = Sys.getenv("SRC_Y", NA_character_)
