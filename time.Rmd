@@ -40,6 +40,7 @@ library(data.table)
 csv.file = Sys.getenv("CSV_TIME_FILE", "time.csv")
 if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
 dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", comment="character", version="character", git="character")) # file stores multiple batches of benchmark run, so the filtering below
+dt = dt[task=="join"] # keep join stats only for now
 dt[order(solution), col := .GRP+1L, .(solution)] # assign colors to solutions
 
 # impala compute stats

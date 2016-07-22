@@ -7,5 +7,8 @@ set -e
 # join
 ./h2o/join-h2o.R
 
+# groupby
+./h2o/groupby-h2o.R
+
 # shutdown
 ./h2o/shutdown-h2o.sh
