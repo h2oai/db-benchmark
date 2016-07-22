@@ -61,7 +61,7 @@ m = memory_usage()
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, fun=fun, time_sec=t, mem_gb=m)
 rm(ans)
 
-question = "mean v1:v3 by=id4"
+question = "mean v1:v3 by id4"
 t = system.time(dim(ans<-X[, lapply(.SD, mean), by=id4, .SDcols=v1:v3]))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, fun=fun, time_sec=t, mem_gb=m)
@@ -75,7 +75,7 @@ m = memory_usage()
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, fun=fun, time_sec=t, mem_gb=m)
 rm(ans)
 
-question = "sum v1:v3 by=id6"
+question = "sum v1:v3 by id6"
 t = system.time(dim(ans<-X[, lapply(.SD, sum), by=id6, .SDcols=v1:v3]))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, fun=fun, time_sec=t, mem_gb=m)

@@ -59,7 +59,7 @@ m = memory_usage()
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
 h2o.rm(ans)
 
-question = "mean v1:v3 by=id4" #4
+question = "mean v1:v3 by id4" #4
 t = system.time(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3")))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
@@ -73,7 +73,7 @@ m = memory_usage()
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
 h2o.rm(ans)
 
-question = "sum v1:v3 by=id6" #5
+question = "sum v1:v3 by id6" #5
 t = system.time(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3")))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
