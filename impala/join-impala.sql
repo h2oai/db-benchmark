@@ -23,29 +23,30 @@ LOCATION '${var:SRC_Y_DIR}';
 CREATE TABLE x STORED AS PARQUET AS SELECT * FROM src_x WHERE key IS NOT NULL;
 CREATE TABLE y STORED AS PARQUET AS SELECT * FROM src_y WHERE key IS NOT NULL;
 
-DROP STATS x;
-DROP STATS y;
-REFRESH x;
-REFRESH y;
-SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 1 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x;
+shell echo "###impala-body";
 
 DROP STATS x;
 DROP STATS y;
 REFRESH x;
 REFRESH y;
 SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 2 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_X_DIR}','[^/]+$',0), '.csv', '-', REGEXP_EXTRACT('${var:SRC_Y_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'inner join' _question, 'impala' _solution, 'INNER JOIN' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 DROP STATS y;
 REFRESH x;
 REFRESH y;
 SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, '' _data, x.in_rows in_rows, NULL out_rows, 'impala' solution, 'INNER JOIN' fun, 3 run, NULL time_sec, NULL mem_gb
-FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_X_DIR}','[^/]+$',0), '.csv', '-', REGEXP_EXTRACT('${var:SRC_Y_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'inner join' _question, 'impala' _solution, 'INNER JOIN' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+
+DROP STATS x;
+DROP STATS y;
+REFRESH x;
+REFRESH y;
+SELECT COUNT(*) FROM (SELECT STRAIGHT_JOIN x.key, x.x2, y.y2 FROM x INNER JOIN /* +SHUFFLE */ y ON x.key=y.key) t;
+SELECT UNIX_TIMESTAMP() _timestamp, 'join' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_X_DIR}','[^/]+$',0), '.csv', '-', REGEXP_EXTRACT('${var:SRC_Y_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'inner join' _question, 'impala' _solution, 'INNER JOIN' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+
+shell echo "###impala-body";
 
 USE default;
 DROP DATABASE benchmark CASCADE;
