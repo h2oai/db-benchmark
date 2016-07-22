@@ -39,7 +39,7 @@ Time includes the actual query, materializing results on the query engine side, 
 library(data.table)
 csv.file = Sys.getenv("CSV_TIME_FILE", "time.csv")
 if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
-dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", comment="character", version="character", git="character")) # file stores multiple batches of benchmark run, so the filtering below
+dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", comment="character", version="character", git="character", question="character", data="character")) # file stores multiple batches of benchmark run, so the filtering below
 dt = dt[task=="join"] # keep join stats only for now
 dt[order(solution), col := .GRP+1L, .(solution)] # assign colors to solutions
 
@@ -51,7 +51,7 @@ dt = dt[fun!="COMPUTE STATS INNER JOIN"] # filter out
 #         main=sprintf("impala compute stats vs h2o on %.e rows", impala_stats$in_rows[1L]),
 #         ylab="seconds")
 
-grain = c("task","data","in_rows","out_rows","solution","col","fun")
+grain = c("task","in_rows","out_rows","solution","col","fun") # "data" for now removed from grain, as now various data used, will be addressed when running same tests on various datasets
 
 # only most recent benchmark batch
 recent_batch = dt[, tail(.SD, 1L), by=c(grain,"run")]
