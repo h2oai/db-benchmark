@@ -34,7 +34,7 @@ lapply(l, function(x) {
   t = as.numeric(substr(t, 1, nchar(t)-1L))
   out_rows = as.integer(x[2L])
   x = strsplit(x[6L], ",", fixed=TRUE)[[1L]]
-  write.log(timestamp=as.numeric(x[1L]), task=x[2L], data=x[3L], in_rows=as.integer(x[4L]), out_rows=out_rows, solution=x[6L], version=ver, fun=x[7L], run=as.integer(x[8L]), time_sec=as.numeric(t), mem_gb=NA_real_)
+  write.log(timestamp=as.numeric(x[1L]), task=x[2L], data=x[3L], in_rows=as.integer(x[4L]), question="inner join", out_rows=out_rows, solution=x[6L], version=ver, fun=x[7L], run=as.integer(x[8L]), time_sec=as.numeric(t), mem_gb=NA_real_)
 }) -> nul
 
 if( !interactive() ) q("no", status=0)

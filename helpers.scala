@@ -1,8 +1,9 @@
+import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 
-def write_log(task:String, data:String, in_rows:Long, out_rows:Long, solution:String, version:String, fun:String, run:Int, time_sec:Double, mem_gb:Double) : Boolean = {
+def write_log(task:String, data:String, in_rows:Long, question:String, out_rows:Long, solution:String, version:String, fun:String, run:Int, time_sec:Double, mem_gb:Double) : Boolean = {
     val some_batch = sys.env.get("BATCH")
     val batch = some_batch.getOrElse("")
     val timestamp = System.currentTimeMillis.toDouble / 1000.toDouble
@@ -18,13 +19,18 @@ def write_log(task:String, data:String, in_rows:Long, out_rows:Long, solution:St
     }
     val git = ""
     val fw = new FileWriter(log_file.toString, true)
-    val log_row = List(batch, "%.3f" format timestamp, task, data, in_rows, out_rows, solution, version, git, fun, run, time_sec, mem_gb, comment).mkString(",") + "\n"
+    val log_row = List(batch, "%.3f" format timestamp, task, data, in_rows, question, out_rows, solution, version, git, fun, run, time_sec, mem_gb, comment).mkString(",") + "\n"
     print("# " + log_row)
     if(!log_file_exists) {
-      val header_row = List("batch","timestamp","task","data","in_rows","out_rows","solution","version","git","fun","run","time_sec","mem_gb","comment").mkString(",") + "\n"
+      val header_row = List("batch","timestamp","task","data","in_rows","question","out_rows","solution","version","git","fun","run","time_sec","mem_gb","comment").mkString(",") + "\n"
       fw.write(header_row)
     }
     fw.write(log_row)
     fw.close()
     return true
+}
+
+def get_data_name(x:List[String]) : String = {
+   var nm = for(ix <- x) yield (new File(ix)).getName()
+   return nm.mkString("-")
 }
