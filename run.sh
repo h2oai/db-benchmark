@@ -14,13 +14,13 @@ export BATCH=$(date +%s)
 ./impala/impala.sh
 
 # datatable
-./datatable/datatable.sh # 15min+
+./datatable/datatable.sh
 
 # h2o
 ./h2o/h2o.sh
 
 # pandas
-./pandas/pandas.sh # 60min+
+./pandas/pandas.sh
 
 # publish timing
 Rscript -e 'knitr::knit2html("time.Rmd")'

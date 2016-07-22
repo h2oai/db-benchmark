@@ -36,7 +36,7 @@ bind.logs = function(history, new) {
   stopifnot(requireNamespace("data.table"), file.exists(history), file.exists(new))
   na.strings=c("","NA","NaN")
   sep=","
-  colClasses=c(comment="character")#, batch="integer", version="character", git="character")
+  colClasses=c(batch="integer", comment="character", version="character", git="character")
   history_dt = data.table::fread(history, na.strings=na.strings, sep=sep, colClasses=colClasses)
   new_dt = data.table::fread(new, na.strings=na.strings, sep=sep, colClasses=colClasses)
   setdiff(names(new_dt), names(history_dt))
