@@ -1,5 +1,5 @@
 require(data.table)
-N=1e7; K=100
+N=1e7; K=1e3
 set.seed(1)
 DT <- data.table(
   id1 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
