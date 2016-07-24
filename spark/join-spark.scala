@@ -22,7 +22,7 @@ val X = sqlContext.read.format("com.databricks.spark.csv").option("header", "tru
 val Y = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").option("inferSchema", "true").load(src_y)
 new Duration(t_start, DateTime.now())
 
-val data_name = get_data_name(List(src_x, src_y)) /** paste(. collapse="-") */
+val data_name = get_data_name(List(src_x, src_y)) /** paste(basename(.) collapse="-") */
 
 val t_start = DateTime.now()
 X.cache
