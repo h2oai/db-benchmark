@@ -12,7 +12,8 @@ solution = "data.table"
 fun = "[.data.table"
 
 cat("loading dataset\n")
-data_name = "G1_1e7_1e2.csv"
+src_grp = Sys.getenv("SRC_GRP")
+data_name = basename(src_grp)
 # if (get.nrow(c(DT)) > 1e9L) {
 #   cat("# groupby with data.table skipped due data volume cap for single machine set to total 1e9 rows")
 #   quit("no", status=0) # datasets > 1e9 too big to try load on single machine

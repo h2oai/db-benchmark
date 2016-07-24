@@ -14,7 +14,8 @@ task = "groupby"
 solution = "h2o"
 fun = "h2o.group_by"
 
-data_name = "G1_1e7_1e2.csv"
+src_grp = Sys.getenv("SRC_GRP")
+data_name = basename(src_grp)
 X = h2o.uploadFile(normalizePath(data_name))
 
 question = "sum v1 by id1" #1
