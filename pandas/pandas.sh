@@ -2,4 +2,7 @@
 set -e
 
 # join
-./pandas/join-pandas.py
+if [[ "$RUN_TASKS" =~ "join" ]]; then ./pandas/join-pandas.py; fi;
+
+# groupby
+if [[ "$RUN_TASKS" =~ "groupby" ]]; then ./pandas/groupby-pandas.py; fi;
