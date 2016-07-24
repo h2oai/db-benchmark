@@ -5,10 +5,10 @@ set -e
 ./h2o/init-h2o.sh
 
 # join
-./h2o/join-h2o.R
+if [[ "$RUN_TASKS" =~ "join" ]]; then ./h2o/join-h2o.R; fi;
 
 # groupby
-./h2o/groupby-h2o.R
+if [[ "$RUN_TASKS" =~ "groupby" ]]; then ./h2o/groupby-h2o.R; fi;
 
 # shutdown
 ./h2o/shutdown-h2o.sh

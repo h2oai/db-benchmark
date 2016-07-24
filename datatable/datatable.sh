@@ -2,7 +2,7 @@
 set -e
 
 # join
-./datatable/join-datatable.R
+if [[ "$RUN_TASKS" =~ "join" ]]; then ./datatable/join-datatable.R; fi;
 
 # groupby
-./datatable/groupby-datatable.R
+if [[ "$RUN_TASKS" =~ "groupby" ]]; then ./datatable/groupby-datatable.R; fi;
