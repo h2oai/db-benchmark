@@ -55,3 +55,12 @@ bind.logs = function(history, new) {
               sep=",")
   invisible(ans)
 }
+
+pretty_sci = function(x) {
+  tmp<-strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
+  if(length(tmp)==1L) {
+    paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
+  } else if(length(tmp)==2L){
+    paste0(tmp[1L], as.character(as.integer(tmp[2L])))
+  }
+}
