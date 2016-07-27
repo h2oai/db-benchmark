@@ -7,6 +7,9 @@ source run.conf
 # set batch
 export BATCH=$(date +%s)
 
+# produce iteration dictionaries
+./init-setup-iteration.R
+
 # spark
 ./spark/spark.sh
 
