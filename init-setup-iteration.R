@@ -1,11 +1,13 @@
 #!/usr/bin/env Rscript
 
-solution_dir = c("spark","impala","datatable","h2o","pandas")
+cat("# init-setup-iteration.R\n")
+
 run_tasks = Sys.getenv("RUN_TASKS", NA_character_)
 if (is.na(run_tasks)) stop("RUN_TASKS env var not defined.")
 run_tasks = strsplit(run_tasks, " ", fixed=TRUE)[[1L]]
 library(data.table)
 iters_on_solution_level = function(){
+  solution_dir = c("spark","impala","datatable","h2o","pandas","dask")
   dt = fread("data.csv")
   dt = dt[active==TRUE # flag
           ][run_tasks, on="task", nomatch=0L # filter for ENV VAR RUN TASKS
