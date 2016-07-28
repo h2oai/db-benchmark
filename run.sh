@@ -25,5 +25,8 @@ export BATCH=$(date +%s)
 # pandas
 ./pandas/pandas.sh
 
+# dask
+./dask/dask.sh
+
 # publish timing
 Rscript -e 'knitr::knit2html("time.Rmd")'
