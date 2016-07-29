@@ -21,6 +21,7 @@ iters_on_solution_level = function(){
      .(iter=sprintf("export %s", paste(paste(c("SRC_GRP","SRC_GRP_LOCAL"), c(hdfs, local), sep="="), collapse=" "))),
      .(task, solution_dir, data)
      ][, if(.N) writeLines(iter, con=file.path(solution_dir,"loop-groupby-data.env"), sep="\n"), .(task, solution_dir)]
+  invisible()
 }
 iters_on_task_level = function(){
   dt = fread("data.csv")
@@ -35,6 +36,7 @@ iters_on_task_level = function(){
      .(iter=sprintf("export %s", paste(paste(c("SRC_GRP","SRC_GRP_LOCAL"), c(hdfs, local), sep="="), collapse=" "))),
      .(task, data)
      ][, if(.N) writeLines(iter, con=file.path("loop-groupby-data.env"), sep="\n"), .(task)]
+  invisible()
 }
 iters_on_task_level()
 

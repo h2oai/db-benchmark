@@ -14,7 +14,7 @@ write.log = function(
                 solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb,
                 comment=comment)
   cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
-  write.table(df,
+  write.table(format(df, scientific=FALSE),
               file=log.file,
               append=file.exists(log.file),
               col.names=!file.exists(log.file),
@@ -56,6 +56,7 @@ bind.logs = function(history, new) {
   invisible(ans)
 }
 
+# short format of 1e7, 1e8 etc.
 pretty_sci = function(x) {
   tmp<-strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
   if(length(tmp)==1L) {
@@ -63,4 +64,15 @@ pretty_sci = function(x) {
   } else if(length(tmp)==2L){
     paste0(tmp[1L], as.character(as.integer(tmp[2L])))
   }
+}
+
+# elegant way to read timing logs
+read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv")) {
+  if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
+  dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="numeric", out_rows="numeric", comment="character", version="character", git="character", question="character", data="character"))
+  # assign colors to solutions
+  dt[order(solution), col := .GRP+1L, .(solution)]
+  # print variable
+  dt[, datetime := as.POSIXct(timestamp, origin="1970-01-01")]
+  dt[]
 }
