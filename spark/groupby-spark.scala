@@ -20,11 +20,12 @@ val X = sqlContext.read.format("com.databricks.spark.csv").option("header", "tru
 new Duration(t_start, DateTime.now())
 
 val t_start = DateTime.now()
-X.cache
+X.cache()
 new Duration(t_start, DateTime.now())
 
 val t_start = DateTime.now() 
-val in_rows = X.count
+val in_rows = X.count()
+in_rows
 new Duration(t_start, DateTime.now())
 
 /** groupby */
@@ -32,167 +33,197 @@ new Duration(t_start, DateTime.now())
 val question = "sum v1 by id1" /** #1 */
 val fun = ".groupBy sum"
 System.gc()
-val ans = X.groupBy("id1").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id1").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id1").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 
 val question = "sum v1 by id1:id2" /** #2 */
 val fun = ".groupBy sum"
 System.gc()
-val ans = X.groupBy("id1","id2").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1","id2").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id1","id2").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1","id2").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id1","id2").sum("v1")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id1","id2").sum("v1")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 
 val question = "sum v1 mean v3 by id3" /** #3 */
 val fun = ".groupBy agg sum mean"
 System.gc()
-val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)"), sum("mean(v3)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("sum(v1)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id3").agg(sum("v1"), mean("v3"))
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("sum(v1)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 
 val question = "mean v1:v3 by id4" /** #4 */
 val fun = ".groupBy mean"
 System.gc()
-val ans = X.groupBy("id4").mean("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id4").mean("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id4").mean("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id4").mean("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id4").mean("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id4").mean("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 
 
 val question = "sum v1:v3 by id6" /** #5 */
 val fun = ".groupBy sum"
 System.gc()
-val ans = X.groupBy("id6").sum("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id6").sum("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id6").sum("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id6").sum("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
-val ans = X.groupBy("id6").sum("v1","v2","v3")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.groupBy("id6").sum("v1","v2","v3")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first */
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */

@@ -25,48 +25,55 @@ new Duration(t_start, DateTime.now())
 val data_name = get_data_name(List(src_x, src_y)) /** paste(basename(.) collapse="-") */
 
 val t_start = DateTime.now()
-X.cache
-Y.cache
+X.cache()
+Y.cache()
 new Duration(t_start, DateTime.now())
 
 val t_start = DateTime.now() 
-val in_rows = X.count
-Y.count
+val in_rows = X.count()
+in_rows
+Y.count()
 new Duration(t_start, DateTime.now())
 
 /** join */
 
 System.gc()
-val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.join(Y, "KEY")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+ans.agg(sum("X2"), sum("Y2")).first
 ans.unpersist(blocking=true)
 
 System.gc()
-val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
-ans.cache 
-val out_rows = ans.count
+val ans = X.join(Y, "KEY")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("X2"), sum("Y2")).first */
 ans.unpersist(blocking=true)
 
 System.gc()
-val ans = X.join(Y, "KEY")
 val t_start = DateTime.now()
-ans.cache
-val out_rows = ans.count
+val ans = X.join(Y, "KEY")
+ans.cache()
+ans.count()
 val t_end = DateTime.now()
+val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+/** ans.agg(sum("X2"), sum("Y2")).first */
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */
