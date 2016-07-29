@@ -54,7 +54,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -66,7 +65,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 
 val question = "sum v1 by id1:id2" /** #2 */
@@ -93,7 +91,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -105,7 +102,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("sum(v1)")).first
 ans.unpersist(blocking=true)
 
 val question = "sum v1 mean v3 by id3" /** #3 */
@@ -132,7 +128,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("sum(v1)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -144,7 +139,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("sum(v1)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 
 val question = "mean v1:v3 by id4" /** #4 */
@@ -171,7 +165,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -183,7 +176,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first */
 ans.unpersist(blocking=true)
 
 
@@ -211,7 +203,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first */
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -223,7 +214,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first */
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */

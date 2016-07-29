@@ -60,7 +60,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("X2"), sum("Y2")).first */
 ans.unpersist(blocking=true)
 
 System.gc()
@@ -73,7 +72,6 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
-/** ans.agg(sum("X2"), sum("Y2")).first */
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */
