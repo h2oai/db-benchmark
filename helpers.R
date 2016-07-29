@@ -10,7 +10,7 @@ write.log = function(
   time_sec=round(time_sec, 3)
   mem_gb=round(mem_gb, 3)
   df=data.frame(batch=as.integer(batch), timestamp=as.numeric(timestamp), 
-                task=task, data=data, in_rows=as.integer(in_rows), question=as.character(question), out_rows=as.integer(out_rows),
+                task=task, data=data, in_rows=trunc(in_rows), question=as.character(question), out_rows=trunc(out_rows), # trunc to support big int in double
                 solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb,
                 comment=comment)
   cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
