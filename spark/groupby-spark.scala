@@ -116,7 +116,7 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("sum(v1)"), sum("mean(v3)")).first
+ans.agg(sum("sum(v1)"), sum("avg(v3)")).first
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -153,7 +153,7 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
-ans.agg(sum("mean(v1)"), sum("mean(v2)"), sum("mean(v3)")).first
+ans.agg(sum("avg(v1)"), sum("avg(v2)"), sum("avg(v3)")).first
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
