@@ -28,6 +28,7 @@ iters_on_task_level = function(){
   dt = dt[active==TRUE # flag
           ][run_tasks, on="task", nomatch=0L # filter for ENV VAR RUN TASKS
             ]
+  file.remove(file.path("loop-join-data.env"), file.path("loop-groupby-data.env"))
   dt[task=="join",
      .(iter=sprintf("export %s", paste(paste(c("SRC_X","SRC_Y","SRC_X_LOCAL","SRC_Y_LOCAL"), c(hdfs[1L], hdfs[2L], local[1L], local[2L]), sep="="), collapse=" "))),
      .(task, rows)
