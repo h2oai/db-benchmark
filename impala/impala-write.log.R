@@ -30,13 +30,13 @@ extract_time_sec = function(x) {
 # collect all metadata and append to csv
 lapply(l, function(x) {
   cat(sprintf("Processing impala log. %s\n", x[1L]))
-  out_rows = as.integer(x[2L])
+  out_rows = bit64::as.integer64(x[2L])
   t = extract_time_sec(x[3L])
   log_row = strsplit(x[5L], ",")[[1L]]
   timestamp = as.numeric(log_row[1L])
   task = log_row[2L]
   data_name = log_row[3L]
-  in_rows = as.integer(log_row[4L])
+  in_rows = bit64::as.integer64(log_row[4L])
   question = log_row[5L]
   solution = log_row[6L]
   fun = log_row[7L]
