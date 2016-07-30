@@ -42,7 +42,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("sum(v1)")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -79,7 +81,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("sum(v1)")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -116,7 +120,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("sum(v1)"), sum("avg(v3)")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -153,7 +159,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("avg(v1)"), sum("avg(v2)"), sum("avg(v3)")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()
@@ -178,7 +186,6 @@ val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
 ans.unpersist(blocking=true)
 
-
 val question = "sum v1:v3 by id6" /** #5 */
 val fun = ".groupBy sum"
 System.gc()
@@ -191,7 +198,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("sum(v1)"), sum("sum(v2)"), sum("sum(v3)")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 System.gc()
 val t_start = DateTime.now()

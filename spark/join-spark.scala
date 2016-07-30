@@ -47,7 +47,9 @@ val out_rows = ans.count()
 val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
 ans.agg(sum("X2"), sum("Y2")).first
+new Duration(t_start, DateTime.now())
 ans.unpersist(blocking=true)
 
 System.gc()
