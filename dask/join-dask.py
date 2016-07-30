@@ -52,6 +52,9 @@ t_end = timeit.default_timer()
 t = t_end - t_start
 m = float('nan')
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1, time_sec=t, mem_gb=m)
+t_start = timeit.default_timer()
+print pd.DataFrame({"X2":{1: ans['X2'].sum().compute()}, "Y2":{1: ans['Y2'].sum().compute()}})
+print "elapsed: {}".format(timeit.default_timer() - t_start)
 del ans
 
 gc.collect()
