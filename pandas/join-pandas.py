@@ -22,6 +22,7 @@ l = [os.path.basename(src_x), os.path.basename(src_y)]
 data_name = '-'.join(l)
 solution = "pandas"
 fun = "merge"
+cache = "TRUE"
 
 print("loading datasets...")
 
@@ -31,37 +32,42 @@ with hd.open(src_x) as f:
 with hd.open(src_y) as f:
    y = pd.read_csv(f)
 
-print("join 1...")
+print("joining...")
+
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-ans.shape[0]
-t_end = timeit.default_timer()
-t = t_end - t_start
-m = float('nan')
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=1, time_sec=t, mem_gb=m)
+print ans.shape[0]
+t = timeit.default_timer() - t_start
+m = float('NaN')
+t_start = timeit.default_timer()
+chk = [ans['X2'].sum(), ans['Y2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
-print("join 2...")
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-ans.shape[0]
-t_end = timeit.default_timer()
-t = t_end - t_start
+print ans.shape[0]
+t = timeit.default_timer() - t_start
 m = float('NaN')
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=2, time_sec=t, mem_gb=m)
+t_start = timeit.default_timer()
+chk = [ans['X2'].sum(), ans['Y2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
-print("join 3...")
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-ans.shape[0]
-t_end = timeit.default_timer()
-t = t_end - t_start
+print ans.shape[0]
+t = timeit.default_timer() - t_start
 m = float('NaN')
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=3, time_sec=t, mem_gb=m)
+t_start = timeit.default_timer()
+chk = [ans['X2'].sum(), ans['Y2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], solution=solution, version=ver, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
 exit(0)
