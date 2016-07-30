@@ -25,7 +25,7 @@ question = "sum v1 by id1" #1
 t = system.time(dim(ans<-h2o.group_by(X, by="id1", sum("v1"))))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-format(data.frame(sum(ans[["sum_v1"]])), scientific=FALSE)
+system.time(print(format(data.frame(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))), scientific=FALSE)))["elapsed"]
 h2o.rm(ans)
 t = system.time(dim(ans<-h2o.group_by(X, by="id1", sum("v1"))))[["elapsed"]]
 m = memory_usage()
@@ -40,7 +40,7 @@ question = "sum v1 by id1:id2" #2
 t = system.time(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1"))))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-format(data.frame(sum(ans[["sum_v1"]])), scientific=FALSE)
+system.time(print(format(data.frame(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))), scientific=FALSE)))["elapsed"]
 h2o.rm(ans)
 t = system.time(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1"))))[["elapsed"]]
 m = memory_usage()
@@ -55,7 +55,7 @@ question = "sum v1 mean v3 by id3" #3
 t = system.time(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3"))))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-format(data.frame(sum(ans[["sum_v1"]]), sum(ans[["mean_v3"]])), scientific=FALSE)
+system.time(print(format(data.frame(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v3=bit64::as.integer64(sum(ans[["mean_v3"]]))), scientific=FALSE)))["elapsed"]
 h2o.rm(ans)
 t = system.time(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3"))))[["elapsed"]]
 m = memory_usage()
@@ -70,7 +70,7 @@ question = "mean v1:v3 by id4" #4
 t = system.time(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3"))))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-format(data.frame(sum(ans[["mean_v1"]]), sum(ans[["mean_v2"]]), sum(ans[["mean_v3"]])), scientific=FALSE)
+system.time(print(format(data.frame(v1=bit64::as.integer64(sum(ans[["mean_v1"]])), v2=bit64::as.integer64(sum(ans[["mean_v2"]])), v3=bit64::as.integer64(sum(ans[["mean_v3"]]))), scientific=FALSE)))["elapsed"]
 h2o.rm(ans)
 t = system.time(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3"))))[["elapsed"]]
 m = memory_usage()
@@ -85,7 +85,7 @@ question = "sum v1:v3 by id6" #5
 t = system.time(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3"))))[["elapsed"]]
 m = memory_usage()
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-format(data.frame(sum(ans[["sum_v1"]]), sum(ans[["sum_v2"]]), sum(ans[["sum_v3"]])), scientific=FALSE)
+system.time(print(format(data.frame(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v2=bit64::as.integer64(sum(ans[["sum_v2"]])), v3=bit64::as.integer64(sum(ans[["sum_v3"]]))), scientific=FALSE)))["elapsed"]
 h2o.rm(ans)
 t = system.time(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3"))))[["elapsed"]]
 m = memory_usage()
