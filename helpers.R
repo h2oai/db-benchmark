@@ -1,7 +1,8 @@
 write.log = function(
   timestamp=Sys.time(), # this has to be here to support timestamp provided when parsing impala sql logs
   task=NA_character_, data=NA_character_, in_rows=NA_integer_, question=NA_character_, out_rows=NA_integer_,
-  solution=NA_character_, version=NA_character_, git=NA_character_, fun=NA_character_, run=NA_integer_, time_sec=NA_real_, mem_gb=NA_real_
+  solution=NA_character_, version=NA_character_, git=NA_character_, fun=NA_character_, run=NA_integer_, 
+  time_sec=NA_real_, mem_gb=NA_real_, cache=NA, chk=NA_character_, chk_time_sec=NA_real_
 ) {
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
@@ -9,11 +10,13 @@ write.log = function(
   comment="" # placeholder for updates to timing data
   time_sec=round(time_sec, 3)
   mem_gb=round(mem_gb, 3)
+  time_sec=round(chk_time_sec, 3)
   df=data.frame(batch=as.integer(batch), timestamp=as.numeric(timestamp), 
                 task=task, data=data, in_rows=trunc(in_rows), question=as.character(question), out_rows=trunc(out_rows), # trunc to support big int in double
-                solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb,
+                solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), 
+                time_sec=time_sec, mem_gb=mem_gb, cache=cache, chk=chk, chk_time_sec=chk_time_sec,
                 comment=comment)
-  cat("# ", paste(sapply(df, toString), collapse=","), "\n", sep="")
+  cat("# ", paste(sapply(df, format, scientific=FALSE), collapse=","), "\n", sep="")
   write.table(format(df, scientific=FALSE),
               file=log.file,
               append=file.exists(log.file),
@@ -33,12 +36,14 @@ get.nrow = function(x) {
 
 # data integration: bing new logs with more fields, expand history for new cols
 bind.logs = function(history, new) {
-  stopifnot(requireNamespace("data.table"), file.exists(history), file.exists(new))
-  na.strings=c("","NA","NaN")
-  sep=","
-  colClasses=c(batch="integer", comment="character", version="character", git="character")
-  history_dt = data.table::fread(history, na.strings=na.strings, sep=sep, colClasses=colClasses)
-  new_dt = data.table::fread(new, na.strings=na.strings, sep=sep, colClasses=colClasses)
+  stopifnot(requireNamespace("data.table"), requireNamespace("bit64"), file.exists(history), file.exists(new))
+  # na.strings=c("","NA","NaN")
+  # sep=","
+  # colClasses=c(batch="integer", comment="character", version="character", git="character")
+  # history_dt = data.table::fread(history, na.strings=na.strings, sep=sep, colClasses=colClasses)
+  browser()
+  history_dt = read_timing(history, raw=TRUE)
+  new_dt = read_timing(new, raw=TRUE)
   setdiff(names(new_dt), names(history_dt))
   stopifnot(nrow(new_dt) > 0L, nrow(history_dt) > 0L)
   if(length(in_hist_only<-setdiff(names(history_dt), names(new_dt)))) stop(sprintf("Could not extend logs history. Following columns are present in history data but not in new: %s", paste(in_hist_only, collapse=",")))
@@ -67,12 +72,27 @@ pretty_sci = function(x) {
 }
 
 # elegant way to read timing logs
-read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv")) {
+read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=FALSE) {
   if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
-  dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="numeric", out_rows="numeric", comment="character", version="character", git="character", question="character", data="character"))
+  dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="integer64", out_rows="integer64", comment="character", version="character", git="character", question="character", data="character"))
+  if (raw) return(dt)
   # assign colors to solutions
   dt[order(solution), col := .GRP+1L, .(solution)]
   # print variable
   dt[, datetime := as.POSIXct(timestamp, origin="1970-01-01")]
   dt[]
 }
+
+last_timing = function(x, csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv")) {
+  if (missing(x)) x = read_timing(csv.file=csv.file) else stopifnot(is.data.table(x))
+  x[, .SD[which.max(timestamp)], by=.(task, question, in_rows, solution, run)
+    ][, time_min:=time_sec/60
+      ][]
+}
+
+make_check = function(values){
+  x = sapply(values, function(x) paste(format(x, scientific=FALSE), collapse="_"))
+  gsub(",", "_", paste(x, collapse=";"), fixed=TRUE)
+}
+
+ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
