@@ -23,85 +23,85 @@ col.types = list(by.col.name=id.vars,types=rep("Enum", length(id.vars)))
 X = h2o.uploadFile(normalizePath(data_name), col.types=col.types)
 
 question = "sum v1 by id1" #1
-t = system.time(dim(ans<-h2o.group_by(X, by="id1", sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id1", sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id1", sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id1", sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id1", sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id1", sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 question = "sum v1 by id1:id2" #2
-t = system.time(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by=c("id1","id2"), sum("v1")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]]))))[["elapsed"]]
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 question = "sum v1 mean v3 by id3" #3
-t = system.time(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id3", sum("v1"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 question = "mean v1:v3 by id4" #4
-t = system.time(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=sum(ans[["mean_v1"]]), v2=sum(ans[["mean_v2"]]), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=sum(ans[["mean_v1"]]), v2=sum(ans[["mean_v2"]]), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id4", mean("v1"), mean("v2"), mean("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=sum(ans[["mean_v1"]]), v2=sum(ans[["mean_v2"]]), v3=sum(ans[["mean_v3"]])))[["elapsed"]]
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 question = "sum v1:v3 by id6" #5
-t = system.time(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v2=bit64::as.integer64(sum(ans[["sum_v2"]])), v3=sum(ans[["sum_v3"]])))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v2=bit64::as.integer64(sum(ans[["sum_v2"]])), v3=sum(ans[["sum_v3"]])))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
-t = system.time(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3"))))[["elapsed"]]
+t = system.time(print(dim(ans<-h2o.group_by(X, by="id6", sum("v1"), sum("v2"), sum("v3")))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-list(v1=bit64::as.integer64(sum(ans[["sum_v1"]])), v2=bit64::as.integer64(sum(ans[["sum_v2"]])), v3=sum(ans[["sum_v3"]])))[["elapsed"]]
 write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
