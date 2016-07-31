@@ -83,6 +83,7 @@ read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=F
   dt[]
 }
 
+# wrapper on read_timing with filter on latest benchmark batch for each query
 last_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), x) {
   if (missing(x)) x = read_timing(csv.file=csv.file) else stopifnot(is.data.table(x))
   x[, .SD[which.max(timestamp)], by=.(task, question, in_rows, solution, run)
@@ -90,18 +91,23 @@ last_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), x) {
       ][]
 }
 
+# makes scalar string to store in "chk" field, check sum of arbitrary number of measures
 make_check = function(values){
   x = sapply(values, function(x) paste(format(x, scientific=FALSE), collapse="_"))
   gsub(",", "_", paste(x, collapse=";"), fixed=TRUE)
 }
 
+# data.table print options, just for formatting when viewing logs interactively
 ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
 
+# extract package metadata from current local library
 current = function(pkg, field){
   stopifnot(is.character(pkg), is.character(field), length(pkg)==1L, length(field)==1L)
   dcf = system.file("DESCRIPTION", package=pkg)
   if (nchar(dcf)) read.dcf(dcf, fields=field)[1L] else NA_character_
 }
+
+# extract package metadata from remote drat repo
 upstream = function(pkg, repo, field){
   stopifnot(is.character(pkg), is.character(field), length(pkg)==1L, length(field)==1L, is.character(repo), length(repo)==1L, field!="Package")
   idx = file(file.path(contrib.url(repo),"PACKAGES"))
@@ -110,7 +116,9 @@ upstream = function(pkg, repo, field){
   if (!pkg %in% dcf[,"Package"]) stop(sprintf("There is no %s package in provided upstream repo.", pkg))
   dcf[dcf[,"Package"]==pkg, field][[1L]]
 }
-install.dev.package = function(pkg, repo, field, ...){
-  if (upg<-(is.na(up<-upstream(pkg, repo, field)) | !identical(up, current(pkg, field)))) utils::install.packages(pkg, repos=repo, ...)
-  cat(sprintf("# R %s package %s %s (%s)\n", pkg, c("is up-to-date at","has been upgraded to")[upg+1L], current(pkg, field), packageVersion(pkg)))
+
+# conditionally install a package only when package in current local library has different git commit hash than package in drat repo
+install.dev.package = function(pkg, repo, field="Commit", ...){
+  if (upg<-(is.na(ups<-upstream(pkg, repo, field)) | !identical(ups, current(pkg, field)))) utils::install.packages(pkg, repos=repo, ...)
+  cat(sprintf("# R %s package %s %s (%s)\n", pkg, c("is up-to-date at","has been upgraded to")[upg+1L], current(pkg, field), utils::packageVersion(pkg)))
 }
