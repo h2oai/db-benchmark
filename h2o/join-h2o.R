@@ -14,6 +14,7 @@ task = "join"
 solution = "h2o"
 fun = "h2o.merge"
 question = "inner join"
+cache = TRUE
 
 src_x = Sys.getenv("SRC_X")
 src_y = Sys.getenv("SRC_Y")
@@ -23,18 +24,20 @@ Y = h2o.importFile(src_y)
 
 t = system.time(dim(ans<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
-system.time(print(format(data.frame(X2=bit64::as.integer64(sum(ans$X2)), Y2=bit64::as.integer64(sum(ans$Y2))), scientific=FALSE)))["elapsed"]
+chkt = system.time(chk<-list(X2=bit64::as.integer64(sum(ans[["X2"]])), Y2=bit64::as.integer64(sum(ans[["Y2"]]))))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 t = system.time(dim(ans<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
+chkt = system.time(chk<-list(X2=bit64::as.integer64(sum(ans[["X2"]])), Y2=bit64::as.integer64(sum(ans[["Y2"]]))))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 t = system.time(dim(ans<-h2o.merge(X, Y, method="radix")))[["elapsed"]]
 m = memory_usage()
-write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m)
+chkt = system.time(chk<-list(X2=bit64::as.integer64(sum(ans[["X2"]])), Y2=bit64::as.integer64(sum(ans[["Y2"]]))))[["elapsed"]]
+write.log(run=3L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 h2o.rm(ans)
 
 h2o.removeAll()
