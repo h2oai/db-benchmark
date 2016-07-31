@@ -7,5 +7,5 @@ set -e
 for i in $CLUSTER; do (ssh $USER@$i "killall -9 python 2>&1 > /dev/null" &) 2>&1 > /dev/null; done && sleep 5
 
 # start cluster
-echo "Starting cluster..."
+echo "Starting dask cluster..."
 nohup ~/.local/bin/dask-ssh $CLUSTER >  ~/tmp/dask/cluster.log 2>&1 &

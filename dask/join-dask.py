@@ -24,6 +24,7 @@ l = [os.path.basename(src_x), os.path.basename(src_y)]
 data_name = '-'.join(l)
 solution = "dask"
 fun = "merge"
+cache = "TRUE"
 
 e = Executor(os.environ['MASTER'] + ":8786")
 e
@@ -47,36 +48,42 @@ gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 ans = e.persist(ans)
+print len(ans.index)
+t = timeit.default_timer() - t_start
 out_rows = len(ans.index)
-t_end = timeit.default_timer()
-t = t_end - t_start
 m = float('nan')
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1, time_sec=t, mem_gb=m)
 t_start = timeit.default_timer()
-print pd.DataFrame({"X2":{1: ans['X2'].sum().compute()}, "Y2":{1: ans['Y2'].sum().compute()}})
-print "elapsed: {}".format(timeit.default_timer() - t_start)
+chk = [ans['X2'].sum().compute(), ans['Y2'].sum().compute()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 ans = e.persist(ans)
+print len(ans.index)
+t = timeit.default_timer() - t_start
 out_rows = len(ans.index)
-t_end = timeit.default_timer()
-t = t_end - t_start
-m = float('NaN')
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2, time_sec=t, mem_gb=m)
+m = float('nan')
+t_start = timeit.default_timer()
+chk = [ans['X2'].sum().compute(), ans['Y2'].sum().compute()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 ans = e.persist(ans)
+print len(ans.index)
+t = timeit.default_timer() - t_start
 out_rows = len(ans.index)
-t_end = timeit.default_timer()
-t = t_end - t_start
-m = float('NaN')
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3, time_sec=t, mem_gb=m)
+m = float('nan')
+t_start = timeit.default_timer()
+chk = [ans['X2'].sum().compute(), ans['Y2'].sum().compute()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 del ans
 
 exit(0)
