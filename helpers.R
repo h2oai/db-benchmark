@@ -10,7 +10,7 @@ write.log = function(
   comment="" # placeholder for updates to timing data
   time_sec=round(time_sec, 3)
   mem_gb=round(mem_gb, 3)
-  time_sec=round(chk_time_sec, 3)
+  chk_time_sec=round(chk_time_sec, 3)
   df=data.frame(batch=as.integer(batch), timestamp=as.numeric(timestamp), 
                 task=task, data=data, in_rows=trunc(in_rows), question=as.character(question), out_rows=trunc(out_rows), # trunc to support big int in double
                 solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), 
@@ -74,7 +74,7 @@ pretty_sci = function(x) {
 # elegant way to read timing logs
 read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=FALSE) {
   if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
-  dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="integer64", out_rows="integer64", comment="character", version="character", git="character", question="character", data="character"))
+  dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="integer64", out_rows="integer64", comment="character", version="character", git="character", question="character", data="character", cache="logical", chk="character", chk_time_sec="numeric"))
   if (raw) return(dt)
   # assign colors to solutions
   dt[order(solution), col := .GRP+1L, .(solution)]
@@ -83,7 +83,7 @@ read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=F
   dt[]
 }
 
-last_timing = function(x, csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv")) {
+last_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), x) {
   if (missing(x)) x = read_timing(csv.file=csv.file) else stopifnot(is.data.table(x))
   x[, .SD[which.max(timestamp)], by=.(task, question, in_rows, solution, run)
     ][, time_min:=time_sec/60
@@ -96,3 +96,21 @@ make_check = function(values){
 }
 
 ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
+
+current = function(pkg, field){
+  stopifnot(is.character(pkg), is.character(field), length(pkg)==1L, length(field)==1L)
+  dcf = system.file("DESCRIPTION", package=pkg)
+  if (nchar(dcf)) read.dcf(dcf, fields=field)[1L] else NA_character_
+}
+upstream = function(pkg, repo, field){
+  stopifnot(is.character(pkg), is.character(field), length(pkg)==1L, length(field)==1L, is.character(repo), length(repo)==1L, field!="Package")
+  idx = file(file.path(contrib.url(repo),"PACKAGES"))
+  on.exit(close(idx))
+  dcf = read.dcf(idx, fields=c("Package",field))
+  if (!pkg %in% dcf[,"Package"]) stop(sprintf("There is no %s package in provided upstream repo.", pkg))
+  dcf[dcf[,"Package"]==pkg, field][[1L]]
+}
+install.dev.package = function(pkg, repo, field, ...){
+  if (upg<-(is.na(up<-upstream(pkg, repo, field)) | !identical(up, current(pkg, field)))) utils::install.packages(pkg, repos=repo, ...)
+  cat(sprintf("# R %s package %s %s (%s)\n", pkg, c("is up-to-date at","has been upgraded to")[upg+1L], current(pkg, field), packageVersion(pkg)))
+}
