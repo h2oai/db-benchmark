@@ -2,6 +2,7 @@ import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.text.DecimalFormat
 
 def write_log(task:String, data:String, in_rows:Long, question:String, out_rows:Long, solution:String, version:String, fun:String, run:Int, time_sec:Double, mem_gb:Double, cache:String, chk:String, chk_time_sec:Double) : Boolean = {
     val some_batch = sys.env.get("BATCH")
@@ -35,6 +36,13 @@ def get_data_name(x:List[String]) : String = {
    return nm.mkString("-")
 }
 
-def make_check(values:Array[org.apache.spark.sql.Row]) : String = {
-   return values(0).mkString(";").replace(",","_")
+def make_chk(values:Array[org.apache.spark.sql.Row]) : String = {
+   val df = new DecimalFormat("0");
+   df.setMaximumFractionDigits(3); //max 340
+   // loop over all fields
+   val x = new Array[String](values(0).length)
+   for (i <- 0 to (values(0).length-1)) {
+      x(i) = df.format(values(0)(i))
+   }
+   return x.mkString(";").replace(",","_")
 }

@@ -32,8 +32,8 @@ new Duration(t_start, DateTime.now())
 
 val t_start = DateTime.now() 
 val in_rows = X.count()
-in_rows
-Y.count()
+println(in_rows)
+println(Y.count())
 new Duration(t_start, DateTime.now())
 
 /** join */
@@ -42,42 +42,42 @@ System.gc()
 val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
-ans.count()
+println(ans.count())
 val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
 val m = Double.NaN
 val t_start = DateTime.now()
 val chk = ans.agg(sum("X2"), sum("Y2")).collect()
 val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 System.gc()
 val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
-ans.count()
+println(ans.count())
 val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
 val m = Double.NaN
 val t_start = DateTime.now()
 val chk = ans.agg(sum("X2"), sum("Y2")).collect()
 val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 System.gc()
 val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
-ans.count()
+println(ans.count())
 val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
 val m = Double.NaN
 val t_start = DateTime.now()
 val chk = ans.agg(sum("X2"), sum("Y2")).collect()
 val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */
