@@ -12,6 +12,7 @@ val ver = sc.version
 val question = "inner join"
 val solution = "spark"
 val fun = ".join"
+val cache = "TRUE"
 
 /** load data */
 
@@ -42,14 +43,13 @@ val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
 ans.count()
-val t_end = DateTime.now()
+val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
-val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m)
 val t_start = DateTime.now()
-ans.agg(sum("X2"), sum("Y2")).first
-new Duration(t_start, DateTime.now())
+val chk = ans.agg(sum("X2"), sum("Y2")).collect()
+val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=1:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 System.gc()
@@ -57,11 +57,13 @@ val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
 ans.count()
-val t_end = DateTime.now()
+val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
-val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
+val chk = ans.agg(sum("X2"), sum("Y2")).collect()
+val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=2:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 System.gc()
@@ -69,11 +71,13 @@ val t_start = DateTime.now()
 val ans = X.join(Y, "KEY")
 ans.cache()
 ans.count()
-val t_end = DateTime.now()
+val t = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
 val out_rows = ans.count()
-val t = new Duration(t_start, t_end).getMillis.toDouble / 1000.toDouble
 val m = Double.NaN
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m)
+val t_start = DateTime.now()
+val chk = ans.agg(sum("X2"), sum("Y2")).collect()
+val chkt = new Duration(t_start, DateTime.now()).getMillis.toDouble / 1000.toDouble
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3:Int, time_sec=t, mem_gb=m, cache=cache, chk=make_check(chk), chk_time_sec=chkt)
 ans.unpersist(blocking=true)
 
 /** cleanup and exit */
