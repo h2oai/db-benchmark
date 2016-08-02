@@ -14,7 +14,7 @@ solution = "data.table"
 fun = "[.data.table"
 cache = TRUE
 
-cat("loading dataset\n")
+cat("loading dataset...\n")
 src_grp = Sys.getenv("SRC_GRP")
 data_name = basename(src_grp)
 # if (get.nrow(c(DT)) > 1e9L) {
@@ -22,6 +22,8 @@ data_name = basename(src_grp)
 #   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
 # }
 X = fread(data_name)
+
+cat("grouping...\n")
 
 question = "sum v1 by id1" #1
 t = system.time(dim(ans<-X[, .(v1=sum(v1)), by=id1]))[["elapsed"]]

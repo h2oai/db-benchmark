@@ -16,11 +16,14 @@ fun = "h2o.merge"
 question = "inner join"
 cache = TRUE
 
+cat("loading datasets...\n")
 src_x = Sys.getenv("SRC_X")
 src_y = Sys.getenv("SRC_Y")
 data_name = paste(basename(src_x), basename(src_y), sep="-")
 X = h2o.importFile(src_x)
 Y = h2o.importFile(src_y)
+
+cat("joining...\n")
 
 t = system.time(print(dim(ans<-h2o.merge(X, Y, method="radix"))))[["elapsed"]]
 m = memory_usage()

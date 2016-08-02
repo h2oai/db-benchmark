@@ -1,12 +1,11 @@
 #!/bin/bash
 set -e
 
-## Requirements:
-# 1. on mr-0xd6 you should have ~/h2o.jar, file originally from h2o-hadoop/h2o-hdp2.2-assembly/build/libs/h2odriver.jar
-
-# build h2o
+# build h2o locally
 BUILD_HADOOP=YeAh ./gradlew :h2o-hadoop:h2o-hdp2.2-assembly:assemble
 mv ./h2o-hadoop/h2o-hdp2.2-assembly/build/libs/h2odriver.jar ~/h2o.jar
+
+# send to mr-0xd6
 rsync -aq $HOME/h2o.jar $USER@mr-0xd6:h2o.jar
 
 # copy h2o.jar to all nodes

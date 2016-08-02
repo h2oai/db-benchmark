@@ -16,6 +16,7 @@ val cache = "TRUE"
 
 /** load data */
 
+println("loading datasets...")
 val src_x = sys.env("SRC_X")
 val src_y = sys.env("SRC_Y")
 val t_start = DateTime.now()
@@ -37,6 +38,7 @@ println(Y.count())
 new Duration(t_start, DateTime.now())
 
 /** join */
+println("joining...")
 
 System.gc()
 val t_start = DateTime.now()

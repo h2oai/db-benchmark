@@ -18,9 +18,12 @@ cache = TRUE
 src_grp = Sys.getenv("SRC_GRP")
 data_name = basename(src_grp)
 
+cat("loading dataset...\n")
 id.vars = paste0("id", 1:5)
 col.types = list(by.col.name=id.vars,types=rep("Enum", length(id.vars)))
 X = h2o.uploadFile(normalizePath(data_name), col.types=col.types)
+
+cat("grouping...\n")
 
 question = "sum v1 by id1" #1
 t = system.time(print(dim(ans<-h2o.group_by(X, by="id1", sum("v1")))))[["elapsed"]]

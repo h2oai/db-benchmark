@@ -17,7 +17,7 @@ if (get.nrow(c(src_x,src_y)) > 2e9L) {
 library(data.table)
 ver = packageVersion("data.table")
 git = datatable.git()
-cat("loading datasets\n")
+cat("loading datasets...\n")
 X = fread(if(file.exists(src_x)) src_x else sprintf("hadoop fs -cat %s", src_x)) # csv can be provided in local dir for faster import
 Y = fread(if(file.exists(src_y)) src_y else sprintf("hadoop fs -cat %s", src_y))
 data_name = paste(basename(src_x), basename(src_y), sep="-")

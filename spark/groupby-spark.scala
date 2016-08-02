@@ -14,6 +14,7 @@ val cache = "TRUE"
 
 /** load data */
 
+println("loading dataset...")
 val src_grp = sys.env("SRC_GRP")
 val data_name = get_data_name(List(src_grp)) /** paste(basename(.) collapse="-") */
 val t_start = DateTime.now()
@@ -30,6 +31,8 @@ println(in_rows)
 new Duration(t_start, DateTime.now())
 
 /** groupby */
+
+println("grouping...")
 
 val question = "sum v1 by id1" /** #1 */
 val fun = ".groupBy sum"
