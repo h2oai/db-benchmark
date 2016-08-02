@@ -37,14 +37,8 @@ get.nrow = function(x) {
 # data integration: bing new logs with more fields, expand history for new cols
 bind.logs = function(history, new) {
   stopifnot(requireNamespace("data.table"), requireNamespace("bit64"), file.exists(history), file.exists(new))
-  # na.strings=c("","NA","NaN")
-  # sep=","
-  # colClasses=c(batch="integer", comment="character", version="character", git="character")
-  # history_dt = data.table::fread(history, na.strings=na.strings, sep=sep, colClasses=colClasses)
-  browser()
   history_dt = read_timing(history, raw=TRUE)
   new_dt = read_timing(new, raw=TRUE)
-  setdiff(names(new_dt), names(history_dt))
   stopifnot(nrow(new_dt) > 0L, nrow(history_dt) > 0L)
   if(length(in_hist_only<-setdiff(names(history_dt), names(new_dt)))) stop(sprintf("Could not extend logs history. Following columns are present in history data but not in new: %s", paste(in_hist_only, collapse=",")))
   ans = data.table::rbindlist(list(history_dt, new_dt), use.names=TRUE, fill=TRUE)
