@@ -10,3 +10,4 @@ Tools:
   - [x] data.table
   - [x] h2o
   - [x] pandas
+  - [x] dask
