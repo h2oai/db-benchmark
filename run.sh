@@ -7,7 +7,7 @@ source run.conf
 # set batch
 export BATCH=$(date +%s)
 
-# produce iteration dictionaries
+# produce iteration dictionaries from data.csv
 ./init-setup-iteration.R
 
 # spark
@@ -28,5 +28,10 @@ export BATCH=$(date +%s)
 # dask
 ./dask/dask.sh
 
-# publish timing
-Rscript -e 'knitr::knit2html("time.Rmd")'
+# dplyr
+./dplyr/dplyr.sh
+
+# publish timing locally
+# Rscript -e 'rmarkdown::render("index.Rmd")'
+# push timing data to shiny
+# rsync -aq time.csv $USER@$SHINY:.
