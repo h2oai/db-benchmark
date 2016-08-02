@@ -41,7 +41,10 @@ lapply(l, function(x) {
   solution = log_row[6L]
   fun = log_row[7L]
   run = as.integer(log_row[8L])
-  write.log(timestamp=timestamp, task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=run, time_sec=as.numeric(t))
+  cache = as.logical(log_row[9L])
+  chk = NA_character_ # as.character(log_row[10L])
+  chk_time_sec = NA_real_ # extract_time_sec(x[0L])
+  write.log(timestamp=timestamp, task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=run, time_sec=as.numeric(t), cache=cache, chk=chk, chk_time_sec=chk_time_sec)
 }) -> nul
 
 if( !interactive() ) q("no", status=0)

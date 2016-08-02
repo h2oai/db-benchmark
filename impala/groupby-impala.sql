@@ -25,81 +25,81 @@ shell echo "###impala-body";
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 -- question = "sum v1 by id1:id2" #2
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1, id2) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1, id2) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1 FROM x GROUP BY id1, id2) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 by id1:id2' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 -- question = "sum v1 mean v3 by id3" #3
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, AVG(v3) v3 FROM x GROUP BY id3) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 1 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, AVG(v3) v3 FROM x GROUP BY id3) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 2 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, AVG(v3) v3 FROM x GROUP BY id3) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1 mean v3 by id3' _question, 'impala' _solution, 'SUM AVG GROUP BY' _fun, 3 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 -- question = "mean v1:v3 by id4" #4
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT AVG(v1) v1, AVG(v2) v2, AVG(v3) v3 FROM x GROUP BY id4) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 1 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT AVG(v1) v1, AVG(v2) v2, AVG(v3) v3 FROM x GROUP BY id4) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 2 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT AVG(v1) v1, AVG(v2) v2, AVG(v3) v3 FROM x GROUP BY id4) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'mean v1:v3 by id4' _question, 'impala' _solution, 'AVG GROUP BY' _fun, 3 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 -- question = "sum v1:v3 by id6" #5
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, SUM(v2) v2, SUM(v3) v3 FROM x GROUP BY id6) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 1 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, SUM(v2) v2, SUM(v3) v3 FROM x GROUP BY id6) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 2 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 DROP STATS x;
 REFRESH x;
 SELECT COUNT(*) FROM (SELECT SUM(v1) v1, SUM(v2) v2, SUM(v3) v3 FROM x GROUP BY id6) t;
-SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run FROM (SELECT COUNT(*) in_rows FROM x) x;
+SELECT UNIX_TIMESTAMP() _timestamp, 'groupby' _task, CONCAT(REGEXP_EXTRACT('${var:SRC_GRP_DIR}','[^/]+$',0), '.csv') _data, x.in_rows _in_rows, 'sum v1:v3 by id6' _question, 'impala' _solution, 'SUM GROUP BY' _fun, 3 _run, 'FALSE' _cache FROM (SELECT COUNT(*) in_rows FROM x) x;
 
 shell echo "###impala-body";
 
