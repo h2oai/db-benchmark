@@ -30,6 +30,6 @@ def write_log(task, data, in_rows, question, out_rows, solution, version, fun, r
          w.writerow(log_row)
    return True
 
-def make_check(values):
-   s = ';'.join(str(x) for x in values)
+def make_chk(values):
+   s = ';'.join(str(round(x,3) if type(x).__name__ == "float" else x) for x in values)
    return s.replace(",","_") # comma is reserved for csv separator
