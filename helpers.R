@@ -92,7 +92,7 @@ last_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), x) {
 }
 
 # makes scalar string to store in "chk" field, check sum of arbitrary number of measures
-make_check = function(values){
+make_chk = function(values){
   x = sapply(values, function(x) paste(format(x, scientific=FALSE), collapse="_"))
   gsub(",", "_", paste(x, collapse=";"), fixed=TRUE)
 }
