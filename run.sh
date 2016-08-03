@@ -35,3 +35,6 @@ export BATCH=$(date +%s)
 # Rscript -e 'rmarkdown::render("index.Rmd")'
 # push timing data to shiny
 # rsync -aq time.csv $USER@$SHINY:.
+
+# completed
+echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
