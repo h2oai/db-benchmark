@@ -6,7 +6,7 @@ source("./helpers.R")
 source("./h2o/helpers-h2o.R")
 
 library(h2o, warn.conflicts=FALSE, quietly=TRUE)
-h2o.init(ip=Sys.getenv("H2O_HOST","localhost"), port=as.integer(Sys.getenv("H2O_PORT","54321")), strict_version_check=FALSE, startH2O=FALSE)
+h2o.init(ip=Sys.getenv("H2O_HOST","localhost"), port=as.integer(Sys.getenv("H2O_PORT","54321")), strict_version_check=TRUE, startH2O=FALSE)
 h2o.removeAll()
 ver = h2o.getVersion()
 git = h2o.git()
