@@ -7,7 +7,7 @@ write.log = function(
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
   batch=Sys.getenv("BATCH", NA)
-  comment="" # placeholder for updates to timing data
+  comment=NA_character_ # placeholder for updates to timing data
   time_sec=round(time_sec, 3)
   mem_gb=round(mem_gb, 3)
   chk_time_sec=round(chk_time_sec, 3)
