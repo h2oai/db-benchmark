@@ -1,9 +1,11 @@
 task,data,rows,local,hdfs,active
 groupby,G1_1e7_1e3.csv,1e7,/datasets/mattd/G1_1e7_1e3.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e7_1e3.csv,TRUE
-groupby,G1_1e7_1e6.csv,1e7,/datasets/mattd/G1_1e7_1e6.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e7_1e6.csv,TRUE
+groupby,G1_1e7_1e6.csv,1e7,/datasets/mattd/G1_1e7_1e6.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e7_1e6.csv,FALSE
 join,X1e7_2c.csv,1e7,/datasets/mattd/X1e7_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e7_2c.csv,TRUE
 join,Y1e7_2c.csv,1e7,/datasets/mattd/Y1e7_2c.csv,hdfs://mr-0xd6/datasets/mattd/Y1e7_2c.csv,TRUE
-join,X1e8_2c.csv,1e8,/datasets/mattd/X1e8_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e8_2c.csv,TRUE
-join,Y1e8_2c.csv,1e8,/datasets/mattd/Y1e8_2c.csv,hdfs://mr-0xd6/datasets/mattd/Y1e8_2c.csv,TRUE
+join,X1e8_2c.csv,1e8,/datasets/mattd/X1e8_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e8_2c.csv,FALSE
+join,Y1e8_2c.csv,1e8,/datasets/mattd/Y1e8_2c.csv,hdfs://mr-0xd6/datasets/mattd/Y1e8_2c.csv,FALSE
 join,X1e9_2c.csv,1e9,/datasets/mattd/X1e9_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e9_2c.csv,FALSE
 join,Y1e9_2c.csv,1e9,/datasets/mattd/Y1e9_2c.csv,hdfs://mr-0xd6/datasets/mattd/Y1e9_2c.csv,FALSE
+join,X1e10_2c.csv,1e10,/datasets/mattd/X1e10_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e10_2c.csv,FALSE
+join,Y1e10_2c.csv,1e10,/datasets/mattd/Y1e10_2c.csv,hdfs://mr-0xd6/datasets/mattd/Y1e10_2c.csv,FALSE

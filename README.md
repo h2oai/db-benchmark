@@ -13,5 +13,9 @@ Tools:
   - [x] dask
   - [x] dplyr
 
-A good way to run benchmark is run it in background so it can continue even if we disconnect: `nohup ./run.sh > run.log 2>&1 &`.  
-Preview logs with `tail -f run.log` or `tail -f run.log | grep "^#"`for pretty print of processing and csv outcome.  
+To reproduce:  
+- setup tools on cluster nodes: use `[tool]/setup-[tool].sh` scripts
+- generate data: use `tableGen.c` for join and `groupby-datagen.R` for groupby
+- edit `run.conf`
+- edit `data.csv`
+- start benchmark with `./run.sh`
