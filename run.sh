@@ -10,26 +10,29 @@ export BATCH=$(date +%s)
 # produce iteration dictionaries from data.csv
 ./init-setup-iteration.R
 
-# spark
-./spark/spark.sh
+# # spark
+# ./spark/spark.sh
 
-# impala
-./impala/impala.sh
+# # impala
+# ./impala/impala.sh
 
-# datatable
-./datatable/datatable.sh
+# # datatable
+# ./datatable/datatable.sh
 
-# h2o
-./h2o/h2o.sh
+# # h2o
+# ./h2o/h2o.sh
 
-# pandas
-./pandas/pandas.sh
+# # pandas
+# ./pandas/pandas.sh
+# 
+# # dask
+# ./dask/dask.sh
+# 
+# # dplyr
+# ./dplyr/dplyr.sh
 
-# dask
-./dask/dask.sh
-
-# dplyr
-./dplyr/dplyr.sh
+# presto
+./presto/presto.sh
 
 # publish timing locally
 # Rscript -e 'rmarkdown::render("index.Rmd")'
