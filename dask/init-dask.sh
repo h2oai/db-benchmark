@@ -10,3 +10,4 @@ for i in $CLUSTER; do (ssh $USER@$i "killall -9 python 2>&1 > /dev/null" &) 2>&1
 # start cluster
 echo "Starting dask cluster..."
 nohup ~/.local/bin/dask-ssh $CLUSTER >  ~/tmp/dask/cluster.log 2>&1 &
+sleep 15
