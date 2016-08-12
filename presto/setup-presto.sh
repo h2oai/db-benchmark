@@ -24,16 +24,6 @@ for i in $CLUSTER; do cmd="ssh $USER@$i 'export PRESTO_NODE_ID=\$HOSTNAME; echo 
 for i in $SLAVES; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.worker $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
 for i in $MASTER; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.master $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
 
-# # substitute slaves with local env vars in config
-# for i in $SLAVES; do cmd="ssh $USER@$i 'export PRESTO_NODE_ID=\$HOSTNAME; echo \$PRESTO_NODE_ID; envsubst < $PRESTO_HOME/etc/node.properties.worker > $PRESTO_HOME/etc/node.properties'"; eval $cmd; done;
-# for i in $SLAVES; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.worker $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
-# for i in $SLAVES; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/jvm.config.worker $PRESTO_HOME/etc/jvm.config'"; eval $cmd; done;
-# 
-# # substitute master with local env vars in config
-# for i in $MASTER; do cmd="ssh $USER@$i 'export PRESTO_NODE_ID=\$HOSTNAME; echo \$PRESTO_NODE_ID; envsubst < $PRESTO_HOME/etc/node.properties.master > $PRESTO_HOME/etc/node.properties'"; eval $cmd; done;
-# for i in $MASTER; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.master $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
-# for i in $MASTER; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/jvm.config.master $PRESTO_HOME/etc/jvm.config'"; eval $cmd; done;
-
 # # client setup
 # curl -O https://repo1.maven.org/maven2/com/facebook/presto/presto-cli/0.150/presto-cli-0.150-executable.jar
 # cp presto-cli-0.150-executable.jar presto.jar
@@ -44,7 +34,7 @@ for i in $MASTER; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.ma
 # 
 # PATH=/usr/lib/jvm/java-8-oracle/bin:$PATH ./presto.jar --help
 # 
-# export PRESTO_PORT=18080
+# export PRESTO_PORT=18880
 # export PRESTO_CLI="$HOME/presto.jar"
 # PATH=/usr/lib/jvm/java-8-oracle/bin:$PATH $PRESTO_CLI --server $MASTER:$PRESTO_PORT --execute "select * from system.runtime.nodes;"
 # 
