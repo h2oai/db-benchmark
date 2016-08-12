@@ -13,12 +13,12 @@ if (get.nrow(c(src_x,src_y)) > 2e9L) {
   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
 }
 
-library(dplyr)
+library(dplyr, warn.conflicts=FALSE)
 ver = packageVersion("dplyr")
 git = NA_character_
 cat("loading datasets...\n")
-X = data.table::fread(if(file.exists(src_x)) src_x else sprintf("hadoop fs -cat %s", src_x), data.table=FALSE) # csv can be provided in local dir for faster import
-Y = data.table::fread(if(file.exists(src_y)) src_y else sprintf("hadoop fs -cat %s", src_y), data.table=FALSE)
+X = data.table::fread(if(file.exists(basename(src_x))) basename(src_x) else sprintf("hadoop fs -cat %s", src_x), data.table=FALSE) # csv can be provided in local dir for faster import
+Y = data.table::fread(if(file.exists(basename(src_y))) basename(src_y) else sprintf("hadoop fs -cat %s", src_y), data.table=FALSE)
 data_name = paste(basename(src_x), basename(src_y), sep="-")
 task = "join"
 solution = "dplyr"
