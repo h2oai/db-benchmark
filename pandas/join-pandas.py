@@ -6,13 +6,12 @@ import os
 import gc
 import timeit
 import pandas as pd
-import pydoop.hdfs as hd
+# import pydoop.hdfs as hd
 
 execfile("./helpers.py")
 
 src_x = os.environ['SRC_X_LOCAL']
 src_y = os.environ['SRC_Y_LOCAL']
-# TODO skip for total row count > 2e9 as data volume cap due to pandas scalability, currently just comment out in run.sh
 
 ver = pd.__version__
 print(ver)
@@ -26,11 +25,13 @@ cache = "TRUE"
 
 print("loading datasets...")
 
-with hd.open(src_x) as f:
-   x = pd.read_csv(f)
+# with hd.open(src_x) as f:
+#    x = pd.read_csv(f)
+x = pd.read_csv(os.path.basename(src_x))
 
-with hd.open(src_y) as f:
-   y = pd.read_csv(f)
+# with hd.open(src_y) as f:
+#    y = pd.read_csv(f)
+y = pd.read_csv(os.path.basename(src_y))
 
 print("joining...")
 

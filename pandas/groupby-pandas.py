@@ -11,7 +11,6 @@ import pandas as pd
 execfile("./helpers.py")
 
 src_grp = os.environ['SRC_GRP_LOCAL']
-# TODO skip for total row count > 2e9 as data volume cap due to pandas scalability, currently just comment out in run.sh
 
 ver = pd.__version__
 print(ver)
