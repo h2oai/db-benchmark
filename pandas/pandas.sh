@@ -18,3 +18,12 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
     ./pandas/groupby-pandas.py
   done < ./loop-groupby-data.env
 fi
+
+# sort
+if [[ "$RUN_TASKS" =~ "sort" ]]; then
+  while read line
+  do 
+    eval $line
+    ./pandas/sort-pandas.py
+  done < ./loop-sort-data.env
+fi

@@ -1,6 +1,7 @@
 Tasks:
   - [x] join
   - [ ] groupby
+  - [ ] sort
   - [ ] import
   - [ ] subset
 
@@ -12,6 +13,7 @@ Tools:
   - [x] pandas
   - [x] dask
   - [x] dplyr
+  - [x] presto
 
 To reproduce:  
 - setup tools on cluster nodes: use `[tool]/setup-[tool].sh` scripts

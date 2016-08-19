@@ -22,5 +22,14 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   done < ./loop-groupby-data.env
 fi
 
+# sort
+if [[ "$RUN_TASKS" =~ "sort" ]]; then
+  while read line
+  do 
+    eval $line
+    ./h2o/sort-h2o.R
+  done < ./loop-sort-data.env
+fi
+
 # shutdown
 ./h2o/shutdown-h2o.sh

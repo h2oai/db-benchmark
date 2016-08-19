@@ -18,3 +18,12 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
     ./dplyr/groupby-dplyr.R
   done < ./loop-groupby-data.env
 fi
+
+# sort
+if [[ "$RUN_TASKS" =~ "sort" ]]; then
+  while read line
+  do 
+    eval $line
+    ./dplyr/sort-dplyr.R
+  done < ./loop-sort-data.env
+fi
