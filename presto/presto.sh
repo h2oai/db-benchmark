@@ -14,8 +14,10 @@ if [[ "$RUN_TASKS" =~ "join" ]]; then
   do
     eval $line
     # load data using hive
+    echo "loading datasets..."
     hive --define SRC_X_DIR=${SRC_X_LOCAL%.csv} --define SRC_Y_DIR=${SRC_Y_LOCAL%.csv} -f ./presto/join-presto-setup-hive.sql >> ./presto/join-presto-setup-hive.log 2>&1;
     # test presto, using <, not -f because -f wont print timing
+    echo "joining..."
     PATH=/usr/lib/jvm/java-8-oracle/bin:$PATH $PRESTO_CLI --catalog hive --schema benchmark --server $MASTER:$PRESTO_PORT --output-format CSV < ./presto/join-presto.sql >> ./presto/join-presto.log 2>&1;
     # parse log, waiting until presto prints the timing
     #./presto/presto-write.log.R "./presto/join-presto.log"
@@ -23,5 +25,5 @@ if [[ "$RUN_TASKS" =~ "join" ]]; then
 fi
 cat ./presto/join-presto.log
 
-# shutdown
-./presto/shutdown-presto.sh
+# shutdown - not shutdown to allow handscrapping
+#./presto/shutdown-presto.sh
