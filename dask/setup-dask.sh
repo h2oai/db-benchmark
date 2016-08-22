@@ -5,8 +5,8 @@ set -e
 python -m pip install --user -U dask[complete]
 python -m pip install --user -U distributed
 
-# scheduler node mr-0xd8 for web uo
-python -m pip install --user -U bokeh
+# scheduler node mr-0xd8 for web ui - doesnt work
+# python -m pip install --user -U bokeh
 
 # install/upgrade to user library (python -m ensure python 2.7)
 for i in $CLUSTER; do cmd="ssh $USER@$i 'python -m pip install --user -U distributed'"; echo $cmd; eval $cmd; done
