@@ -21,8 +21,8 @@ for i in $CLUSTER; do cmd="rsync -aq $PRESTO_HOME/ $USER@$i:$PRESTO_HOME"; echo 
 
 # NEW: master and slaves
 for i in $CLUSTER; do cmd="ssh $USER@$i 'export PRESTO_NODE_ID=\$HOSTNAME; echo \$PRESTO_NODE_ID; envsubst < $PRESTO_HOME/etc/node.properties.in > $PRESTO_HOME/etc/node.properties'"; eval $cmd; done;
-for i in $SLAVES; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.worker $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
-for i in $MASTER; do cmd="ssh $USER@$i 'mv $PRESTO_HOME/etc/config.properties.master $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
+for i in $SLAVES; do cmd="ssh $USER@$i 'cp $PRESTO_HOME/etc/config.properties.worker $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
+for i in $MASTER; do cmd="ssh $USER@$i 'cp $PRESTO_HOME/etc/config.properties.master $PRESTO_HOME/etc/config.properties'"; eval $cmd; done;
 
 # # client setup
 # curl -O https://repo1.maven.org/maven2/com/facebook/presto/presto-cli/0.150/presto-cli-0.150-executable.jar
