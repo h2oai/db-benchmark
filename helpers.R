@@ -66,12 +66,12 @@ pretty_sci = function(x) {
 }
 
 # elegant way to read timing logs
-read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=FALSE) {
+read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=FALSE, cols=c("presto"=2L,"data.table"=3L,"dplyr"=4L,"h2o"=5L,"impala"=6L,"pandas"=7L,"spark"=8L,"dask"=9L)) {
   if (!file.exists(csv.file)) stop(sprintf("File %s storing timings does not exists. Did you successfully run.sh benchmark?", csv.file))
   dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="integer64", out_rows="integer64", comment="character", version="character", git="character", question="character", data="character", cache="logical", chk="character", chk_time_sec="numeric"))
   if (raw) return(dt)
   # assign colors to solutions
-  dt[order(solution), col := .GRP+1L, .(solution)]
+  dt[, col := cols[solution], .(solution)]
   # print variable
   dt[, datetime := as.POSIXct(timestamp, origin="1970-01-01")]
   dt[]
