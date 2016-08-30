@@ -30,14 +30,14 @@ e = Executor(os.environ['MASTER'] + ":8786")
 e
 
 print("loading datasets...")
-# with hd.open(src_x) as f:
-#   x = pd.read_csv(f)
+#with hd.open(src_x) as f:
+#  x = pd.read_csv(f)
 x = pd.read_csv(src_x)
-x = dd.from_pandas(x, npartitions=8)
-# with hd.open(src_y) as f:
-#   y = pd.read_csv(f)
+x = dd.from_pandas(x, npartitions=9)
+#with hd.open(src_y) as f:
+#  y = pd.read_csv(f)
 y = pd.read_csv(src_y)
-y = dd.from_pandas(y, npartitions=8)
+y = dd.from_pandas(y, npartitions=9)
 x = e.persist(x)
 y = e.persist(y)
 in_rows = len(x.index)
