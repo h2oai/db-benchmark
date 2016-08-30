@@ -4,40 +4,38 @@ set -e
 # get config
 source run.conf
 
-# set batch
-export BATCH=$(date +%s)
-
 # produce iteration dictionaries from data.csv
 ./init-setup-iteration.R
 
-# # spark
-# ./spark/spark.sh
+# set batch
+export BATCH=$(date +%s)
 
-# # impala
-# ./impala/impala.sh
+# spark
+./spark/spark.sh
 
-# # datatable
-# ./datatable/datatable.sh
+# impala
+./impala/impala.sh
 
-# # h2o
-# ./h2o/h2o.sh
+# datatable
+./datatable/datatable.sh
 
-# # pandas
-# ./pandas/pandas.sh
-# 
-# # dask
-# ./dask/dask.sh
-# 
-# # dplyr
-# ./dplyr/dplyr.sh
+# h2o
+./h2o/h2o.sh
+
+# pandas
+./pandas/pandas.sh
+
+# dask
+./dask/dask.sh
+
+# dplyr
+./dplyr/dplyr.sh
 
 # presto
 ./presto/presto.sh
 
 # publish timing locally
-# Rscript -e 'rmarkdown::render("index.Rmd")'
-# push timing data to shiny
-# rsync -aq time.csv $USER@$SHINY:.
+#Rscript -e 'rmarkdown::render("index.Rmd")'
 
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
