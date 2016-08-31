@@ -7,6 +7,7 @@ set -e
 echo "Stopping presto cluster..."
 for i in $CLUSTER; do cmd="ssh $USER@$i 'export PRESTO_HOME=$PRESTO_HOME PATH=/usr/lib/jvm/java-8-oracle/bin:\$PATH; $PRESTO_HOME/bin/launcher kill'"; eval $cmd; done;
 sleep 5
+for i in $CLUSTER; do (ssh $USER@$i "killall -9 presto-server 2>&1 > /dev/null" &) 2>&1 > /dev/null; done && sleep 5
 for i in $CLUSTER; do (ssh $USER@$i "killall -9 java 2>&1 > /dev/null" &) 2>&1 > /dev/null; done && sleep 5
 sleep 5
 
