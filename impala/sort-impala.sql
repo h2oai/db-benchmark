@@ -8,7 +8,7 @@ USE benchmark;
 
 shell echo "${var:SRC_X_DIR}";
 
-CREATE EXTERNAL TABLE src_x (KEY INT, X2 INT)
+CREATE EXTERNAL TABLE src_x (KEY BIGINT, X2 BIGINT)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ","
 STORED AS TEXTFILE
@@ -16,7 +16,7 @@ LOCATION '${var:SRC_X_DIR}'
 TBLPROPERTIES('skip.header.line.count'='1') -- should be compatible with 2.6.0
 ;
 
-CREATE TABLE x STORED AS PARQUET AS SELECT CAST(KEY AS INT) KEY, CAST(X2 AS INT) X2 FROM src_x WHERE key IS NOT NULL -- skip header row and ensure valid data types, required till 2.6.0?
+CREATE TABLE x STORED AS PARQUET AS SELECT CAST(KEY AS BIGINT) KEY, CAST(X2 AS BIGINT) X2 FROM src_x WHERE key IS NOT NULL -- skip header row and ensure valid data types, required till 2.6.0?
 ;
 
 CREATE TABLE x_count STORED AS PARQUET AS SELECT COUNT(*) in_rows FROM x;
