@@ -8,12 +8,11 @@ import timeit
 import pandas as pd
 import dask as dk
 import dask.dataframe as dd
-#import pydoop.hdfs as hd
-from distributed import Executor
+from distributed import Executor, hdfs
 
 execfile("./helpers.py")
 
-src_grp = os.path.basename(os.environ['SRC_GRP_LOCAL'])
+src_grp = os.environ['SRC_GRP']
 
 ver = dk.__version__
 print(ver)
@@ -27,12 +26,12 @@ e = Executor(os.environ['MASTER'] + ":8786")
 e
 
 print("loading dataset...")
-#with hd.open(src_grp) as f:
-#  x = pd.read_csv(f)
-x = pd.read_csv(src_grp)
-x = dd.from_pandas(x, npartitions=9)
+
+x = dd.read_csv(src_grp, na_filter=False)
+print(x.dtypes)
 x = e.persist(x)
 in_rows = len(x.index)
+print(in_rows)
 
 print("grouping...")
 
@@ -283,6 +282,6 @@ t_start = timeit.default_timer()
 chk = [ans1.sum().compute(), ans2.sum().compute(), ans3.sum().compute()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, solution=solution, version=ver, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-del ans1, ans2, ans3
+del ans1, ans2, ans3, x
 
 exit(0)
