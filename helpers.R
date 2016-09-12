@@ -80,8 +80,9 @@ read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=F
 # wrapper on read_timing with filter on latest benchmark batch for each query
 last_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), x) {
   if (missing(x)) x = read_timing(csv.file=csv.file) else stopifnot(is.data.table(x))
-  x[, .SD[which.max(timestamp)], by=.(task, data, in_rows, question, solution, fun, run)
-    ][]
+  x[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache) # take recent only including cache granularity
+    ][, .SD[1L], by=.(task, data, in_rows, question, solution, run) # use .SD[.N] for cache=TRUE if needed
+      ]
 }
 
 # makes scalar string to store in "chk" field, check sum of arbitrary number of measures
@@ -135,7 +136,8 @@ solution.date = function(solution, version, git) {
               "2.1.0-SNAPSHOT" = "2016-08-15"),
     presto = c("0.150" = "2016-07-07"),
     pandas = c("0.18.1" = "2016-05-03"),
-    dask = c("0.10.2" = "2016-07-26"),
+    dask = c("0.10.2" = "2016-07-26",
+             "0.11.0" = "2016-08-18"),
     dplyr = c("0.5.0" = "2016-06-23")
   )
   if (!is.na(git)) {
@@ -145,6 +147,7 @@ solution.date = function(solution, version, git) {
     )[["committer"]][["date"]], error=function(e) NA_character_) # error when hit github api limit
     r = strptime(string, "%F")[1L]
   } else if (!is.na(version)) {
+    if (!version %in% names(solution_versions[[solution]])) stop(sprintf("Solution %s in version %s doesn't have date defined to corresponding version. See helpers.R solution.date function to add version date.", solution, version))
     r = as.character(solution_versions[[solution]][[version]])[1L]
   } else {
     stop("solution.date lookup requires non-NA git hash or version")
