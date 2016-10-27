@@ -16,12 +16,12 @@ source("helpers.R")
 L64 = bit64::as.integer64
 # distributed = c("spark","h2o","impala","dask","presto")
 exceptions = rbindlist(list(
-  #data.table(solution = "impala", task = "join", in_rows = L64(1e10), data="X1e10_2c.csv-Y1e10_2c.csv", comment = "d2-precise1 disk space"), # it passed but heavily hitting disk space issues, re-run when disk space issue resolved
-  data.table(solution = "impala", task = "sort", in_rows = L64(1e10), data="X1e10_2c.csv", comment = "d2-precise1 disk space"),
-  #data.table(solution = "dask", task = "join", in_rows = L64(c(1e10)), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "~4.5h"),
-  data.table(solution = "presto", task = "sort", in_rows = L64(c(5e9, 1e10)), data=c("X5e9_2c.csv","X1e10_2c.csv"), comment = "Out of Memory"),
-  data.table(solution = "presto", task = "join", in_rows = L64(1e10), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "data loading speed"), # to be addressed
-  data.table(solution = "dask", task = "sort", in_rows = L64(c(1e7,1e8,1e9,5e9,1e10)), data=sprintf("X%se%s_2c.csv", c(rep(1,3),5,1), c(7:9,9:10)), comment = "Not Implemented")
+  #data.table(solution = "impala", version="2.5.0", task = "join", in_rows = L64(1e10), data="X1e10_2c.csv-Y1e10_2c.csv", comment = "d2-precise1 disk space"), # it passed but heavily hitting disk space issues, re-run when disk space issue resolved
+  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(1e10), data="X1e10_2c.csv", comment = "d2-precise1 disk space"),
+  #data.table(solution = "dask", version="0.11.0", task = "join", in_rows = L64(c(1e10)), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "~4.5h"),
+  data.table(solution = "presto", version="0.150", task = "sort", in_rows = L64(c(5e9, 1e10)), data=c("X5e9_2c.csv","X1e10_2c.csv"), comment = "Out of Memory"),
+  data.table(solution = "presto", version="0.150", task = "join", in_rows = L64(1e10), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "data loading speed"), # to be addressed
+  data.table(solution = "dask", version="0.11.0", task = "sort", in_rows = L64(c(1e7,1e8,1e9,5e9,1e10)), data=sprintf("X%se%s_2c.csv", c(rep(1,3),5,1), c(7:9,9:10)), comment = "Not Implemented")
 ))
 ```
 
@@ -55,11 +55,11 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   n_obs = sort(unique(toplot[!is.na(timestamp), .N, .(task, in_rows, solution, run)]$N)) # is.na(timestamp) filter outs exceptions
   toplot[,
          .(time_sec=mean(time_sec)), # average over question (related to groupby) and data (not yet used) and cache (only if all timings provided: `DT`, not `dt`)
-         .(task, in_rows, solution, col, run, exception=comment)
+         .(task, in_rows, solution, version, col, run, exception=comment)
          ][, time_min:=time_sec/60
            ] -> toplot
   stopifnot(toplot[is.na(exception), uniqueN(run), .(solution)]$V1==3L) # incomplete runs makes the plot invalid
-  toplot[!is.na(exception) & is.na(run), run := 1L]
+  toplot[!is.na(exception) & is.na(run), run := 1L] # fill exceptions with run=1
   # use secs/min dynamically
   if (max(toplot$time_sec, na.rm=TRUE) <= 3*60) {
     toplot[, time := time_sec]
@@ -68,6 +68,7 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
     toplot[, time := time_min]
     time_unit = "Minutes"
   }
+  toplot[, `:=`(solution = paste(solution, substr(version, 1, 8)))][, version:=NULL]
   toplot[run==1, ord := rank(time)][, ord := ord[1L], .(task, in_rows, solution, col)] # recycle order for exceptions
   par(mar=c(5,8,4,2)+0.1)
   toplot[run==1, plot(time,ord,pch=19,cex=3,ylim=c(0,.N),xlim=xrn<-range(toplot$time, na.rm=TRUE),col="red",axes=FALSE,ann=FALSE)]
@@ -75,7 +76,7 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   toplot[run==2, points(time,ord,pch=19,cex=2.5,col="blue")]
   toplot[run==3, points(time,ord,pch=19,cex=2,col="green")]
   axis(1,cex.axis=2,font=2,padj=0.5,line=-1)
-  toplot[run==1][order(ord), mtext(solution, side=2, at=seq_along(solution), font=1.25, las=1, cex=2)]
+  toplot[run==1][order(ord), mtext(solution, side=2, at=seq_along(solution), font=1.25, las=1, cex=1.25)]
   mtext(time_unit, side=1, at=0, line=2.5,adj=0,cex=2,font=2)
   gb = metadata[task==subset_task & rows==subset_in_rows, sum(gb)]
   if (gb > 1) gb = round(gb, 0)
