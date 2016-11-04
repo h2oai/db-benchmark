@@ -4,4 +4,4 @@ time.md
 *.log
 *.html
 *.csv
-!time.csv
+.Rproj.user
