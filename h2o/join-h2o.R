@@ -4,6 +4,8 @@ cat("# join-h2o.R\n")
 
 source("./helpers.R")
 source("./h2o/helpers-h2o.R")
+# print version
+sapply(strsplit(Sys.getenv("CLUSTER")," ")[[1L]], h2o.git, as.integer(Sys.getenv("H2O_PORT","54321")))
 
 library(h2o, warn.conflicts=FALSE, quietly=TRUE)
 h2o.init(ip=Sys.getenv("H2O_HOST","localhost"), port=as.integer(Sys.getenv("H2O_PORT","54321")), strict_version_check=TRUE, startH2O=FALSE)
