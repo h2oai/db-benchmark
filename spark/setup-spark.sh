@@ -2,9 +2,9 @@
 set -e
 
 ## Spark 2.0 - https://spark.apache.org/downloads.html
-wget http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.6.tgz
-tar -xf spark-2.0.0-bin-hadoop2.6.tgz
-export SPARK_HOME="$HOME/spark-2.0.0-bin-hadoop2.6"
+wget http://d3kbcqa49mib13.cloudfront.net/spark-2.0.1-bin-hadoop2.6.tgz
+tar -xf spark-2.0.1-bin-hadoop2.6.tgz
+export SPARK_HOME="$HOME/spark-2.0.1-bin-hadoop2.6"
 
 ## Spark 2.1.0-SNAPSHOT - http://people.apache.org/~pwendell/spark-nightly/spark-master-bin/latest/
 wget http://people.apache.org/~pwendell/spark-nightly/spark-master-bin/latest/spark-2.1.0-SNAPSHOT-bin-hadoop2.6.tgz
