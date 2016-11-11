@@ -14,13 +14,13 @@ source("helpers.R")
 
 ```{r exceptions, include=FALSE}
 L64 = bit64::as.integer64
-# distributed = c("spark","h2o","impala","dask","presto")
 exceptions = rbindlist(list(
-  #data.table(solution = "impala", version="2.5.0", task = "join", in_rows = L64(1e10), data="X1e10_2c.csv-Y1e10_2c.csv", comment = "d2-precise1 disk space"), # it passed but heavily hitting disk space issues, re-run when disk space issue resolved
-  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(1e10), data="X1e10_2c.csv", comment = "d2-precise1 disk space"),
-  #data.table(solution = "dask", version="0.11.0", task = "join", in_rows = L64(c(1e10)), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "~4.5h"),
+  # data.table(solution = "impala", version="2.5.0", task = "join", in_rows = L64(1e10), data="X1e10_2c.csv-Y1e10_2c.csv", comment = "disk space issue"), # it passed but heavily hitting disk space issues, re-run when disk space issue resolved
+  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(5e9), data="X5e9_2c.csv", comment = "~1h"),
+  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(1e10), data="X1e10_2c.csv", comment = "disk space issue"),
+  data.table(solution = "dask", version="0.11.0", task = "join", in_rows = L64(c(1e10)), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "~4.5h"),
   data.table(solution = "presto", version="0.150", task = "sort", in_rows = L64(c(5e9, 1e10)), data=c("X5e9_2c.csv","X1e10_2c.csv"), comment = "Out of Memory"),
-  data.table(solution = "presto", version="0.150", task = "join", in_rows = L64(1e10), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "data loading speed"), # to be addressed
+  data.table(solution = "presto", version="0.150", task = "join", in_rows = L64(1e10), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "loading speed issue"),
   data.table(solution = "dask", version="0.11.0", task = "sort", in_rows = L64(c(1e7,1e8,1e9,5e9,1e10)), data=sprintf("X%se%s_2c.csv", c(rep(1,3),5,1), c(7:9,9:10)), comment = "Not Implemented")
 ))
 ```
@@ -47,7 +47,11 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
     msg = exceptions[in_rows==subset_in_rows & task==subset_task]
     if (!missing(subset_solution)) msg = msg[solution%in%subset_solution]
     common = toplot[msg, nomatch=0L, on=c("task","data","in_rows","solution")]
-    if (nrow(common)) stop("there are exceptions defined for which timings are being provided")
+    if (nrow(common)) {
+      # this message will be printed to console output while rendering, not to the document, after upgrade version exceptions should be re-confirmed and updated/removed if needed
+      common[, message(sprintf("Timings for '%s' has been filtered out due to exception defined: %s", paste(unique(solution), collapse=", "), paste(unique(i.comment), collapse=", ")))]
+      toplot = toplot[!msg, on=c("task","data","in_rows","solution")]
+    }
     toplot = rbindlist(list(toplot, msg), use.names=TRUE, fill=TRUE)
   }
   if (!nrow(toplot)) return(invisible())
@@ -70,60 +74,30 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   }
   toplot[, `:=`(solution = paste(solution, substr(version, 1, 8)))][, version:=NULL]
   toplot[run==1, ord := rank(time)][, ord := ord[1L], .(task, in_rows, solution, col)] # recycle order for exceptions
-  par(mar=c(5,8,4,2)+0.1)
-  toplot[run==1, plot(time,ord,pch=19,cex=3,ylim=c(0,.N),xlim=xrn<-range(toplot$time, na.rm=TRUE),col="red",axes=FALSE,ann=FALSE)]
+  par(mar=c(2.5,8,4,2)+0.1)
+  xrn = range(c(0,toplot$time), na.rm=TRUE)
+  nsol = uniqueN(toplot$solution)
+  toplot[run==1, plot(time,ord,pch=19,cex=3,ylim=c(0,.N),xlim=xrn,col="red",axes=FALSE,ann=FALSE)]
   toplot[run==1, mtext(exception, side=4, at=seq_along(solution), font=1.25, adj=1, las=1, cex=1.25)]
   toplot[run==2, points(time,ord,pch=19,cex=2.5,col="blue")]
   toplot[run==3, points(time,ord,pch=19,cex=2,col="green")]
-  axis(1,cex.axis=2,font=2,padj=0.5,line=-1)
+  axis(1, cex.axis=1.5, font=2, padj=0.5, line=-1)
   toplot[run==1][order(ord), mtext(solution, side=2, at=seq_along(solution), font=1.25, las=1, cex=1.25)]
-  mtext(time_unit, side=1, at=0, line=2.5,adj=0,cex=2,font=2)
+  mtext(paste0(time_unit, "  "), side=2, 
+        at=if (nsol==8) -0.65 else if (nsol==5) -0.4 else -0.5, # dynamic based on number of solutions, tested on 8 and 5
+        las=1, cex=1.5, font=2)
   gb = metadata[task==subset_task & rows==subset_in_rows, sum(gb)]
   if (gb > 1) gb = round(gb, 0)
   gb = paste0(gb, "GB")
-  title(main = sprintf("%s %s%s",
-                       gb,#if (subset_task=="join") paste(gb, collapse=" x ") else gb,
-                       subset_task,
+  title(main = sprintf("%s %s%s", gb, subset_task,
                        if (identical(n_obs, 1L)) "" else paste0(" (mean over ",paste(n_obs, collapse=",")," obs.)")))
-  invisible()
-}
-
-plot_vs = function(subset_in_rows, subset_task, dt, log=FALSE) {
-  stopifnot(length(subset_task)==2L, length(subset_in_rows)==1L)
-  dt[task%in%subset_task, # filter tasks
-     .(time_op1=mean(time_sec[task==subset_task[1L]]), time_op2=mean(time_sec[task==subset_task[2L]])), # we use mean to average multiple `question` (now in groupby) and multiple `data` (not yet used)
-     .(in_rows, solution, col, run)
-     ][in_rows==subset_in_rows
-       ][!is.na(time_op1) & !is.na(time_op2) # filter out missing tools for that row count
-         ] -> toplot
-  if (!nrow(toplot)) return(invisible())
-  par(bg = "white") # lightgray
-  inner_bg = function(col="white", log) do.call(rect,as.list(c({
-    tmp = par()$usr[c(1,3,2,4)]
-    if (log) 10^tmp else tmp
-  }, col=col)))
-  min_values = if (log) toplot[, min(c(time_op1,time_op2))] else 0
-  toplot[, {
-    plot(c(min_values,max(time_op1)), c(min_values,max(time_op2)), type="n", log=if (log) "xy" else "",
-         main=sprintf("%s rows %s/%s timing in seconds", pretty_sci(subset_in_rows), subset_task[1L], subset_task[2L]),
-         xlab=subset_task[1L], ylab=subset_task[2L], 
-         panel.first=inner_bg(log=log))
-    grid(col="lightgray", equilogs=!log)
-    abline(0, 1, col = scales::alpha("black", 0.5), lty="dotted")
-  }]
-  solution_plot = function(subset_solution) {
-    toplot[solution==subset_solution, {
-      points(min(time_op1), min(time_op2), pch=19, cex=1.5, col=col)
-      text(min(time_op1), min(time_op2), labels=solution, col=col, cex=1.5, xpd=NA, adj=c(-0.25,0.5))
-    }]
-  }
-  lapply(unique(toplot$solution), solution_plot)
   invisible()
 }
 
 task_source = function(subset_task, DT) {
   stopifnot(length(subset_task)==1L)
   cat(sapply(DT[task==subset_task, unique(solution)], function(x) {
+    # remove dots from solution name
     fp = file.path("https://github.com/h2oai/db-benchmark/blob/master", xx<-gsub(".", "", x, fixed=TRUE), sprintf("%s-%s.%s", subset_task, xx, file.ext(x)))
     sprintf("- [%s](%s)", basename(fp), fp)
   }), sep="  \n")
@@ -135,34 +109,21 @@ task_source = function(subset_task, DT) {
 Repository for reproducible benchmarking of database-like operations.  
 Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. I encourage readers to re-run benchmark on own cluster with chosen tools, see [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) readme for details. Pull requests are welcome, any tunings proposed should be portable.  
 
-Time includes the actual query, materializing results on the query engine side, and time of the count rows of result.  
-TODO: add info on checksum, already included in plots.  
-Size of data mentioned in the plot refers to on-disk stored csv file, or in case of multiple tables involved, the sum of csv files size.  
+Time includes the actual query, materializing results on the query engine side, time of the count rows of result. To ensure that query is evaluated also the sum of measures produced by each query is included in timing.  
+Size of data mentioned in plots refer to on-disk stored csv file, or in case of multiple tables involved, the sum of csv files size.  
 
-```{r o_legend, echo=FALSE, fig.width=3, fig.height=3}
+Following legend describe rank plots in next sections.  
+
+```{r o_legend, echo=FALSE, fig.width=1.85, fig.height=1.2}
+oldmar = par(mar=rep(0,4))
 plot(0,0,type="n", axes=F, xlab="", ylab="")
 legend("center", legend=c("1st","2nd","3rd"), title="Each query runs 3 times", col=c("red","blue","green"), pch=19, pt.cex=c(3,2.5,2), bty="n", y.intersp = 1.25, inset = 0.1)
+par(oldmar)
 ```
+
+------
 
 ## High cardinality big to big join {.tabset .tabset-fade .tabset-pills}
-
-### 1e9
-
-```{r o_join3, echo=FALSE}
-plot_op(1e9, "join", dt)
-```
-
-### 5e9
-
-```{r o_join4, echo=FALSE}
-plot_op(5e9, "join", dt)
-```
-
-### 1e10
-
-```{r o_join5, echo=FALSE}
-plot_op(1e10, "join", dt)
-```
 
 ### 1e7
 
@@ -176,13 +137,108 @@ plot_op(1e7, "join", dt)
 plot_op(1e8, "join", dt)
 ```
 
+### 1e9 {.active}
+
+```{r o_join3, echo=FALSE}
+plot_op(1e9, "join", dt)
+```
+
+### 5e9
+
+```{r o_join4, echo=FALSE, message=FALSE}
+plot_op(5e9, "join", dt)
+```
+
+### 1e10
+
+```{r o_join5, echo=FALSE, message=FALSE}
+plot_op(1e10, "join", dt)
+```
+
+
+## Sort {.tabset .tabset-fade .tabset-pills}
+
+### 1e7
+
+```{r o_sort1, echo=FALSE}
+plot_op(1e7, "sort", dt)
+```
+
+### 1e8
+
+```{r o_sort2, echo=FALSE}
+plot_op(1e8, "sort", dt)
+```
+
+### 1e9 {.active}
+
+```{r o_sort3, echo=FALSE}
+plot_op(1e9, "sort", dt)
+```
+
+### 5e9
+
+```{r o_sort4, echo=FALSE, message=FALSE}
+plot_op(5e9, "sort", dt)
+```
+
+### 1e10
+
+```{r o_sort5, echo=FALSE, message=FALSE}
+plot_op(1e10, "sort", dt)
+```
+
+## Group by {.tabset .tabset-fade .tabset-pills}
+
+### 1e7
+
+```{r o_groupby1, echo=FALSE}
+plot_op(1e7, "groupby", dt)
+```
+
+### 1e8
+
+```{r o_groupby2, echo=FALSE}
+plot_op(1e8, "groupby", dt)
+```
+
+### 1e9 {.active}
+
+```{r o_groupby3, echo=FALSE}
+plot_op(1e9, "groupby", dt)
+```
+
+### 5e9
+
+```{r o_groupby4, echo=FALSE, message=FALSE}
+plot_op(5e9, "groupby", dt)
+```
+
+### 1e10
+
+```{r o_groupby5, echo=FALSE, message=FALSE}
+plot_op(1e10, "groupby", dt)
+```
+
+
+
+------
+
+## Benchmark description
+
 ## Join description {.tabset .tabset-fade .tabset-pills}
 
-### Notes
+### Notes {.active}
 
 - presto is known to not well address big join (high cardinality), as read [here](http://dataconomy.com/presto-versus-hive-what-you-need-to-know/)
 - impala uses `STRAIGHT_JOIN` clause and `SHUFFLE` hint, x4 speed up on 5e9 rows join
 - dask scalability for 1e10 reported in [dask#1545](https://github.com/dask/dask/issues/1545)
+
+### Test scripts
+
+```{r join_source, echo=FALSE, results='asis'}
+task_source("join", DT)
+```
 
 ### Data
 
@@ -207,123 +263,21 @@ example output:
 data.table(KEY = c(8723957L, 8931042L, 3429303L, 8707603L), X2 = c(9424892L, -7723560L, -3180523L, 2339699L), Y2 = c(-8875053L, -4909120L, -8444697L, 8536014L))
 ```
 
-### Test scripts
-
-```{r join_source, echo=FALSE, results='asis'}
-task_source("join", DT)
-```
-
-
-------
-
-## Group by {.tabset .tabset-fade .tabset-pills}
-
-### 1e9
-
-```{r o_groupby3, echo=FALSE}
-plot_op(1e9, "groupby", dt)
-```
-
-### 5e9
-
-```{r o_groupby4, echo=FALSE}
-plot_op(5e9, "groupby", dt)
-```
-
-### 1e10
-
-```{r o_groupby5, echo=FALSE}
-plot_op(1e10, "groupby", dt)
-```
-
-### 1e7
-
-```{r o_groupby1, echo=FALSE}
-plot_op(1e7, "groupby", dt)
-```
-
-### 1e8
-
-```{r o_groupby2, echo=FALSE}
-plot_op(1e8, "groupby", dt)
-```
-
-## Group by description {.tabset .tabset-fade .tabset-pills}
-
-### Notes
-
-- dask does not yet allow to answer all our grouping questions efficiently, workaround suggested in [dask#1517](https://github.com/dask/dask/issues/1517) was applied on `sum v1 mean v3 by id3`, `mean v1:v3 by id4`, `sum v1:v3 by id6` questions
-
-### Data
-
-data size: 
-
-```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-example input:
-
-```{r groupby_data_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), id3 = c("id0000009560", "id0000005226", "id0000000821", "id0000007739"), id4 = c(180L, 683L, 240L, 511L), id5 = c(69L, 50L, 785L, 818L), id6 = c(5703L, 2003L, 2893L, 5755L), v1 = c(1L, 4L, 5L, 1L), v2 = c(1L, 1L, 2L, 3L), v3 = c(66.5912, 83.3882, 24.3, 24.8819))
-```
-
-example output for a `sum v1 by id1:id2` question:
-
-```{r groupby_ans_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
-```
-
-### Test scripts
-
-```{r groupby_source, echo=FALSE, results='asis'}
-task_source("groupby", DT)
-```
-
-
-------
-
-## Sort timing {.tabset .tabset-fade .tabset-pills}
-
-### 1e9
-
-```{r o_sort3, echo=FALSE}
-plot_op(1e9, "sort", dt)
-```
-
-### 5e9
-
-```{r o_sort4, echo=FALSE}
-plot_op(5e9, "sort", dt)
-```
-
-### 1e10
-
-```{r o_sort5, echo=FALSE}
-plot_op(1e10, "sort", dt)
-```
-
-### 1e7
-
-```{r o_sort1, echo=FALSE}
-plot_op(1e7, "sort", dt)
-```
-
-### 1e8
-
-```{r o_sort2, echo=FALSE}
-plot_op(1e8, "sort", dt)
-```
-
 ## Sort description {.tabset .tabset-fade .tabset-pills}
 
-### Notes
+### Notes {.active}
 
 - impala timings for 5e9+ are likely affected by lack of free disk space on d2-precise1 machine
 - impala uses workaround `ROW_NUMBER() OVER (ORDER BY ...)` as impala-cli is unable to perform *ORDER BY* without printing all results from the query, see commented blocks in [sort-impala.sql](https://github.com/h2oai/db-benchmark/blob/master/impala/sort-impala.sql)
 - impala sort tests only `cache=TRUE` scenario because `cache=FALSE` tests were unable to materialize sort results
 - presto requires to fit all data into single node according to [presto query faq: avoid order by](https://docs.treasuredata.com/articles/presto-query-faq#solution-avoid-order-by) so it won't scale for big sort, testing on 5e9 result into `failed: 2147483639`, and for 1e9 took ~2h, looking forward on [presto#6042](https://github.com/prestodb/presto/issues/6042)
 - dask does not provide sort method, for details see [dask#1414](https://github.com/dask/dask/issues/1414)
+
+### Test scripts
+
+```{r sort_source, echo=FALSE, results='asis'}
+task_source("sort", DT)
+```
 
 ### Data
 
@@ -345,47 +299,39 @@ example output:
 data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518L))
 ```
 
+
+## Group by description {.tabset .tabset-fade .tabset-pills}
+
+### Notes {.active}
+
+- dask does not yet allow to answer all our grouping questions efficiently, workaround suggested in [dask#1517](https://github.com/dask/dask/issues/1517) was applied on `sum v1 mean v3 by id3`, `mean v1:v3 by id4`, `sum v1:v3 by id6` questions
+
 ### Test scripts
 
-```{r sort_source, echo=FALSE, results='asis'}
-task_source("sort", DT)
+```{r groupby_source, echo=FALSE, results='asis'}
+task_source("groupby", DT)
 ```
 
+### Data
 
-------
+data size: 
 
-## Cross functional performance {.tabset .tabset-fade .tabset-pills}
-
-DEV: for now it is 1e7, 1e8, 1e9 (where possible), will move to 1e9, 5e9, 1e10 once groupby on 1e9 will work.
-
-Below plots presents timings of tasks compared in pairs. Timing of one task is presented on X axis, second task on Y axis. Circle points represents mean query timings for 3 runs for each solution marked with color.  
-
-### 1e7
-
-```{r vs1, echo=FALSE, fig.width=7, fig.height=7}
-size=1e7
-plot_vs(size, c("join","sort"), dt)
-plot_vs(size, c("join","groupby"), dt)
-plot_vs(size, c("sort","groupby"), dt)
+```{r groupby_data_size, echo=FALSE,}
+metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
 ```
 
-### 1e8
+example input:
 
-```{r vs2, echo=FALSE, fig.width=7, fig.height=7}
-size=1e8
-plot_vs(size, c("join","sort"), dt)
-plot_vs(size, c("join","groupby"), dt)
-plot_vs(size, c("sort","groupby"), dt)
+```{r groupby_data_head, echo=FALSE}
+data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), id3 = c("id0000009560", "id0000005226", "id0000000821", "id0000007739"), id4 = c(180L, 683L, 240L, 511L), id5 = c(69L, 50L, 785L, 818L), id6 = c(5703L, 2003L, 2893L, 5755L), v1 = c(1L, 4L, 5L, 1L), v2 = c(1L, 1L, 2L, 3L), v3 = c(66.5912, 83.3882, 24.3, 24.8819))
 ```
 
-### 1e9
+example output for a `sum v1 by id1:id2` question:
 
-```{r vs3, echo=FALSE, fig.width=7, fig.height=7}
-size=1e9
-plot_vs(size, c("join","sort"), dt)
-plot_vs(size, c("join","groupby"), dt)
-plot_vs(size, c("sort","groupby"), dt)
+```{r groupby_ans_head, echo=FALSE}
+data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
 ```
+
 
 ------
 
@@ -448,29 +394,43 @@ plot_vs(size, c("sort","groupby"), dt)
 
 ------
 
+## FAQ
+
+> Why did we do our own tests rather then TPC?
+
+We wanted to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If h2o can do that, then h2o can build lower down the mountain. TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. We do plan to release TPC benchmark.  
+
+> Why number of workers varies between solutions?
+
+We have 10 machines for running benchmark. Dependending on the architecture of solutions some of machines needs to be coordinator/master/driver/etc. nodes.  
+
+> What does `cache=TRUE|FALSE` cases means?
+
+Some of the tools doesn't have ability to keep query result in cache, which is useful if you use the tool for ETL purposes. Currently those tools are impala and presto and they will have extra timings entries, one for `cache=FALSE` and another for `cache=TRUE`. The latter one is basically `CREATE TABLE AS SELECT` which adds extra overhead, therefore timings used on reports are using first, faster `cache=FALSE` timing where possible, which is not always possible due to query optimizer. If you are going to use `cache==TRUE` scenario more in your workflow be sure to confirm your conclusions against complete timings data on `cache` granularity provided together with the document. Keep in mind that `cache=FALSE` will not guarantee that query results are fully materialized for impala and presto.  
+
+> Why Google BigQuery and Amazon Redshift are no included?
+
+Both BigQuery and Redshift aren't open source, neither can be run on-premises. Please ping me when Google or Amazon will manage to open their platforms, I will be glad to add them.  
+
+> Is it fair to compare distributed solutions to single machine solutions?
+
+It isn't, yet it is still good to have them included. Single machine solutions are usually more commonly known, many people do prototypes in single machine tools thus can have a reference on performance difference when moving to distributed solutions. Readers should keep in mind that single node tools won't scale as good as distributed ones.  
+
+> Why I'm not able to reproduce benchmark for impala?
+
+Among currently tested tools only Impala wasn't setup in a portable way - [is it even possible?](http://stackoverflow.com/q/39087813/2490497). We run impala tests on pre-installed CDH, unlike other tools which just starts the binaries copied to own directories in `$HOME`. Impala cli is still used from a portable directory in `$HOME`.  
+
+> Why populating data for join/sort test is not straightfoward?
+
+We use [PCG random number generator](http://www.pcg-random.org/), in the [tableGen.c](https://github.com/h2oai/db-benchmark/blob/master/tableGen.c) file you have the code you can use to produce the data. Rationale behind that decision can be found in [H2O@NYC presentation](https://youtu.be/5X7h1rZGVs0?t=750).  
+
+------
+
 ## About
 
 ### Timings
 
-Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")`. Unless stated otherwise, plots presented in the other tabs are based on most recent benchmark timings collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
-Following plot presents distribution of all timings data for each solution on all task.  
-
-#### Timings frequencies by solution
-
-```{r data_hist, echo=FALSE}
-barplot(table(f<-as.factor(DT$solution)), las=2,
-        col=DT[levels(f), col, on="solution", mult="first"], 
-        main="number of timings for each solution")
-```
-
-#### Time frame of timings
-
-```{r data_series, echo=FALSE}
-f = function(x) DT[solution==x][order(timestamp), points(datetime, time_sec, col=col, pch=19)]
-DT[, plot(range(datetime), range(time_sec), type="n", xlab="datetime", ylab="time sec", main="all benchmark measurements")] -> nul
-sapply(unique(DT$solution), f) -> nul
-DT[, legend(c("topleft"), legend=unique(solution), col=unique(col), pch=19, cex=0.75, bg = "white")] -> nul
-```
+Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")`. Unless stated otherwise, plots presented in this document are based on most recent benchmark timings. Those were collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
 
 ### Most recent timings
 
@@ -485,7 +445,7 @@ DT::datatable(dt, extensions = 'Buttons', options = list(
 
 ### All available timings data
 
-Entries provided in full timings dump may contain runs from shared environment, so is not really reliable. Thus report shows only last benchmark run timings, which has to be run made on dedicated environment.  
+Entries provided in full timings dump may contain runs from shared environment, so is not really reliable. Thus report shows only last benchmark run timings, which has to be made on dedicated environment.  
 Filter to most recent timings using `data.table::fread("db-benchmark.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]`. To avoid _double counting_ caused by `cache=T|F` add chain with `.SD[1L]` / `.SD[.N]` and group without `cache` and `fun` fields.  
 
 ```{r all_data, echo=FALSE}
@@ -518,34 +478,3 @@ DT::datatable(DT, extensions = 'Buttons', options = list(
 - `col`: color used to represent solution, unique within solution.  
 - `datetime`: value of `timestamp` field as `POSIXct` for human readable print.  
 
-------
-
-## FAQ
-
-> Why did we do our own tests rather then TPC?
-
-We wanted to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If h2o can do that, then h2o can build lower down the mountain. TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. We do plan to release TPC benchmark.  
-
-> Why number of workers varies between solutions?
-
-We have 10 machines for running benchmark. Dependending on the architecture of solutions some of machines needs to be coordinator/master/driver/etc. nodes.  
-
-> What does `cache=TRUE|FALSE` cases means?
-
-Some of the tools doesn't have ability to keep query result in cache, which is useful if you use the tool for ETL purposes. Currently those tools are impala and presto and they will have extra timings entries, one for `cache=FALSE` and another for `cache=TRUE`. The latter one is basically `CREATE TABLE AS SELECT` which adds extra overhead, therefore timings used on reports are using first, faster `cache=FALSE` timing where possible, which is not always possible due to query optimizer. If you are going to use `cache==TRUE` scenario more in your workflow be sure to confirm your conclusions against complete timings data on `cache` granularity provided together with the document. Keep in mind that `cache=FALSE` will not guarantee that query results are fully materialized for impala and presto.  
-
-> Why Google BigQuery and Amazon Redshift are no included?
-
-Both BigQuery and Redshift aren't open source, neither can be run on-premises. Please ping me when Google or Amazon will manage to open their platforms, I will be glad to add them.  
-
-> Is it fair to compare distributed solutions to single machine solutions?
-
-It isn't, yet it is still good to have them included. Single machine solutions are usually more commonly known, many people do prototypes in single machine tools thus can have a reference on performance difference when moving to distributed solutions. Readers should keep in mind that single node tools won't scale as good as distributed ones.  
-
-> Why I'm not able to reproduce benchmark for impala?
-
-Among currently tested tools only Impala wasn't setup in a portable way - [is it even possible?](http://stackoverflow.com/q/39087813/2490497). We run impala tests on pre-installed CDH, unlike other tools which just starts the binaries copied to own directories in `$HOME`. Impala cli is still used from a portable directory in `$HOME`.  
-
-> Why populating data for join/sort test is not straightfoward?
-
-We use [PCG random number generator](http://www.pcg-random.org/), in the [tableGen.c](https://github.com/h2oai/db-benchmark/blob/master/tableGen.c) file you have the code you can use to produce the data. Rationale behind that decision can be found in [H2O@NYC presentation](https://youtu.be/5X7h1rZGVs0?t=750).  
