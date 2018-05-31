@@ -28,7 +28,7 @@ exceptions = rbindlist(list(
 ```{r load_data, include=FALSE}
 cols = setNames(scales::hue_pal()(8), c("presto", "data.table", "dplyr", "h2o", "impala", "pandas", "spark", "dask"))
 # all timings
-DT = rbindlist(lapply(c("time.csv","time_presto.csv"), read_timing, cols=cols)) # presto timings scrapped manually in separate csv
+DT = rbindlist(lapply(c("time.csv"), read_timing, cols=cols)) # presto timings scrapped manually in separate csv
 DT[is.na(chk_time_sec), chk_time_sec:=0
    ][, time_sec := time_sec + chk_time_sec] # checksum included in timings
 # recent timings, single cache=FALSE scenario where available
@@ -348,20 +348,22 @@ data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791"
 - impala on 10 nodes: 9 daemons, 1 state store and catalog server
 - data.table on 1 node
 - pandas on 1 node
+- pydatatable on 1 node
 - dask on 10 nodes: 9 workers, 1 scheduler
 - dplyr on 1 node
 - presto on 10 nodes: 9 workers, 1 coordinator
 
 #### Software version
 
-- h2o - [latest dev](https://github.com/h2oai/db-benchmark/tree/master/h2o/init-h2o.sh) - `r dt[solution=="h2o", solution.date(solution[.N], version[.N], git[.N])]`
+<!-- - h2o - [latest dev](https://github.com/h2oai/db-benchmark/tree/master/h2o/init-h2o.sh) - `_r dt[solution=="h2o", solution.date(solution[.N], version[.N], git[.N])]` -->
 - data.table - [latest dev](https://github.com/h2oai/db-benchmark/tree/master/datatable/init-datatable.sh) - `r dt[solution=="data.table", solution.date(solution[.N], version[.N], git[.N])]`
-- spark - [recent-ish dev](http://people.apache.org/~pwendell/spark-nightly/spark-master-bin/latest/) - `r dt[solution=="spark", solution.date(solution[.N], version[.N], git[.N])]`
-- impala - recent-ish stable - `r dt[solution=="impala", solution.date(solution[.N], version[.N], git[.N])]`
+<!-- - spark - [recent-ish dev](http://people.apache.org/~pwendell/spark-nightly/spark-master-bin/latest/) - `_r dt[solution=="spark", solution.date(solution[.N], version[.N], git[.N])]` -->
+<!-- - impala - recent-ish stable - `_r dt[solution=="impala", solution.date(solution[.N], version[.N], git[.N])]` -->
 - pandas - [recent stable](https://pypi.python.org/pypi/pandas) - `r dt[solution=="pandas", solution.date(solution[.N], version[.N], git[.N])]`
-- dask - [recent stable](https://pypi.python.org/pypi/dask) - `r dt[solution=="dask", solution.date(solution[.N], version[.N], git[.N])]`
+<!-- - dask - [recent stable](https://pypi.python.org/pypi/dask) - `_r dt[solution=="dask", solution.date(solution[.N], version[.N], git[.N])]` -->
 - dplyr - [recent stable](https://cran.r-project.org/package=dplyr) - `r dt[solution=="dplyr", solution.date(solution[.N], version[.N], git[.N])]`
-- presto - recent-ish stable - `r dt[solution=="presto", solution.date(solution[.N], version[.N], git[.N])]`
+- pydatatable - [recent stable](https://github.com/h2oai/datatable) - `r dt[solution=="pydatatable", solution.date(solution[.N], version[.N], git[.N])]`
+<!-- - presto - recent-ish stable - `_r dt[solution=="presto", solution.date(solution[.N], version[.N], git[.N])]` -->
 
 #### Tuning
 

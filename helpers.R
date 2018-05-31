@@ -100,7 +100,7 @@ ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
 file.ext = function(x)
   switch(x,
          "data.table"=, "dplyr"=, "h2o"="R",
-         "pandas"=, "dask"="py",
+         "pandas"=, "pydatatable"=, "dask"="py",
          "impala"=, "presto"="sql",
          "spark"="scala")
 
@@ -108,7 +108,8 @@ solution.date = function(solution, version, git) {
   stopifnot(is.character(solution), !is.na(version) | !is.na(git))
   gh_repos = c("h2o"="h2oai/h2o-3",
                "impala"="cloudera/Impala",
-               "data.table"="Rdatatable/data.table"
+               "data.table"="Rdatatable/data.table",
+               "pydatatable"="h2oai/datatable"
                #"dask"="dask/dask" # since next version: https://github.com/dask/dask/pull/1760/commits/a0fd57285cb980b1b297221cf2550cd0a4289f42
                )
   solution_versions = list(
@@ -118,11 +119,13 @@ solution.date = function(solution, version, git) {
     presto = c("0.150" = "2016-07-07"),
     pandas = c("0.18.1" = "2016-05-03",
                "0.19.0" = "2016-10-02",
-               "0.19.1" = "2016-11-03"),
+               "0.19.1" = "2016-11-03",
+               "0.23.0" = "2018-05-16"),
     dask = c("0.10.2" = "2016-07-26",
              "0.11.0" = "2016-08-18",
              "0.11.1" = "2016-10-07"),
-    dplyr = c("0.5.0" = "2016-06-23")
+    dplyr = c("0.5.0" = "2016-06-23",
+              "0.7.5" = "2018-05-19")
   )
   if (!is.na(git)) {
     string = tryCatch(jsonlite::fromJSON(
