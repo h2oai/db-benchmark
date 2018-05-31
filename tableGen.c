@@ -17,7 +17,7 @@
 int main(int argc, char** argv)
 {
   if (argc != 3) {
-    printf("Usage: ./tableGen X|Y nrow\n");
+    printf("Usage: ./tableGen X|Y nrow > file.csv\n");
     exit(1);
   }
   char *tableName = argv[1];
