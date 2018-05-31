@@ -12,7 +12,8 @@ src_x = Sys.getenv("SRC_X", NA_character_)
 #   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
 # }
 
-library(data.table)
+stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
+suppressPackageStartupMessages(library(data.table))
 ver = packageVersion("data.table")
 git = datatable.git()
 data_name = basename(src_x)

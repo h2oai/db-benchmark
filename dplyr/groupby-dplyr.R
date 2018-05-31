@@ -5,7 +5,8 @@ cat("# groupby-dplyr\n")
 source("./helpers.R")
 source("./dplyr/helpers-dplyr.R")
 
-library(dplyr, warn.conflicts=FALSE)
+stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
+suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
 git = NA_character_
 task = "groupby"

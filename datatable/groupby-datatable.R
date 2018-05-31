@@ -5,8 +5,8 @@ cat("# groupby-datatable.R\n")
 source("./helpers.R")
 source("./datatable/helpers-datatable.R")
 
-# library(bit64)
-library(data.table)
+stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
+suppressPackageStartupMessages(library(data.table))
 ver = packageVersion("data.table")
 git = datatable.git()
 task = "groupby"
