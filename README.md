@@ -1,6 +1,5 @@
 Repository for reproducible benchmarking of database-like operations.  
-Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.
-Multi-node applications has been disabled, to re-enable them check git history for child commit of `21b1b367a587e6281ca86d3ccba5348a4a11213f`.  
+Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.  
 
 Tasks:
   - [x] join
@@ -8,18 +7,30 @@ Tasks:
   - [x] sort
 
 Tools:
-  - [_] spark
-  - [_] impala
   - [x] data.table
-  - [_] h2o
   - [x] pandas
-  - [_] dask
   - [x] dplyr
-  - [_] presto
+
+Reproduce:  
+- edit `run.conf` to define tasks to benchmark
+- generate data: use `tableGen.c` for join/sort and `groupby-datagen.R` for groupby
+- edit `data.csv` to define data sizes to benchmark
+- start benchmark with `./run.sh`
+
+---
+
+Multi-node applications has been disabled, to re-enable them check [2ae9815](https://github.com/h2oai/db-benchmark/commit/2ae98156532641f57c092f7b9b74cf4a8d7e2ef8). Some of their scripts might require updates for recent changes.  
+
+Currently disabled multinode tools:
+  - [x] spark
+  - [x] impala
+  - [x] h2o
+  - [x] dask
+  - [x] presto
 
 To reproduce:  
 - setup tools on cluster nodes: use `[tool]/setup-[tool].sh` scripts
-- generate data: use `tableGen.c` for join and `groupby-datagen.R` for groupby
-- edit `run.conf`
-- edit `data.csv`
+- edit `run.conf` to define tasks to benchmark and configure cluster
+- generate data: use `tableGen.c` for join/sort and `groupby-datagen.R` for groupby
+- edit `data.csv` to define data sizes to benchmark
 - start benchmark with `./run.sh`
