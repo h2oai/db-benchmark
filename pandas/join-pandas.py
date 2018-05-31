@@ -8,7 +8,7 @@ import timeit
 import pandas as pd
 # import pydoop.hdfs as hd
 
-execfile("./helpers.py")
+exec(open("./helpers.py").read())
 
 src_x = os.environ['SRC_X_LOCAL']
 src_y = os.environ['SRC_Y_LOCAL']
@@ -39,7 +39,7 @@ print("joining...")
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-print ans.shape
+print(ans.shape)
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -51,7 +51,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-print ans.shape
+print(ans.shape)
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -63,7 +63,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
-print ans.shape
+print(ans.shape)
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
