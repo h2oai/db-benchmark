@@ -28,7 +28,7 @@ print("loading dataset...")
 #    x = pd.read_csv(f)
 x = pd.read_csv(data_name)
 
-print("joining...")
+print("sorting...")
 
 gc.collect()
 t_start = timeit.default_timer()
