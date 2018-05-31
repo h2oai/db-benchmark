@@ -1,16 +1,10 @@
-library(bit64)
-library(data.table)
-# library(slackr)
-# slackrSetup(channel = "db-benchmark", 
-#             username = "slackr", 
-#             incoming_webhook_url="https://hooks.slack.com/services/X", 
-#             api_token = Sys.getenv("SLACK_API_TOKEN"))
-# 
-# slackr("test1", channel = "db-benchmark")
-# slackr(str(iris))
+suppressPackageStartupMessages({
+  library(bit64)
+  library(data.table)
+})
 source("helpers.R")
 
-DT = rbindlist(lapply(c("time.csv","time_presto.csv"), read_timing)) # presto timings scrapped manually in separate csv
+DT = read_timing("time.csv")
 # recent timings, single cache=FALSE scenario where available
 dt = last_timing(x=DT)
 
@@ -24,7 +18,6 @@ uniqueness = function(dt, const=c("out_rows","chk","batch"), const.by=c("task", 
          ]
 }
 uniqueness(dt, c("out_rows","chk","batch")) -> const.check
-# also posted solution to http://stackoverflow.com/questions/21027143/filter-data-table-by-multiple-columns-dynamically
 
 # detect lack of consistency in query output between benchmark runs (just 2 most recent runs)
 cby=c("task", "data", "in_rows", "question", "solution", "cache", "fun", "run")
@@ -54,12 +47,15 @@ chk.approx = function(dt, precision=4) {
 chk.approx(dt, 8)[mean_rel_chk > 0] -> chk.check
 
 # send data quality report
-submit = function(x) write.table(x[, reporter_batch_id := as.integer(Sys.getenv("BATCH", NA))][, reported_datetime := as.POSIXct(reported_batch_id, origin="1970-01-01")], # current workflow
-                                 file=lf<-path.expand(file.path("~", "db-benchmark", "validation.csv")), 
-                                 row.names = FALSE,
-                                 col.names = !file.exists(lf),
-                                 append = file.exists(lf),
-                                 sep = ",")
+submit = function(x) {
+  lf <- file.path(getwd(), "validation.csv")
+  write.table(x[, reporter_batch_id := as.integer(Sys.getenv("BATCH", NA))][, reported_datetime := as.POSIXct(reporter_batch_id, origin="1970-01-01")], # current workflow
+              file=lf,
+              row.names = FALSE,
+              col.names = !file.exists(lf),
+              append = file.exists(lf),
+              sep = ",")
+}
 if (nrow(report <- rbindlist(c(
   list(const = const.check),
   list(change = change.check),
