@@ -17,7 +17,9 @@ def write_log(task, data, in_rows, question, out_rows, solution, version, git, f
    log_row = [batch, timestamp, task, data, in_rows, question, out_rows, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment]
    log_header = ["batch","timestamp","task","data","in_rows","question","out_rows","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment"]
    append = os.path.isfile(csv_file)
-   print('# ' + ','.join(str(x) for x in log_row))
+   csv_verbose = os.getenv('CSV_VERBOSE', "true")
+   if csv_verbose.lower()=="true":
+      print('# ' + ','.join(str(x) for x in log_row))
    if append:
       with open(csv_file, 'a') as f:
          w = csv.writer(f, lineterminator='\n')

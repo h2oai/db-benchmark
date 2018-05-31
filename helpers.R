@@ -16,7 +16,8 @@ write.log = function(
                 solution=solution, version=as.character(version), git=as.character(git), fun=fun, run=as.integer(run), 
                 time_sec=time_sec, mem_gb=mem_gb, cache=cache, chk=chk, chk_time_sec=chk_time_sec,
                 comment=comment)
-  cat("# ", paste(sapply(df, format, scientific=FALSE), collapse=","), "\n", sep="")
+  csv_verbose = Sys.getenv("CSV_VERBOSE", "true")
+  if (as.logical(csv_verbose)) cat("# ", paste(sapply(df, format, scientific=FALSE), collapse=","), "\n", sep="")
   write.table(format(df, scientific=FALSE),
               file=log.file,
               append=file.exists(log.file),
