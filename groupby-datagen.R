@@ -1,6 +1,8 @@
+args = commandArgs(TRUE)
+
 require(data.table)
-N=1e7; K=1e3
-set.seed(1)
+N=as.integer(args[1L]); K=as.integer(args[2L])
+set.seed(108)
 DT <- data.table(
   id1 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
   id2 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
