@@ -27,6 +27,9 @@ echo "# Benchmark run $BATCH started"
 ## impala
 #./impala/impala.sh
 
+# pydatatable
+./pydatatable/pydatatable.sh
+
 # datatable
 ./datatable/datatable.sh
 

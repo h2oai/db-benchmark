@@ -2,7 +2,7 @@ Repository for reproducible benchmarking of database-like operations.
 Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.  
 
 Tasks:
-  - [x] join
+  - [ ] join
   - [x] groupby
   - [x] sort
 
@@ -10,6 +10,7 @@ Tools:
   - [x] data.table
   - [x] pandas
   - [x] dplyr
+  - [x] pydatatable
 
 Reproduce:  
 - edit `run.conf` to define tasks to benchmark
