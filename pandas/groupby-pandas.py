@@ -33,7 +33,7 @@ question = "sum v1 by id1" #1
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -44,7 +44,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -55,7 +55,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -68,7 +68,7 @@ question = "sum v1 by id1:id2" #2
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -79,7 +79,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -90,7 +90,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -103,7 +103,7 @@ question = "sum v1 mean v3 by id3" #3
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -114,7 +114,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -125,7 +125,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -138,7 +138,7 @@ question = "mean v1:v3 by id4" #4
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -149,7 +149,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -160,7 +160,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -173,7 +173,7 @@ question = "sum v1:v3 by id6" #5
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -184,7 +184,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -195,7 +195,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()

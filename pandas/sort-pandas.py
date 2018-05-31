@@ -33,7 +33,7 @@ print("joining...")
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.sort_values('KEY')
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -45,7 +45,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.sort_values('KEY')
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
@@ -57,7 +57,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.sort_values('KEY')
-print ans.shape[0]
+print ans.shape
 t = timeit.default_timer() - t_start
 m = float('NaN')
 t_start = timeit.default_timer()
