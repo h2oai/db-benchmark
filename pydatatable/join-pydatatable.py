@@ -13,7 +13,6 @@ src_x = os.environ['SRC_X_LOCAL']
 src_y = os.environ['SRC_Y_LOCAL']
 
 ver = dt.__version__
-print(ver)
 git = dt.__git_revision__
 task = "join"
 question = "inner join"
