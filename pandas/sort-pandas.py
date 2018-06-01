@@ -13,7 +13,6 @@ exec(open("./helpers.py").read())
 src_x = os.environ['SRC_X_LOCAL']
 
 ver = pd.__version__
-print(ver)
 git = ""
 task = "sort"
 question = "by int KEY"

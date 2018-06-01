@@ -13,7 +13,6 @@ exec(open("./helpers.py").read())
 src_grp = os.environ['SRC_GRP_LOCAL']
 
 ver = pd.__version__
-print(ver)
 git = ""
 task = "groupby"
 data_name = os.path.basename(src_grp)

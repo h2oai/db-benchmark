@@ -14,7 +14,6 @@ src_x = os.environ['SRC_X_LOCAL']
 src_y = os.environ['SRC_Y_LOCAL']
 
 ver = pd.__version__
-print(ver)
 git = ""
 task = "join"
 question = "inner join"
