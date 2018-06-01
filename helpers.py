@@ -36,6 +36,11 @@ def str_round(x):
       x = round(x,3)
    return str(x)
 
+flatten = lambda l: [item for sublist in l for item in sublist]
+
 def make_chk(values):
+   values.topython()
+   if (isinstance(values, dt.Frame)):
+       values = flatten(values.topython())
    s = ';'.join(str_round(x) for x in values)
    return s.replace(",","_") # comma is reserved for csv separator
