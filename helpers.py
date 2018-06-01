@@ -2,7 +2,7 @@ import time
 import csv
 import math
 
-def write_log(task, data, in_rows, question, out_rows, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec):
+def write_log(task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec):
    batch = os.getenv('BATCH', "") 
    timestamp = time.time()
    csv_file = os.getenv('CSV_TIME_FILE', "time.csv")
@@ -14,8 +14,8 @@ def write_log(task, data, in_rows, question, out_rows, solution, version, git, f
       time_sec = ""
    if math.isnan(mem_gb):
       mem_gb = ""
-   log_row = [batch, timestamp, task, data, in_rows, question, out_rows, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment]
-   log_header = ["batch","timestamp","task","data","in_rows","question","out_rows","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment"]
+   log_row = [batch, timestamp, task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment]
+   log_header = ["batch","timestamp","task","data","in_rows","question","out_rows","out_cols","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment"]
    append = os.path.isfile(csv_file)
    csv_verbose = os.getenv('CSV_VERBOSE', "true")
    if csv_verbose.lower()=="true":
