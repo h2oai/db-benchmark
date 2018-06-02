@@ -126,13 +126,11 @@ benchplot = function(.nrow=1e6) {
     if (is.na(ans2[3+i*NPKG, elapsed])) textBG(0, tt[8+i*space], "MemoryError", col=green, font=2)
     if (is.na(ans2[4+i*NPKG, elapsed])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
   }
-  t1 = res[nrow==.nrow & pkg=="data.table", sum(elapsed)]
-  t2 = res[nrow==.nrow & pkg=="dplyr", sum(elapsed)]
-  t3 = res[nrow==.nrow & pkg=="pandas", sum(elapsed)]
-  t4 = res[nrow==.nrow & pkg=="pydatatable", sum(elapsed, na.rm=TRUE)] # TODO rm na.rm after test2 ready datatable#1082
   cph = 0.30  # minimum on graph histories; what people will see if they check
-  leg = unique(res, by="pkg"
-               )[, tN:=c(t1,t2,t3,t4)
+  tn = res[nrow==.nrow, sum(elapsed, na.rm=TRUE), pkg]
+  tn = setNames(tn$V1, tn$pkg)
+  leg = unique(ans[order(pkg)], by="pkg"
+               )[, tN := tn[pkg] # no joining to not reorder
                  ][, hasgit:=!is.na(git) && nzchar(git), by=pkg
                    ][, sprintf("%s %s %s  -  date  -  Total: $%.02f for %s %s", pkg, version, if (hasgit) paste0("(",substr(git,1,7),")")  else "", cph*tN/3600, round(tN/timescale,0), tolower(xlab)), by=pkg
                      ][, V1]
