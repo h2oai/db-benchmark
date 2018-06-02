@@ -8,7 +8,7 @@ source("./dplyr/helpers-dplyr.R")
 stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
 suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
-git = NA_character_
+git = dplyr.git()
 task = "groupby"
 solution = "dplyr"
 fun = "group_by"

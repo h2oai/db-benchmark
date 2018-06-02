@@ -16,7 +16,7 @@ if (get.nrow(c(src_x,src_y)) > 2e9L) {
 stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
 suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
-git = NA_character_
+git = dplyr.git()
 cat("loading datasets...\n")
 X = data.table::fread(if(file.exists(basename(src_x))) basename(src_x) else sprintf("hadoop fs -cat %s", src_x), data.table=FALSE) # csv can be provided in local dir for faster import
 Y = data.table::fread(if(file.exists(basename(src_y))) basename(src_y) else sprintf("hadoop fs -cat %s", src_y), data.table=FALSE)
