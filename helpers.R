@@ -104,8 +104,9 @@ file.ext = function(x)
          "impala"=, "presto"="sql",
          "spark"="scala")
 
-solution.date = function(solution, version, git) {
+solution.date = function(solution, version, git, only.date=FALSE, use.cache=FALSE) {
   stopifnot(is.character(solution), !is.na(version) | !is.na(git))
+  if (use.cache) cache <- if(exists(cache.obj<-".solution.date.cache", envir=.GlobalEnv)) get(cache.obj, envir=.GlobalEnv) else list()
   gh_repos = c("h2o"="h2oai/h2o-3",
                "impala"="cloudera/Impala",
                "data.table"="Rdatatable/data.table",
@@ -128,16 +129,30 @@ solution.date = function(solution, version, git) {
               "0.7.5" = "2018-05-19")
   )
   if (!is.na(git)) {
-    string = tryCatch(jsonlite::fromJSON(
-      sprintf("https://api.github.com/repos/%s/git/commits/%s",
-              gh_repos[[solution]], git)
-    )[["committer"]][["date"]], error=function(e) NA_character_) # error when hit github api limit
-    r = strptime(string, "%F")[1L]
+    if (use.cache && !is.null(cgit<-cache[[solution]][[git]])) {
+      #message("using git commit date from cache instead of github api")
+      r <- cgit
+    } else {
+      string = tryCatch(jsonlite::fromJSON(
+        sprintf("https://api.github.com/repos/%s/git/commits/%s",
+                gh_repos[[solution]], git)
+      )[["committer"]][["date"]], error=function(e) NA_character_) # error when hit github api limit
+      r = strptime(string, "%F")[1L]
+      if (use.cache) {
+        if (!is.na(r)) cache[[solution]][[git]] <- r
+        #message("writing git commit date to cache")
+        assign(cache.obj, cache, envir=.GlobalEnv)
+      }
+    }
   } else if (!is.na(version)) {
     if (!version %in% names(solution_versions[[solution]])) stop(sprintf("Solution %s in version %s doesn't have date defined to corresponding version. See helpers.R solution.date function to add version date.", solution, version))
     r = as.character(solution_versions[[solution]][[version]])[1L]
   } else {
     stop("solution.date lookup requires non-NA git hash or version")
   }
-  sprintf("%s (%s)", version, as.character(as.Date(r))) # get rid of tz, etc.
+  if (!only.date) {
+    sprintf("%s (%s)", version, as.character(as.Date(r))) # get rid of tz, etc.
+  } else {
+    as.character(as.Date(r))
+  }
 }

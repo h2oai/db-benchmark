@@ -1,3 +1,7 @@
+## Nice bar plot of grouping benchmark timings based on Matt Dowle scripts from 2014
+## https://github.com/h2oai/db-benchmark/commit/fce1b8c9177afb49471fcf483a438f619f1a992b
+## Original grouping benchmark can be found in: https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping
+
 tests = "
 # GROUPING
 DT[, sum(v1), keyby=id1]
@@ -26,6 +30,8 @@ DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, f.id6]
 "
 
+source("helpers.R") # for solution date from gh repos
+stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
 benchplot = function(.nrow=1e6) {
   fnam = paste0("grouping.",gsub("e[+]0","E",.nrow),".png")
@@ -41,6 +47,7 @@ benchplot = function(.nrow=1e6) {
   gb = fread("data.csv")[rows==.nrow & task=="groupby" & active==TRUE, gb]
   stopifnot(length(gb)==1L)
   res[, gb:=gb]
+  res[git=="", git:=NA_character_]
 
   # datatable#1082 grouping test2 currently (0,0) dummy frame
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
@@ -131,17 +138,17 @@ benchplot = function(.nrow=1e6) {
   tn = setNames(tn$V1, tn$pkg)
   leg = unique(ans[order(pkg)], by="pkg"
                )[, tN := tn[pkg] # no joining to not reorder
-                 ][, hasgit:=!is.na(git) && nzchar(git), by=pkg
-                   ][, sprintf("%s %s %s  -  date  -  Total: $%.02f for %s %s", pkg, version, if (hasgit) paste0("(",substr(git,1,7),")")  else "", cph*tN/3600, round(tN/timescale,0), tolower(xlab)), by=pkg
-                     ][, V1]
+                 ][, sprintf("%s %s %s  -  %s  -  Total: $%.02f for %s %s",
+                             pkg, version, if (!is.na(git)) paste0("(",substr(git,1,7),")")  else "",
+                             solution.date(pkg, version, git, only.date=TRUE, use.cache=TRUE),
+                             cph*tN/3600, round(tN/timescale,0), tolower(xlab)), by=pkg
+                   ][, V1]
   topoffset = 18.5
   legend(0,par()$usr[4]+topoffset*w, pch=22, pt.bg=c("blue","red",green,pydtcol), bty="n", cex=1.5, pt.cex=3.5,
-         text.font=1, xpd=NA,
-         legend=leg)
+         text.font=1, xpd=NA, legend=leg)
   mtext(paste("Input table:",comma(.nrow),"rows x 9 columns (",
         {gb<-ans[pkg=="data.table",gb[1]]; if (gb<1) round(gb,1) else 5*round(ceiling(gb)/5)},"GB ) - Random order"),
         side=3, line=4.5, cex=1.5, adj=0, font=2)
-
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
   dev.off()
