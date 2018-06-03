@@ -36,6 +36,9 @@ echo "# Benchmark run $BATCH started"
 ## h2o
 #./h2o/h2o.sh
 
+# dplyr
+./dplyr/dplyr.sh
+
 # pandas
 ./pandas/pandas.sh
 
@@ -45,14 +48,14 @@ echo "# Benchmark run $BATCH started"
 ## dask
 #./dask/dask.sh
 
-# dplyr
-./dplyr/dplyr.sh
-
 ## test network speed
 #./servertest.sh
 #Rscript -e 'data.table::fread("servertest.log")[substr(V3,1,2)!="Gb" | V2 < 9, if (!.N) q("no") else if(any(V2<5)) stop("slow (< 5 Gb) network interface on nodes: ",paste(V1[V2<5],collapse=", "), call.=FALSE) else warning("network interface below 9 Gb on nodes: ",paste(V1,collapse=", "), call.=FALSE)]'
 ## presto
 #./presto/presto.sh
+
+# pydatatable
+./pydatatable/pydatatable.sh
 
 # publish timing locally
 #Rscript -e 'rmarkdown::render("index.Rmd")'
