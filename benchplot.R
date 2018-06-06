@@ -12,7 +12,7 @@ DT[:, {'v1': sum(f.v1)}, f.id1]
 DT[, .(v1=sum(v1)), keyby=.(id1, id2)]
 DF %>% group_by(id1,id2) %>% summarise(sum(v1))
 DF.groupby(['id1','id2']).agg({'v1':'sum'})
-DT[:, sum(f.v1), [f.id1, f.id2]] 
+DT[:, {'v1': sum(f.v1)}, [f.id1, f.id2]] 
 
 DT[, .(v1=sum(v1), v3=mean(v3)), keyby=id3]
 DF %>% group_by(id3) %>% summarise(sum(v1),mean(v3))
