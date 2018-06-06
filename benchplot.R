@@ -44,7 +44,7 @@ benchplot = function(.nrow=1e6) {
   res=res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git")]
   res[, test := setNames(1:5, unique(res$question))[question]]
   setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
-  gb = fread("data.csv")[rows==.nrow & task=="groupby" & active==TRUE, gb]
+  gb = fread("data.csv")[rows==.nrow & task=="groupby", gb[1L]] # [1L] will take k=1e2
   stopifnot(length(gb)==1L)
   res[, gb:=gb]
   res[git=="", git:=NA_character_]
