@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# upgrade
+./dplyr/init-dplyr.sh
+
 # join
 if [[ "$RUN_TASKS" =~ "join" ]]; then
   while read line
