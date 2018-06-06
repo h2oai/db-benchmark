@@ -145,8 +145,12 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=FALS
       }
     }
   } else if (!is.na(version)) {
-    if (!version %in% names(solution_versions[[solution]])) stop(sprintf("Solution %s in version %s doesn't have date defined to corresponding version. See helpers.R solution.date function to add version date.", solution, version))
-    r = as.character(solution_versions[[solution]][[version]])[1L]
+    if (!version %in% names(solution_versions[[solution]])) {
+      warning(sprintf("Solution %s in version %s doesn't have date defined to corresponding version. See helpers.R solution.date function to add version date.", solution, version))
+      r = NA_character_
+    } else {
+      r = as.character(solution_versions[[solution]][[version]])[1L]
+    }
   } else {
     stop("solution.date lookup requires non-NA git hash or version")
   }
