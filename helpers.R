@@ -105,7 +105,8 @@ file.ext = function(x)
          "spark"="scala")
 
 solution.date = function(solution, version, git, only.date=FALSE, use.cache=FALSE) {
-  stopifnot(is.character(solution), !is.na(version) | !is.na(git))
+  stopifnot(is.character(solution))
+  if (is.na(version) && is.na(git)) return(NA_character_)
   if (use.cache) cache <- if(exists(cache.obj<-".solution.date.cache", envir=.GlobalEnv)) get(cache.obj, envir=.GlobalEnv) else list()
   gh_repos = c("h2o"="h2oai/h2o-3",
                "impala"="cloudera/Impala",

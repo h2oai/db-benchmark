@@ -41,7 +41,7 @@ benchplot = function(.nrow=1e6) {
   par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
 
   res = fread("time.csv")[batch==max(batch)][task=="groupby"][, task:=NULL]
-  res=res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git")]
+  res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git")]
   res[, test := setNames(1:5, unique(res$question))[question]]
   setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
   gb = fread("data.csv")[rows==.nrow & task=="groupby", gb[1L]] # [1L] will take k=1e2
@@ -49,10 +49,20 @@ benchplot = function(.nrow=1e6) {
   res[, gb:=gb]
   res[git=="", git:=NA_character_]
 
-  # datatable#1082 grouping test2 currently (0,0) dummy frame
+  # h2oai/datatable#1082 grouping test2 currently (0,0) dummy frame
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
   fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)]
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", c("ansnrow","ansncol") := fix_missing]
+  # tidyverse/dplyr#3640 workaround
+  if (.nrow >= 1e9 && res[pkg=="dplyr", .N] == 0) {
+    fix_dplyr = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="dplyr"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]
+    res = rbindlist(list(res, fix_dplyr))[order(pkg)]
+  }
+  # pandas 1e9 killed on 120GB machine due to not enough memory
+  if (.nrow >= 1e9 && res[pkg=="pandas", .N] < 15L) {
+    fix_pandas = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="pandas"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]
+    res = rbindlist(list(res[pkg!="pandas"], fix_pandas))[order(pkg)]
+  }
   
   ans = res[nrow==.nrow & run==1][order(test,pkg,decreasing=TRUE)]
   
@@ -130,6 +140,7 @@ benchplot = function(.nrow=1e6) {
     at=tt[6+i*space]; rect(0, at-w, ans2[2+i*NPKG, (elapsed)/timescale], at+w, col=lr, xpd=NA)
     at=tt[8+i*space]; rect(0, at-w, ans2[3+i*NPKG, (elapsed)/timescale], at+w, col=lg, xpd=NA)
     at=tt[10+i*space]; rect(0, at-w, ans2[4+i*NPKG, (elapsed)/timescale], at+w, col=lpydtcol, xpd=NA)
+    if (is.na(ans2[2+i*NPKG, elapsed])) textBG(0, tt[6+i*space], "corrupt grouped_df: tidyverse/dplyr#3640", col="red", font=2)
     if (is.na(ans2[3+i*NPKG, elapsed])) textBG(0, tt[8+i*space], "MemoryError", col=green, font=2)
     if (is.na(ans2[4+i*NPKG, elapsed])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
   }
