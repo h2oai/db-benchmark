@@ -53,11 +53,6 @@ benchplot = function(.nrow=1e6) {
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
   fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)]
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", c("ansnrow","ansncol") := fix_missing]
-  # tidyverse/dplyr#3640 workaround
-  if (.nrow >= 1e9 && res[pkg=="dplyr", .N] == 0) {
-    fix_dplyr = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="dplyr"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]
-    res = rbindlist(list(res, fix_dplyr))[order(pkg)]
-  }
   # pandas 1e9 killed on 120GB machine due to not enough memory
   if (.nrow >= 1e9 && res[pkg=="pandas", .N] < 15L) {
     fix_pandas = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="pandas"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]

@@ -17,11 +17,6 @@ cache = TRUE
 cat("loading dataset\n")
 src_grp = Sys.getenv("SRC_GRP")
 data_name = basename(src_grp)
-nr = substr(data_name, 4,6)
-if (as.numeric(nr) >= 1e9) {
-  cat(sprintf("dplyr grouping benchmarking is currently skipped for %s nrow due to following bug:\n%s\n", nr, "https://github.com/tidyverse/dplyr/issues/3640"))
-  quit("no", status=0)
-}
 # if (get.nrow(c(DT)) > 1e9L) {
 #   cat("# groupby with dplyr skipped due data volume cap for single machine set to total 1e9 rows")
 #   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
