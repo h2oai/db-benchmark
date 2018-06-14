@@ -165,5 +165,5 @@ benchplot = function(.nrow=Inf) {
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
   dev.off()
-  system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) 
+  if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) 
 }
