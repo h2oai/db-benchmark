@@ -40,7 +40,7 @@ benchplot = function(.nrow=Inf) {
   if (!is.finite(.nrow)) {
     .nrow = res[, max(in_rows)]
   }
-  res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git")]
+  res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
   res[, test := setNames(1:5, unique(res$question))[question]]
   setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
   gb = fread("data.csv")[rows==.nrow & task=="groupby", gb[1L]] # [1L] will take k=1e2
@@ -58,7 +58,7 @@ benchplot = function(.nrow=Inf) {
     res = rbindlist(list(res[pkg!="pandas"], fix_pandas))[order(pkg)]
   }
   
-  fnam = paste0("grouping.",gsub("e[+]0","E",.nrow),".png")
+  fnam = paste0("grouping.",gsub("e[+]0","E", pretty_sci(.nrow)),".png")
   cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1000)
   
