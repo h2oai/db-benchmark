@@ -22,10 +22,10 @@ publishGhPages(){
 
   cp ../time.csv .
   git add time.csv 2>err.txt
-  git commit -m 'publish benchmark timings' 2>err.txt
+  git commit -q -m 'publish benchmark timings' 2>err.txt
   cp ../grouping.*.png .
   git add grouping.*.png 2>err.txt
-  git commit -m 'publish grouping benchplots' 2>err.txt
+  git commit -q -m 'publish grouping benchplots' 2>err.txt
   git push --force upstream gh-pages 2>err.txt
   
   cd ..
