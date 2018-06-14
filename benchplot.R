@@ -36,7 +36,20 @@ library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
 benchplot = function(.nrow=Inf) {
   
-  res = fread("time.csv")[batch==max(batch)][task=="groupby"][, task:=NULL]
+  res = fread("time.csv")[batch==max(batch)]
+  if (FALSE) {
+    png("groupby-memtest.png", width=1080, height=720)
+    lattice::barchart(
+      mem_gb ~ run |
+        factor(question, levels=unique(question)) +
+        factor(in_rows, levels=rev(unique(in_rows)), labels=sapply(rev(unique(in_rows)), pretty_sci)),
+      data = res, group = paste(solution, version),
+      horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
+      main = paste("Grouping Benchmark RSS memory usage - as of", format(as.POSIXct(res[1L, batch], origin="1970-01-01"), "%Y-%m-%d")), xlab = "run", ylab = "GB"
+    )
+    dev.off()
+  }
+  res = res[task=="groupby"][, task:=NULL]
   if (!is.finite(.nrow)) {
     .nrow = res[, max(in_rows)]
   }
