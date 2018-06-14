@@ -60,6 +60,12 @@ echo "# Benchmark run $BATCH started"
 # publish timing locally
 #Rscript -e 'rmarkdown::render("index.Rmd")'
 
+# groupby benchplot
+Rscript -e 'source("benchplot.R"); benchplot()'
+
+# publish benchmark, only if token file exists
+[ -f ./token ] && ./publish.sh
+
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
 

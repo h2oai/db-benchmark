@@ -33,7 +33,7 @@ DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, f.id6]
 source("helpers.R") # for solution date from gh repos
 stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
-benchplot = function(.nrow=1e6) {
+benchplot = function(.nrow=Inf) {
   fnam = paste0("grouping.",gsub("e[+]0","E",.nrow),".png")
   cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1000)
@@ -41,6 +41,9 @@ benchplot = function(.nrow=1e6) {
   par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
 
   res = fread("time.csv")[batch==max(batch)][task=="groupby"][, task:=NULL]
+  if (!is.finite(.nrow)) {
+    .nrow = res[, max(in_rows)]
+  }
   res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git")]
   res[, test := setNames(1:5, unique(res$question))[question]]
   setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
@@ -153,7 +156,9 @@ benchplot = function(.nrow=1e6) {
   legend(0,par()$usr[4]+topoffset*w, pch=22, pt.bg=c("blue","red",green,pydtcol), bty="n", cex=1.5, pt.cex=3.5,
          text.font=1, xpd=NA, legend=leg)
   mtext(paste("Input table:",comma(.nrow),"rows x 9 columns (",
-        {gb<-ans[pkg=="data.table",gb[1]]; if (gb<1) round(gb,1) else 5*round(ceiling(gb)/5)},"GB ) - Random order"),
+        {gb<-ans[pkg=="data.table",gb[1]]; if (gb<1) round(gb,1) else 5*round(ceiling(gb)/5)},
+        "GB ) - Random order",
+        paste0("(as of ", format(as.POSIXct(ans[1L, batch], origin="1970-01-01")),")")), # add datetime of benchmark batch to plot title
         side=3, line=4.5, cex=1.5, adj=0, font=2)
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
