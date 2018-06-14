@@ -8,7 +8,7 @@ echo 'upgrading pydatatable...'
 rm -rf ./tmp/datatable
 mkdir -p ./tmp/datatable
 
-git clone --depth=1 https://github.com/h2oai/datatable.git ./tmp/datatable > /dev/null
+git clone --depth=1 https://github.com/h2oai/datatable.git ./tmp/datatable &> /dev/null
 cd tmp/datatable
 make clean > /dev/null
 make build &> /dev/null
