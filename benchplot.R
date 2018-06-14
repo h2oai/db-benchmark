@@ -33,7 +33,7 @@ DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, f.id6]
 source("helpers.R") # for solution date from gh repos
 stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
-if (!capabilities()[["png"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
+if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
 benchplot = function(.nrow=Inf) {
   
   res = fread("time.csv")[batch==max(batch)][task=="groupby"][, task:=NULL]
