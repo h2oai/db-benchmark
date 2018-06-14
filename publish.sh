@@ -17,11 +17,13 @@ publishGhPages(){
   ## Reset gh-pages branch
   git remote add upstream "https://$GH_TOKEN@github.com/h2oai/db-benchmark.git" 2>err.txt
   git fetch upstream gh-pages 2>err.txt
-  git checkout gh-pages 2>err.txt
-  git reset --hard "f2d1593f0e760f0526ce2d8759d16955f29e2c6b" 2>err.txt
+  git checkout -q gh-pages 2>err.txt
+  git reset -q --hard "f2d1593f0e760f0526ce2d8759d16955f29e2c6b" 2>err.txt
 
+  cp ../time.csv .
   git add time.csv 2>err.txt
   git commit -m 'publish benchmark timings' 2>err.txt
+  cp ../grouping.*.png .
   git add grouping.*.png 2>err.txt
   git commit -m 'publish grouping benchplots' 2>err.txt
   git push --force upstream gh-pages 2>err.txt
