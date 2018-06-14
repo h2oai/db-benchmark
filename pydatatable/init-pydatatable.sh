@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-# at this point python virtual env should be sourced and LLVM6 env var
+echo 'upgrading pydatatable...'
+
+# at this point python virtual env should be sourced and LLVM6 env var set
 
 rm -rf ./tmp/datatable
 mkdir -p ./tmp/datatable
