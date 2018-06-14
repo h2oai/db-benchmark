@@ -160,7 +160,7 @@ benchplot = function(.nrow=Inf) {
   mtext(paste("Input table:",comma(.nrow),"rows x 9 columns (",
         {gb<-ans[pkg=="data.table",gb[1]]; if (gb<1) round(gb,1) else 5*round(ceiling(gb)/5)},
         "GB ) - Random order",
-        paste0("(as of ", format(as.POSIXct(ans[1L, batch], origin="1970-01-01")),")")), # add datetime of benchmark batch to plot title
+        paste0("(as of ", format(as.POSIXct(res[1L, batch], origin="1970-01-01")),")")), # add datetime of benchmark batch to plot title
         side=3, line=4.5, cex=1.5, adj=0, font=2)
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
