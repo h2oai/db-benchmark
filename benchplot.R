@@ -34,12 +34,7 @@ source("helpers.R") # for solution date from gh repos
 stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
 benchplot = function(.nrow=Inf) {
-  fnam = paste0("grouping.",gsub("e[+]0","E",.nrow),".png")
-  cat("Plotting to",fnam,"...\n")
-  png(file = fnam, width=800, height=1000)
   
-  par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
-
   res = fread("time.csv")[batch==max(batch)][task=="groupby"][, task:=NULL]
   if (!is.finite(.nrow)) {
     .nrow = res[, max(in_rows)]
@@ -61,6 +56,12 @@ benchplot = function(.nrow=Inf) {
     fix_pandas = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="pandas"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]
     res = rbindlist(list(res[pkg!="pandas"], fix_pandas))[order(pkg)]
   }
+  
+  fnam = paste0("grouping.",gsub("e[+]0","E",.nrow),".png")
+  cat("Plotting to",fnam,"...\n")
+  png(file = fnam, width=800, height=1000)
+  
+  par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
   
   ans = res[nrow==.nrow & run==1][order(test,pkg,decreasing=TRUE)]
   
