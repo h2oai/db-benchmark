@@ -11,3 +11,6 @@ cd tmp/datatable
 make clean
 make build
 make install
+
+cd ../..
+rm -rf ./tmp/datatable
