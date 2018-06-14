@@ -2,7 +2,8 @@
 set -o errexit -o nounset
 
 publishGhPages(){
-  mkdir db-benchmark.gh-pages
+  rm -rf db-benchmark.gh-pages
+  mkdir -p db-benchmark.gh-pages
   cd db-benchmark.gh-pages
 
   ## Set up Repo parameters
