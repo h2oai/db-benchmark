@@ -32,7 +32,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1)}, f.id1]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
@@ -43,7 +43,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1)}, f.id1]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
@@ -54,7 +54,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1)}, f.id1]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
@@ -68,7 +68,7 @@ t_start = timeit.default_timer()
 ans = dt.Frame()
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 #chk = ans[:, sum(f.v1)]
 chk = dt.Frame()
@@ -81,7 +81,7 @@ t_start = timeit.default_timer()
 ans = dt.Frame()
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 #chk = ans[:, sum(f.v1)]
 chk = dt.Frame()
@@ -94,7 +94,7 @@ t_start = timeit.default_timer()
 ans = dt.Frame()
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 #chk = ans[:, sum(f.v1)]
 chk = dt.Frame()
@@ -108,7 +108,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, f.id3]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -119,7 +119,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, f.id3]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), mean(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -130,7 +130,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, f.id3]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), mean(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -143,7 +143,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, f.id4]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -154,7 +154,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, f.id4]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -165,7 +165,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, f.id4]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -178,7 +178,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, f.id6]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -189,7 +189,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, f.id6]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
@@ -200,7 +200,7 @@ t_start = timeit.default_timer()
 ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, f.id6]
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start

@@ -34,7 +34,7 @@ t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.X2), sum(f.Y2)]]
 chkt = timeit.default_timer() - t_start
@@ -46,7 +46,7 @@ t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.X2), sum(f.Y2)]]
 chkt = timeit.default_timer() - t_start
@@ -58,7 +58,7 @@ t_start = timeit.default_timer()
 ans = x.merge(y, how='inner', on='KEY')
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.X2), sum(f.Y2)]]
 chkt = timeit.default_timer() - t_start

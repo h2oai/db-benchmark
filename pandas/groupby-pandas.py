@@ -34,7 +34,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -45,7 +45,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -56,7 +56,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -69,7 +69,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -80,7 +80,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -91,7 +91,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -104,7 +104,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -115,7 +115,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -126,7 +126,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -139,7 +139,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -150,7 +150,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -161,7 +161,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -174,7 +174,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -185,7 +185,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
@@ -196,7 +196,7 @@ t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 print(ans.shape)
 t = timeit.default_timer() - t_start
-m = float('NaN')
+m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start

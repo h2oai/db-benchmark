@@ -1,6 +1,8 @@
 import time
 import csv
 import math
+import psutil
+import os
 
 def write_log(task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec):
    batch = os.getenv('BATCH', "") 
@@ -41,3 +43,8 @@ flatten = lambda l: [item for sublist in l for item in sublist]
 def make_chk(values):
    s = ';'.join(str_round(x) for x in values)
    return s.replace(",","_") # comma is reserved for csv separator
+
+def memory_usage():
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss/(1024**3) # GB units
+
