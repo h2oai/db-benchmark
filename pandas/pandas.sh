@@ -15,7 +15,7 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   while read line
   do 
     eval $line
-    ./pandas/groupby-pandas.py
+    ./pandas/groupby-pandas.py || true
   done < ./loop-groupby-data.env
 fi
 
