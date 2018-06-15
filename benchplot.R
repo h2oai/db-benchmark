@@ -43,7 +43,7 @@ benchplot = function(.nrow=Inf) {
       mem_gb ~ run |
         factor(question, levels=unique(question)) +
         factor(in_rows, levels=rev(unique(in_rows)), labels=sapply(rev(unique(in_rows)), pretty_sci)),
-      data = res, group = paste(solution, version),
+      data = res, group = paste(solution, version), ylim=c(0, NA),
       horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
       main = paste("Grouping Benchmark RSS memory usage - as of", format(as.POSIXct(res[1L, batch], origin="1970-01-01"), "%Y-%m-%d")), xlab = "run", ylab = "GB"
     )
