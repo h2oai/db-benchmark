@@ -6,7 +6,8 @@ output:
 ---
 
 ```{r load_deps, include=FALSE}
-stopifnot(sapply(c("DT","jsonlite","scales"), requireNamespace))
+# Rscript -e 'rmarkdown::render("index.Rmd")'
+stopifnot(sapply(c("DT","jsonlite","lattice"), requireNamespace))
 library(bit64)
 library(data.table)
 source("helpers.R")
@@ -15,22 +16,14 @@ source("helpers.R")
 ```{r exceptions, include=FALSE}
 L64 = bit64::as.integer64
 exceptions = rbindlist(list(
-  # data.table(solution = "impala", version="2.5.0", task = "join", in_rows = L64(1e10), data="X1e10_2c.csv-Y1e10_2c.csv", comment = "disk space issue"), # it passed but heavily hitting disk space issues, re-run when disk space issue resolved
-  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(5e9), data="X5e9_2c.csv", comment = "~1h"),
-  data.table(solution = "impala", version="2.5.0", task = "sort", in_rows = L64(1e10), data="X1e10_2c.csv", comment = "disk space issue"),
-  data.table(solution = "dask", version="0.11.0", task = "join", in_rows = L64(c(1e10)), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "~4.5h"),
-  data.table(solution = "presto", version="0.150", task = "sort", in_rows = L64(c(5e9, 1e10)), data=c("X5e9_2c.csv","X1e10_2c.csv"), comment = "Out of Memory"),
-  data.table(solution = "presto", version="0.150", task = "join", in_rows = L64(1e10), data=c("X1e10_2c.csv-Y1e10_2c.csv"), comment = "loading speed issue"),
-  data.table(solution = "dask", version="0.11.0", task = "sort", in_rows = L64(c(1e7,1e8,1e9,5e9,1e10)), data=sprintf("X%se%s_2c.csv", c(rep(1,3),5,1), c(7:9,9:10)), comment = "Not Implemented")
+  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
+  data.table(solution = "pandas", version="0.23.0", task = "sort", in_rows = L64(1e9), data=c("X1_1e9_2c.csv"), comment = "not run due to groupby failure")
 ))
 ```
 
 ```{r load_data, include=FALSE}
-cols = setNames(scales::hue_pal()(8), c("presto", "data.table", "dplyr", "h2o", "impala", "pandas", "spark", "dask"))
 # all timings
-DT = rbindlist(lapply(c("time.csv"), read_timing, cols=cols)) # presto timings scrapped manually in separate csv
-DT[is.na(chk_time_sec), chk_time_sec:=0
-   ][, time_sec := time_sec + chk_time_sec] # checksum included in timings
+DT = read_timing("time.csv", col=NULL)
 # recent timings, single cache=FALSE scenario where available
 dt = last_timing(x=DT)
 
@@ -42,7 +35,7 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   stopifnot(is.data.table(dt), is.numeric(subset_in_rows), length(subset_in_rows)==1L, is.character(subset_task), length(subset_task)==1L)
   toplot = dt[in_rows==subset_in_rows & task==subset_task]
   if (!missing(subset_solution)) toplot = toplot[solution%in%subset_solution]
-  do_exceptions = exists("exceptions") && is.data.table(exceptions)
+  do_exceptions = exists("exceptions") && is.data.table(exceptions) && nrow(exceptions)
   if (do_exceptions) {
     msg = exceptions[in_rows==subset_in_rows & task==subset_task]
     if (!missing(subset_solution)) msg = msg[solution%in%subset_solution]
@@ -58,8 +51,8 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   # report averaging, see description below, it is reported in plot main title, useful to track unexpected averaging, or when `DT` (all timings) passed instead of `dt` (last timings)
   n_obs = sort(unique(toplot[!is.na(timestamp), .N, .(task, in_rows, solution, run)]$N)) # is.na(timestamp) filter outs exceptions
   toplot[,
-         .(time_sec=mean(time_sec)), # average over question (related to groupby) and data (not yet used) and cache (only if all timings provided: `DT`, not `dt`)
-         .(task, in_rows, solution, version, col, run, exception=comment)
+         .(time_sec=mean(time_sec)), # average over question and datasets (not yet used) and cache (only if all timings provided: `DT`, not `dt`)
+         .(task, in_rows, solution, version, run, exception=comment)
          ][, time_min:=time_sec/60
            ] -> toplot
   stopifnot(toplot[is.na(exception), uniqueN(run), .(solution)]$V1==3L) # incomplete runs makes the plot invalid
@@ -73,7 +66,7 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
     time_unit = "Minutes"
   }
   toplot[, `:=`(solution = paste(solution, substr(version, 1, 8)))][, version:=NULL]
-  toplot[run==1, ord := rank(time)][, ord := ord[1L], .(task, in_rows, solution, col)] # recycle order for exceptions
+  toplot[run==1, ord := rank(time)][, ord := ord[1L], .(task, in_rows, solution)] # recycle order for exceptions
   par(mar=c(2.5,8,4,2)+0.1)
   xrn = range(c(0,toplot$time), na.rm=TRUE)
   nsol = uniqueN(toplot$solution)
@@ -84,13 +77,19 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   axis(1, cex.axis=1.5, font=2, padj=0.5, line=-1)
   toplot[run==1][order(ord), mtext(solution, side=2, at=seq_along(solution), font=1.25, las=1, cex=1.25)]
   mtext(paste0(time_unit, "  "), side=2, 
-        at=if (nsol==8) -0.65 else if (nsol==5) -0.4 else -0.5, # dynamic based on number of solutions, tested on 8 and 5
+        at=if (nsol==8) -0.65 else if (nsol==5) -0.4625 else if (nsol==4) -0.325 else -0.5, # dynamic based on number of solutions, tested on 8 and 5
         las=1, cex=1.5, font=2)
   gb = metadata[task==subset_task & rows==subset_in_rows, sum(gb)]
-  if (gb > 1) gb = round(gb, 0)
-  gb = paste0(gb, "GB")
+  if (length(gb)==0 || is.na(gb)) {
+    gb = "Unknown GB"
+  } else if (length(gb)==1L) {
+    if (gb > 1) gb = round(gb, 0)
+    gb = paste0(gb, "GB")
+  } else {
+    stop("length of 'gb' from metadata > 1, which one to use? investigate")
+  }
   title(main = sprintf("%s %s%s", gb, subset_task,
-                       if (identical(n_obs, 1L)) "" else paste0(" (mean over ",paste(n_obs, collapse=",")," obs.)")))
+                       if (identical(n_obs, 1L)) "" else paste0(" (mean over ",paste(n_obs, collapse=",")," queries)")))
   invisible()
 }
 
@@ -107,9 +106,9 @@ task_source = function(subset_task, DT) {
 ## Benchmark overview
 
 Repository for reproducible benchmarking of database-like operations.  
-Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. I encourage readers to re-run benchmark on own cluster with chosen tools, see [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) readme for details. Pull requests are welcome, any tunings proposed should be portable.  
+Benchmark is mainly focused on portability and reproducibility. I encourage readers to re-run benchmark on own machine, see [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) readme for details. Pull requests are welcome, any changes proposed should be portable.  
 
-Time includes the actual query, materializing results on the query engine side, time of the count rows of result. To ensure that query is evaluated also the sum of measures produced by each query is included in timing.  
+Time includes the actual query time and a call to verify dimensions of an answer, `dim` in R or `.shape` in python, to ensure no lazy evaluation is taking place.  
 Size of data mentioned in plots refer to on-disk stored csv file, or in case of multiple tables involved, the sum of csv files size.  
 
 Following legend describe rank plots in next sections.  
@@ -220,8 +219,6 @@ plot_op(5e9, "groupby", dt)
 plot_op(1e10, "groupby", dt)
 ```
 
-
-
 ------
 
 ## Benchmark description
@@ -230,9 +227,7 @@ plot_op(1e10, "groupby", dt)
 
 ### Notes {.active}
 
-- presto is known to not well address big join (high cardinality), as read [here](http://dataconomy.com/presto-versus-hive-what-you-need-to-know/)
-- impala uses `STRAIGHT_JOIN` clause and `SHUFFLE` hint, x4 speed up on 5e9 rows join
-- dask scalability for 1e10 reported in [dask#1545](https://github.com/dask/dask/issues/1545)
+- join results will be included after [h2oai/datatable#1080](https://github.com/h2oai/datatable/issues/1080)
 
 ### Test scripts
 
@@ -267,11 +262,7 @@ data.table(KEY = c(8723957L, 8931042L, 3429303L, 8707603L), X2 = c(9424892L, -77
 
 ### Notes {.active}
 
-- impala timings for 5e9+ are likely affected by lack of free disk space on d2-precise1 machine
-- impala uses workaround `ROW_NUMBER() OVER (ORDER BY ...)` as impala-cli is unable to perform *ORDER BY* without printing all results from the query, see commented blocks in [sort-impala.sql](https://github.com/h2oai/db-benchmark/blob/master/impala/sort-impala.sql)
-- impala sort tests only `cache=TRUE` scenario because `cache=FALSE` tests were unable to materialize sort results
-- presto requires to fit all data into single node according to [presto query faq: avoid order by](https://docs.treasuredata.com/articles/presto-query-faq#solution-avoid-order-by) so it won't scale for big sort, testing on 5e9 result into `failed: 2147483639`, and for 1e9 took ~2h, looking forward on [presto#6042](https://github.com/prestodb/presto/issues/6042)
-- dask does not provide sort method, for details see [dask#1414](https://github.com/dask/dask/issues/1414)
+- sort currently tests only soring by integer column
 
 ### Test scripts
 
@@ -304,7 +295,7 @@ data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518
 
 ### Notes {.active}
 
-- dask does not yet allow to answer all our grouping questions efficiently, workaround suggested in [dask#1517](https://github.com/dask/dask/issues/1517) was applied on `sum v1 mean v3 by id3`, `mean v1:v3 by id4`, `sum v1:v3 by id6` questions
+- pydatatable did not yet support grouping by multiple columns so one of the questions could not be answered with it [h2oai/datatable#1082](https://github.com/h2oai/datatable/issues/1082)
 
 ### Test scripts
 
@@ -332,67 +323,35 @@ example output for a `sum v1 by id1:id2` question:
 data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
 ```
 
-
 ------
 
 ## Benchmark setup
 
 #### Hardware
 
-10 nodes environment, 32 cores and 200GB memory each node.
-
-#### Softrware
-
-- h2o on 10 nodes
-- spark on 10 nodes: 9 workers, 1 master and driver
-- impala on 10 nodes: 9 daemons, 1 state store and catalog server
-- data.table on 1 node
-- pandas on 1 node
-- pydatatable on 1 node
-- dask on 10 nodes: 9 workers, 1 scheduler
-- dplyr on 1 node
-- presto on 10 nodes: 9 workers, 1 coordinator
+20 cores and 125GB memory  
 
 #### Software version
 
-<!-- - h2o - [latest dev](https://github.com/h2oai/db-benchmark/tree/master/h2o/init-h2o.sh) - `_r dt[solution=="h2o", solution.date(solution[.N], version[.N], git[.N])]` -->
-- data.table - [latest dev](https://github.com/h2oai/db-benchmark/tree/master/datatable/init-datatable.sh) - `r dt[solution=="data.table", solution.date(solution[.N], version[.N], git[.N])]`
-<!-- - spark - [recent-ish dev](http://people.apache.org/~pwendell/spark-nightly/spark-master-bin/latest/) - `_r dt[solution=="spark", solution.date(solution[.N], version[.N], git[.N])]` -->
-<!-- - impala - recent-ish stable - `_r dt[solution=="impala", solution.date(solution[.N], version[.N], git[.N])]` -->
+- data.table - [latest dev](https://github.com/Rdatatable/data.table) - `r dt[solution=="data.table", solution.date(solution[.N], version[.N], git[.N])]`
+- dplyr - [latest dev](https://github.com/tidyverse/dplyr) - `r dt[solution=="dplyr", solution.date(solution[.N], version[.N], git[.N])]`
 - pandas - [recent stable](https://pypi.python.org/pypi/pandas) - `r dt[solution=="pandas", solution.date(solution[.N], version[.N], git[.N])]`
-<!-- - dask - [recent stable](https://pypi.python.org/pypi/dask) - `_r dt[solution=="dask", solution.date(solution[.N], version[.N], git[.N])]` -->
-- dplyr - [recent stable](https://cran.r-project.org/package=dplyr) - `r dt[solution=="dplyr", solution.date(solution[.N], version[.N], git[.N])]`
-- pydatatable - [recent stable](https://github.com/h2oai/datatable) - `r dt[solution=="pydatatable", solution.date(solution[.N], version[.N], git[.N])]`
-<!-- - presto - recent-ish stable - `_r dt[solution=="presto", solution.date(solution[.N], version[.N], git[.N])]` -->
+- pydatatable - [latest dev](https://github.com/h2oai/datatable) - `r dt[solution=="pydatatable", solution.date(solution[.N], version[.N], git[.N])]`
 
 #### Tuning
 
-- spark
-    - `spark.driver.maxResultSize=200g`
-    - `increate spark.network.timeout=2400`
-    - `spark.executor.heartbeatInterval=1200`
+We placed the following in `~/.R/Makevars` before installing the packages:
+```
+CFLAGS=-O3 -mtune=native
+CXXFLAGS=-O3 -mtune=native
+```
 
-- presto
-    - `hive.metastore-cache-ttl=0s`
-    - `distributed-joins-enabled=true`
-    - `query.max-memory=1600GB`
-    - `query.max-memory-per-node=200GB`
-    - `resources.reserved-system-memory=24GB`
-    - `-Xmx230G`
-    - `-Xms230G`
+Otherwise, R by default compiles packages with `-g -O2`. The R core team know of some problems with `-O3` with some other CRAN packages in some circumstances so that choice of R's default is not an oversight. On the other hand we don't know which CRAN packages are affected and to what degree. So we used `-O3` for these benchmarks to isolate that concern, since we're not aware of any problem with `-O3`.  
+Python appears to use `-O3` by default.
 
 #### Notes
 
-- impala is running using lxc  
-- impala and presto reads from disk (parquet, orc)  
-- impala and presto mostly runs in cache TRUE/FALSE scenarios - on reports `cache=FALSE` (faster) is used when possible but there is no guarantee that query results gets fully materialized  
-- data.table, dplyr and pandas are single node solutions, they are included in plots up to 1e9 rows  
-- presto timings are at the moment ([presto#5857](https://github.com/prestodb/presto/issues/5857)) hand scraped from logs
-- spark timings can vary within the single reported version due to lack of unique identifier of spark devel snapshots ([SPARK-16864](https://issues.apache.org/jira/browse/SPARK-16864))  
-- pandas, data.table and dplyr were unable to process 5e9+ rows tests due to [pandas#14131](https://github.com/pydata/pandas/issues/14131) and 2^31 limit in `fread`  
-- presto uses hive (>= 0.13.0) to create tables on which it issue queries
-- presto does not have 1e10 tests due to huge data loading time required by presto, more details in [scalability issue 20GB/h](http://stackoverflow.com/questions/39309984/csv-loading-from-hadoop-to-hive-scalability-issue-20gb-h)
-- reported *Out of Memory* on 5e9 and 1e10 rows was really reproduced only on 5e9 rows, please let me know if such assumption is not valid
+- none so far
 
 ------
 
@@ -402,29 +361,18 @@ data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791"
 
 We wanted to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If h2o can do that, then h2o can build lower down the mountain. TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. We do plan to release TPC benchmark.  
 
-> Why number of workers varies between solutions?
-
-We have 10 machines for running benchmark. Dependending on the architecture of solutions some of machines needs to be coordinator/master/driver/etc. nodes.  
-
 > What does `cache=TRUE|FALSE` cases means?
 
+As multinode tools has been currently removed from benchmark this field should always be `FALSE`.  
 Some of the tools doesn't have ability to keep query result in cache, which is useful if you use the tool for ETL purposes. Currently those tools are impala and presto and they will have extra timings entries, one for `cache=FALSE` and another for `cache=TRUE`. The latter one is basically `CREATE TABLE AS SELECT` which adds extra overhead, therefore timings used on reports are using first, faster `cache=FALSE` timing where possible, which is not always possible due to query optimizer. If you are going to use `cache==TRUE` scenario more in your workflow be sure to confirm your conclusions against complete timings data on `cache` granularity provided together with the document. Keep in mind that `cache=FALSE` will not guarantee that query results are fully materialized for impala and presto.  
-
-> Why Google BigQuery and Amazon Redshift are no included?
-
-Both BigQuery and Redshift aren't open source, neither can be run on-premises. Please ping me when Google or Amazon will manage to open their platforms, I will be glad to add them.  
-
-> Is it fair to compare distributed solutions to single machine solutions?
-
-It isn't, yet it is still good to have them included. Single machine solutions are usually more commonly known, many people do prototypes in single machine tools thus can have a reference on performance difference when moving to distributed solutions. Readers should keep in mind that single node tools won't scale as good as distributed ones.  
-
-> Why I'm not able to reproduce benchmark for impala?
-
-Among currently tested tools only Impala wasn't setup in a portable way - [is it even possible?](http://stackoverflow.com/q/39087813/2490497). We run impala tests on pre-installed CDH, unlike other tools which just starts the binaries copied to own directories in `$HOME`. Impala cli is still used from a portable directory in `$HOME`.  
 
 > Why populating data for join/sort test is not straightfoward?
 
 We use [PCG random number generator](http://www.pcg-random.org/), in the [tableGen.c](https://github.com/h2oai/db-benchmark/blob/master/tableGen.c) file you have the code you can use to produce the data. Rationale behind that decision can be found in [H2O@NYC presentation](https://youtu.be/5X7h1rZGVs0?t=750).  
+
+> How was memory usage measured?
+
+We needed to use measure that will be portable across different software. `ps -o rss $pid` while not really precise is perfectly portable, thus it was used from R and python to capture RSS memory measure after each query run. Before each query there is call to garbage collector.  
 
 ------
 
@@ -466,6 +414,7 @@ DT::datatable(DT, extensions = 'Buttons', options = list(
 - `in_rows`: nrow of input dataset, if multiple then only first provided.  
 - `question`: query question, currently used for *group by* tests.  
 - `out_rows`: nrow of results from query.  
+- `out_cols`: ncol of results from query.  
 - `solution`: a tool used to solve the task.  
 - `version`: version of a tool used.  
 - `git`: git commit hash for a tool for precise development version tracking.  
@@ -477,6 +426,4 @@ DT::datatable(DT, extensions = 'Buttons', options = list(
 - `chk`: total sum for each measure in the query result, used for validation of results.  
 - `chk_time_sec`: time taken to calculate `chk` field, last resort force evaluation, not available when `cache=FALSE`.  
 - `comment`: field not used in the workflow, a placeholder for comments related to particular timing entry.  
-- `col`: color used to represent solution, unique within solution.  
 - `datetime`: value of `timestamp` field as `POSIXct` for human readable print.  
-
