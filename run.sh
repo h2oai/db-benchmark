@@ -24,8 +24,8 @@ echo "# Benchmark run $BATCH started"
 # pydatatable
 ./pydatatable/pydatatable.sh
 
-# publish timing locally
-#Rscript -e 'rmarkdown::render("index.Rmd")'
+# publish report for all tasks
+Rscript -e 'rmarkdown::render("index.Rmd")'
 
 # groupby benchplot
 Rscript -e 'source("benchplot.R"); nr<-fread("data.csv")[task=="groupby" & active==TRUE, unique(rows)]; sapply(nr, benchplot)'

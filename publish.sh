@@ -23,6 +23,9 @@ publishGhPages(){
   cp ../time.csv .
   git add time.csv 2>err.txt
   git commit -q -m 'publish benchmark timings' 2>err.txt
+  cp ../index.html .
+  git add index.html 2>err.txt
+  git commit -q -m 'publish benchmark report' 2>err.txt
   cp ../grouping.*.png .
   git add grouping.*.png 2>err.txt
   git commit -q -m 'publish grouping benchplots' 2>err.txt
