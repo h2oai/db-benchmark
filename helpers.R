@@ -72,7 +72,7 @@ read_timing = function(csv.file=Sys.getenv("CSV_TIME_FILE", "~/time.csv"), raw=F
   dt = fread(csv.file, na.strings=c("","NA","NaN"), sep=",", colClasses=c(batch="integer", in_rows="integer64", out_rows="integer64", comment="character", version="character", git="character", question="character", data="character", cache="logical", chk="character", chk_time_sec="numeric"))
   if (raw) return(dt)
   # assign colors to solutions
-  dt[, col := cols[solution], .(solution)]
+  if (!is.null(col)) dt[, col := cols[solution], .(solution)]
   # print variable
   dt[, datetime := as.POSIXct(timestamp, origin="1970-01-01")]
   dt[]
