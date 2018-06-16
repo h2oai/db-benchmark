@@ -13,9 +13,9 @@ export BATCH=$(date +%s)
 echo "# Benchmark run $BATCH started"
 
 # upgrade tools
-./datatable/init-datatable.sh
-./dplyr/init-dplyr.sh
-./pydatatable/init-pydatatable.sh
+$DO_UPGRADE && ./datatable/init-datatable.sh
+$DO_UPGRADE && ./dplyr/init-dplyr.sh
+$DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 
 # datatable
 ./datatable/datatable.sh
@@ -33,7 +33,7 @@ echo "# Benchmark run $BATCH started"
 Rscript -e 'rmarkdown::render("index.Rmd")'
 
 # publish benchmark, only if token file exists
-[ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
+$DO_PUBLISH && [ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
 
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
