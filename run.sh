@@ -30,7 +30,7 @@ $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 ./pydatatable/pydatatable.sh
 
 # publish report for all tasks
-Rscript -e 'rmarkdown::render("index.Rmd")' > ./rmarkdown.out 2>&1
+Rscript -e 'rmarkdown::render("index.Rmd")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
 $DO_PUBLISH && [ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
