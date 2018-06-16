@@ -26,9 +26,9 @@ publishGhPages(){
   cp ../index.html .
   git add index.html 2>err.txt
   git commit -q -m 'publish benchmark report' 2>err.txt
-  cp ../grouping.*.png .
-  git add grouping.*.png 2>err.txt
-  git commit -q -m 'publish grouping benchplots' 2>err.txt
+  cp ../*.png .
+  git add *.png 2>err.txt
+  git commit -q -m 'publish plots' 2>err.txt
   git push --force upstream gh-pages 2>err.txt
   
   cd ..
