@@ -12,6 +12,11 @@ export BATCH=$(date +%s)
 
 echo "# Benchmark run $BATCH started"
 
+# upgrade tools
+./datatable/init-datatable.sh
+./dplyr/init-dplyr.sh
+./pydatatable/init-pydatatable.sh
+
 # datatable
 ./datatable/datatable.sh
 

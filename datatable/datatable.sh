@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# upgrade
-./datatable/init-datatable.sh
-
 # join
 if [[ "$RUN_TASKS" =~ "join" ]]; then
   while read line
