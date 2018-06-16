@@ -6,18 +6,19 @@ output:
 ---
 
 ```{r load_deps, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE)
 # Rscript -e 'rmarkdown::render("index.Rmd")'
 stopifnot(sapply(c("DT","jsonlite","lattice"), requireNamespace))
 library(bit64)
 library(data.table)
 source("helpers.R")
+source("benchplot.R")
 ```
 
 ```{r exceptions, include=FALSE}
-L64 = bit64::as.integer64
+L64 = function(...) as.integer64(unlist(list(...)))
 exceptions = rbindlist(list(
-  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
-  data.table(solution = "pandas", version="0.23.0", task = "sort", in_rows = L64(1e9), data=c("X1_1e9_2c.csv"), comment = "not run due to groupby failure")
+  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory")
 ))
 ```
 
@@ -26,7 +27,7 @@ exceptions = rbindlist(list(
 DT = read_timing("time.csv", col=NULL)
 # recent timings, single cache=FALSE scenario where available
 dt = last_timing(x=DT)
-
+dt = dt[in_rows %in% L64(1e7, 1e8, 1e9, 2e9, 5e9, 1e10)] # filter out 1e6, and eventually others
 metadata = fread("data.csv") # dictionary of data size
 ```
 
@@ -93,6 +94,30 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   invisible()
 }
 
+plot_all = function(dt, what, subset_task) {
+  # not used now due to deepayan/lattice#7
+  stopifnot(is.data.table(dt), is.character(subset_task), length(subset_task)==1L, is.character(what), what%in%c("cpu","mem"), length(what)==1L)
+  png(sprintf("%s-%s.png", subset_task, what), width=1080, height=720)
+  if (what=="mem") lattice::barchart(
+  mem_gb ~ run |
+    factor(question, levels=unique(question)) +
+    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+  data = dt, group = paste(solution, version), ylim=c(0, NA),
+  horizontal=FALSE, subset = task==subset_task, auto.key=TRUE, scales=list(relation="free"),
+  main = paste(subset_task, "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
+) else if (what=="cpu") lattice::barchart(
+    time_sec ~ run |
+      factor(question, levels=unique(question)) +
+      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+    data = dt, groups = paste(solution, version), ylim=c(0, NA),
+    horizontal=FALSE, subset = task==subset_task, auto.key=TRUE, scales=list(relation="free"),
+    main = paste(subset_task, "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
+  )
+  dev.off()
+}
+
 task_source = function(subset_task, DT) {
   stopifnot(length(subset_task)==1L)
   cat(sapply(DT[task==subset_task, unique(solution)], function(x) {
@@ -157,6 +182,33 @@ plot_op(1e10, "join", dt)
 
 ## Sort {.tabset .tabset-fade .tabset-pills}
 
+```{r o_sort0, echo=FALSE, include=FALSE}
+png(sprintf("%s-%s.png", subset_task="sort", what="cpu"), width=1080, height=720)
+lattice::barchart(
+    time_sec ~ run |
+      factor(question, levels=unique(question)) +
+      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+    data = dt, groups = paste(solution, version), ylim=c(0, NA),
+    horizontal=FALSE, subset = task=="sort", auto.key=TRUE, scales=list(relation="free"),
+    main = paste("sort", "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
+)
+dev.off()
+png(sprintf("%s-%s.png", subset_task="sort", what="mem"), width=1080, height=720)
+lattice::barchart(
+  mem_gb ~ run |
+    factor(question, levels=unique(question)) +
+    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+  data = dt, group = paste(solution, version), ylim=c(0, NA),
+  horizontal=FALSE, subset = task=="sort", auto.key=TRUE, scales=list(relation="free"),
+  main = paste("sort", "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
+)
+dev.off()
+```
+
+Detailed summary of benchmark available for [cpu](sort-cpu.png) and [memory](sort-mem.png)  
+
 ### 1e7
 
 ```{r o_sort1, echo=FALSE}
@@ -189,23 +241,59 @@ plot_op(1e10, "sort", dt)
 
 ## Group by {.tabset .tabset-fade .tabset-pills}
 
+```{r o_groupby0, echo=FALSE, include=FALSE}
+png(sprintf("%s-%s.png", subset_task="groupby", what="cpu"), width=1080, height=720)
+lattice::barchart(
+    time_sec ~ run |
+      factor(question, levels=unique(question)) +
+      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+    data = dt, groups = paste(solution, version), ylim=c(0, NA),
+    horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
+    main = paste("groupby", "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
+)
+dev.off()
+png(sprintf("%s-%s.png", subset_task="groupby", what="mem"), width=1080, height=720)
+lattice::barchart(
+  mem_gb ~ run |
+    factor(question, levels=unique(question)) +
+    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
+           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
+  data = dt, group = paste(solution, version), ylim=c(0, NA),
+  horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
+  main = paste("groupby", "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
+)
+dev.off()
+```
+
+Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
+
 ### 1e7
 
 ```{r o_groupby1, echo=FALSE}
 plot_op(1e7, "groupby", dt)
+benchplot(1e7)
 ```
+
+By query [_benchplot_ 1e7](grouping.1e7.png)
 
 ### 1e8
 
 ```{r o_groupby2, echo=FALSE}
 plot_op(1e8, "groupby", dt)
+benchplot(1e8)
 ```
+
+By query [_benchplot_ 1e8](grouping.1e8.png)
 
 ### 1e9 {.active}
 
 ```{r o_groupby3, echo=FALSE}
 plot_op(1e9, "groupby", dt)
+#benchplot(1e9)
 ```
+
+<!-- By query [_benchplot_](grouping.1e9.png) -->
 
 ### 5e9
 

@@ -27,9 +27,6 @@ echo "# Benchmark run $BATCH started"
 # publish report for all tasks
 Rscript -e 'rmarkdown::render("index.Rmd")'
 
-# groupby benchplot
-Rscript -e 'source("benchplot.R"); nr<-fread("data.csv")[task=="groupby" & active==TRUE, unique(rows)]; sapply(nr, benchplot)'
-
 # publish benchmark, only if token file exists
 [ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
 

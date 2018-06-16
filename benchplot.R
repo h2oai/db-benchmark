@@ -37,18 +37,6 @@ if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="c
 benchplot = function(.nrow=Inf) {
   
   res = fread("time.csv")[batch==max(batch)]
-  if (FALSE) {
-    png("groupby-memtest.png", width=1080, height=720)
-    lattice::barchart(
-      mem_gb ~ run |
-        factor(question, levels=unique(question)) +
-        factor(in_rows, levels=rev(unique(in_rows)), labels=sapply(rev(unique(in_rows)), pretty_sci)),
-      data = res, group = paste(solution, version), ylim=c(0, NA),
-      horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
-      main = paste("Grouping Benchmark RSS memory usage - as of", format(as.POSIXct(res[1L, batch], origin="1970-01-01"), "%Y-%m-%d")), xlab = "run", ylab = "GB"
-    )
-    dev.off()
-  }
   res = res[task=="groupby"][, task:=NULL]
   if (!is.finite(.nrow)) {
     .nrow = res[, max(in_rows)]
@@ -72,7 +60,7 @@ benchplot = function(.nrow=Inf) {
   }
   
   fnam = paste0("grouping.",gsub("e[+]0","E", pretty_sci(.nrow)),".png")
-  cat("Plotting to",fnam,"...\n")
+  if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1000)
   
   par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
@@ -153,7 +141,7 @@ benchplot = function(.nrow=Inf) {
     at=tt[6+i*space]; rect(0, at-w, ans2[2+i*NPKG, (elapsed)/timescale], at+w, col=lr, xpd=NA)
     at=tt[8+i*space]; rect(0, at-w, ans2[3+i*NPKG, (elapsed)/timescale], at+w, col=lg, xpd=NA)
     at=tt[10+i*space]; rect(0, at-w, ans2[4+i*NPKG, (elapsed)/timescale], at+w, col=lpydtcol, xpd=NA)
-    if (is.na(ans2[2+i*NPKG, elapsed])) textBG(0, tt[6+i*space], "corrupt grouped_df: tidyverse/dplyr#3640", col="red", font=2)
+    #if (is.na(ans2[2+i*NPKG, elapsed])) textBG(0, tt[6+i*space], "corrupt grouped_df: tidyverse/dplyr#3640", col="red", font=2)
     if (is.na(ans2[3+i*NPKG, elapsed])) textBG(0, tt[8+i*space], "MemoryError", col=green, font=2)
     if (is.na(ans2[4+i*NPKG, elapsed])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
   }
@@ -178,5 +166,5 @@ benchplot = function(.nrow=Inf) {
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
   dev.off()
-  if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else TRUE
+  if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
