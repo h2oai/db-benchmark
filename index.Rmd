@@ -95,10 +95,12 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
 }
 
 plot_all = function(dt, what, subset_task) {
-  # not used now due to deepayan/lattice#7
   stopifnot(is.data.table(dt), is.character(subset_task), length(subset_task)==1L, is.character(what), what%in%c("cpu","mem"), length(what)==1L)
+  pad = lattice.getOption("axis.padding")
+  pad$numeric = 0 #0.07
+  lattice.options("axis.padding" = pad)
   png(sprintf("%s-%s.png", subset_task, what), width=1080, height=720)
-  if (what=="mem") lattice::barchart(
+  p = if (what=="mem") lattice::barchart(
   mem_gb ~ run |
     factor(question, levels=unique(question)) +
     factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
@@ -115,6 +117,7 @@ plot_all = function(dt, what, subset_task) {
     horizontal=FALSE, subset = task==subset_task, auto.key=TRUE, scales=list(relation="free"),
     main = paste(subset_task, "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
   )
+  print(p)
   dev.off()
 }
 
@@ -183,28 +186,8 @@ plot_op(1e10, "join", dt)
 ## Sort {.tabset .tabset-fade .tabset-pills}
 
 ```{r o_sort0, echo=FALSE, include=FALSE}
-png(sprintf("%s-%s.png", subset_task="sort", what="cpu"), width=1080, height=720)
-lattice::barchart(
-    time_sec ~ run |
-      factor(question, levels=unique(question)) +
-      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-    data = dt, groups = paste(solution, version), ylim=c(0, NA),
-    horizontal=FALSE, subset = task=="sort", auto.key=TRUE, scales=list(relation="free"),
-    main = paste("sort", "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
-)
-dev.off()
-png(sprintf("%s-%s.png", subset_task="sort", what="mem"), width=1080, height=720)
-lattice::barchart(
-  mem_gb ~ run |
-    factor(question, levels=unique(question)) +
-    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-  data = dt, group = paste(solution, version), ylim=c(0, NA),
-  horizontal=FALSE, subset = task=="sort", auto.key=TRUE, scales=list(relation="free"),
-  main = paste("sort", "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
-)
-dev.off()
+plot_all(dt, "cpu", "sort")
+plot_all(dt, "mem", "sort")
 ```
 
 Detailed summary of benchmark available for [cpu](sort-cpu.png) and [memory](sort-mem.png)  
@@ -242,28 +225,8 @@ plot_op(1e10, "sort", dt)
 ## Group by {.tabset .tabset-fade .tabset-pills}
 
 ```{r o_groupby0, echo=FALSE, include=FALSE}
-png(sprintf("%s-%s.png", subset_task="groupby", what="cpu"), width=1080, height=720)
-lattice::barchart(
-    time_sec ~ run |
-      factor(question, levels=unique(question)) +
-      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-    data = dt, groups = paste(solution, version), ylim=c(0, NA),
-    horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
-    main = paste("groupby", "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
-)
-dev.off()
-png(sprintf("%s-%s.png", subset_task="groupby", what="mem"), width=1080, height=720)
-lattice::barchart(
-  mem_gb ~ run |
-    factor(question, levels=unique(question)) +
-    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-  data = dt, group = paste(solution, version), ylim=c(0, NA),
-  horizontal=FALSE, subset = task=="groupby", auto.key=TRUE, scales=list(relation="free"),
-  main = paste("groupby", "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
-)
-dev.off()
+plot_all(dt, "cpu", "groupby")
+plot_all(dt, "mem", "groupby")
 ```
 
 Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
