@@ -18,7 +18,8 @@ source("benchplot.R")
 ```{r exceptions, include=FALSE}
 L64 = function(...) as.integer64(unlist(list(...)))
 exceptions = rbindlist(list(
-  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory")
+  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
+  data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = L64(1e7,1e8,1e9), data=c("X1e7_2c.csv-Y1e7_2c.csv","X1e8_2c.csv-Y1e8_2c.csv","X1e9_2c.csv-Y1e9_2c.csv"), comment = "not yet implemented")
 ))
 ```
 
@@ -36,6 +37,7 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   stopifnot(is.data.table(dt), is.numeric(subset_in_rows), length(subset_in_rows)==1L, is.character(subset_task), length(subset_task)==1L)
   toplot = dt[in_rows==subset_in_rows & task==subset_task]
   if (!missing(subset_solution)) toplot = toplot[solution%in%subset_solution]
+  if (!nrow(toplot)) return(invisible())
   do_exceptions = exists("exceptions") && is.data.table(exceptions) && nrow(exceptions)
   if (do_exceptions) {
     msg = exceptions[in_rows==subset_in_rows & task==subset_task]
@@ -48,7 +50,6 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
     }
     toplot = rbindlist(list(toplot, msg), use.names=TRUE, fill=TRUE)
   }
-  if (!nrow(toplot)) return(invisible())
   # report averaging, see description below, it is reported in plot main title, useful to track unexpected averaging, or when `DT` (all timings) passed instead of `dt` (last timings)
   n_obs = sort(unique(toplot[!is.na(timestamp), .N, .(task, in_rows, solution, run)]$N)) # is.na(timestamp) filter outs exceptions
   toplot[,
@@ -96,9 +97,10 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
 
 plot_all = function(dt, what, subset_task) {
   stopifnot(is.data.table(dt), is.character(subset_task), length(subset_task)==1L, is.character(what), what%in%c("cpu","mem"), length(what)==1L)
-  pad = lattice.getOption("axis.padding")
+  if (dt[task==subset_task, .N]==0L) return(invisible())
+  pad = lattice::lattice.getOption("axis.padding")
   pad$numeric = 0 #0.07
-  lattice.options("axis.padding" = pad)
+  lattice::lattice.options("axis.padding" = pad)
   png(sprintf("%s-%s.png", subset_task, what), width=1080, height=720)
   p = if (what=="mem") lattice::barchart(
   mem_gb ~ run |
@@ -151,6 +153,13 @@ par(oldmar)
 ------
 
 ## High cardinality big to big join {.tabset .tabset-fade .tabset-pills}
+
+```{r o_join0, echo=FALSE, include=FALSE}
+plot_all(dt, "cpu", "join")
+plot_all(dt, "mem", "join")
+```
+
+Detailed summary of benchmark available for [cpu](join-cpu.png) and [memory](join-mem.png)  
 
 ### 1e7
 
@@ -233,30 +242,27 @@ Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](
 
 ### 1e7
 
+[Detailed 1e7 benchplot](grouping.1e7.png)
 ```{r o_groupby1, echo=FALSE}
 plot_op(1e7, "groupby", dt)
 benchplot(1e7)
 ```
 
-By query [_benchplot_ 1e7](grouping.1e7.png)
-
 ### 1e8
 
+[Detailed 1e8 benchplot](grouping.1e8.png)
 ```{r o_groupby2, echo=FALSE}
 plot_op(1e8, "groupby", dt)
 benchplot(1e8)
 ```
 
-By query [_benchplot_ 1e8](grouping.1e8.png)
-
 ### 1e9 {.active}
 
+[Detailed 1e9 benchplot (now measures are messed up, will work fine once pandas pass 1e9)](grouping.1e9.png)
 ```{r o_groupby3, echo=FALSE}
 plot_op(1e9, "groupby", dt)
-#benchplot(1e9)
+benchplot(1e9)
 ```
-
-<!-- By query [_benchplot_](grouping.1e9.png) -->
 
 ### 5e9
 
