@@ -51,7 +51,7 @@ benchplot = function(.nrow=Inf) {
 
   # h2oai/datatable#1082 grouping test2 currently (0,0) dummy frame
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
-  fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)]
+  fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)][1L]
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", c("ansnrow","ansncol") := fix_missing]
   # pandas 1e9 killed on 120GB machine due to not enough memory
   if (.nrow >= 1e9 && res[pkg=="pandas", .N] < 15L) {
