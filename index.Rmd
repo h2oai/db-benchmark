@@ -242,7 +242,8 @@ Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](
 
 ### 1e7
 
-[Detailed 1e7 benchplot](grouping.1e7.png)
+[Detailed 1e7 benchplot](grouping.1e7.png)  
+
 ```{r o_groupby1, echo=FALSE}
 plot_op(1e7, "groupby", dt)
 benchplot(1e7)
@@ -250,7 +251,8 @@ benchplot(1e7)
 
 ### 1e8
 
-[Detailed 1e8 benchplot](grouping.1e8.png)
+[Detailed 1e8 benchplot](grouping.1e8.png)  
+
 ```{r o_groupby2, echo=FALSE}
 plot_op(1e8, "groupby", dt)
 benchplot(1e8)
@@ -258,7 +260,8 @@ benchplot(1e8)
 
 ### 1e9 {.active}
 
-[Detailed 1e9 benchplot (now measures are messed up, will work fine once pandas pass 1e9)](grouping.1e9.png)
+[Detailed 1e9 benchplot (now measures are messed up, will work fine once pandas pass 1e9)](grouping.1e9.png)  
+
 ```{r o_groupby3, echo=FALSE}
 plot_op(1e9, "groupby", dt)
 benchplot(1e9)
