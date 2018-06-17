@@ -8,9 +8,9 @@ source("./dplyr/helpers-dplyr.R")
 src_x = Sys.getenv("SRC_X", NA_character_)
 src_y = Sys.getenv("SRC_Y", NA_character_)
 
-if (get.nrow(c(src_x,src_y)) > 2e9L) {
-  cat("# join with dplyr skipped due data volume cap for single machine set to total 2e9 rows")
-  quit("no", status=0) # datasets > 1e9 too big to try load on single machine
+if (get.nrow(c(src_x,src_y)) >= 2e9L) {
+  cat("# join with dplyr skipped due data volume cap for single machine set to total >= 2e9 rows")
+  quit("no", status=0) # join of two datasets 1e9 too big to run on 125GB machine
 }
 
 stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
