@@ -34,9 +34,11 @@ source("helpers.R") # for solution date from gh repos
 stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
-benchplot = function(.nrow=Inf) {
+benchplot = function(.nrow=Inf, res) {
   
-  res = fread("time.csv")[batch==max(batch)]
+  if (missing(res)) {
+    res = fread("time.csv")[batch==max(batch)]
+  }
   res = res[task=="groupby"][, task:=NULL]
   if (!is.finite(.nrow)) {
     .nrow = res[, max(in_rows)]

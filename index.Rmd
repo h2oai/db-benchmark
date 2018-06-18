@@ -248,7 +248,7 @@ Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](
 
 ```{r o_groupby1, echo=FALSE}
 plot_op(1e7, "groupby", dt)
-benchplot(1e7)
+benchplot(1e7, dt)
 ```
 
 ### 1e8
@@ -257,7 +257,7 @@ benchplot(1e7)
 
 ```{r o_groupby2, echo=FALSE}
 plot_op(1e8, "groupby", dt)
-benchplot(1e8)
+benchplot(1e8, dt)
 ```
 
 ### 1e9 {.active}
@@ -266,7 +266,7 @@ benchplot(1e8)
 
 ```{r o_groupby3, echo=FALSE}
 plot_op(1e9, "groupby", dt)
-benchplot(1e9)
+benchplot(1e9, dt)
 ```
 
 ### 5e9
