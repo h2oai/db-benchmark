@@ -23,6 +23,10 @@ solution = "pandas"
 fun = "merge"
 cache = "TRUE"
 
+if os.path.basename(src_x)=="X1e9_2c.csv":
+  print("# join with pandas skipped for 1e9 x 1e9 (20GB x 20GB) due to memory error on 125GB mem machine")
+  exit(0)
+
 print("loading datasets...")
 
 # with hd.open(src_x) as f:

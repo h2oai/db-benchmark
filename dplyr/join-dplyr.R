@@ -9,7 +9,7 @@ src_x = Sys.getenv("SRC_X", NA_character_)
 src_y = Sys.getenv("SRC_Y", NA_character_)
 
 if (get.nrow(c(src_x,src_y)) >= 2e9L) {
-  cat("# join with dplyr skipped due data volume cap for single machine set to total >= 2e9 rows")
+  cat("# join with dplyr skipped for 1e9 x 1e9 (20GB x 20GB) due to memory error on 125GB mem machine")
   quit("no", status=0) # join of two datasets 1e9 too big to run on 125GB machine
 }
 
