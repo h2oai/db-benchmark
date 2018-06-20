@@ -23,3 +23,8 @@ sort,X1e9_2c.csv,1e9,18.88,/datasets/mattd/X1e9_2c.csv,hdfs://mr-0xd6/datasets/m
 sort,X2e9_2c.csv,2e9,40,/datasets/mattd/X2e9_2c.csv,hdfs://mr-0xd6/datasets/mattd/X2e9_2c.csv,FALSE
 sort,X5e9_2c.csv,5e9,102.7,/datasets/mattd/X5e9_2c.csv,hdfs://mr-0xd6/datasets/mattd/X5e9_2c.csv,FALSE
 sort,X1e10_2c.csv,1e10,207.47,/datasets/mattd/X1e10_2c.csv,hdfs://mr-0xd6/datasets/mattd/X1e10_2c.csv,FALSE
+read,G1_1e6_1e2.csv,1e6,0.044,/datasets/mattd/G1_1e6_1e2.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e6_1e2.csv,TRUE
+read,G1_1e7_1e2.csv,1e7,0.46,/datasets/mattd/G1_1e7_1e2.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e7_1e2.csv,FALSE
+read,G1_1e8_1e2.csv,1e8,4.7,/datasets/mattd/G1_1e8_1e2.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e8_1e2.csv,FALSE
+read,G1_1e9_1e2.csv,1e9,48,/datasets/mattd/G1_1e9_1e2.csv,hdfs://mr-0xd6/datasets/mattd/G1_1e9_1e2.csv,FALSE
+read,G1_2e9_1e2.csv,2e9,96,/datasets/mattd/G1_2e9_1e2.csv,hdfs://mr-0xd6/datasets/mattd/G1_2e9_1e2.csv,FALSE

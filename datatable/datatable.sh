@@ -27,3 +27,12 @@ if [[ "$RUN_TASKS" =~ "sort" ]]; then
     ./datatable/sort-datatable.R
   done < ./loop-sort-data.env
 fi
+
+# read
+if [[ "$RUN_TASKS" =~ "read" ]]; then
+  while read line
+  do 
+    eval $line
+    ./datatable/read-datatable.R
+  done < ./loop-read-data.env
+fi

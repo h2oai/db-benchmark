@@ -12,9 +12,10 @@ iters_on_task_level = function(){
   dt = dt[active==TRUE # flag
           ][run_tasks, on="task", nomatch=0L # filter for ENV VAR RUN TASKS
             ]
-  if(file.exists(file.path("loop-join-data.env"))) file.remove(file.path("loop-join-data.env"))
-  if(file.exists(file.path("loop-groupby-data.env"))) file.remove(file.path("loop-groupby-data.env"))
-  if(file.exists(file.path("loop-sort-data.env"))) file.remove(file.path("loop-sort-data.env"))
+  sapply(run_tasks, function(task) {
+    fn = sprintf("loop-%s-data.env", task)
+    if (file.exists(fn)) file.remove(fn)
+  })
   dt[task=="join",
      .(iter=sprintf("export %s", paste(paste(c("SRC_X","SRC_Y","SRC_X_LOCAL","SRC_Y_LOCAL"), c(hdfs[1L], hdfs[2L], local[1L], local[2L]), sep="="), collapse=" "))),
      .(task, rows)
@@ -27,6 +28,10 @@ iters_on_task_level = function(){
      .(iter=sprintf("export %s", paste(paste(c("SRC_X","SRC_X_LOCAL"), c(hdfs[1L], local[1L]), sep="="), collapse=" "))),
      .(task, rows)
      ][, if(.N) writeLines(iter, con=file.path("loop-sort-data.env"), sep="\n"), .(task)]
+  dt[task=="read",
+     .(iter=sprintf("export %s", paste(paste(c("SRC_GRP","SRC_GRP_LOCAL"), c(hdfs[1L], local[1L]), sep="="), collapse=" "))),
+     .(task, rows)
+     ][, if(.N) writeLines(iter, con=file.path("loop-read-data.env"), sep="\n"), .(task)]
   invisible()
 }
 iters_on_task_level()

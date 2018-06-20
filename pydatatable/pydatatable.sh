@@ -27,3 +27,12 @@ if [[ "$RUN_TASKS" =~ "sort" ]]; then
     ./pydatatable/sort-pydatatable.py
   done < ./loop-sort-data.env
 fi
+
+# read
+if [[ "$RUN_TASKS" =~ "read" ]]; then
+  while read line
+  do 
+    eval $line
+    ./pydatatable/read-pydatatable.py
+  done < ./loop-read-data.env
+fi
