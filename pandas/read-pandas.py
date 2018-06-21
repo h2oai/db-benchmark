@@ -20,7 +20,7 @@ solution = "pandas"
 fun = "read_csv"
 cache = "TRUE"
 
-wc_lines = subprocess.run(['wc','-l','G1_1e6_1e2.csv'], stdout=subprocess.PIPE).stdout.decode('utf-8').split(" ", 1)[0]
+wc_lines = subprocess.run(['wc','-l',data_name], stdout=subprocess.PIPE).stdout.decode('utf-8').split(" ", 1)[0]
 in_rows = int(wc_lines)-1
 
 print("reading...")
