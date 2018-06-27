@@ -147,7 +147,7 @@ benchplot = function(.nrow=Inf, res) {
     if (is.na(ans2[3+i*NPKG, elapsed])) textBG(0, tt[8+i*space], "MemoryError", col=green, font=2)
     if (is.na(ans2[4+i*NPKG, elapsed])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
   }
-  cph = 0.30  # minimum on graph histories; what people will see if they check
+  cph = 0.5  # minimum on graph histories; what people will see if they check
   tn = res[nrow==.nrow, sum(elapsed, na.rm=TRUE), pkg]
   tn = setNames(tn$V1, tn$pkg)
   leg = unique(ans[order(pkg)], by="pkg"
