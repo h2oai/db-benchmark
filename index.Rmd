@@ -396,7 +396,8 @@ data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518
 
 ### Notes {.active}
 
-- pydatatable did not yet support grouping by multiple columns so one of the questions could not be answered with it [h2oai/datatable#1082](https://github.com/h2oai/datatable/issues/1082)
+- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
+- input data is randomly ordered, no pre-sort, no indexes, no key
 
 ### Test scripts
 
