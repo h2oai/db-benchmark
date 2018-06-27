@@ -22,7 +22,10 @@ cache = "TRUE"
 
 print("loading dataset...")
 
-x = dt.fread(data_name)
+if os.path.isfile(data_name):
+  x = dt.fread(data_name)
+else:
+  x = dt.fread(src_grp)
 
 print("grouping...")
 

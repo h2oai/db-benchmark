@@ -15,13 +15,9 @@ fun = "[.data.table"
 cache = TRUE
 
 cat("loading dataset...\n")
-src_grp = Sys.getenv("SRC_GRP")
+src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
-# if (get.nrow(c(DT)) > 1e9L) {
-#   cat("# groupby with data.table skipped due data volume cap for single machine set to total 1e9 rows")
-#   quit("no", status=0) # datasets > 1e9 too big to try load on single machine
-# }
-X = fread(if(file.exists(data_name)) data_name else sprintf("hadoop fs -cat %s", src_grp)) # csv can be provided in local dir for faster import
+X = fread(if (file.exists(data_name)) data_name else src_grp) # csv can be provided in local dir for faster import
 
 cat("grouping...\n")
 

@@ -6,7 +6,6 @@ import os
 import gc
 import timeit
 import pandas as pd
-# import pydoop.hdfs as hd
 
 exec(open("./helpers.py").read())
 
@@ -22,9 +21,10 @@ cache = "TRUE"
 
 print("loading dataset...")
 
-# with hd.open(src_grp) as f:
-#   x = pd.read_csv(f)
-x = pd.read_csv(data_name)
+if os.path.isfile(data_name):
+  x = pd.read_csv(data_name)
+else:
+  x = pd.read_csv(src_grp)
 
 print("grouping...")
 
