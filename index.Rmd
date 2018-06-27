@@ -107,6 +107,7 @@ plot_all = function(dt, what, subset_task) {
   pad$numeric = 0 #0.07
   lattice::lattice.options("axis.padding" = pad)
   png(sprintf("%s-%s.png", subset_task, what), width=1080, height=720)
+  dt = dt[task==subset_task] # subset here to drop empty levels
   p = if (what=="mem") lattice::barchart(
   mem_gb ~ run |
     factor(question, levels=unique(question)) +
