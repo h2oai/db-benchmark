@@ -104,13 +104,14 @@ file.ext = function(x)
          "impala"=, "presto"="sql",
          "spark"="scala")
 
-solution.date = function(solution, version, git, only.date=FALSE, use.cache=FALSE) {
+solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE) {
   stopifnot(is.character(solution))
   if (is.na(version) && is.na(git)) return(NA_character_)
   if (use.cache) cache <- if(exists(cache.obj<-".solution.date.cache", envir=.GlobalEnv)) get(cache.obj, envir=.GlobalEnv) else list()
   gh_repos = c("h2o"="h2oai/h2o-3",
                "impala"="cloudera/Impala",
                "data.table"="Rdatatable/data.table",
+               "dplyr"="tidyverse/dplyr",
                "pydatatable"="h2oai/datatable"
                #"dask"="dask/dask" # since next version: https://github.com/dask/dask/pull/1760/commits/a0fd57285cb980b1b297221cf2550cd0a4289f42
                )
@@ -135,6 +136,7 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=FALS
       #message("using git commit date from cache instead of github api")
       r <- cgit
     } else {
+      Sys.sleep(1) # avoid block because of often calls
       string = tryCatch(jsonlite::fromJSON(
         sprintf("https://api.github.com/repos/%s/git/commits/%s",
                 gh_repos[[solution]], git)
