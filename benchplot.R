@@ -55,8 +55,6 @@ benchplot = function(.nrow=Inf, res) {
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
   fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)][1L]
   res[pkg=="pydatatable" & task=="sum v1 by id1:id2", c("ansnrow","ansncol") := fix_missing]
-  impute_time = res[pkg!="pydatatable" & task=="sum v1 by id1:id2" & nrow==.nrow, .(elapsed=mean(elapsed)),, .(run)]
-  res[pkg=="pydatatable" & task=="sum v1 by id1:id2" & nrow==.nrow, "elapsed" := impute_time$elapsed]
   # pandas 1e9 killed on 120GB machine due to not enough memory
   if (.nrow >= 1e9 && res[pkg=="pandas", .N] < 15L) {
     fix_pandas = res[pkg=="data.table"][, elapsed:=NA_real_][, pkg:="pandas"][, gb:=NA_real_][, version:=NA_character_][,git:=NA_character_]

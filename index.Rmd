@@ -40,6 +40,9 @@ plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
   toplot = dt[in_rows==subset_in_rows & task==subset_task]
   if (!missing(subset_solution)) toplot = toplot[solution%in%subset_solution]
   if (!nrow(toplot)) return(invisible())
+  # https://github.com/h2oai/datatable/issues/1082
+  impute_time = toplot[solution!="pydatatable" & question=="sum v1 by id1:id2", .(time_sec=mean(time_sec)),, .(run)]
+  toplot[solution=="pydatatable" & question=="sum v1 by id1:id2", "time_sec" := impute_time$time_sec]
   do_exceptions = exists("exceptions") && is.data.table(exceptions) && nrow(exceptions)
   if (do_exceptions) {
     msg = exceptions[in_rows==subset_in_rows & task==subset_task]
@@ -262,7 +265,7 @@ benchplot(1e8, dt)
 
 ### 1e9 {.active}
 
-[Detailed 1e9 benchplot (now measures are messed up, will work fine once pandas pass 1e9)](grouping.1e9.png)  
+[Detailed 1e9 benchplot](grouping.1e9.png)  
 
 ```{r o_groupby3, echo=FALSE}
 plot_op(1e9, "groupby", dt)
