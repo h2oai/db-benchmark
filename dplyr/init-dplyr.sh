@@ -3,4 +3,4 @@ set -e
 
 # upgrade to latest devel
 echo 'upgrading dplyr...'
-Rscript -e 'devtools::install_github("tidyverse/dplyr", quiet=TRUE, method="curl")'
+Rscript -e 'devtools::install_github(c("tidyverse/dplyr","tidyverse/readr"), quiet=TRUE, method="curl")'
