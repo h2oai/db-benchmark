@@ -24,7 +24,7 @@ git clone http://github.com/h2oai/datatable
 git clone http://github.com/h2oai/db-benchmark
 
 virtualenv --python=python3.5 ~/py35
-Rscript -e 'install.packages(c("jsonlite","bit64","devtools"), repos="https://cloud.r-project.org")'
+Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), repos="https://cloud.r-project.org")'
 
 byobu
 source ~/py35/bin/activate
@@ -41,7 +41,7 @@ make install
 cd ~
 
 # install dplyr
-Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/tidyr","tidyverse/dplyr"))'
+Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
 
 # install data.table
 Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/data.table")'
@@ -50,11 +50,10 @@ Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/d
 cd db-benchmark
 
 # generate data for groupby
-#Rscript groupby-datagen.R 1e6 1e2
 Rscript groupby-datagen.R 1e7 1e2
 Rscript groupby-datagen.R 1e8 1e2
 Rscript groupby-datagen.R 1e9 1e2
-Rscript groupby-datagen.R 2e9 1e2
+#Rscript groupby-datagen.R 2e9 1e2 # https://github.com/Rdatatable/data.table/issues/2956
 
 # set only groupby task
 vim run.conf
