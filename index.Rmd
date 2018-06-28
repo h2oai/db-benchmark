@@ -332,7 +332,8 @@ plot_op(1e10, "read", dt)
 
 ### Notes {.active}
 
-- join results will be included after [h2oai/datatable#1080](https://github.com/h2oai/datatable/issues/1080)
+- currently there is only inner join on integer column
+- join is made on complex case data, high cardinality big to big join
 
 ### Test scripts
 
@@ -402,6 +403,7 @@ data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518
 
 - [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
 - input data is randomly ordered, no pre-sort, no indexes, no key
+- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 244GB memory machine to produce 1e9 rows grouping statistics
 
 ### Test scripts
 
@@ -432,7 +434,9 @@ data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791"
 
 ### Notes {.active}
 
-- `readr` (marked as `dplyr` solution) failed to detect column types properly, types were provided to function call giving speed advantage.  
+- `readr` (marked as `dplyr` solution) failed to detect column types properly, types were provided to function call giving speed advantage
+- `readr` (marked as `dplyr` solution) failed with 1e9 rows on 125GB memory machine due to lack of memory
+- R solutions has an overhead of populating _R's global string cache_ which is at the time of writing not thread safe so has to be done using single core
 
 ### Test scripts
 
