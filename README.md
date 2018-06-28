@@ -19,6 +19,10 @@ Reproduce:
 - edit `data.csv` to define data sizes to benchmark
 - start benchmark with `./run.sh`
 
+Example environment setup:
+- setting up r3-8xlarge: 244GB RAM, 32 cores: [Amazon EC2 for beginners](https://github.com/Rdatatable/data.table/wiki/Amazon-EC2-for-beginners)  
+- full reproduce script on clean Ubuntu 16.04: [repro.sh](https://github.com/h2oai/db-benchmark/blob/master/repro.sh)  
+
 ---
 
 Multi-node applications has been disabled, to re-enable them check [2ae9815](https://github.com/h2oai/db-benchmark/commit/2ae98156532641f57c092f7b9b74cf4a8d7e2ef8). Some of their scripts might require updates for recent changes.  
