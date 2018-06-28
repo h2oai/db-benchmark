@@ -2,9 +2,10 @@ Repository for reproducible benchmarking of database-like operations.
 Benchmark is mainly focused on portability and reproducibility, there was no *production tuning* made. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.  
 
 Tasks:
-  - [ ] join
+  - [x] join
   - [x] groupby
   - [x] sort
+  - [x] read
 
 Tools:
   - [x] data.table
