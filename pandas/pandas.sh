@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source ./pandas/py-pandas/bin/activate
+
 # join
 if [[ "$RUN_TASKS" =~ "join" ]]; then
   while read line
@@ -36,3 +38,4 @@ if [[ "$RUN_TASKS" =~ "read" ]]; then
     ./pandas/read-pandas.py
   done < ./loop-read-data.env
 fi
+
