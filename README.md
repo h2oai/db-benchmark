@@ -2,8 +2,8 @@ Repository for reproducible benchmarking of database-like operations.
 Benchmark is mainly focused on portability and reproducibility. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.  
 
 Tasks:
-  - [x] join
-  - [x] groupby
+  - [x] join (modin, pydatatable not yet implemented)
+  - [x] groupby (modin not yet implemented)
   - [x] sort
   - [x] read
 
