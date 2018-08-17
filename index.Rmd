@@ -534,8 +534,21 @@ We needed to use measure that will be portable across different software. `ps -o
 
 ------
 
-## Timings
+## About
+
+### Timings
 
 Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")` and stored in a single csv file. Unless stated otherwise, plots presented in this document are based on most recent benchmark timings. Those were collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
 
-To access all timings data you can use `fread("time.csv")` on [time.csv](https://h2oai.github.io/db-benchmark/time.csv). For most recent timings use `fread("time.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]`.
+To access all timings data download [time.csv](https://h2oai.github.io/db-benchmark/time.csv) and use:
+```r
+fread("time.csv")
+```
+For most recent timings use:
+```r
+fread("time.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]
+```
+
+### Report
+
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
