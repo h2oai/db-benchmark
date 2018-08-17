@@ -144,9 +144,14 @@ task_source = function(subset_task, DT) {
 Repository for reproducible benchmarking of database-like operations.  
 Benchmark is mainly focused on portability and reproducibility. I encourage readers to re-run benchmark on own machine, see [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) readme for details. Pull requests are welcome, any changes proposed should be portable.  
 
-Time includes the actual query time and a call to verify dimensions of an answer, `dim` in R or `.shape` in python, to ensure no lazy evaluation is taking place.  
+Time includes the actual query time and a call to verify dimensions of an answer, `dim()` in R or `.shape()` in python, to ensure no lazy evaluation is taking place.  
 Size of data mentioned in plots refer to on-disk stored csv file, or in case of multiple tables involved, the sum of csv files size.  
 
+### How to read charts
+
+#### Runs dot plots
+
+Main charts embedded directly in reports present timings of three runs (every command is run 3 times) for each task. Scenario of particular task is not presented in this plot, thus in case if a task has multiple scenarios their timings will be averaged. You can preview timings for different datasizes using tabs.  
 Following legend describe rank plots in next sections.  
 
 ```{r o_legend, echo=FALSE, fig.width=1.85, fig.height=1.2}
@@ -156,9 +161,65 @@ legend("center", legend=c("1st","2nd","3rd"), title="Each query runs 3 times", c
 par(oldmar)
 ```
 
+#### Summary lattice plots
+
+Under each task there are links to summarized statistics, one for timings and another one for memory usage. Those statistics are most detailed but least readable.  
+
+#### Benchplot
+
+Benchplot is a horizontal barchart for each task and scenario. It presents single datasize at a time and timings of first and second run. It also shows syntax needed to perform particular task and scenario. It is built from [Grouping benchmark](https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping) scripts. Links to benchplots are currently available only for `groupby` task and can be found under each datasize tab.
+
 ------
 
-## High cardinality big to big join {.tabset .tabset-fade .tabset-pills}
+## Groupby {.tabset .tabset-fade .tabset-pills}
+
+```{r o_groupby0, echo=FALSE, include=FALSE}
+plot_all(dt, "cpu", "groupby")
+plot_all(dt, "mem", "groupby")
+```
+
+Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
+
+### 1e7
+
+[Detailed 1e7 benchplot](grouping.1e7.png)  
+
+```{r o_groupby1, echo=FALSE}
+plot_op(1e7, "groupby", dt)
+benchplot(1e7, dt)
+```
+
+### 1e8
+
+[Detailed 1e8 benchplot](grouping.1e8.png)  
+
+```{r o_groupby2, echo=FALSE}
+plot_op(1e8, "groupby", dt)
+benchplot(1e8, dt)
+```
+
+### 1e9 {.active}
+
+[Detailed 1e9 benchplot](grouping.1e9.png)  
+
+```{r o_groupby3, echo=FALSE}
+plot_op(1e9, "groupby", dt)
+benchplot(1e9, dt)
+```
+
+### 5e9
+
+```{r o_groupby4, echo=FALSE, message=FALSE}
+plot_op(5e9, "groupby", dt)
+```
+
+### 1e10
+
+```{r o_groupby5, echo=FALSE, message=FALSE}
+plot_op(1e10, "groupby", dt)
+```
+
+## Join {.tabset .tabset-fade .tabset-pills}
 
 ```{r o_join0, echo=FALSE, include=FALSE}
 plot_all(dt, "cpu", "join")
@@ -237,54 +298,6 @@ plot_op(5e9, "sort", dt)
 plot_op(1e10, "sort", dt)
 ```
 
-## Groupby {.tabset .tabset-fade .tabset-pills}
-
-```{r o_groupby0, echo=FALSE, include=FALSE}
-plot_all(dt, "cpu", "groupby")
-plot_all(dt, "mem", "groupby")
-```
-
-Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
-
-### 1e7
-
-[Detailed 1e7 benchplot](grouping.1e7.png)  
-
-```{r o_groupby1, echo=FALSE}
-plot_op(1e7, "groupby", dt)
-benchplot(1e7, dt)
-```
-
-### 1e8
-
-[Detailed 1e8 benchplot](grouping.1e8.png)  
-
-```{r o_groupby2, echo=FALSE}
-plot_op(1e8, "groupby", dt)
-benchplot(1e8, dt)
-```
-
-### 1e9 {.active}
-
-[Detailed 1e9 benchplot](grouping.1e9.png)  
-
-```{r o_groupby3, echo=FALSE}
-plot_op(1e9, "groupby", dt)
-benchplot(1e9, dt)
-```
-
-### 5e9
-
-```{r o_groupby4, echo=FALSE, message=FALSE}
-plot_op(5e9, "groupby", dt)
-```
-
-### 1e10
-
-```{r o_groupby5, echo=FALSE, message=FALSE}
-plot_op(1e10, "groupby", dt)
-```
-
 ## Read {.tabset .tabset-fade .tabset-pills}
 
 ```{r o_ready0, echo=FALSE, include=FALSE}
@@ -327,6 +340,40 @@ plot_op(1e10, "read", dt)
 ------
 
 ## Benchmark description
+
+## Groupby description {.tabset .tabset-fade .tabset-pills}
+
+### Notes {.active}
+
+- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
+- input data is randomly ordered, no pre-sort, no indexes, no key
+- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 244GB memory machine to produce 1e9 rows grouping statistics
+
+### Test scripts
+
+```{r groupby_source, echo=FALSE, results='asis'}
+task_source("groupby", DT)
+```
+
+### Data
+
+data size: 
+
+```{r groupby_data_size, echo=FALSE,}
+metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
+```
+
+example input:
+
+```{r groupby_data_head, echo=FALSE}
+data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), id3 = c("id0000009560", "id0000005226", "id0000000821", "id0000007739"), id4 = c(180L, 683L, 240L, 511L), id5 = c(69L, 50L, 785L, 818L), id6 = c(5703L, 2003L, 2893L, 5755L), v1 = c(1L, 4L, 5L, 1L), v2 = c(1L, 1L, 2L, 3L), v3 = c(66.5912, 83.3882, 24.3, 24.8819))
+```
+
+example output for a `sum v1 by id1:id2` question:
+
+```{r groupby_ans_head, echo=FALSE}
+data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
+```
 
 ## Join description {.tabset .tabset-fade .tabset-pills}
 
@@ -397,39 +444,6 @@ data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518
 ```
 
 
-## Groupby description {.tabset .tabset-fade .tabset-pills}
-
-### Notes {.active}
-
-- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
-- input data is randomly ordered, no pre-sort, no indexes, no key
-- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 244GB memory machine to produce 1e9 rows grouping statistics
-
-### Test scripts
-
-```{r groupby_source, echo=FALSE, results='asis'}
-task_source("groupby", DT)
-```
-
-### Data
-
-data size: 
-
-```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-example input:
-
-```{r groupby_data_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), id3 = c("id0000009560", "id0000005226", "id0000000821", "id0000007739"), id4 = c(180L, 683L, 240L, 511L), id5 = c(69L, 50L, 785L, 818L), id6 = c(5703L, 2003L, 2893L, 5755L), v1 = c(1L, 4L, 5L, 1L), v2 = c(1L, 1L, 2L, 3L), v3 = c(66.5912, 83.3882, 24.3, 24.8819))
-```
-
-example output for a `sum v1 by id1:id2` question:
-
-```{r groupby_ans_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
-```
 ## Read description {.tabset .tabset-fade .tabset-pills}
 
 ### Notes {.active}
@@ -473,19 +487,20 @@ data.table(id1 = c("id046", "id041", "id036", "id067", "id047",
 
 ## Benchmark setup
 
-#### Hardware
+### Hardware
 
 20 cores and 125GB memory  
 `groupby` task on 32 cores and 244GB memory
 
-#### Software version
+### Software version
 
 - data.table - [latest dev](https://github.com/Rdatatable/data.table) - `r dt[solution=="data.table", solution.date(solution[.N], version[.N], git[.N])]`
 - dplyr - [latest dev](https://github.com/tidyverse/dplyr) - `r dt[solution=="dplyr", solution.date(solution[.N], version[.N], git[.N])]`
 - pandas - [recent stable](https://pypi.python.org/pypi/pandas) - `r dt[solution=="pandas", solution.date(solution[.N], version[.N], git[.N])]`
 - pydatatable - [latest dev](https://github.com/h2oai/datatable) - `r dt[solution=="pydatatable", solution.date(solution[.N], version[.N], git[.N])]`
+- modin - [recent stable](https://pypi.python.org/pypi/modin) - `r dt[solution=="modin", solution.date(solution[.N], version[.N], git[.N])]`
 
-#### Tuning
+### Tuning
 
 We placed the following in `~/.R/Makevars` before installing the packages:
 ```
@@ -495,10 +510,6 @@ CXXFLAGS=-O3 -mtune=native
 
 Otherwise, R by default compiles packages with `-g -O2`. The R core team know of some problems with `-O3` with some other CRAN packages in some circumstances so that choice of R's default is not an oversight. On the other hand we don't know which CRAN packages are affected and to what degree. So we used `-O3` for these benchmarks to isolate that concern, since we're not aware of any problem with `-O3`.  
 Python appears to use `-O3` by default.
-
-#### Notes
-
-- none so far
 
 ------
 
@@ -523,54 +534,8 @@ We needed to use measure that will be portable across different software. `ps -o
 
 ------
 
-## About
+## Timings
 
-### Timings
+Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")` and stored in a single csv file. Unless stated otherwise, plots presented in this document are based on most recent benchmark timings. Those were collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
 
-Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")`. Unless stated otherwise, plots presented in this document are based on most recent benchmark timings. Those were collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
-
-### Most recent timings
-
-These are timings from most recently run benchmark workflow. They are additionally filtered to keep only first `cache` scenario, when two present - related to impala and presto. To get `cache` granularity timings use _all available timings data_ below.  
-
-```{r recent_data, echo=FALSE}
-DT::datatable(dt, extensions = 'Buttons', options = list(
-  pageLength = 6, autoWidth = TRUE, lengthMenu = c(3, 6, 12),
-  dom = 'Bfrtip', buttons = c('csv','print')
-))
-```
-
-### All available timings data
-
-Entries provided in full timings dump may contain runs from shared environment, so is not really reliable. Thus report shows only last benchmark run timings, which has to be made on dedicated environment.  
-Filter to most recent timings using `data.table::fread("db-benchmark.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]`. To avoid _double counting_ caused by `cache=T|F` add chain with `.SD[1L]` / `.SD[.N]` and group without `cache` and `fun` fields.  
-
-```{r all_data, echo=FALSE}
-DT::datatable(DT, extensions = 'Buttons', options = list(
-  pageLength = 6, autoWidth = TRUE, lengthMenu = c(3, 6, 12),
-  dom = 'Bfrtip', buttons = c('csv','print')
-))
-```
-
-### Fields description
-
-- `batch`: integer timestamp of the workflow run for multiple solutions, tasks, datasets and volumes.  
-- `timestamp`: numeric value of system timestamp, seconds from 1970-01-01.
-- `task`: benchmark operation.  
-- `data`: csv filename, for join two filenames.  
-- `in_rows`: nrow of input dataset, if multiple then only first provided.  
-- `question`: query question, currently used for *group by* tests.  
-- `out_rows`: nrow of results from query.  
-- `out_cols`: ncol of results from query.  
-- `solution`: a tool used to solve the task.  
-- `version`: version of a tool used.  
-- `git`: git commit hash for a tool for precise development version tracking.  
-- `fun`: function or method used for a tool.  
-- `run`: each query is run 3 times.  
-- `time_sec`: timing of a query in seconds.  
-- `mem_gb`: memory used during processing.  
-- `cache`: see FAQ.  
-- `chk`: total sum for each measure in the query result, used for validation of results.  
-- `chk_time_sec`: time taken to calculate `chk` field, last resort force evaluation, not available when `cache=FALSE`.  
-- `comment`: field not used in the workflow, a placeholder for comments related to particular timing entry.  
-- `datetime`: value of `timestamp` field as `POSIXct` for human readable print.  
+To access all timings data you can use `fread("time.csv")` on [time.csv](https://h2oai.github.io/db-benchmark/time.csv). For most recent timings use `fread("time.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]`.
