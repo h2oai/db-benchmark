@@ -5,13 +5,14 @@ print("# sort-modin.py")
 import os
 import gc
 import timeit
+import modin as modin
 import modin.pandas as pd
 
 exec(open("./helpers.py").read())
 
 src_x = os.environ['SRC_X_LOCAL']
 
-ver = "" #pd.__version__
+ver = modin.__version__
 git = ""
 task = "sort"
 question = "by int KEY"
