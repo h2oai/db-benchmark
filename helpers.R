@@ -100,11 +100,11 @@ ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
 file.ext = function(x)
   switch(x,
          "data.table"=, "dplyr"=, "h2o"="R",
-         "pandas"=, "pydatatable"=, "dask"="py",
+         "pandas"=, "pydatatable"=, "dask", "modin"="py",
          "impala"=, "presto"="sql",
          "spark"="scala")
 
-solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE) {
+solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE, debug=FALSE) {
   stopifnot(is.character(solution))
   if (is.na(version) && is.na(git)) return(NA_character_)
   if (use.cache) cache <- if(exists(cache.obj<-".solution.date.cache", envir=.GlobalEnv)) get(cache.obj, envir=.GlobalEnv) else list()
@@ -129,22 +129,27 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
              "0.11.0" = "2016-08-18",
              "0.11.1" = "2016-10-07"),
     dplyr = c("0.5.0" = "2016-06-23",
-              "0.7.5" = "2018-05-19")
+              "0.7.5" = "2018-05-19"),
+    modin = c("0.1.1" = "2018-07-29")
   )
   if (!is.na(git)) {
     if (use.cache && !is.null(cgit<-cache[[solution]][[git]])) {
-      #message("using git commit date from cache instead of github api")
+      if (debug) message("using git commit date from cache instead of github api")
       r <- cgit
     } else {
+      if (debug) message("using git commit date from github api")
       Sys.sleep(1) # avoid block because of often calls
       string = tryCatch(jsonlite::fromJSON(
         sprintf("https://api.github.com/repos/%s/git/commits/%s",
                 gh_repos[[solution]], git)
-      )[["committer"]][["date"]], error=function(e) NA_character_) # error when hit github api limit
+      )[["committer"]][["date"]], error=function(e) {
+        if (debug) message("getting solution git commit date from github api failed")
+        NA_character_
+        }) # error when hit github api limit
       r = strptime(string, "%F")[1L]
       if (use.cache) {
         if (!is.na(r)) cache[[solution]][[git]] <- r
-        #message("writing git commit date to cache")
+        if (debug) message("writing git commit date to cache")
         assign(cache.obj, cache, envir=.GlobalEnv)
       }
     }
