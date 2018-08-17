@@ -23,22 +23,34 @@ echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 git clone http://github.com/h2oai/datatable
 git clone http://github.com/h2oai/db-benchmark
 
-virtualenv --python=python3.5 ~/py35
+cd db-benchmark
+cd pydatatable
+virtualenv py-pydatatable --python=/usr/bin/python3.6
+cd ../pandas
+virtualenv py-pandas --python=/usr/bin/python3.6
+cd ../modin
+virtualenv py-modin --python=/usr/bin/python3.6
+cd ..
+
 Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), repos="https://cloud.r-project.org")'
 
 byobu
-source ~/py35/bin/activate
+source ./pandas/py-pandas/bin/activate
 python -m pip install --upgrade psutil
-
-# install pandas
 python -m pip install --upgrade pandas
+deactivate
+
+source ./modin/py-modin/bin/activate
+python -m pip install --upgrade modin
+deactivate
 
 # install pydatatable
+source ./pydatatable/py-pydatatable/bin/activate
 export LLVM6=/opt/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04
 cd datatable
 make build
 make install
-cd ~
+deactivate
 
 # install dplyr
 Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
