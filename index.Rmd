@@ -1,14 +1,21 @@
 ---
-title: "db-benchmark"
+title: "single machine db-benchmark"
+subtitle: "for human consumption"
 output:
   html_document:
     dev: svg
+editor_options: 
+  chunk_output_type: console
 ---
+
+This page aims to benchmark various database-like tools, restricted to a single machine. We believe distributed solutions (i.e. multi-server) incur a cost which penalizes performance when run on a single machine, which we aim to highlight.  Tools that are in-memory only with no disk ability, we also aim to highlight.  Tools which are layers/interfaces to other solutions, we will measure the space and time cost.  And abilities/features of the various tools.  The machine we use to benchmark has 10TB of disk and 250GB RAM.  Our goal is to do as much as possible with this single server.
+
+The first task was rerunning the grouping benchmark designed and run by Matt Dowle in 2014. It includes 5 grouping tests on different column types including high and low cardinality. The original page and reproducible code is [here](grouping-benchmark).
 
 ```{r load_deps, include=FALSE}
 knitr::opts_chunk$set(cache=FALSE)
 # Rscript -e 'rmarkdown::render("index.Rmd")'
-stopifnot(sapply(c("DT","jsonlite","lattice"), requireNamespace))
+#stopifnot(sapply(c("DT","jsonlite","lattice"), requireNamespace))
 library(bit64)
 library(data.table)
 source("helpers.R")
@@ -139,207 +146,33 @@ task_source = function(subset_task, DT) {
 }
 ```
 
-## Benchmark overview
-
-Repository for reproducible benchmarking of database-like operations.  
-Benchmark is mainly focused on portability and reproducibility. I encourage readers to re-run benchmark on own machine, see [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) readme for details. Pull requests are welcome, any changes proposed should be portable.  
-
-Time includes the actual query time and a call to verify dimensions of an answer, `dim()` in R or `.shape()` in python, to ensure no lazy evaluation is taking place.  
-Size of data mentioned in plots refer to on-disk stored csv file, or in case of multiple tables involved, the sum of csv files size.  
-
-### How to read charts
-
-#### Runs dot plots
-
-Main charts embedded directly in reports present timings of three runs (every command is run 3 times) for each task. Scenario of particular task is not presented in this plot, thus in case if a task has multiple scenarios their timings will be averaged. You can preview timings for different datasizes using tabs.  
-Following legend describe rank plots in next sections.  
-
-```{r o_legend, echo=FALSE, fig.width=1.85, fig.height=1.2}
-oldmar = par(mar=rep(0,4))
-plot(0,0,type="n", axes=F, xlab="", ylab="")
-legend("center", legend=c("1st","2nd","3rd"), title="Each query runs 3 times", col=c("red","blue","green"), pch=19, pt.cex=c(3,2.5,2), bty="n", y.intersp = 1.25, inset = 0.1)
-par(oldmar)
-```
-
-#### Summary lattice plots
-
-Under each task there are links to summarized statistics, one for timings and another one for memory usage. Those statistics are most detailed but least readable.  
-
-#### Benchplot
-
-Benchplot is a horizontal barchart for each task and scenario. It presents single datasize at a time and timings of first and second run. It also shows syntax needed to perform particular task and scenario. It is built from [Grouping benchmark](https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping) scripts. Links to benchplots are currently available only for `groupby` task and can be found under each datasize tab.
-
-------
-
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
-```{r o_groupby0, echo=FALSE, include=FALSE}
+```{r o_groupby0, echo=FALSE, include=FALSE, eval=FALSE}
 plot_all(dt, "cpu", "groupby")
 plot_all(dt, "mem", "groupby")
+# Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
 ```
-
-Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
 
 ### 1e7
 
-[Detailed 1e7 benchplot](grouping.1e7.png)  
-
-```{r o_groupby1, echo=FALSE}
-plot_op(1e7, "groupby", dt)
-benchplot(1e7, dt)
-```
+![](grouping.1e7.png)
 
 ### 1e8
 
-[Detailed 1e8 benchplot](grouping.1e8.png)  
-
-```{r o_groupby2, echo=FALSE}
-plot_op(1e8, "groupby", dt)
-benchplot(1e8, dt)
-```
+![](grouping.1e8.png)
 
 ### 1e9 {.active}
 
-[Detailed 1e9 benchplot](grouping.1e9.png)  
+![](grouping.1e9.png)
 
-```{r o_groupby3, echo=FALSE}
-plot_op(1e9, "groupby", dt)
-benchplot(1e9, dt)
-```
+### 2e9
 
-### 5e9
 
-```{r o_groupby4, echo=FALSE, message=FALSE}
-plot_op(5e9, "groupby", dt)
-```
 
 ### 1e10
 
-```{r o_groupby5, echo=FALSE, message=FALSE}
-plot_op(1e10, "groupby", dt)
-```
 
-## Join {.tabset .tabset-fade .tabset-pills}
-
-```{r o_join0, echo=FALSE, include=FALSE}
-plot_all(dt, "cpu", "join")
-plot_all(dt, "mem", "join")
-```
-
-Detailed summary of benchmark available for [cpu](join-cpu.png) and [memory](join-mem.png)  
-
-### 1e7
-
-```{r o_join1, echo=FALSE}
-plot_op(1e7, "join", dt)
-```
-
-### 1e8
-
-```{r o_join2, echo=FALSE}
-plot_op(1e8, "join", dt)
-```
-
-### 1e9 {.active}
-
-```{r o_join3, echo=FALSE}
-plot_op(1e9, "join", dt)
-```
-
-### 5e9
-
-```{r o_join4, echo=FALSE, message=FALSE}
-plot_op(5e9, "join", dt)
-```
-
-### 1e10
-
-```{r o_join5, echo=FALSE, message=FALSE}
-plot_op(1e10, "join", dt)
-```
-
-
-## Sort {.tabset .tabset-fade .tabset-pills}
-
-```{r o_sort0, echo=FALSE, include=FALSE}
-plot_all(dt, "cpu", "sort")
-plot_all(dt, "mem", "sort")
-```
-
-Detailed summary of benchmark available for [cpu](sort-cpu.png) and [memory](sort-mem.png)  
-
-### 1e7
-
-```{r o_sort1, echo=FALSE}
-plot_op(1e7, "sort", dt)
-```
-
-### 1e8
-
-```{r o_sort2, echo=FALSE}
-plot_op(1e8, "sort", dt)
-```
-
-### 1e9 {.active}
-
-```{r o_sort3, echo=FALSE}
-plot_op(1e9, "sort", dt)
-```
-
-### 5e9
-
-```{r o_sort4, echo=FALSE, message=FALSE}
-plot_op(5e9, "sort", dt)
-```
-
-### 1e10
-
-```{r o_sort5, echo=FALSE, message=FALSE}
-plot_op(1e10, "sort", dt)
-```
-
-## Read {.tabset .tabset-fade .tabset-pills}
-
-```{r o_ready0, echo=FALSE, include=FALSE}
-plot_all(dt, "cpu", "read")
-plot_all(dt, "mem", "read")
-```
-
-Detailed summary of benchmark available for [cpu](read-cpu.png) and [memory](read-mem.png)  
-
-### 1e7
-
-```{r o_read1, echo=FALSE}
-plot_op(1e7, "read", dt)
-```
-
-### 1e8
-
-```{r o_read2, echo=FALSE}
-plot_op(1e8, "read", dt)
-```
-
-### 1e9 {.active}
-
-```{r o_read3, echo=FALSE}
-plot_op(1e9, "read", dt)
-```
-
-### 5e9
-
-```{r o_read4, echo=FALSE, message=FALSE}
-plot_op(5e9, "read", dt)
-```
-
-### 1e10
-
-```{r o_read5, echo=FALSE, message=FALSE}
-plot_op(1e10, "read", dt)
-```
-
-------
-
-## Benchmark description
 
 ## Groupby description {.tabset .tabset-fade .tabset-pills}
 
@@ -375,180 +208,18 @@ example output for a `sum v1 by id1:id2` question:
 data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
 ```
 
-## Join description {.tabset .tabset-fade .tabset-pills}
-
-### Notes {.active}
-
-- currently there is only inner join on integer column
-- join is made on complex case data, high cardinality big to big join
-
-### Test scripts
-
-```{r join_source, echo=FALSE, results='asis'}
-task_source("join", DT)
-```
-
-### Data
-
-data size: 
-
-```{r join_data_size, echo=FALSE,}
-metadata[task=="join", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-example input:
-
-```{r join_data_head, echo=FALSE}
-cat("X:")
-data.table(KEY = c(829673L, 5501052L, 9635168L, 7069052L), X2 = c(-92335L, -8190789L, -6631465L, -1289657L))
-cat("Y:")
-data.table(KEY = c(6101982L, 8723957L, 3409724L, 230673L), Y2 = c(3226855L, -8875053L, 5353612L, 3462315L))
-```
-
-example output:
-
-```{r join_ans_head, echo=FALSE}
-data.table(KEY = c(8723957L, 8931042L, 3429303L, 8707603L), X2 = c(9424892L, -7723560L, -3180523L, 2339699L), Y2 = c(-8875053L, -4909120L, -8444697L, 8536014L))
-```
-
-## Sort description {.tabset .tabset-fade .tabset-pills}
-
-### Notes {.active}
-
-- sort currently tests only soring by integer column
-
-### Test scripts
-
-```{r sort_source, echo=FALSE, results='asis'}
-task_source("sort", DT)
-```
-
-### Data
-
-data size: 
-
-```{r sort_data_size, echo=FALSE,}
-metadata[task=="sort", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-example input:
-
-```{r sort_data_head, echo=FALSE}
-data.table(KEY = c(829673L, 5501052L, 9635168L, 7069052L), X2 = c(-92335L, -8190789L, -6631465L, -1289657L))
-```
-
-example output:
-
-```{r sort_ans_head, echo=FALSE}
-data.table(KEY = c(0L, 3L, 6L, 7L), X2 = c(1624390L, -5284359L, 9592786L, 159518L))
-```
-
-
-## Read description {.tabset .tabset-fade .tabset-pills}
-
-### Notes {.active}
-
-- `readr` (marked as `dplyr` solution) failed to detect column types properly, types were provided to function call giving speed advantage
-- `readr` (marked as `dplyr` solution) failed with 1e9 rows on 125GB memory machine due to lack of memory
-- R solutions has an overhead of populating _R's global string cache_ which is at the time of writing not thread safe so has to be done using single core
-
-### Test scripts
-
-```{r read_source, echo=FALSE, results='asis'}
-task_source("read", DT)
-```
-
-### Data
-
-data size: 
-
-```{r read_data_size, echo=FALSE,}
-metadata[task=="read", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-```{r read_data_head, echo=FALSE, include=FALSE}
-# same as output so include=FALSE
-```
-
-example output for a `all rows` question:
-
-```{r read_ans_head, echo=FALSE}
-data.table(id1 = c("id046", "id041", "id036", "id067", "id047", 
-"id003"), id2 = c("id018", "id047", "id039", "id100", "id086", 
-"id002"), id3 = c("id0000006976", "id0000009477", "id0000003195", 
-"id0000001035", "id0000005874", "id0000001900"), id4 = c(97L, 
-89L, 23L, 44L, 79L, 10L), id5 = c(67L, 75L, 33L, 31L, 75L, 34L
-), id6 = c(7103L, 699L, 7180L, 3189L, 5530L, 4013L), v1 = c(3L, 
-4L, 1L, 3L, 5L, 3L), v2 = c(5L, 4L, 2L, 2L, 4L, 1L), v3 = c(2.4358, 
-15.3333, 82.1465, 32.4652, 2.4358, 73.0214))
-```
-
-------
-
-## Benchmark setup
-
-### Hardware
-
-20 cores and 125GB memory  
-`groupby` task on 32 cores and 244GB memory
-
-### Software version
-
-- data.table - [latest dev](https://github.com/Rdatatable/data.table) - `r dt[solution=="data.table", solution.date(solution[.N], version[.N], git[.N])]`
-- dplyr - [latest dev](https://github.com/tidyverse/dplyr) - `r dt[solution=="dplyr", solution.date(solution[.N], version[.N], git[.N])]`
-- pandas - [recent stable](https://pypi.python.org/pypi/pandas) - `r dt[solution=="pandas", solution.date(solution[.N], version[.N], git[.N])]`
-- pydatatable - [latest dev](https://github.com/h2oai/datatable) - `r dt[solution=="pydatatable", solution.date(solution[.N], version[.N], git[.N])]`
-- modin - [recent stable](https://pypi.python.org/pypi/modin) - `r dt[solution=="modin", solution.date(solution[.N], version[.N], git[.N])]`
-
-### Tuning
-
-We placed the following in `~/.R/Makevars` before installing the packages:
-```
-CFLAGS=-O3 -mtune=native
-CXXFLAGS=-O3 -mtune=native
-```
-
-Otherwise, R by default compiles packages with `-g -O2`. The R core team know of some problems with `-O3` with some other CRAN packages in some circumstances so that choice of R's default is not an oversight. On the other hand we don't know which CRAN packages are affected and to what degree. So we used `-O3` for these benchmarks to isolate that concern, since we're not aware of any problem with `-O3`.  
-Python appears to use `-O3` by default.
-
 ------
 
 ## FAQ
 
 > Why did we do our own tests rather then TPC?
 
-We wanted to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If h2o can do that, then h2o can build lower down the mountain. TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. We do plan to release TPC benchmark.  
-
-> What does `cache=TRUE|FALSE` cases means?
-
-As multinode tools has been currently removed from benchmark this field should always be `FALSE`.  
-Some of the tools doesn't have ability to keep query result in cache, which is useful if you use the tool for ETL purposes. Currently those tools are impala and presto and they will have extra timings entries, one for `cache=FALSE` and another for `cache=TRUE`. The latter one is basically `CREATE TABLE AS SELECT` which adds extra overhead, therefore timings used on reports are using first, faster `cache=FALSE` timing where possible, which is not always possible due to query optimizer. If you are going to use `cache==TRUE` scenario more in your workflow be sure to confirm your conclusions against complete timings data on `cache` granularity provided together with the document. Keep in mind that `cache=FALSE` will not guarantee that query results are fully materialized for impala and presto.  
-
-> Why populating data for join/sort test is not straightfoward?
-
-We use [PCG random number generator](http://www.pcg-random.org/), in the [tableGen.c](https://github.com/h2oai/db-benchmark/blob/master/tableGen.c) file you have the code you can use to produce the data. Rationale behind that decision can be found in [H2O@NYC presentation](https://youtu.be/5X7h1rZGVs0?t=750).  
+We wanted to present timings of atomic processes and communicate them in clear and readable way. TPC benchmarks can be found at [](). TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. They are not well readable, difficult to communicate. One of goals of our benchmark is to make it portable that reader can easily adjust them for own data and own infrastructure to measure performance. TPC benchmark due to its complexity could not be as portable. Another goal was to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If H2O.AI can do that, then H2O.AI can build lower down the mountain.
 
 > How was memory usage measured?
 
-We needed to use measure that will be portable across different software. `ps -o rss $pid` while not really precise is perfectly portable, thus it was used from R and python to capture RSS memory measure after each query run. Before each query there is call to garbage collector.  
+We needed to use measure that will be portable across different software. `ps -o rss $pid` while not really precise is perfectly portable, thus it was used from R and python to measure RSS memory use after each query run. Before each query there is call to garbage collector.  
 
 ------
-
-## About
-
-### Timings
-
-Benchmark timings are being collected over a period of `r paste(range(DT$datetime), collapse=" - ")` and stored in a single csv file. Unless stated otherwise, plots presented in this document are based on most recent benchmark timings. Those were collected over a period of `r paste(range(dt$datetime), collapse=" - ")`.  
-
-To access all timings data download [time.csv](https://h2oai.github.io/db-benchmark/time.csv) and use:
-```r
-fread("time.csv")
-```
-For most recent timings use:
-```r
-fread("time.csv")[order(timestamp), .SD[.N], by=.(task, data, in_rows, question, solution, fun, run, cache)]
-```
-
-### Report
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.

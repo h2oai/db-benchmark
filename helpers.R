@@ -100,7 +100,7 @@ ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
 file.ext = function(x)
   switch(x,
          "data.table"=, "dplyr"=, "h2o"="R",
-         "pandas"=, "pydatatable"=, "dask", "modin"="py",
+         "pandas"=, "pydatatable"=, "dask"=, "modin"="py",
          "impala"=, "presto"="sql",
          "spark"="scala")
 
