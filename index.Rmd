@@ -216,10 +216,6 @@ data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791"
 
 We wanted to present timings of atomic processes and communicate them in clear and readable way. TPC benchmarks can be found at [](). TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. They are not well readable, difficult to communicate. One of goals of our benchmark is to make it portable that reader can easily adjust them for own data and own infrastructure to measure performance. TPC benchmark due to its complexity could not be as portable. Another goal was to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If H2O.AI can do that, then H2O.AI can build lower down the mountain.
 
-> How was memory usage measured?
-
-We needed to use measure that will be portable across different software. `ps -o rss $pid` while not really precise is perfectly portable, thus it was used from R and python to measure RSS memory use after each query run. Before each query there is call to garbage collector.  
-
 ------
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
