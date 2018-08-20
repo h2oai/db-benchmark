@@ -10,7 +10,7 @@ editor_options:
 
 This page aims to benchmark various database-like tools, restricted to a single machine. We believe distributed solutions (i.e. multi-server) incur a cost which penalizes performance when run on a single machine, which we aim to highlight.  Tools that are in-memory only with no disk ability, we also aim to highlight.  Tools which are layers/interfaces to other solutions, we will measure the space and time cost.  And abilities/features of the various tools.  The machine we use to benchmark has 10TB of disk and 250GB RAM.  Our goal is to do as much as possible with this single server.
 
-The first task was rerunning the grouping benchmark designed and run by Matt Dowle in 2014. It includes 5 grouping tests on different column types including high and low cardinality. The original page and reproducible code is [here](grouping-benchmark).
+The first task was rerunning the grouping benchmark designed and run by Matt Dowle in 2014. It includes 5 grouping tests on different column types including high and low cardinality. The original page and reproducible code is [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping).
 
 ```{r load_deps, include=FALSE}
 knitr::opts_chunk$set(cache=FALSE)
@@ -214,7 +214,7 @@ data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791"
 
 > Why did we do our own tests rather then TPC?
 
-We wanted to present timings of atomic processes and communicate them in clear and readable way. TPC benchmarks can be found at [](). TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. They are not well readable, difficult to communicate. One of goals of our benchmark is to make it portable that reader can easily adjust them for own data and own infrastructure to measure performance. TPC benchmark due to its complexity could not be as portable. Another goal was to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If H2O.AI can do that, then H2O.AI can build lower down the mountain.
+We wanted to present timings of atomic processes and communicate them in clear and readable way. TPC benchmarks can be found at [www.tpc.org](http://www.tpc.org). TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. They are not well readable, difficult to communicate. One of goals of our benchmark is to make it portable that reader can easily adjust them for own data and own infrastructure to measure performance. TPC benchmark due to its complexity could not be as portable. Another goal was to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If H2O.AI can do that, then H2O.AI can build lower down the mountain.
 
 ------
 
