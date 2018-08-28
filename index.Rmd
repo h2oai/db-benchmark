@@ -166,21 +166,13 @@ plot_all(dt, "mem", "groupby")
 
 ![](grouping.1e9.png)
 
-### 2e9
-
-
-
-### 1e10
-
-
-
 ## Groupby description {.tabset .tabset-fade .tabset-pills}
 
 ### Notes {.active}
 
 - [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
 - input data is randomly ordered, no pre-sort, no indexes, no key
-- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 244GB memory machine to produce 1e9 rows grouping statistics
+- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 250GB memory machine to produce 1e9 rows grouping statistics
 
 ### Test scripts
 
@@ -193,7 +185,7 @@ task_source("groupby", DT)
 data size: 
 
 ```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
+metadata[task=="groupby" & rows <= 1e9, .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
 ```
 
 example input:
