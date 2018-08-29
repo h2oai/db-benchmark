@@ -25,9 +25,9 @@ source("benchplot.R")
 ```{r exceptions, include=FALSE}
 L64 = function(...) as.integer64(unlist(list(...)))
 exceptions = rbindlist(list(
-#  data.table(solution = "pandas", version="0.23.0", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
-    data.table(solution = "pandas", version="0.23.0", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
-  data.table(solution = "dplyr", version="0.7.5.9000", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "Cannot allocate memory"),
+  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
+    data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
+  data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "Cannot allocate memory"),
   data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = L64(1e7,1e8,1e9), data=c("X1e7_2c.csv-Y1e7_2c.csv","X1e8_2c.csv-Y1e8_2c.csv","X1e9_2c.csv-Y1e9_2c.csv"), comment = "not yet implemented")
 ))
 ```
