@@ -8,7 +8,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-This page aims to benchmark various database-like tools, restricted to a single machine. We believe distributed solutions (i.e. multi-server) incur a cost which penalizes performance when run on a single machine, which we aim to highlight.  Tools that are in-memory only with no disk ability, we also aim to highlight.  Tools which are layers/interfaces to other solutions, we will measure the space and time cost.  And abilities/features of the various tools.  The machine we use to benchmark has 10TB of disk and 250GB RAM.  Our goal is to do as much as possible with this single server.
+This page aims to benchmark various database-like tools, restricted to a single machine. We believe distributed solutions (i.e. multi-server) incur a cost which penalizes performance when run on a single machine, which we aim to highlight. Tools that are in-memory only with no disk ability, we also aim to highlight.  Tools which are layers/interfaces to other solutions, we will measure the space and time cost. And abilities/features of the various tools. The machine we use to benchmark has 125GB RAM. Our goal is to do as much as possible with this single server.
 
 The first task was rerunning the grouping benchmark designed and run by Matt Dowle in 2014. It includes 5 grouping tests on different column types including high and low cardinality. The original page and reproducible code is [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping).
 
@@ -170,9 +170,9 @@ plot_all(dt, "mem", "groupby")
 
 ### Notes {.active}
 
-- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots
-- input data is randomly ordered, no pre-sort, no indexes, no key
-- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, `groupby` benchmark was run on 250GB memory machine to produce 1e9 rows grouping statistics
+- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots.
+- input data is randomly ordered, no pre-sort, no indexes, no key.
+- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, timings on 1e9 can be measured when running 250GB memory machine.
 
 ### Test scripts
 
@@ -185,7 +185,7 @@ task_source("groupby", DT)
 data size: 
 
 ```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby" & rows <= 1e9, .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
+metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
 ```
 
 example input:
