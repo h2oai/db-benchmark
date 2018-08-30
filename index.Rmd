@@ -197,7 +197,7 @@ task_source("groupby", DT)
 data size: 
 
 ```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby", .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
+metadata[task=="groupby" & rows %in% c(1e7, 1e8, 1e9), .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
 ```
 
 example input:
