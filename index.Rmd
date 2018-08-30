@@ -158,7 +158,7 @@ plot_all(dt, "mem", "groupby")
 
 ```{r o_groupby1, echo=FALSE}
 #plot_op(1e7, "groupby", dt)
-benchplot(1e7, dt)
+benchplot(1e7)
 ```
 ![](grouping.1e7.png)
 
@@ -166,7 +166,7 @@ benchplot(1e7, dt)
 
 ```{r o_groupby2, echo=FALSE}
 #plot_op(1e8, "groupby", dt)
-benchplot(1e8, dt)
+benchplot(1e8)
 ```
 ![](grouping.1e8.png)
 
@@ -174,7 +174,7 @@ benchplot(1e8, dt)
 
 ```{r o_groupby3, echo=FALSE}
 #plot_op(1e9, "groupby", dt)
-benchplot(1e9, dt)
+benchplot(1e9)
 ```
 ![](grouping.1e9.png)
 
