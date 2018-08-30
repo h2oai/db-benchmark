@@ -156,14 +156,26 @@ plot_all(dt, "mem", "groupby")
 
 ### 1e7
 
+```{r o_groupby1, echo=FALSE}
+#plot_op(1e7, "groupby", dt)
+benchplot(1e7, dt)
+```
 ![](grouping.1e7.png)
 
 ### 1e8
 
+```{r o_groupby2, echo=FALSE}
+#plot_op(1e8, "groupby", dt)
+benchplot(1e8, dt)
+```
 ![](grouping.1e8.png)
 
 ### 1e9 {.active}
 
+```{r o_groupby3, echo=FALSE}
+#plot_op(1e9, "groupby", dt)
+benchplot(1e9, dt)
+```
 ![](grouping.1e9.png)
 
 ## Groupby description {.tabset .tabset-fade .tabset-pills}
