@@ -152,8 +152,8 @@ benchplot = function(.nrow=Inf, res) {
   tn = setNames(tn$V1, tn$pkg)
   leg = unique(ans[order(pkg)], by="pkg"
                )[, tN := tn[pkg] # no joining to not reorder
-                 ][, sprintf("%s %s %s  -  %s  -  Total: $%.02f for %s %s",
-                             pkg, version, if (!is.na(git)) paste0("(",substr(git,1,7),")")  else "",
+                 ][, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
+                             pkg, version,
                              solution.date(pkg, version, git, only.date=TRUE, use.cache=TRUE),
                              cph*tN/3600, round(tN/timescale,0), tolower(xlab)), by=pkg
                    ][, V1]
