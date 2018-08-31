@@ -1,34 +1,34 @@
 ---
-title: "single machine db-benchmark"
-subtitle: "for human consumption"
+title: "Single-node data aggregation"
 output:
   html_document:
     dev: svg
-editor_options: 
-  chunk_output_type: console
 ---
 
-This page aims to benchmark various database-like tools, restricted to a single machine. We believe distributed solutions (i.e. multi-server) incur a cost which penalizes performance when run on a single machine, which we aim to highlight. Tools that are in-memory only with no disk ability, we also aim to highlight.  Tools which are layers/interfaces to other solutions, we will measure the space and time cost. And abilities/features of the various tools. The machine we use to benchmark has 125GB RAM. Our goal is to do as much as possible with this single server.
+This page aims to benchmark various database-like tools popular in open-source data science: pandas, dplyr and data.table. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add Julia too and are looking for help to do so.
 
-The first task was rerunning the grouping benchmark designed and run by Matt Dowle in 2014. It includes 5 grouping tests on different column types including high and low cardinality. The original page and reproducible code is [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping).
+We limit the scope to what can be achieved on a single machine. Laptop size ram (8GB) and server size ram (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope as these packages start to begin to support that (notably pydatatable). Multi-node systems such as Spark running in single machine mode is in scope, too. We believe the multi-node ability of distributed systems incurs a cost that impacts performance when distribution isn't needed; one goal of this page is to measure that cost. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
+
+Unlike TPC benchmarks we report timings. Yes: actual timings in seconds/minutes intended for easy human consumption. We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
+
+Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by Matt Dowle (creator of `data.table`) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this benchmark can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark).  
+In case of doubts, questions, feedback, feel free to fill an issue in benchmark repository.
+Presently [Matt Dowle](https://github.com/mattdowle) and me, [Jan Gorecki](https://github.com/jangorecki), author of this benchmark, are working at [H2O.AI](https://www.h2o.ai) which funded development of this benchmark and infrastructure to run it.
 
 ```{r load_deps, include=FALSE}
-knitr::opts_chunk$set(cache=FALSE)
 # Rscript -e 'rmarkdown::render("index.Rmd")'
-#stopifnot(sapply(c("DT","jsonlite","lattice"), requireNamespace))
-library(bit64)
+knitr::opts_chunk$set(cache=FALSE)
 library(data.table)
 source("helpers.R")
 source("benchplot.R")
 ```
 
 ```{r exceptions, include=FALSE}
-L64 = function(...) as.integer64(unlist(list(...)))
 exceptions = rbindlist(list(
-  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = L64(1e9), data=c("G1_1e9_1e2.csv"), comment = "lack of memory"),
-    data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
-  data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = L64(1e9), data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "Cannot allocate memory"),
-  data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = L64(1e7,1e8,1e9), data=c("X1e7_2c.csv-Y1e7_2c.csv","X1e8_2c.csv-Y1e8_2c.csv","X1e9_2c.csv-Y1e9_2c.csv"), comment = "not yet implemented")
+  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = 1e9, data=c("G1_1e9_1e2.csv"), comment = "lack of memory to read csv")#,
+    #data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = 1e9, data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
+  #data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = 1e9, data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "Cannot allocate memory"),
+  #data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = c(1e7,1e8,1e9), data=c("X1e7_2c.csv-Y1e7_2c.csv","X1e8_2c.csv-Y1e8_2c.csv","X1e9_2c.csv-Y1e9_2c.csv"), comment = "not yet implemented")
 ))
 ```
 
@@ -36,189 +36,33 @@ exceptions = rbindlist(list(
 # all timings
 DT = read_timing("time.csv", col=NULL)
 # recent timings, single cache=FALSE scenario where available
-dt = last_timing(x=DT)
-dt = dt[in_rows %in% L64(1e7, 1e8, 1e9, 2e9, 5e9, 1e10)] # filter out 1e6, and eventually others
-metadata = fread("data.csv") # dictionary of data size
-```
-
-```{r def_funs, include=FALSE}
-plot_op = function(subset_in_rows, subset_task, dt, subset_solution) {
-  stopifnot(is.data.table(dt), is.numeric(subset_in_rows), length(subset_in_rows)==1L, is.character(subset_task), length(subset_task)==1L)
-  toplot = dt[in_rows==subset_in_rows & task==subset_task]
-  if (!missing(subset_solution)) toplot = toplot[solution%in%subset_solution]
-  if (!nrow(toplot)) return(invisible())
-  # https://github.com/h2oai/datatable/issues/1082
-  impute_time = toplot[solution!="pydatatable" & question=="sum v1 by id1:id2", .(time_sec=mean(time_sec)),, .(run)]
-  toplot[solution=="pydatatable" & question=="sum v1 by id1:id2", "time_sec" := impute_time$time_sec]
-  do_exceptions = exists("exceptions") && is.data.table(exceptions) && nrow(exceptions)
-  if (do_exceptions) {
-    msg = exceptions[in_rows==subset_in_rows & task==subset_task]
-    if (!missing(subset_solution)) msg = msg[solution%in%subset_solution]
-    common = toplot[msg, nomatch=0L, on=c("task","data","in_rows","solution")]
-    if (nrow(common)) {
-      # this message will be printed to console output while rendering, not to the document, after upgrade version exceptions should be re-confirmed and updated/removed if needed
-      common[, message(sprintf("Timings for '%s' has been filtered out due to exception defined: %s", paste(unique(solution), collapse=", "), paste(unique(i.comment), collapse=", ")))]
-      toplot = toplot[!msg, on=c("task","data","in_rows","solution")]
-    }
-    toplot = rbindlist(list(toplot, msg), use.names=TRUE, fill=TRUE)
-  }
-  # report averaging, see description below, it is reported in plot main title, useful to track unexpected averaging, or when `DT` (all timings) passed instead of `dt` (last timings)
-  n_obs = sort(unique(toplot[!is.na(timestamp), .N, .(task, in_rows, solution, run)]$N)) # is.na(timestamp) filter outs exceptions
-  toplot[,
-         .(time_sec=mean(time_sec)), # average over question and datasets (not yet used) and cache (only if all timings provided: `DT`, not `dt`)
-         .(task, in_rows, solution, version, run, exception=comment)
-         ][, time_min:=time_sec/60
-           ] -> toplot
-  stopifnot(toplot[is.na(exception), uniqueN(run), .(solution)]$V1==3L) # incomplete runs makes the plot invalid
-  toplot[!is.na(exception) & is.na(run), run := 1L] # fill exceptions with run=1
-  # use secs/min dynamically
-  if (max(toplot$time_sec, na.rm=TRUE) <= 3*60) {
-    toplot[, time := time_sec]
-    time_unit = "Seconds"
-  } else {
-    toplot[, time := time_min]
-    time_unit = "Minutes"
-  }
-  toplot[, `:=`(solution = paste(solution, substr(version, 1, 8)))][, version:=NULL]
-  toplot[run==1, ord := rank(time)][, ord := ord[1L], .(task, in_rows, solution)] # recycle order for exceptions
-  par(mar=c(2.5,8,4,2)+0.1)
-  xrn = range(c(0,toplot$time), na.rm=TRUE)
-  nsol = uniqueN(toplot$solution)
-  toplot[run==1, plot(time,ord,pch=19,cex=3,ylim=c(0,.N),xlim=xrn,col="red",axes=FALSE,ann=FALSE)]
-  toplot[run==1, mtext(exception, side=4, at=seq_along(solution), font=1.25, adj=1, las=1, cex=1.25)]
-  toplot[run==2, points(time,ord,pch=19,cex=2.5,col="blue")]
-  toplot[run==3, points(time,ord,pch=19,cex=2,col="green")]
-  axis(1, cex.axis=1.5, font=2, padj=0.5, line=-1)
-  toplot[run==1][order(ord), mtext(solution, side=2, at=seq_along(solution), font=1.25, las=1, cex=1.25)]
-  mtext(paste0(time_unit, "  "), side=2, 
-        at=if (nsol==8) -0.65 else if (nsol==5) -0.4625 else if (nsol==4) -0.325 else -0.5, # dynamic based on number of solutions, tested on 8 and 5
-        las=1, cex=1.5, font=2)
-  gb = metadata[task==subset_task & rows==subset_in_rows, sum(gb)]
-  if (length(gb)==0 || is.na(gb)) {
-    gb = "Unknown GB"
-  } else if (length(gb)==1L) {
-    if (gb > 1) gb = round(gb, 0)
-    gb = paste0(gb, "GB")
-  } else {
-    stop("length of 'gb' from metadata > 1, which one to use? investigate")
-  }
-  title(main = sprintf("%s %s%s", gb, subset_task,
-                       if (identical(n_obs, 1L)) "" else paste0(" (mean over ",paste(n_obs, collapse=",")," queries)")))
-  invisible()
-}
-
-plot_all = function(dt, what, subset_task) {
-  stopifnot(is.data.table(dt), is.character(subset_task), length(subset_task)==1L, is.character(what), what%in%c("cpu","mem"), length(what)==1L)
-  if (dt[task==subset_task, .N]==0L) return(invisible())
-  pad = lattice::lattice.getOption("axis.padding")
-  pad$numeric = 0 #0.07
-  lattice::lattice.options("axis.padding" = pad)
-  png(sprintf("%s-%s.png", subset_task, what), width=1080, height=720)
-  dt = dt[task==subset_task] # subset here to drop empty levels
-  p = if (what=="mem") lattice::barchart(
-  mem_gb ~ run |
-    factor(question, levels=unique(question)) +
-    factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-  data = dt, group = paste(solution, version), ylim=c(0, NA),
-  horizontal=FALSE, subset = task==subset_task, auto.key=TRUE, scales=list(relation="free"),
-  main = paste(subset_task, "RSS memory usage - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "GB"
-) else if (what=="cpu") lattice::barchart(
-    time_sec ~ run |
-      factor(question, levels=unique(question)) +
-      factor(in_rows, levels=lvls<-rev(as.character(unique(in_rows))),
-           labels=sapply(seq_along(lvls), function(i) pretty_sci(lvls[i]))),
-    data = dt, groups = paste(solution, version), ylim=c(0, NA),
-    horizontal=FALSE, subset = task==subset_task, auto.key=TRUE, scales=list(relation="free"),
-    main = paste(subset_task, "time elapsed - as of", paste(format(as.POSIXct(dt[, unique(range(batch))], origin="1970-01-01"), "%Y-%m-%d"), collapse="~")), xlab = "run", ylab = "seconds"
-  )
-  print(p)
-  dev.off()
-}
-
-task_source = function(subset_task, DT) {
-  stopifnot(length(subset_task)==1L)
-  cat(sapply(DT[task==subset_task, unique(solution)], function(x) {
-    # remove dots from solution name
-    fp = file.path("https://github.com/h2oai/db-benchmark/blob/master", xx<-gsub(".", "", x, fixed=TRUE), sprintf("%s-%s.%s", subset_task, xx, file.ext(x)))
-    sprintf("- [%s](%s)", basename(fp), fp)
-  }), sep="  \n")
-}
+#dt = last_timing(x=DT)
+dt = DT[batch==max(batch)] # take 
+dt = dt[in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
-```{r o_groupby0, echo=FALSE, include=FALSE, eval=FALSE}
-plot_all(dt, "cpu", "groupby")
-plot_all(dt, "mem", "groupby")
-# Detailed summary of benchmark available for [cpu](groupby-cpu.png) and [memory](groupby-mem.png)  
-```
-
-### 1e7
+### 0.5GB
 
 ```{r o_groupby1, echo=FALSE}
-#plot_op(1e7, "groupby", dt)
-benchplot(1e7)
+benchplot(1e7, dt)
 ```
 ![](grouping.1e7.png)
 
-### 1e8
+### 5GB
 
 ```{r o_groupby2, echo=FALSE}
-#plot_op(1e8, "groupby", dt)
-benchplot(1e8)
+benchplot(1e8, dt)
 ```
 ![](grouping.1e8.png)
 
-### 1e9 {.active}
+### 50GB {.active}
 
 ```{r o_groupby3, echo=FALSE}
-#plot_op(1e9, "groupby", dt)
-benchplot(1e9)
+benchplot(1e9, dt)
 ```
 ![](grouping.1e9.png)
-
-## Groupby description {.tabset .tabset-fade .tabset-pills}
-
-### Notes {.active}
-
-- [`pydatatable` does not yet support grouping by multiple columns](https://github.com/h2oai/datatable/issues/1082) so one of the questions could not be answered, timing for this question has been imputed as `mean` by `run` from other solutions to reduce impact on the average when doing plots.
-- input data is randomly ordered, no pre-sort, no indexes, no key.
-- `pandas` was failing with 1e9 rows on 125GB memory machine due to lack of memory, timings on 1e9 can be measured when running 250GB memory machine.
-
-### Test scripts
-
-```{r groupby_source, echo=FALSE, results='asis'}
-task_source("groupby", DT)
-```
-
-### Data
-
-data size: 
-
-```{r groupby_data_size, echo=FALSE,}
-metadata[task=="groupby" & rows %in% c(1e7, 1e8, 1e9), .N, .(rows, gb)][, .(`Rows`=rows, GB=gb)]
-```
-
-example input:
-
-```{r groupby_data_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), id3 = c("id0000009560", "id0000005226", "id0000000821", "id0000007739"), id4 = c(180L, 683L, 240L, 511L), id5 = c(69L, 50L, 785L, 818L), id6 = c(5703L, 2003L, 2893L, 5755L), v1 = c(1L, 4L, 5L, 1L), v2 = c(1L, 1L, 2L, 3L), v3 = c(66.5912, 83.3882, 24.3, 24.8819))
-```
-
-example output for a `sum v1 by id1:id2` question:
-
-```{r groupby_ans_head, echo=FALSE}
-data.table(id1 = c("id266", "id373", "id573", "id909"), id2 = c("id410", "id791", "id605", "id022"), v1 = c(26L, 47L, 31L, 32L))
-```
-
-------
-
-## FAQ
-
-> Why did we do our own tests rather then TPC?
-
-We wanted to present timings of atomic processes and communicate them in clear and readable way. TPC benchmarks can be found at [www.tpc.org](http://www.tpc.org). TPC are specialized tests which, depending on the TPC type, meant to cover scalbility for various use cases, not precisely the extreme cases from the technical point of view. They are not well readable, difficult to communicate. One of goals of our benchmark is to make it portable that reader can easily adjust them for own data and own infrastructure to measure performance. TPC benchmark due to its complexity could not be as portable. Another goal was to measure scale factor both for data volume and data complexity. We can say we built on the peak of the hardest mountain first. If H2O.AI can do that, then H2O.AI can build lower down the mountain.
 
 ------
 
