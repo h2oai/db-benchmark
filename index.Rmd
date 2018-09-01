@@ -1,5 +1,5 @@
 ---
-title: "Single-node data aggregation"
+title: "Single-node data aggregation benchmark"
 output:
   html_document:
     dev: svg
@@ -63,6 +63,8 @@ benchplot(1e8, dt)
 benchplot(1e9, dt)
 ```
 ![](grouping.1e9.png)
+
+##
 
 ------
 
