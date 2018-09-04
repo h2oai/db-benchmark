@@ -32,6 +32,9 @@ $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 # modin
 ./modin/modin.sh
 
+# spark
+./spark/spark.sh
+
 # publish report for all tasks
 Rscript -e 'rmarkdown::render("index.Rmd")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 

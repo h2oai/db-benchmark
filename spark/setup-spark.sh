@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# install java, setup JAVA_HOME
+# install java8, setup JAVA_HOME
 
 cd spark
 virtualenv py-spark --python=/usr/bin/python3.6
