@@ -22,7 +22,11 @@ cache = "TRUE"
 
 print("loading dataset...")
 
+from pyspark.conf import SparkConf
 spark = SparkSession.builder.appName("groupby-spark").getOrCreate()
+conf = spark.sparkContext._conf.setAll([('spark.executor.memory', '20g'), ('spark.app.name', 'groupby-spark'), ('spark.executor.cores', '4'), ('spark.cores.max', '20'), ('spark.driver.memory','20g')])
+spark.sparkContext.stop()
+spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
 if os.path.isfile(data_name):
   x = spark.read.csv(data_name, header=True, inferSchema='true').cache()
