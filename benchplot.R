@@ -48,6 +48,8 @@ benchplot = function(.nrow=Inf, res) {
     .nrow = res[, max(in_rows)]
   }
   
+  res = res[solution%in%c("data.table","dplyr","pandas","pydatatable")]
+  
   res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
   res[, test := setNames(1:5, unique(res$question))[question]]
   setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
