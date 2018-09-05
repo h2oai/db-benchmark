@@ -2,8 +2,8 @@ Repository for reproducible benchmarking of database-like operations.
 Benchmark is mainly focused on portability and reproducibility. Initial benchmark setup is meant to compare scalability both in data volume and data complexity.  
 
 Tasks:
-  - [x] join (modin, pydatatable not yet implemented)
-  - [x] groupby (modin not yet implemented)
+  - [x] join
+  - [x] groupby
   - [x] sort
   - [x] read
 
@@ -12,7 +12,8 @@ Tools:
   - [x] pandas
   - [x] dplyr
   - [x] pydatatable
-  - [ ] modin (Pandas on Ray)
+  - [x] modin (only sort)
+  - [x] spark (only groupby)
 
 Reproduce:  
 - edit `run.conf` to define tasks to benchmark
