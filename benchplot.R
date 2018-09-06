@@ -2,78 +2,99 @@
 ## https://github.com/h2oai/db-benchmark/commit/fce1b8c9177afb49471fcf483a438f619f1a992b
 ## Original grouping benchmark can be found in: https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping
 
-tests = "
-# GROUPING
-DT[, .(v1=sum(v1)), keyby=id1]
-DF %>% group_by(id1) %>% summarise(sum(v1))
-DF.groupby(['id1']).agg({'v1':'sum'})
-DT[:, {'v1': sum(f.v1)}, f.id1]
+code = list(
+  "sum v1 by id1" = c(
+    "data.table"="DT[, .(v1=sum(v1)), keyby=id1]",
+    "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
+    "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
+    "pydatatable"="DT[:, {'v1': sum(f.v1)}, f.id1]",
+    "spark"="spark.sql('select sum(v1) as v1 from x group by id1')"
+    ),
+  "sum v1 by id1:id2" = c(
+    "data.table"="DT[, .(v1=sum(v1)), keyby=.(id1, id2)]",
+    "dplyr"="DF %>% group_by(id1,id2) %>% summarise(sum(v1))",
+    "pandas"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
+    "pydatatable"="DT[:, {'v1': sum(f.v1)}, [f.id1, f.id2]]",
+    "spark"="spark.sql('select sum(v1) as v1 from x group by id1, id2')"
+    ),
+  "sum v1 mean v3 by id3" = c(
+    "data.table"="DT[, .(v1=sum(v1), v3=mean(v3)), keyby=id3]",
+    "dplyr"="DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))",
+    "pandas"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
+    "pydatatable"="DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, f.id3]",
+    "spark"="spark.sql('select sum(v1) as v1, mean(v3) as v3 from x group by id3')"
+    ),
+  "mean v1:v3 by id4" = c(
+    "data.table"="DT[, lapply(.SD, mean), keyby=id4, .SDcols=v1:v3]",
+    "dplyr"="DF %>% group_by(id4) %>% summarise_each(funs(mean), vars=7:9)",
+    "pandas"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
+    "pydatatable"="DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, f.id4]",
+    "spark"="spark.sql('select mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')"
+    ),
+  "sum v1:v3 by id6" = c(
+    "data.table"="DT[, lapply(.SD, sum), keyby=id6, .SDcols=v1:v3]",
+    "dplyr"="DF %>% group_by(id6) %>% summarise_each(funs(sum), vars=7:9)",
+    "pandas"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
+    "pydatatable"="DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, f.id6]",
+    "spark"="spark.sql('select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')"
+    )
+)
 
-DT[, .(v1=sum(v1)), keyby=.(id1, id2)]
-DF %>% group_by(id1,id2) %>% summarise(sum(v1))
-DF.groupby(['id1','id2']).agg({'v1':'sum'})
-DT[:, {'v1': sum(f.v1)}, [f.id1, f.id2]] 
-
-DT[, .(v1=sum(v1), v3=mean(v3)), keyby=id3]
-DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))
-DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})
-DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, f.id3]
-
-DT[, lapply(.SD, mean), keyby=id4, .SDcols=v1:v3]
-DF %>% group_by(id4) %>% summarise_each(funs(mean), vars=7:9)
-DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, f.id4]
-
-DT[, lapply(.SD, sum), keyby=id6, .SDcols=v1:v3]
-DF %>% group_by(id6) %>% summarise_each(funs(sum), vars=7:9)
-DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, f.id6]
-"
-
-source("helpers.R") # for solution date from gh repos
+source("helpers.R") # for solution date based on git sha from github repositories, if no git revision available then hardcoded dictionary
 stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used for lookup date based on git
 library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
-benchplot = function(.nrow=Inf, res) {
-  
-  if (missing(res)) {
-    res = fread("time.csv")[batch==max(batch)]
-  }
-  
-  res = res[task=="groupby"][, task:=NULL]
-  if (uniqueN(res$batch)!=1) {
-    stop("All timings to be presented has to be produced from same benchmark batch")
-  }
-  if (!is.finite(.nrow)) {
-    .nrow = res[, max(in_rows)]
-  }
-  
-  res = res[solution%in%c("data.table","dplyr","pandas","pydatatable")]
-  
-  res = res[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
-  res[, test := setNames(1:5, unique(res$question))[question]]
-  setnames(res, c("time_sec","question","solution","in_rows","out_rows","out_cols"), c("elapsed","task","pkg","nrow","ansnrow","ansncol"))
-  gb = fread("data.csv")[rows==.nrow & task=="groupby", gb[1L]] # [1L] will take k=1e2
-  stopifnot(length(gb)==1L)
-  res[, gb:=gb]
-  res[git=="", git:=NA_character_]
 
+benchplot = function(.nrow=Inf, timings, code) {
+  # dev only
+  #timings=fread("time.csv")[!is.na(batch)][batch==max(batch)]
+  #.nrow=1e7
+  
+  if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
+  if (uniqueN(timings$batch)!=1) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
+  task = unique(timings$task)
+  if (length(task)!=1L) stop("there should be only single task to present on benchplot while data contains multiple, filter data before passing to benchplot")
+  timings[, task:=NULL]
+  if (!is.finite(.nrow)) .nrow = timings[, max(in_rows)]
+  
+  timings = timings[in_rows==.nrow]
+  
+  solutions = unique(timings$solution)
+  nsolutions = length(solutions)
+  questions = unique(timings$question)
+  nquestions = length(questions)
+  runs = unique(timings$run)
+  nruns = length(runs)
+  data = unique(timings$data)
+  ndata = length(data)
+  if (ndata!=1L) stop("only single data supported in benchplot")
+  
+  gb = NA_real_
+  if (length(intersect(list.files(pattern="\\.csv$"), data))) {
+    gb = file.info(data)$size/1024^3
+  }
+  
+  # keep only required columns
+  timings = timings[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
+  timings[git=="", git:=NA_character_]
+  # add question order
+  timings[as.data.table(list(question=questions))[, I:=.I][], nquestion := i.I, on="question"][]
+  
   if (exceptions<-TRUE) {
-    # h2oai/datatable#1082 grouping test2 currently (0,0) dummy frame
-    res[pkg=="pydatatable" & task=="sum v1 by id1:id2", elapsed:=NA_real_]
-    fix_missing = res[pkg=="data.table" & task=="sum v1 by id1:id2", .(ansnrow, ansncol)][1L]
-    res[pkg=="pydatatable" & task=="sum v1 by id1:id2", c("ansnrow","ansncol") := fix_missing]
+    # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
+    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
+    fix_missing = timings[solution=="data.table" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
+    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", c("out_rows","out_cols") := fix_missing]
     
-    # pandas 1e9 killed on 120GB machine due to not enough memory
-    if (res[pkg=="pandas" & nrow==1e9, uniqueN(test)*uniqueN(run)] < 15) { # 5 scenario, 3 runs
-      pandasi = res[pkg=="pandas" & nrow==1e9, which=TRUE]
-      fix_pandas = res[pkg=="data.table" & nrow==1e9
-                       ][, elapsed:=NA_real_
-                         ][, pkg:="pandas"
-                           ][, gb:=NA_real_
-                             ][, version:=NA_character_
-                               ][, git:=NA_character_]
-      res = rbindlist(list(res[!pandasi], fix_pandas))[order(pkg)]
+    # pandas 1e9 killed on 125GB machine due to not enough memory
+    if (timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
+      fix_pandas = timings[solution=="data.table" & in_rows==1e9
+                       ][, time_sec:=NA_real_
+                         ][, solution:="pandas"
+                           ][, version:=NA_character_
+                             ][, git:=NA_character_]
+      timings = rbindlist(list(timings[!pandasi], fix_pandas))[order(solution)]
     }
   }
 
@@ -81,16 +102,12 @@ benchplot = function(.nrow=Inf, res) {
   if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1000)
   
-  par(mar=c(1.1,1.1,6.1,2.1)) # shift to the left
+  par(mar=c(0.6,1.1,6.1,2.1)) # shift to the left
   
-  ans = res[nrow==.nrow & run==1][order(test,pkg,decreasing=TRUE)]
+  ans = timings[run==1L][order(nquestion, solution, decreasing=TRUE)]
   
-  NPKG = 4L # data.table, dplyr, pandas, pydatatable
-  pad = as.vector(sapply(0:4, function(x) c( as.vector(rbind(x*NPKG + 1:NPKG, NA)), NA, NA)))
+  pad = as.vector(sapply(0:4, function(x) c(as.vector(rbind(x*nsolutions + 1:nsolutions, NA)), NA, NA)))
 
-  code = unlist(strsplit(tests, split="\n"))[-(1:2)]
-  code = code[code!=""]
-  
   # horiz=TRUE does it first bar from the bottom
   comma = function(x) format(as.integer(signif(x,4)),big.mark=",")
   lr = "#FF7777"
@@ -98,90 +115,106 @@ benchplot = function(.nrow=Inf, res) {
   lg = "#77FF77"; green = "green4"
   pydtcol = "orange2"
   lpydtcol = "orange"
-  m = ans[,max(elapsed,na.rm=TRUE)]
-  if (m>2*60*60) {
-    timescale=3600; xlab="Hours"
-  } else if (m>120) {
-    timescale=60; xlab="Minutes"
+  sparkcol = "cyan"
+  lsparkcol = "lightblue"
+  colors = c(sparkcol, pydtcol, green, "red", "blue", "black")
+  m = ans[,max(time_sec,na.rm=TRUE)]
+  if (m > 2*60*60) {
+    timescale = 3600
+    xlab = "Hours"
+  } else if (m > 120) {
+    timescale = 60
+    xlab = "Minutes"
   } else {
-    timescale=1; xlab="Seconds"
+    timescale = 1
+    xlab = "Seconds"
   }
-  bars = ans[,(elapsed)/timescale]
-  at = pretty(bars,10)
+  bars = ans[, time_sec/timescale]
+  at = pretty(bars, 10)
   at = at[at!=0]
-  tt = barplot(bars[pad], horiz=TRUE, xlim=c(0,tail(at,1)), axes=FALSE)
+  # dev here adjust position of bars/
+  tt = barplot(bars[pad], horiz=TRUE, xlim=c(0, tail(at, 1)), axes=FALSE)
   tt = rev(tt)
   w = (tt[1]-tt[2])/4
   
   h1 = tt[1]
   abline(h=h1)
   ff = if (length(at)<=8) TRUE else -1  # ff = first first xaxis label overlap
-  text(x=at[ff], y=h1, labels=format(at[ff]), adj=c(0.5,-0.5), cex=1.5, font=2, xpd=NA)
-  text(x=0, y=h1, labels=xlab, adj=c(0,-0.5), font=2, cex=1.5, xpd=NA)
+  text(x=at[ff], y=h1, labels=format(at[ff]), adj=c(0.5, -0.5), cex=1.5, font=2, xpd=NA)
+  text(x=0, y=h1, labels=xlab, adj=c(0, -0.5), font=2, cex=1.5, xpd=NA)
   
-  h2 = tail(tt,1)-4*w
+  h2 = tail(tt, 1)-4*w
   abline(h=h2)
-  text(x=at[ff], y=h2, labels=format(at[ff]), adj=c(0.5,+1.5), cex=1.5, font=2, xpd=NA)
-  text(x=0, y=h2, labels=xlab, adj=c(0,+1.5), font=2, cex=1.5, xpd=NA)
+  text(x=at[ff], y=h2, labels=format(at[ff]), adj=c(0.5, 1.5), cex=1.5, font=2, xpd=NA)
+  text(x=0, y=h2, labels=xlab, adj=c(0, 1.5), font=2, cex=1.5, xpd=NA)
   
-  space = NPKG*2 + 2
-  abline(h=tt[seq(space+1,by=space,length=4)], col="grey",lwd=2)
-  for (x in at) lines(x=c(x,x), y=c(h1,h2), col="lightgrey", lwd=2, lty="dotted")
+  space = nsolutions*2 + 2
+  abline(h=tt[seq(space+1, by=space, length=4)], col="grey", lwd=2)
+  for (x in at) lines(x=c(x, x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
   barplot(bars[pad], horiz=TRUE, axes=FALSE,
-          col=rep(c(pydtcol,green,"red","blue","black"),each=2), font=2, xpd=NA, add=TRUE)
+          col=rep(colors, each=2), font=2, xpd=NA, add=TRUE)
   
-  textBG = function(x,y,txt,...) {
+  textBG = function(x, y, txt, ...) {
     txtw = strwidth(txt, ...); txth = strheight(txt, ...);
     txty = y-2*w;  # w from calling scope above
     rect(x, txty, x+txtw, txty+1.8*txth, col="white", border=NA)
-    text(x, y, txt, adj=c(0,0.7), ...)
+    text(x, y, txt, adj=c(0, 0.7), ...)
   }
   
   for (i in 0:4) {
-    textBG(0, tt[3+i*space], code[1+i*NPKG], col="blue", font=2)
-    textBG(0, tt[5+i*space], code[2+i*NPKG], col="red", font=2)
-    textBG(0, tt[7+i*space], code[3+i*NPKG], col=green, font=2)
-    textBG(0, tt[9+i*space], code[4+i*NPKG], col=pydtcol, font=2)
-    ansnrow = ans[test==i+1 & run==1,ansnrow]
-    ansncol = ans[test==i+1 & run==1,ansncol]
-    if (length(unique(ansnrow)) != 1) stop("ansnrow mismatch")
-    #if (length(unique(ansncol)) != 1) stop("ansncol mismatch") # pd.ans.shape[1] does not return the actual columns and ans is pivot like
-    ansnrow = ansnrow[1]
-    ansncol = ansncol[1]
-    textBG(0, tt[2+i*space], font=2, paste("Test", i+1, ":",
-      comma(ansnrow),"ad hoc groups of",comma(ans[1,nrow]/ansnrow),"rows;  result",
-      comma(ansnrow),"x",ansncol))
+    q = questions[i+1]
+    textBG(0, tt[3+i*space], code[[q]][["data.table"]], col="blue", font=2)
+    textBG(0, tt[5+i*space], code[[q]][["dplyr"]], col="red", font=2)
+    textBG(0, tt[7+i*space], code[[q]][["pandas"]], col=green, font=2)
+    textBG(0, tt[9+i*space], code[[q]][["pydatatable"]], col=pydtcol, font=2)
+    textBG(0, tt[11+i*space], code[[q]][["spark"]], col=sparkcol, font=2)
+    out_rows = ans[question==q & run==1L, out_rows]
+    out_cols = ans[question==q & run==1L, out_cols]
+    if (length(unique(out_rows)) != 1) stop("out_rows mismatch")
+    #if (length(unique(out_cols)) != 1) stop("out_cols mismatch") # pd.ans.shape[1] does not return the actual columns and ans is pivot like
+    out_rows = out_rows[1]
+    Mode = function(x) {tx<-table(x); as.numeric(names(tx)[which.max(tx)])}
+    out_cols = Mode(out_cols) # pandas and spark does not return grouping column
+    textBG(0, tt[2+i*space], font=2, paste("Question", i+1, ":",
+      comma(out_rows), "ad hoc groups of", comma(ans[1L, in_rows]/out_rows), "rows;  result",
+      comma(out_rows), "x", out_cols))
   }
 
-  ans2 = res[nrow==.nrow & run==2][order(test,pkg)]
+  ans2 = timings[run==2L][order(nquestion, solution)]
   for (i in 0:4) {
-    at=tt[4+i*space]; rect(0, at-w, ans2[1+i*NPKG, (elapsed)/timescale], at+w, col=lb, xpd=NA)
-    at=tt[6+i*space]; rect(0, at-w, ans2[2+i*NPKG, (elapsed)/timescale], at+w, col=lr, xpd=NA)
-    at=tt[8+i*space]; rect(0, at-w, ans2[3+i*NPKG, (elapsed)/timescale], at+w, col=lg, xpd=NA)
-    at=tt[10+i*space]; rect(0, at-w, ans2[4+i*NPKG, (elapsed)/timescale], at+w, col=lpydtcol, xpd=NA)
-    #if (is.na(ans2[2+i*NPKG, elapsed])) textBG(0, tt[6+i*space], "corrupt grouped_df: tidyverse/dplyr#3640", col="red", font=2)
-    if (is.na(ans2[3+i*NPKG, elapsed])) textBG(0, tt[8+i*space], "Lack of memory to read data", col=green, font=2)
-    if (is.na(ans2[4+i*NPKG, elapsed])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
+    at=tt[4+i*space]; rect(0, at-w, ans2[1+i*nsolutions, (time_sec)/timescale], at+w, col=lb, xpd=NA)
+    at=tt[6+i*space]; rect(0, at-w, ans2[2+i*nsolutions, (time_sec)/timescale], at+w, col=lr, xpd=NA)
+    at=tt[8+i*space]; rect(0, at-w, ans2[3+i*nsolutions, (time_sec)/timescale], at+w, col=lg, xpd=NA)
+    at=tt[10+i*space]; rect(0, at-w, ans2[4+i*nsolutions, (time_sec)/timescale], at+w, col=lpydtcol, xpd=NA)
+    at=tt[12+i*space]; rect(0, at-w, ans2[5+i*nsolutions, (time_sec)/timescale], at+w, col=lsparkcol, xpd=NA)
+    # exceptions: pandas and pydatatable
+    if (is.na(ans2[3+i*nsolutions, time_sec])) textBG(0, tt[8+i*space], "Lack of memory to read data", col=green, font=2)
+    if (is.na(ans2[4+i*nsolutions, time_sec])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
   }
   cph = 0.5  # minimum on graph histories; what people will see if they check
-  tn = res[nrow==.nrow, sum(elapsed, na.rm=TRUE), pkg]
-  tn = setNames(tn$V1, tn$pkg)
-  leg = unique(ans[order(pkg)], by="pkg"
-               )[, tN := tn[pkg] # no joining to not reorder
+  tn = timings[in_rows==.nrow, sum(time_sec, na.rm=TRUE), solution]
+  tn = setNames(tn$V1, tn$solution)
+  leg = unique(ans[order(solution)], by="solution"
+               )[, tN := tn[solution] # no joining to not reorder
                  ][, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
-                             pkg, version,
-                             solution.date(pkg, version, git, only.date=TRUE, use.cache=TRUE),
-                             cph*tN/3600, round(tN/timescale,0), tolower(xlab)), by=pkg
+                             solution, version,
+                             solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
+                             cph*tN/3600, round(tN/timescale, 0), tolower(xlab)), by=solution
                    ][, V1]
   topoffset = 18.5
-  legend(0,par()$usr[4]+topoffset*w, pch=22, pt.bg=c("blue","red",green,pydtcol), bty="n", cex=1.5, pt.cex=3.5,
+  legend(0,par()$usr[4]+topoffset*w, pch=22, pt.bg=rev(colors)[-1], bty="n", cex=1.5, pt.cex=3.5,
          text.font=1, xpd=NA, legend=leg)
-  mtext(paste("Input table:",comma(.nrow),"rows x 9 columns (",
-        {gb<-ans[pkg=="data.table",gb[1]]; if (gb<1) round(gb,1) else 5*round(ceiling(gb)/5)},
+  mtext(paste("Input table:", comma(.nrow), "rows x 9 columns (",
+        if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5),
         "GB )"),
         side=3, line=4.5, cex=1.5, adj=0, font=2)
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
-         legend=c("First time","Second time"), pt.cex=c(3.5,2.5), cex=1.5, pt.bg=c("blue",lb))
+         legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=c("blue", lb))
   dev.off()
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
+
+#if (interactive()) {
+#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
+#  benchplot(1e7, timings=d, code)
+#}
