@@ -38,6 +38,7 @@ DT = read_timing("time.csv", col=NULL)
 # last benchmark batch
 dt = DT[!is.na(batch)][batch==max(batch)] # take last batch only
 dt = dt[in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
+dt = dt[task=="groupby"] # report limited to groupby as of now
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
