@@ -65,8 +65,19 @@ benchplot(1e9, timings=dt, code=groupby.code)
 
 ## Hardware configuration
 
-20 CPU  
-125GB memory  
+```{r hardware, echo=FALSE}
+kB_to_GB = function(x) {
+  nx = nchar(x)
+  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep MemTotal /proc/meminfo', expects 'kB'")
+  sprintf("%.2f GB", as.numeric(trimws(gsub("kB", "", x)))/1024^2)
+}
+fread(
+  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep MemTotal /proc/meminfo",
+  sep=":", header=FALSE
+)[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
+  ][, .(Component=V1, Value=V2)
+    ][, knitr::kable(.SD)]
+```
 
 ------
 
