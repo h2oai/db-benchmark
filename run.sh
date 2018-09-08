@@ -4,6 +4,12 @@ set -e
 # get config
 source run.conf
 
+# cleanup
+rm -f *.png
+rm -f *.env
+rm -f rmarkdown.out
+rm -rf db-benchmark.gh-pages
+
 # produce iteration dictionaries from data.csv
 ./init-setup-iteration.R
 
