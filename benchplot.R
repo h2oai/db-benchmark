@@ -49,11 +49,36 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
   if (uniqueN(timings$batch)!=1) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
-  task = unique(timings$task)
-  if (length(task)!=1L) stop("there should be only single task to present on benchplot while data contains multiple, filter data before passing to benchplot")
+  timings.task = unique(timings$task)
+  if (length(intersect(timings.task, task))!=1L) stop("there should be only single task to present on benchplot, provide 'task' argument which exists in 'timings' dataset")
+  vtask = task
+  timings = timings[task==vtask]
   if (!is.finite(.nrow)) .nrow = timings[, max(in_rows)]
   
+  exceptions = TRUE
+  if (exceptions) {
+    pandas_version = timings[solution=="pandas" & in_rows==min(in_rows), version[1L]]
+  }
+  
   timings = timings[in_rows==.nrow]
+  
+  if (exceptions) {
+    # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
+    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
+    fix_missing = timings[solution=="data.table" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
+    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", c("out_rows","out_cols") := fix_missing]
+    
+    # pandas 1e9 killed on 125GB machine due to not enough memory
+    if (timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
+      fix_pandas = timings[solution=="data.table" & in_rows==1e9
+                           ][, time_sec:=NA_real_
+                             ][, solution:="pandas"
+                               ][, version:=pandas_version
+                                 ][, git:=NA_character_]
+      timings = rbindlist(list(timings[!pandasi], fix_pandas))[order(solution)]
+    }
+  }
   
   solutions = unique(timings$solution)
   nsolutions = length(solutions)
@@ -66,35 +91,15 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   if (ndata!=1L) stop("only single data supported in benchplot")
   
   gb = NA_real_
-  if (length(intersect(list.files(pattern="\\.csv$"), data))) {
-    gb = file.info(data)$size/1024^3
-  }
+  if (length(intersect(list.files(pattern="\\.csv$"), data))) gb = file.info(data)$size/1024^3
   
   # keep only required columns
   timings = timings[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
   timings[git=="", git:=NA_character_]
   # add question order
-  timings[as.data.table(list(question=questions))[, I:=.I][], nquestion := i.I, on="question"][]
-  
-  if (exceptions<-TRUE) {
-    # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
-    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
-    fix_missing = timings[solution=="data.table" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
-    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", c("out_rows","out_cols") := fix_missing]
-    
-    # pandas 1e9 killed on 125GB machine due to not enough memory
-    if (timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
-      fix_pandas = timings[solution=="data.table" & in_rows==1e9
-                       ][, time_sec:=NA_real_
-                         ][, solution:="pandas"
-                           ][, version:=NA_character_
-                             ][, git:=NA_character_]
-      timings = rbindlist(list(timings[!pandasi], fix_pandas))[order(solution)]
-    }
-  }
+  timings[as.data.table(list(question=questions))[, I:=.I][], nquestion := i.I, on="question"]
 
-  fnam = paste0("grouping.",gsub("e[+]0","E", pretty_sci(.nrow)),".png")
+  fnam = paste0(task, gsub("e[+]0","E", pretty_sci(.nrow)),".png")
   if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1200)
   
@@ -211,6 +216,6 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 }
 
 #if (interactive()) {
-#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)][task=="groupby"]
-#  benchplot(1e7, timings=d, code=groupby.code)
+#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
+#  benchplot(1e9, timings=d, code=groupby.code)
 #}
