@@ -62,6 +62,14 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   timings = timings[in_rows==.nrow]
   
+  questions = unique(timings$question)
+  nquestions = length(questions)
+  runs = unique(timings$run)
+  nruns = length(runs)
+  data = unique(timings$data)
+  ndata = length(data)
+  if (ndata!=1L) stop("only single data supported in benchplot")
+  
   if (exceptions) {
     # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
     timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
@@ -82,13 +90,6 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   solutions = unique(timings$solution)
   nsolutions = length(solutions)
-  questions = unique(timings$question)
-  nquestions = length(questions)
-  runs = unique(timings$run)
-  nruns = length(runs)
-  data = unique(timings$data)
-  ndata = length(data)
-  if (ndata!=1L) stop("only single data supported in benchplot")
   
   gb = NA_real_
   if (length(intersect(list.files(pattern="\\.csv$"), data))) gb = file.info(data)$size/1024^3
