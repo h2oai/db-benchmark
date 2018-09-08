@@ -38,7 +38,6 @@ DT = read_timing("time.csv", col=NULL)
 # last benchmark batch
 dt = DT[!is.na(batch)][batch==max(batch)] # take last batch only
 dt = dt[in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
-dt = dt[task=="groupby"] # report limited to groupby as of now
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -46,21 +45,21 @@ dt = dt[task=="groupby"] # report limited to groupby as of now
 ### 0.5GB
 
 ```{r o_groupby1, echo=FALSE}
-benchplot(1e7, dt, code)
+benchplot(1e7, timings=dt, code=groupby.code)
 ```
 ![](grouping.1e7.png)
 
 ### 5GB
 
 ```{r o_groupby2, echo=FALSE}
-benchplot(1e8, dt, code)
+benchplot(1e8, timings=dt, code=groupby.code)
 ```
 ![](grouping.1e8.png)
 
 ### 50GB {.active}
 
 ```{r o_groupby3, echo=FALSE}
-benchplot(1e9, dt, code)
+benchplot(1e9, timings=dt, code=groupby.code)
 ```
 ![](grouping.1e9.png)
 

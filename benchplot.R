@@ -2,7 +2,7 @@
 ## https://github.com/h2oai/db-benchmark/commit/fce1b8c9177afb49471fcf483a438f619f1a992b
 ## Original grouping benchmark can be found in: https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping
 
-code = list(
+groupby.code = list(
   "sum v1 by id1" = c(
     "data.table"="DT[, .(v1=sum(v1)), keyby=id1]",
     "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
@@ -45,10 +45,7 @@ stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used f
 library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
 
-benchplot = function(.nrow=Inf, timings, code) {
-  # dev only
-  #timings=fread("time.csv")[!is.na(batch)][batch==max(batch)]
-  #.nrow=1e7
+benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
   if (uniqueN(timings$batch)!=1) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
@@ -114,8 +111,8 @@ benchplot = function(.nrow=Inf, timings, code) {
   lg = "#77FF77"; green = "green4"
   pydtcol = "orange2"
   lpydtcol = "orange"
-  sparkcol = "cyan"
-  lsparkcol = "lightblue"
+  sparkcol = "#8000FFFF"
+  lsparkcol = "#CC66FF"
   colors = c(sparkcol, pydtcol, green, "red", "blue", "black")
   m = ans[,max(time_sec,na.rm=TRUE)]
   if (m > 2*60*60) {
@@ -213,7 +210,7 @@ benchplot = function(.nrow=Inf, timings, code) {
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
 
-if (interactive()) {
-  d = fread("time.csv")[!is.na(batch)][batch==max(batch)][task=="groupby"]
-  benchplot(1e7, timings=d, code)
-}
+#if (interactive()) {
+#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)][task=="groupby"]
+#  benchplot(1e7, timings=d, code=groupby.code)
+#}
