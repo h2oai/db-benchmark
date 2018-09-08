@@ -54,7 +54,6 @@ benchplot = function(.nrow=Inf, timings, code) {
   if (uniqueN(timings$batch)!=1) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
   task = unique(timings$task)
   if (length(task)!=1L) stop("there should be only single task to present on benchplot while data contains multiple, filter data before passing to benchplot")
-  timings[, task:=NULL]
   if (!is.finite(.nrow)) .nrow = timings[, max(in_rows)]
   
   timings = timings[in_rows==.nrow]
