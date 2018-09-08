@@ -100,7 +100,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   # add question order
   timings[as.data.table(list(question=questions))[, I:=.I][], nquestion := i.I, on="question"]
 
-  fnam = paste0(task, gsub("e[+]0","E", pretty_sci(.nrow)),".png")
+  fnam = paste0(task, ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
   if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1200)
   
