@@ -101,7 +101,7 @@ benchplot = function(.nrow=Inf, timings, code) {
   if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1200)
   
-  par(mar=c(0.6, 1.1, 12.1, 2.1)) # shift to the left
+  par(mar=c(0.6, 1.1, 8.1, 2.1)) # shift to the left
   
   ans = timings[run==1L][order(nquestion, solution, decreasing=TRUE)]
   
@@ -200,20 +200,20 @@ benchplot = function(.nrow=Inf, timings, code) {
                              solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
                              cph*tN/3600, round(tN/timescale, 0), tolower(xlab)), by=solution
                    ][, V1]
-  topoffset = 30.6
+  topoffset = 23.8
   legend(0, par()$usr[4]+topoffset*w, pch=22, pt.bg=rev(colors)[-1], bty="n", cex=1.5, pt.cex=3.5,
          text.font=1, xpd=NA, legend=leg)
   mtext(paste("Input table:", comma(.nrow), "rows x 9 columns (",
         if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA",
         "GB )"),
-        side=3, line=9.5, cex=1.5, adj=0, font=2)
+        side=3, line=6.5, cex=1.5, adj=0, font=2)
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=c("blue", lb))
   dev.off()
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
 
-#if (interactive()) {
-#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)][task=="groupby"]
-#  benchplot(1e7, timings=d, code)
-#}
+if (interactive()) {
+  d = fread("time.csv")[!is.na(batch)][batch==max(batch)][task=="groupby"]
+  benchplot(1e7, timings=d, code)
+}
