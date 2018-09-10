@@ -7,13 +7,11 @@ output:
 
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add Julia too and are looking for help to do so.
 
-We limit the scope to what can be achieved on a single machine. Laptop size ram (8GB) and server size ram (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope as these packages start to begin to support that (notably python `datatable`). Multi-node systems such as Spark running in single machine mode is in scope, too. We believe the multi-node ability of distributed systems incurs a cost that impacts performance when distribution isn't needed; one goal of this page is to measure that cost. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
+We limit the scope to what can be achieved on a single machine. Laptop size memory (8GB) and server size memory (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope. Multi-node systems such as Spark running in single machine mode is in scope, too. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
 
-Unlike TPC benchmarks we report timings. Yes: actual timings in seconds/minutes intended for easy human consumption. We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
+We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
 
-Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by Matt Dowle (creator of `data.table`) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this benchmark can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark).  
-In case of doubts, questions, feedback, feel free to fill an issue in benchmark repository.
-Presently [Matt Dowle](https://github.com/mattdowle) and me, [Jan Gorecki](https://github.com/jangorecki), author of this benchmark, are working at [H2O.ai](https://www.h2o.ai) which funded development of this benchmark and infrastructure to run it.
+Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://github.com/mattdowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
 
 ```{r load_deps, include=FALSE}
 # Rscript -e 'rmarkdown::render("index.Rmd")'
@@ -71,11 +69,11 @@ benchplot(1e9, timings=dt, code=groupby.code)
 ```{r hardware, echo=FALSE}
 kB_to_GB = function(x) {
   nx = nchar(x)
-  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep MemTotal /proc/meminfo', expects 'kB'")
+  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep ^MemTotal /proc/meminfo', expects 'kB'")
   sprintf("%.2f GB", as.numeric(trimws(gsub("kB", "", x)))/1024^2)
 }
 fread(
-  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep MemTotal /proc/meminfo",
+  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep ^MemTotal /proc/meminfo",
   sep=":", header=FALSE
 )[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
   ][, .(Component=V1, Value=V2)
@@ -83,5 +81,7 @@ fread(
 ```
 
 ------
+
+Benchmark run took around 4.5 hours.  
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
