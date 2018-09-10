@@ -199,7 +199,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   leg = unique(ans[order(solution)], by="solution"
                )[, tN := tn[solution] # no joining to not reorder
                  ][, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
-                             solution, version,
+                             if (solution=="pydatatable") "(py)datatable" else solution, version, # decode pydatatable to (py)datatable
                              solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
                              cph*tN/3600, round(tN/timescale, 0), tolower(xlab)), by=solution
                    ][, V1]
