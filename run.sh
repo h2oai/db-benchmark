@@ -21,7 +21,9 @@ echo "# Benchmark run $BATCH started"
 # upgrade tools
 $DO_UPGRADE && ./datatable/init-datatable.sh
 $DO_UPGRADE && ./dplyr/init-dplyr.sh
+$DO_UPGRADE && ./pandas/init-pandas.sh
 $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
+$DO_UPGRADE && ./spark/init-spark.sh
 
 # datatable
 ./datatable/datatable.sh
