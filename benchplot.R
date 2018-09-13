@@ -48,7 +48,8 @@ if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="c
 benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
-  if (uniqueN(timings$batch)!=1) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
+  if (uniqueN(timings$batch)!=1L) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
+  vbatch = timings$batch[1L]
   timings.task = unique(timings$task)
   if (length(intersect(timings.task, task))!=1L) stop("there should be only single task to present on benchplot, provide 'task' argument which exists in 'timings' dataset")
   vtask = task
@@ -214,6 +215,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
         side=3, line=6.5, cex=1.5, adj=0, font=2)
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=c("blue", lb))
+  mtext(side=1, line=-1, text=format(as.POSIXct(vbatch, origin="1970-01-01"), usetz=TRUE), adj=1, outer=TRUE, cex=1)
   dev.off()
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
