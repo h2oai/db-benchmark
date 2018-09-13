@@ -138,7 +138,8 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   at = pretty(bars, 10)
   at = at[at!=0]
   tt = barplot(bars[pad], horiz=TRUE, xlim=c(0, tail(at, 1)), axes=FALSE)
-  text(pmax(bars, bars2), tt[!is.na(pad)]-0.15, round(bars, 1), pos=4, cex=1.25)
+  max_t = pmax(bars, bars2) # we put timing value as max(run1, run2), otherwise bigger bar would be overlapping text
+  text(max_t, tt[!is.na(pad)]-0.15, round(max_t, 1), pos=4, cex=1.25)
   tt = rev(tt)
   w = (tt[1]-tt[2])/4
   
@@ -222,5 +223,5 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 
 if (interactive()) {
   d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
-  benchplot(.nrow=1e9, timings=d, code=groupby.code)
+  benchplot(.nrow=1e7, timings=d, code=groupby.code)
 }
