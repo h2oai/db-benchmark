@@ -199,7 +199,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   cph = 0.5  # minimum on graph histories; what people will see if they check
   tn = timings[in_rows==.nrow, sum(time_sec, na.rm=TRUE), solution]
   tn = setNames(tn$V1, tn$solution)
-  leg = unique(ans[order(solution)], by="solution"
+  leg = unique(ans1[order(solution)], by="solution"
                )[, tN := tn[solution] # no joining to not reorder
                  ][, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
                              if (solution=="pydatatable") "(py)datatable" else solution, version, # decode pydatatable to (py)datatable
