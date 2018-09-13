@@ -1,8 +1,6 @@
 ---
 title: "Single-node data aggregation benchmark"
-output:
-  html_document:
-    dev: svg
+output: html_document
 ---
 
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add Julia too and are looking for help to do so.
