@@ -106,7 +106,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   par(mar=c(0.6, 1.1, 8.1, 2.1)) # shift to the left
   
-  ans = timings[run==1L][order(nquestion, solution, decreasing=TRUE)]
+  ans1 = timings[run==1L][order(nquestion, solution, decreasing=TRUE)]
   
   pad = as.vector(sapply(0:4, function(x) c(as.vector(rbind(x*nsolutions + 1:nsolutions, NA)), NA, NA)))
 
@@ -120,7 +120,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   sparkcol = "#8000FFFF"
   lsparkcol = "#CC66FF"
   colors = c(sparkcol, pydtcol, green, "red", "blue", "black")
-  m = ans[,max(time_sec,na.rm=TRUE)]
+  m = ans1[,max(time_sec,na.rm=TRUE)]
   if (m > 2*60*60) {
     timescale = 3600
     xlab = "Hours"
@@ -131,11 +131,13 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
     timescale = 1
     xlab = "Seconds"
   }
-  bars = ans[, time_sec/timescale]
+  bars = ans1[, time_sec/timescale]
+  # this is used for text(pmax(bars, bars2)) only to not overlap text with 2nd timing bar
+  bars2 = timings[run==2L][order(nquestion, solution, decreasing=TRUE)][, time_sec/timescale]
   at = pretty(bars, 10)
   at = at[at!=0]
-  # dev here adjust position of bars/
   tt = barplot(bars[pad], horiz=TRUE, xlim=c(0, tail(at, 1)), axes=FALSE)
+  text(pmax(bars, bars2), tt[!is.na(pad)]-0.15, round(bars, 1), pos=4, cex=1.25)
   tt = rev(tt)
   w = (tt[1]-tt[2])/4
   
@@ -170,15 +172,15 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
     textBG(0, tt[7+i*space], code[[q]][["pandas"]], col=green, font=2)
     textBG(0, tt[9+i*space], code[[q]][["pydatatable"]], col=pydtcol, font=2)
     textBG(0, tt[11+i*space], code[[q]][["spark"]], col=sparkcol, font=2)
-    out_rows = ans[question==q & run==1L, out_rows]
-    out_cols = ans[question==q & run==1L, out_cols]
+    out_rows = ans1[question==q & run==1L, out_rows]
+    out_cols = ans1[question==q & run==1L, out_cols]
     if (length(unique(out_rows)) != 1) stop("out_rows mismatch")
     #if (length(unique(out_cols)) != 1) stop("out_cols mismatch") # pd.ans.shape[1] does not return the actual columns and ans is pivot like
     out_rows = out_rows[1]
     Mode = function(x) {tx<-table(x); as.numeric(names(tx)[which.max(tx)])}
     out_cols = Mode(out_cols) # pandas and spark does not return grouping column
     textBG(0, tt[2+i*space], font=2, paste("Question", i+1, ":",
-      comma(out_rows), "ad hoc groups of", comma(ans[1L, in_rows]/out_rows), "rows;  result",
+      comma(out_rows), "ad hoc groups of", comma(ans1[1L, in_rows]/out_rows), "rows;  result",
       comma(out_rows), "x", out_cols))
   }
 
@@ -216,7 +218,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
 
-#if (interactive()) {
-#  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
-#  benchplot(1e9, timings=d, code=groupby.code)
-#}
+if (interactive()) {
+  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
+  benchplot(.nrow=1e9, timings=d, code=groupby.code)
+}
