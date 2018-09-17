@@ -40,6 +40,8 @@ if os.path.isfile(data_name):
 else:
   x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
+print(x.count())
+
 x.createOrReplaceTempView("x")
 
 print("grouping...")

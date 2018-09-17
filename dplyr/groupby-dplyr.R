@@ -18,6 +18,9 @@ cat("loading dataset\n")
 src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
 X = data.table::fread(if (file.exists(data_name)) data_name else src_grp, data.table=FALSE) # csv can be provided in local dir for faster import
+print(nrow(X))
+
+cat("grouping...\n")
 
 question = "sum v1 by id1" #1
 t = system.time(print(dim(ans<-summarise(group_by(X, id1), v1=sum(v1)))))[["elapsed"]]

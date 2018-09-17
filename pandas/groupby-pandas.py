@@ -26,6 +26,8 @@ if os.path.isfile(data_name):
 else:
   x = pd.read_csv(src_grp)
 
+print(len(x.index))
+
 print("grouping...")
 
 question = "sum v1 by id1" #1

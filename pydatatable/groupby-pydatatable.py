@@ -27,6 +27,8 @@ if os.path.isfile(data_name):
 else:
   x = dt.fread(src_grp)
 
+print(x.shape[0])
+
 print("grouping...")
 
 question = "sum v1 by id1" #1
