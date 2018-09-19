@@ -27,7 +27,7 @@ if os.path.isfile(data_name):
 else:
   x = dt.fread(src_grp)
 
-print(x.shape[0])
+print(x.nrows)
 
 print("grouping...")
 
