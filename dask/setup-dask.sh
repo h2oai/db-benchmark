@@ -13,15 +13,11 @@ python -m pip install --upgrade dask
 python -m pip install --upgrade dask[dataframe]
 python -m pip install --upgrade dask[distributed]
 
-import distributed
-print(distributed.__version__)
-
-import tornado
-print(tornado.version)
-
 # check
 python
 import dask as dk
 dk.__version__
 dk.__git_revision__
 quit()
+
+deactivate
