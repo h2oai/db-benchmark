@@ -275,4 +275,6 @@ ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
 
+spark.stop()
+
 exit(0)
