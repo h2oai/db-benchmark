@@ -15,6 +15,7 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
   - [x] [pandas](https://github.com/pandas-dev/pandas)
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
+  - [x] [dask](https://github.com/dask/dask)
   - [ ] [modin](https://github.com/modin-project/modin) (not capable to _groupby_ yet)
 
 # Reproduce
@@ -39,7 +40,9 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 - setting up r3-8xlarge: 244GB RAM, 32 cores: [Amazon EC2 for beginners](https://github.com/Rdatatable/data.table/wiki/Amazon-EC2-for-beginners)  
 - full reproduce script on clean Ubuntu 16.04: [repro.sh](https://github.com/h2oai/db-benchmark/blob/master/repro.sh)  
+
 # Acknowledgment
 
 - Solution [`modin`](https://github.com/modin-project/modin) is not capable to perform `groupby` task yet.  
 - It might eventually happens that on the report `spark` will not have a date for its corresponding version. It is because of [SPARK-16864](https://issues.apache.org/jira/browse/SPARK-16864) "resolved" as "Won't Fix", thus we are unable to lookup that information from GitHub repo.  
+- Solution [`dask`](https://github.com/dask/dask) is currently not presented on plot due to ["groupby aggregation does not scale well with amount of groups"](https://github.com/dask/dask/issues/4001), `groupby` scritpt is in place so anyone interested can run it already.
