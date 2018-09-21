@@ -19,15 +19,15 @@ export BATCH=$(date +%s)
 echo "# Benchmark run $BATCH started"
 
 # upgrade tools
-$DO_UPGRADE && ./dask/init-dask.sh
+#$DO_UPGRADE && ./dask/init-dask.sh
 $DO_UPGRADE && ./datatable/init-datatable.sh
 $DO_UPGRADE && ./dplyr/init-dplyr.sh
 $DO_UPGRADE && ./pandas/init-pandas.sh
 $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 $DO_UPGRADE && ./spark/init-spark.sh
 
-# dask
-./dask/dask.sh
+## dask
+#./dask/dask.sh
 
 # datatable
 ./datatable/datatable.sh
@@ -41,8 +41,8 @@ $DO_UPGRADE && ./spark/init-spark.sh
 # pydatatable
 ./pydatatable/pydatatable.sh
 
-# modin
-./modin/modin.sh
+## modin
+#./modin/modin.sh
 
 # spark
 ./spark/spark.sh
