@@ -32,6 +32,7 @@ spark = SparkSession.builder \
      .config("spark.driver.maxResultSize", "100g") \
      .config("spark.network.timeout", "2400") \
      .config("spark.executor.heartbeatInterval", "1200") \
+     .config("spark.ui.showConsoleProgress", "false") \
      .getOrCreate()
 print(spark.sparkContext._conf.getAll())
 
@@ -40,7 +41,7 @@ if os.path.isfile(data_name):
 else:
   x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
-print(x.count())
+print(x.count()) # currently raises error in interactive session: https://stackoverflow.com/q/51952535/2490497
 
 x.createOrReplaceTempView("x")
 
