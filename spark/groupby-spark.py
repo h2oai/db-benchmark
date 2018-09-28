@@ -41,7 +41,7 @@ if os.path.isfile(data_name):
 else:
   x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
-print(x.count()) # currently raises error in interactive session: https://stackoverflow.com/q/51952535/2490497
+print(x.count())
 
 x.createOrReplaceTempView("x")
 
