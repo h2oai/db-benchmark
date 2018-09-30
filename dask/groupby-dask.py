@@ -23,6 +23,14 @@ cache = "TRUE"
 
 print("loading dataset...")
 
+# try parquet according to suggestions in https://github.com/dask/dask/issues/4001
+# parq created with fastparquet for 1e7, 1e8, and spark for 1e9 due to failure to read 1e9 data in
+# x.write.option("compression","uncompressed").parquet("G1_1e9_1e2.parq") # full path to file was used
+#data_name = "G1_1e9_1e2.csv"
+#data_name = data_name[:-3]+"parq" # csv to parq
+#x = dd.read_parquet(data_name, engine="fastparquet")
+# parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
+
 if os.path.isfile(data_name):
   x = dd.read_csv(data_name, na_filter=False).persist()
 else:
