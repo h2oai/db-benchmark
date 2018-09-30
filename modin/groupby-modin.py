@@ -5,14 +5,15 @@ print("# groupby-modin.py")
 import os
 import gc
 import timeit
+import modin as modin
 import modin.pandas as pd
 
 exec(open("./helpers.py").read())
 
 src_grp = os.environ['SRC_GRP_LOCAL']
 
-ver = "" #pd.__version__
-git = ""
+ver = modin.__version__
+git = modin.__git_revision__
 task = "groupby"
 data_name = os.path.basename(src_grp)
 solution = "modin"

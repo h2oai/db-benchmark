@@ -13,7 +13,7 @@ exec(open("./helpers.py").read())
 src_x = os.environ['SRC_X_LOCAL']
 
 ver = modin.__version__
-git = ""
+git = modin.__git_revision__
 task = "sort"
 question = "by int KEY"
 data_name = os.path.basename(src_x)
