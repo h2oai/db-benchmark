@@ -8,5 +8,7 @@ using Pkg;
 Pkg.add("DataFrames");
 Pkg.add("CSV");
 #Pkg.add("FastGroupBy"); # using raise error, not recommended for string anyway
+#Pkg.clone("https://github.com/xiaodaigh/FastGroupBy.jl.git")
+# both attempts to install FastGroupBy raise error at the current moment: https://github.com/xiaodaigh/FastGroupBy.jl/issues/7
 
 exit();
