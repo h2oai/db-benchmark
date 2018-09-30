@@ -16,7 +16,8 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
   - [x] [dask](https://github.com/dask/dask)
-  - [ ] [modin](https://github.com/modin-project/modin) (not capable to _groupby_ yet)
+  - [ ] [julia](https://github.com/JuliaLang/julia) (for status see [#30](https://github.com/h2oai/db-benchmark/issues/30))
+  - [ ] [modin](https://github.com/modin-project/modin) (for status see [#38](https://github.com/h2oai/db-benchmark/issues/38))
 
 # Reproduce
 
