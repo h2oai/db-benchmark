@@ -10,13 +10,13 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 # Solutions
 
+  - [ ] [dask](https://github.com/dask/dask)
   - [x] [data.table](https://github.com/Rdatatable/data.table)
   - [x] [dplyr](https://github.com/tidyverse/dplyr)
+  - [ ] [juliadf](https://github.com/JuliaLang/julia) (for status see [#30](https://github.com/h2oai/db-benchmark/issues/30))
   - [x] [pandas](https://github.com/pandas-dev/pandas)
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
-  - [x] [dask](https://github.com/dask/dask)
-  - [ ] [julia](https://github.com/JuliaLang/julia) (for status see [#30](https://github.com/h2oai/db-benchmark/issues/30))
   - [ ] [modin](https://github.com/modin-project/modin) (for status see [#38](https://github.com/h2oai/db-benchmark/issues/38))
 
 # Reproduce
@@ -46,4 +46,4 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 - Solution [`modin`](https://github.com/modin-project/modin) is not capable to perform `groupby` task yet.  
 - It might eventually happens that on the report `spark` will not have a date for its corresponding version. It is because of [SPARK-16864](https://issues.apache.org/jira/browse/SPARK-16864) "resolved" as "Won't Fix", thus we are unable to lookup that information from GitHub repo.  
-- Solution [`dask`](https://github.com/dask/dask) is currently not presented on plot due to ["groupby aggregation does not scale well with amount of groups"](https://github.com/dask/dask/issues/4001), `groupby` scritpt is in place so anyone interested can run it already.
+- Above issue currently affects also `juliadf`, this hopefully will be fixed [JuliaLang/Pkg.jl#793](https://github.com/JuliaLang/Pkg.jl/issues/793).

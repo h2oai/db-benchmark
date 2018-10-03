@@ -112,8 +112,10 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
                "impala"="cloudera/Impala",
                "data.table"="Rdatatable/data.table",
                "dplyr"="tidyverse/dplyr",
-               "pydatatable"="h2oai/datatable"
-               #"dask"="dask/dask" # since next version: https://github.com/dask/dask/pull/1760/commits/a0fd57285cb980b1b297221cf2550cd0a4289f42
+               "pydatatable"="h2oai/datatable",
+               "dask"="dask/dask",
+               "pandas"="pandas-dev/pandas", # since next version: https://github.com/pandas-dev/pandas/pull/22745
+               "juliadf"="JuliaData/DataFrames.jl" # support requested https://github.com/JuliaLang/Pkg.jl/issues/793
                )
   solution_versions = list(
     spark = c("2.0.0" = "2016-07-19",
