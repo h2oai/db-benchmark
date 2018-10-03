@@ -6,6 +6,6 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   while read line
   do
     eval $line
-    ./julia/groupby-julia.jl
+    ./juliadf/groupby-juliadf.jl
   done < ./loop-groupby-data.env
 fi

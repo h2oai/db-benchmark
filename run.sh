@@ -22,7 +22,7 @@ echo "# Benchmark run $BATCH started"
 #$DO_UPGRADE && ./dask/init-dask.sh
 $DO_UPGRADE && ./datatable/init-datatable.sh
 $DO_UPGRADE && ./dplyr/init-dplyr.sh
-#$DO_UPGRADE && ./julia/init-julia.sh
+$DO_UPGRADE && ./juliadf/init-juliadf.sh
 $DO_UPGRADE && ./pandas/init-pandas.sh
 $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 $DO_UPGRADE && ./spark/init-spark.sh
@@ -36,8 +36,8 @@ $DO_UPGRADE && ./spark/init-spark.sh
 # dplyr
 ./dplyr/dplyr.sh
 
-## julia
-#./julia/julia.sh
+# juliadf
+./juliadf/juliadf.sh
 
 # pandas
 ./pandas/pandas.sh
