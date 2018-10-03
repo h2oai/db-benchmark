@@ -5,7 +5,7 @@ print("# groupby-juliadf\n");
 using DataFrames;
 using CSV;
 using Statistics; # mean function
-Using Pkg; # to get DataFrames version
+using Pkg; # to get DataFrames version
 
 include("./../helpers.jl");
 
