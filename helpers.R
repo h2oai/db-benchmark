@@ -100,9 +100,9 @@ ppc = function(trunc.char) options(datatable.prettyprint.char=trunc.char)
 file.ext = function(x)
   switch(x,
          "data.table"=, "dplyr"=, "h2o"="R",
-         "pandas"=, "pydatatable"=, "dask"=, "modin"="py",
+         "pandas"=, "pydatatable"=, "dask"=, "spark"=, "modin"="py",
          "impala"=, "presto"="sql",
-         "spark"="scala")
+         "juliadf"="jl")
 
 solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE, debug=FALSE) {
   stopifnot(is.character(solution))
