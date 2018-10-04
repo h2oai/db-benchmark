@@ -7,10 +7,10 @@ using CSV;
 using Statistics; # mean function
 using Pkg; # to get DataFrames version
 
-include("./../helpers.jl");
+include("$(pwd())/helpers.jl");
 
 ver = string(Pkg.installed()["DataFrames"]);
-git = "";
+git = ""; # https://github.com/JuliaLang/Pkg.jl/issues/793
 task = "groupby";
 solution = "juliadf";
 fun = "by";

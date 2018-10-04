@@ -16,11 +16,12 @@ function make_chk(x)
 end;
 
 function write_log(run, task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, time_sec, mem_gb, cache, chk, chk_time_sec)
-  file==try
+  file=try
     ENV["CSV_TIME_FILE"]
   catch
     "time.csv"
   end;
+  file="$(pwd())/$file";
   batch=try
     ENV["BATCH"]
   catch
