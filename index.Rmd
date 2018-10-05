@@ -36,6 +36,9 @@ DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark")] # fi
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 # take last batch only
 dt = dt[batch==max(batch)]
+# in case of out_rows mismatch track using below:
+#dt[solution%in%c("juliadf","data.table"), .N,, .(in_rows, question, out_rows, solution, run)
+#   ][, dcast(.SD, in_rows + solution + run ~ question, value.var="out_rows")]
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}

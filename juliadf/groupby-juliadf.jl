@@ -36,7 +36,7 @@ print("grouping...\n");
 question = "sum v1 by id1"; #1
 GC.gc();
 t_start = time_ns();
-ANS = by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -47,7 +47,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -58,7 +58,7 @@ write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();

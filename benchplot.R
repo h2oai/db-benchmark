@@ -7,7 +7,7 @@ groupby.code = list(
     "dask"="x.groupby(['id1']).agg({'v1':'sum'}).compute()",
     "data.table"="DT[, .(v1=sum(v1)), keyby=id1]",
     "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
-    "juliadf"="by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;",
+    "juliadf"="by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;",
     "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1)}, f.id1]",
     "spark"="spark.sql('select sum(v1) as v1 from x group by id1')"
