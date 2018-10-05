@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 
-print("# groupby-juliadf\n");
+print("# groupby-juliadf.jl\n");
 
 using DataFrames;
 using CSV;

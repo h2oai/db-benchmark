@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-cat("# groupby-dplyr\n")
+cat("# groupby-dplyr.R\n")
 
 source("./helpers.R")
 source("./dplyr/helpers-dplyr.R")
