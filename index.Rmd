@@ -34,15 +34,8 @@ DT = read_timing("time.csv", col=NULL)
 DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark")] # filter out dask for now, and modin when added as plot is adjusted for 5 solutions
 # last benchmark batch
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
-# create plots for 3 previous runs/days
-prev.dt = list()
-prev.dt[[1L]] = dt[batch<max(batch)]
-prev.dt[[2L]] = prev.dt[[1L]][batch<max(batch)]
-prev.dt[[3L]] = prev.dt[[2L]][batch<max(batch)][batch==max(batch)]
-prev.dt[[2L]] = prev.dt[[2L]][batch==max(batch)]
-prev.dt[[1L]] = prev.dt[[1L]][batch==max(batch)]
-
-dt = dt[batch==max(batch)] # take last batch only
+# take last batch only
+dt = dt[batch==max(batch)]
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -52,10 +45,6 @@ dt = dt[batch==max(batch)] # take last batch only
 ```{r o_groupby1, echo=FALSE}
 unlink("groupby.1e7.png")
 benchplot(1e7, timings=dt, code=groupby.code)
-for (p in 1:3) {
-  unlink(sprintf("groupby.1e7.prev%s.png", p))
-  benchplot(1e7, timings=prev.dt[[p]], code=groupby.code, prev=p)
-}
 ```
 ![](groupby.1e7.png)
 
@@ -64,10 +53,6 @@ for (p in 1:3) {
 ```{r o_groupby2, echo=FALSE}
 unlink("groupby.1e8.png")
 benchplot(1e8, timings=dt, code=groupby.code)
-for (p in 1:3) {
-  unlink(sprintf("groupby.1e8.prev%s.png", p))
-  benchplot(1e8, timings=prev.dt[[p]], code=groupby.code, prev=p)
-}
 ```
 ![](groupby.1e8.png)
 
@@ -76,10 +61,6 @@ for (p in 1:3) {
 ```{r o_groupby3, echo=FALSE}
 unlink("groupby.1e9.png")
 benchplot(1e9, timings=dt, code=groupby.code)
-for (p in 1:3) {
-  unlink(sprintf("groupby.1e9.prev%s.png", p))
-  benchplot(1e9, timings=prev.dt[[p]], code=groupby.code, prev=p)
-}
 ```
 ![](groupby.1e9.png)
 
