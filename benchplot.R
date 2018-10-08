@@ -69,6 +69,9 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   exceptions = TRUE
   if (exceptions) {
     pandas_version = timings[solution=="pandas" & in_rows==min(in_rows), version[1L]]
+    pandas_git = timings[solution=="pandas" & in_rows==min(in_rows), git[1L]]
+    dask_version = timings[solution=="dask" & in_rows==min(in_rows), version[1L]]
+    dask_git = timings[solution=="dask" & in_rows==min(in_rows), git[1L]]
   }
   
   timings = timings[in_rows==.nrow]
@@ -81,6 +84,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   ndata = length(data)
   if (ndata!=1L) stop("only single data supported in benchplot")
   
+  #timings[,.N,solution]
   if (exceptions) {
     # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
     timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
@@ -94,10 +98,21 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
                            ][, time_sec:=NA_real_
                              ][, solution:="pandas"
                                ][, version:=pandas_version
-                                 ][, git:=NA_character_]
+                                 ][, git:=pandas_git]
       timings = rbindlist(list(timings[!pandasi], fix_pandas))[order(solution)]
     }
+    # dask 1e9 killed on 125GB machine due to not enough memory
+    if (timings[solution=="dask" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      daski = timings[solution=="dask" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
+      fix_dask = timings[solution=="data.table" & in_rows==1e9
+                         ][, time_sec:=NA_real_
+                           ][, solution:="dask"
+                             ][, version:=dask_version
+                               ][, git:=dask_git]
+      timings = rbindlist(list(timings[!daski], fix_dask))[order(solution)]
+    }
   }
+  #timings[,.N,solution]
   
   solutions = unique(timings$solution)
   nsolutions = length(solutions)
@@ -233,5 +248,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 
 if (interactive()) {
   d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
-  benchplot(.nrow=1e7, timings=d, code=groupby.code)
+  .nrow=1e9
+  timings=d; code=groupby.code; task="groupby"
+  #benchplot(.nrow=1e7, timings=d, code=groupby.code)
 }
