@@ -128,7 +128,8 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 
   fnam = paste0(task, ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
   if (interactive()) cat("Plotting to",fnam,"...\n")
-  png(file = fnam, width=800, height=1200)
+  height = 700+100*nsolutions;
+  png(file = fnam, width=800, height=height)
   
   par(mar=c(0.6, 1.1, 8.1, 2.1)) # shift to the left
   
