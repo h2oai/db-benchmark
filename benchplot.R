@@ -55,7 +55,7 @@ stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used f
 library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
 
-benchplot = function(.nrow=Inf, task="groupby", timings, code, prev=0) {
+benchplot = function(.nrow=Inf, task="groupby", timings, code) {
   
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
   if (uniqueN(timings$batch)!=1L) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
@@ -111,7 +111,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, prev=0) {
   # add question order
   timings[as.data.table(list(question=questions))[, I:=.I][], nquestion := i.I, on="question"]
 
-  fnam = paste0(task, ".", gsub("e[+]0", "E", pretty_sci(.nrow)), if (prev > 0) paste0(".prev", prev) else "", ".png")
+  fnam = paste0(task, ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
   if (interactive()) cat("Plotting to",fnam,"...\n")
   png(file = fnam, width=800, height=1200)
   
