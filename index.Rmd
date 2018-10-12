@@ -31,7 +31,7 @@ exceptions = rbindlist(list(
 ```{r load_data, include=FALSE}
 # all timings
 DT = read_timing("time.csv", col=NULL)
-DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark")] # filter out dask for now, and modin when added as plot is adjusted for 5 solutions
+DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
 # last benchmark batch
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 # take last batch only
