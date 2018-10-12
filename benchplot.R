@@ -324,6 +324,8 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, interacti
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
   # footer timestamp of plot gen
   mtext(side=1, line=-1, text=format(as.POSIXct(vbatch, origin="1970-01-01"), usetz=TRUE), adj=1, outer=TRUE, cex=1)
+  # put link to report
+  mtext(side=1, line=-1, text=" https://h2oai.github.io/db-benchmark", adj=0, outer=TRUE, cex=1)
   dev.off()
   if (interactive) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
 }
