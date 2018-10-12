@@ -47,7 +47,7 @@ dt = dt[batch==max(batch)]
 
 ```{r o_groupby1, echo=FALSE}
 unlink("groupby.1e7.png")
-benchplot(1e7, timings=dt, code=groupby.code)
+benchplot(1e7, timings=dt, code=groupby.code, colors=solution.colors)
 ```
 ![](groupby.1e7.png)
 
@@ -55,7 +55,7 @@ benchplot(1e7, timings=dt, code=groupby.code)
 
 ```{r o_groupby2, echo=FALSE}
 unlink("groupby.1e8.png")
-benchplot(1e8, timings=dt, code=groupby.code)
+benchplot(1e8, timings=dt, code=groupby.code, colors=solution.colors)
 ```
 ![](groupby.1e8.png)
 
@@ -63,7 +63,7 @@ benchplot(1e8, timings=dt, code=groupby.code)
 
 ```{r o_groupby3, echo=FALSE}
 unlink("groupby.1e9.png")
-benchplot(1e9, timings=dt, code=groupby.code)
+benchplot(1e9, timings=dt, code=groupby.code, colors=solution.colors)
 ```
 ![](groupby.1e9.png)
 
