@@ -55,7 +55,17 @@ stopifnot(sapply(c("curl","jsonlite"), requireNamespace, quietly=TRUE)) # used f
 library(data.table)
 if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) options(bitmapType="cairo") # fix for R compiled with-x=no with-cairo=yes
 
-benchplot = function(.nrow=Inf, task="groupby", timings, code) {
+colors = rbindlist(list(
+  list(solution="dplyr", colmain="red", collight="#FF7777"),
+  list(solution="data.table", "blue", "#7777FF"),
+  list(solution="pandas", "green4", "#77FF77"),
+  list(solution="pydatatable", "orange2", "orange"),
+  list(solution="spark", "#8000FFFF", "#CC66FF"),
+  list(solution="dask", "chocolate2", "chocolate3"),
+  list(solution="juliadf", "deepskyblue", "darkturquoise")
+))
+
+benchplot = function(.nrow=Inf, task="groupby", timings, code, colors) {
   
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
   if (uniqueN(timings$batch)!=1L) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
@@ -139,14 +149,10 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 
   # horiz=TRUE does it first bar from the bottom
   comma = function(x) format(as.integer(signif(x,4)),big.mark=",")
-  lr = "#FF7777"
-  lb = "#7777FF"
-  lg = "#77FF77"; green = "green4"
-  pydtcol = "orange2"
-  lpydtcol = "orange"
-  sparkcol = "#8000FFFF"
-  lsparkcol = "#CC66FF"
-  colors = c(sparkcol, pydtcol, green, "red", "blue", "black")
+  stopifnot(colors[,.N==1L,.(solution,colmain,collight)]$V1)
+  timings[colors, c("colmain","collight") := list(i.colmain, i.collight), on="solution"]
+  stopifnot(timings[is.na(colmain) | is.na(collight), .N==0L])
+  maincolors = rev(unique(timings$colmain))
   m = ans1[,max(time_sec,na.rm=TRUE)]
   if (m > 2*60*60) {
     timescale = 3600
@@ -158,33 +164,40 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
     timescale = 1
     xlab = "Seconds"
   }
-  bars = ans1[, time_sec/timescale]
-  # this is used for text(pmax(bars, bars2)) only to not overlap text with 2nd timing bar
+  ans1[, bars1:=time_sec/timescale]
+  # this is used ONLY for text(pmax(bars, bars2)) to not overlap text with 2nd timing bar
   bars2 = timings[run==2L][order(nquestion, solution, decreasing=TRUE)][, time_sec/timescale]
-  at = pretty(bars, 10)
+  at = pretty(ans1$bars1, 10)
   at = at[at!=0]
-  tt = barplot(bars[pad], horiz=TRUE, xlim=c(0, tail(at, 1)), axes=FALSE)
-  max_t = pmax(bars, bars2) # we put timing value as max(run1, run2), otherwise bigger bar would be overlapping text
+  tt = barplot(ans1$bars1[pad], horiz=TRUE, xlim=c(0, tail(at, 1)), axes=FALSE)
+  max_t = pmax(ans1$bars1, bars2) # we put timing value as max(run1, run2), otherwise bigger bar would be overlapping text
   text(max_t, tt[!is.na(pad)]-0.15, round(max_t, 1), pos=4, cex=1.25)
   tt = rev(tt)
   w = (tt[1]-tt[2])/4
   
+  # upper line break to separate legend from timings
   h1 = tt[1]
   abline(h=h1)
+  # x axis upper label (seconds, minutes) and values
   ff = if (length(at)<=8) TRUE else -1  # ff = first first xaxis label overlap
   text(x=at[ff], y=h1, labels=format(at[ff]), adj=c(0.5, -0.5), cex=1.5, font=2, xpd=NA)
   text(x=0, y=h1, labels=xlab, adj=c(0, -0.5), font=2, cex=1.5, xpd=NA)
   
+  # lower line break to separate legend from timings
   h2 = tail(tt, 1)-4*w
   abline(h=h2)
+  # x axis lower label (seconds, minutes) and values
   text(x=at[ff], y=h2, labels=format(at[ff]), adj=c(0.5, 1.5), cex=1.5, font=2, xpd=NA)
   text(x=0, y=h2, labels=xlab, adj=c(0, 1.5), font=2, cex=1.5, xpd=NA)
   
   space = nsolutions*2 + 2
+  # horizontal lines separating questions
   abline(h=tt[seq(space+1, by=space, length=4)], col="grey", lwd=2)
+  # grid
   for (x in at) lines(x=c(x, x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
-  barplot(bars[pad], horiz=TRUE, axes=FALSE,
-          col=rep(colors, each=2), font=2, xpd=NA, add=TRUE)
+  # color bars according to solutions
+  barplot(ans1$bars1[pad], horiz=TRUE, axes=FALSE,
+          col=rep(c(maincolors, "black"), each=2), font=2, xpd=NA, add=TRUE)
   
   textBG = function(x, y, txt, ...) {
     txtw = strwidth(txt, ...); txth = strheight(txt, ...);
@@ -193,13 +206,15 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
     text(x, y, txt, adj=c(0, 0.7), ...)
   }
   
-  for (i in 0:4) {
-    q = questions[i+1]
-    textBG(0, tt[3+i*space], code[[q]][["data.table"]], col="blue", font=2)
-    textBG(0, tt[5+i*space], code[[q]][["dplyr"]], col="red", font=2)
-    textBG(0, tt[7+i*space], code[[q]][["pandas"]], col=green, font=2)
-    textBG(0, tt[9+i*space], code[[q]][["pydatatable"]], col=pydtcol, font=2)
-    textBG(0, tt[11+i*space], code[[q]][["spark"]], col=sparkcol, font=2)
+  # syntax to each question-solution, headers for each question
+  for (iq in 1L:nquestions) {
+    q = questions[iq]
+    for (is in 1L:nsolutions) {
+      s = solutions[is]
+      cod = code[[q]][[s]]
+      col = colors[s, colmain, on="solution"]
+      textBG(0, tt[is*2L+1L+(iq-1)*space], cod, col=col, font=2)
+    }
     out_rows = ans1[question==q & run==1L, out_rows]
     out_cols = ans1[question==q & run==1L, out_cols]
     if (length(unique(out_rows)) != 1) stop("out_rows mismatch")
@@ -207,41 +222,61 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
     out_rows = out_rows[1]
     Mode = function(x) {tx<-table(x); as.numeric(names(tx)[which.max(tx)])}
     out_cols = Mode(out_cols) # pandas and spark does not return grouping column
-    textBG(0, tt[2+i*space], font=2, paste("Question", i+1, ":",
+    textBG(0, tt[2+(iq-1)*space], font=2, paste("Question", iq, ":",
       comma(out_rows), "ad hoc groups of", comma(ans1[1L, in_rows]/out_rows), "rows;  result",
       comma(out_rows), "x", out_cols))
   }
-
+  
+  # bars with second timings, or exceptions
   ans2 = timings[run==2L][order(nquestion, solution)]
-  for (i in 0:4) {
-    at=tt[4+i*space]; rect(0, at-w, ans2[1+i*nsolutions, (time_sec)/timescale], at+w, col=lb, xpd=NA)
-    at=tt[6+i*space]; rect(0, at-w, ans2[2+i*nsolutions, (time_sec)/timescale], at+w, col=lr, xpd=NA)
-    at=tt[8+i*space]; rect(0, at-w, ans2[3+i*nsolutions, (time_sec)/timescale], at+w, col=lg, xpd=NA)
-    at=tt[10+i*space]; rect(0, at-w, ans2[4+i*nsolutions, (time_sec)/timescale], at+w, col=lpydtcol, xpd=NA)
-    at=tt[12+i*space]; rect(0, at-w, ans2[5+i*nsolutions, (time_sec)/timescale], at+w, col=lsparkcol, xpd=NA)
-    # exceptions: pandas and pydatatable
-    if (is.na(ans2[3+i*nsolutions, time_sec])) textBG(0, tt[8+i*space], "Lack of memory to read data", col=green, font=2)
-    if (is.na(ans2[4+i*nsolutions, time_sec])) textBG(0, tt[10+i*space], "Not yet implemented", col=pydtcol, font=2)
+  for (iq in 1L:nquestions) {
+    q = questions[iq]
+    for (is in 1L:nsolutions) {
+      s = solutions[is]
+      col = colors[s, collight, on="solution"]
+      excol = colors[s, colmain, on="solution"]
+      val = ans2[solution==s & question==q, (time_sec)/timescale]
+      at = tt[(is+1)*2+(iq-1)*space]
+      rect(0, at-w, val, at+w, col=col, xpd=NA)
+      if (is.na(val)) { # to do, use dictionary
+        exception = if (s=="pandas") "Lack of memory to read data"
+        else if (s=="pydatatable") "Not yet implemented"
+        else if (s=="dask") "Lack of memory to read data"
+        else "undefined exception"
+        textBG(0, tt[(is+1)*2+(iq-1)*space], exception, col=excol, font=2)
+      }
+    }
   }
+  
   cph = 0.5  # minimum on graph histories; what people will see if they check
-  tn = timings[in_rows==.nrow, sum(time_sec, na.rm=TRUE), solution]
-  tn = setNames(tn$V1, tn$solution)
-  leg = unique(ans1[order(solution)], by="solution"
-               )[, tN := tn[solution] # no joining to not reorder
-                 ][, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
-                             if (solution=="pydatatable") "(py)datatable" else solution, version, # decode pydatatable to (py)datatable
-                             solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
-                             cph*tN/3600, round(tN/timescale, 0), tolower(xlab)), by=solution
-                   ][, V1]
+  sum.run12 = timings[in_rows==.nrow & run%in%c(1L, 2L),
+                      .(total_time_sec = sum(time_sec, na.rm=TRUE)),
+                      by="solution"]
+  # labels for legend solutions
+  legdt = ans1[, head(.SD, 1L), keyby="solution"]
+  legdt[sum.run12, total_time_sec := i.total_time_sec, on="solution"] # no joining to not reorder
+  legdt[, sprintf("%s %s  -  %s  -  Total: $%.02f for %s %s",
+                if (solution=="pydatatable") "(py)datatable" else solution, # decode pydatatable to (py)datatable
+                version,
+                solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
+                cph*total_time_sec/3600,
+                round(total_time_sec/timescale, 0),
+                tolower(xlab)),
+      by="solution"
+      ]$V1 -> leg
+  # plot legend solutions
   topoffset = 23.8
-  legend(0, par()$usr[4]+topoffset*w, pch=22, pt.bg=rev(colors)[-1], bty="n", cex=1.5, pt.cex=3.5,
+  legend(0, par()$usr[4]+topoffset*w, pch=22, pt.bg=rev(maincolors), bty="n", cex=1.5, pt.cex=3.5,
          text.font=1, xpd=NA, legend=leg)
+  # plot header, hardcoded number of columns!
   mtext(paste("Input table:", comma(.nrow), "rows x 9 columns (",
         if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA",
         "GB )"),
         side=3, line=6.5, cex=1.5, adj=0, font=2)
+  # legend first/second timing
   legend(par()$usr[2], par()$usr[4]+topoffset*w, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
-         legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=c("blue", lb))
+         legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
+  # footer timestamp of plot gen
   mtext(side=1, line=-1, text=format(as.POSIXct(vbatch, origin="1970-01-01"), usetz=TRUE), adj=1, outer=TRUE, cex=1)
   dev.off()
   if (interactive()) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
@@ -249,7 +284,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code) {
 
 if (interactive()) {
   d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
-  .nrow=1e9
+  .nrow=1e8
   timings=d; code=groupby.code; task="groupby"
-  #benchplot(.nrow=1e7, timings=d, code=groupby.code)
+  benchplot(.nrow=.nrow, timings=d[solution%in%c("juliadf","dask","spark","pydatatable","data.table","pandas","dplyr")], code=groupby.code, colors=colors)
 }
