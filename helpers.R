@@ -137,7 +137,8 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
               "0.7.5" = "2018-05-19"),
     modin = c("0.1.1" = "2018-07-29"),
     julia = c("1.0.0" = "2018-08-09"), # not used not as switched to juliadf
-    juliadf = c("0.14.0" = "2018-09-26")
+    juliadf = c("0.14.0" = "2018-09-26",
+                "0.14.1" = "2018-10-03")
   )
   if (!is.na(git)) {
     if (use.cache && !is.null(cgit<-cache[[solution]][[git]])) {
