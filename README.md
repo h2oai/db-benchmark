@@ -10,10 +10,10 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 # Solutions
 
-  - [ ] [dask](https://github.com/dask/dask)
+  - [x] [dask](https://github.com/dask/dask)
   - [x] [data.table](https://github.com/Rdatatable/data.table)
   - [x] [dplyr](https://github.com/tidyverse/dplyr)
-  - [ ] [juliadf](https://github.com/JuliaLang/julia)
+  - [x] [juliadf](https://github.com/JuliaLang/julia)
   - [x] [pandas](https://github.com/pandas-dev/pandas)
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
