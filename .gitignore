@@ -5,3 +5,7 @@ time.md
 *.html
 *.csv
 .Rproj.user
+
+__pycache__/
+loop-groupby-data.env
+pydatatable/py-pydatatable/
