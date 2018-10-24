@@ -307,7 +307,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
   # plot timing values next to each bar
   max_t = ans[, pmax(cutoff_bars[run==1L], cutoff_bars[run==2L])] # max(run1, run2) otherwise bigger bar could overlaps text
   max_t_x_pos = max_t
-  if (length(.cutoff)) max_t_x_pos[max_t>cutoff.bars.after] = cutoff.bars.after
+  if (length(.cutoff)) max_t_x_pos[max_t>cutoff.bars.after] = x_at[length(x_at)-1L] #cutoff.bars.after
   max_t_y_pos = rev(tt)[!is.na(pad)]-w/2
   text(max_t_x_pos, max_t_y_pos, round(max_t, 2), pos=4, cex=1.25) # round to 2 decimals places to avoid 0.0 cases
   
