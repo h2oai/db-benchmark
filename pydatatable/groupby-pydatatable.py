@@ -6,7 +6,7 @@ import os
 import gc
 import timeit
 import datatable as dt
-from datatable import f, sum, mean
+from datatable import f, sum, mean, by
 
 exec(open("./helpers.py").read())
 
