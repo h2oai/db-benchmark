@@ -141,12 +141,6 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
   
   #timings[,.N,solution]
   if (exceptions) {
-    # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
-    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
-    if (timings[solution=="data.table", .N==0L]) stop("exception for pydatatable question2 is fixed based on data.table, you must have data.table solution included")
-    fix_missing = timings[solution=="data.table" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
-    timings[solution=="pydatatable" & question=="sum v1 by id1:id2", c("out_rows","out_cols") := fix_missing]
-    
     # pandas 1e9 killed on 125GB machine due to not enough memory
     if (.nrow==1e9 && timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
       if (timings[solution=="data.table" & in_rows==1e9, .N==0L]) stop("exception for pandas 1e9 is fixed based on data.table, you must have data.table solution included")
@@ -297,7 +291,6 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
       rect(0, at-w, val, at+w, col=col, xpd=NA)
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
-        else if (s=="pydatatable") "Not yet implemented"
         else "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
