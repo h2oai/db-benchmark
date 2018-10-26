@@ -36,9 +36,28 @@ DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask"
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 # take last batch only
 dt = dt[batch==max(batch)]
+```
+
+```{r track_performance_change, eval=FALSE, echo=FALSE, include=FALSE}
+dt = dt[order(solution)]
 # in case of out_rows mismatch track using below:
 #dt[solution%in%c("juliadf","data.table"), .N,, .(in_rows, question, out_rows, solution, run)
 #   ][, dcast(.SD, in_rows + solution + run ~ question, value.var="out_rows")]
+DT[solution=="data.table" & batch%in%tail(b, 2), .(time_sec), .(in_rows, question=factor(question, levels=unique(question)), run, git)] -> d
+dcast(d, in_rows+question+run ~ git, value.var = "time_sec") -> dd
+gits = setdiff(names(dd), c("in_rows","question","run"))
+setnames(dd, gits, substr(gits, 1, 7))
+dd[,time_change:=round((`e59ba14`-`88439d9`)/`88439d9`, 2)]
+knitr::kable(dd)
+knitr::kable(
+  dd[, .(mean_time_change=mean(time_change)), run]
+)
+knitr::kable(
+  dd[, .(mean_time_change=mean(time_change)), question]
+)
+knitr::kable(
+  dd[, .(mean_time_change=mean(time_change)), in_rows]
+)
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -85,6 +104,6 @@ fread(
 
 ------
 
-Benchmark run took around 4.5 hours.  
+Benchmark run took around 14 hours.  
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
