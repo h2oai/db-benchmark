@@ -5,7 +5,7 @@
 groupby.code = list(
   "sum v1 by id1" = c(
     "dask"="x.groupby(['id1']).agg({'v1':'sum'}).compute()",
-    "data.table"="DT[, .(v1=sum(v1)), keyby=id1]",
+    "data.table"="DT[, .(v1=sum(v1)), by=id1]",
     "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
     "juliadf"="by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;",
     "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
@@ -14,7 +14,7 @@ groupby.code = list(
     ),
   "sum v1 by id1:id2" = c(
     "dask"="x.groupby(['id1','id2']).agg({'v1':'sum'}).compute()",
-    "data.table"="DT[, .(v1=sum(v1)), keyby=.(id1, id2)]",
+    "data.table"="DT[, .(v1=sum(v1)), by=.(id1, id2)]",
     "dplyr"="DF %>% group_by(id1,id2) %>% summarise(sum(v1))",
     "juliadf"="by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;",
     "pandas"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
@@ -23,7 +23,7 @@ groupby.code = list(
     ),
   "sum v1 mean v3 by id3" = c(
     "dask"="x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()",
-    "data.table"="DT[, .(v1=sum(v1), v3=mean(v3)), keyby=id3]",
+    "data.table"="DT[, .(v1=sum(v1), v3=mean(v3)), by=id3]",
     "dplyr"="DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))",
     "juliadf"="by(x, :id3) do df; DataFrame(v1 = sum(df.v1), v3 = mean(df.v3)); end;",
     "pandas"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
@@ -32,7 +32,7 @@ groupby.code = list(
     ),
   "mean v1:v3 by id4" = c(
     "dask"="x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
-    "data.table"="DT[, lapply(.SD, mean), keyby=id4, .SDcols=v1:v3]",
+    "data.table"="DT[, lapply(.SD, mean), by=id4, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id4) %>% summarise_each(funs(mean), vars=7:9)",
     "juliadf"="by(x, :id4) do df; DataFrame(v1 = mean(df.v1), v2 = mean(df.v2), v3 = mean(df.v3)); end;",
     "pandas"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
@@ -41,7 +41,7 @@ groupby.code = list(
     ),
   "sum v1:v3 by id6" = c(
     "dask"="x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
-    "data.table"="DT[, lapply(.SD, sum), keyby=id6, .SDcols=v1:v3]",
+    "data.table"="DT[, lapply(.SD, sum), by=id6, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id6) %>% summarise_each(funs(sum), vars=7:9)",
     "juliadf"="by(x, :id6) do df; DataFrame(v1 = sum(df.v1), v2 = sum(df.v2), v3 = sum(df.v3)); end;",
     "pandas"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
