@@ -54,17 +54,6 @@ chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1)]
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, sum(f.v1)]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
-del ans
 
 question = "sum v1 by id1:id2" #2
 gc.collect()
@@ -89,22 +78,11 @@ chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1, f.id2)]
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, sum(f.v1)]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
-del ans
 
 question = "sum v1 mean v3 by id3" #3
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, f.id3]
+ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, by(f.id3)]
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -123,17 +101,6 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, by(f.id3)]
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, [sum(f.v1), sum(f.v3)]]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
 del ans
 
 question = "mean v1:v3 by id4" #4
@@ -159,17 +126,6 @@ chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, f.id4]
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
-del ans
 
 question = "sum v1:v3 by id6" #5
 gc.collect()
@@ -193,17 +149,6 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, by(f.id6)]
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.topython())), chk_time_sec=chkt)
 del ans
 
 exit(0)

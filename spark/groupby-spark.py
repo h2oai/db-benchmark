@@ -76,20 +76,6 @@ write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_r
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1").persist(pyspark.StorageLevel.MEMORY_ONLY)
-print((ans.count(), len(ans.columns))) # shape
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-ans.createOrReplaceTempView("ans")
-chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-ans.unpersist()
-spark.catalog.uncacheTable("ans")
-del ans
 
 question = "sum v1 by id1:id2" #2
 gc.collect()
@@ -117,20 +103,6 @@ ans.createOrReplaceTempView("ans")
 chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-ans.unpersist()
-spark.catalog.uncacheTable("ans")
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1, id2").persist(pyspark.StorageLevel.MEMORY_ONLY)
-print((ans.count(), len(ans.columns))) # shape
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-ans.createOrReplaceTempView("ans")
-chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -166,21 +138,6 @@ write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_r
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, mean(v3) as v3 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
-print((ans.count(), len(ans.columns))) # shape
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-ans.createOrReplaceTempView("ans")
-tempchk = spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict()
-chk = [tempchk['v1'], tempchk['v3']]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-ans.unpersist()
-spark.catalog.uncacheTable("ans")
-del ans
 
 question = "mean v1:v3 by id4" #4
 gc.collect()
@@ -213,21 +170,6 @@ write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_r
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = spark.sql("select mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
-print((ans.count(), len(ans.columns))) # shape
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-ans.createOrReplaceTempView("ans")
-tempchk = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict()
-chk = [tempchk['v1'], tempchk['v2'], tempchk['v3']]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-ans.unpersist()
-spark.catalog.uncacheTable("ans")
-del ans
 
 question = "sum v1:v3 by id6" #5
 gc.collect()
@@ -257,21 +199,6 @@ tempchk = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans
 chk = [tempchk['v1'], tempchk['v2'], tempchk['v3']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-ans.unpersist()
-spark.catalog.uncacheTable("ans")
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
-print((ans.count(), len(ans.columns))) # shape
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-ans.createOrReplaceTempView("ans")
-tempchk = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict()
-chk = [tempchk['v1'], tempchk['v2'], tempchk['v3']]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=3, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
