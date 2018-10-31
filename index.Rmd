@@ -104,6 +104,6 @@ fread(
 
 ------
 
-Benchmark run took around 14 hours.  
+Benchmark run took around 10 hours.  
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
