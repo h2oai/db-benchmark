@@ -26,7 +26,7 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
 - install every solution (if needed activate `virtualenv` each)
 - edit `run.conf` to define tasks to benchmark
-- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2` to create `G1_1e7_1e2.csv`
+- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`
 - edit `data.csv` to define data sizes to benchmark
 - start benchmark with `./run.sh`
 
@@ -34,8 +34,8 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
 - install solution (if needed activate `virtualenv`)
-- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2` to create `G1_1e7_1e2.csv`
-- start single task and solution by `SRC_GRP_LOCAL=G1_1e7_1e2.csv ./pandas/groupby-pandas.py`
+- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`
+- start single task and solution by `SRC_GRP_LOCAL=G1_1e7_1e2_0_0.csv ./pandas/groupby-pandas.py`
 
 # Example environment
 
