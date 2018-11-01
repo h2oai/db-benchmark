@@ -17,7 +17,7 @@ cache = TRUE
 cat("loading dataset...\n")
 src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
-X = fread(if (file.exists(data_name)) data_name else src_grp) # csv can be provided in local dir for faster import
+X = fread(if (file.exists(data_name)) data_name else src_grp, stringsAsFactors=TRUE) # csv can be provided in local dir for faster import
 print(nrow(X))
 
 cat("grouping...\n")

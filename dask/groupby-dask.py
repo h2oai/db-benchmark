@@ -32,9 +32,9 @@ print("loading dataset...")
 # parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
 
 if os.path.isfile(data_name):
-  x = dd.read_csv(data_name, na_filter=False).persist()
+  x = dd.read_csv(data_name, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
 else:
-  x = dd.read_csv(src_grp, na_filter=False).persist()
+  x = dd.read_csv(src_grp, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
 
 in_rows = len(x)
 print(in_rows)

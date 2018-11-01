@@ -22,9 +22,9 @@ cache = "TRUE"
 print("loading dataset...")
 
 if os.path.isfile(data_name):
-  x = pd.read_csv(data_name)
+  x = pd.read_csv(data_name, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
 else:
-  x = pd.read_csv(src_grp)
+  x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
 
 print(len(x.index))
 
