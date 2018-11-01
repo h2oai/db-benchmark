@@ -2,11 +2,21 @@
 # Rscript groupby-datagen.R 1e8 1e1 5 1 ## 1e8 rows, 10 K, 5% NAs, sorted order
 args = commandArgs(TRUE)
 
+pretty_sci = function(x) {
+  tmp<-strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
+  if(length(tmp)==1L) {
+    paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
+  } else if(length(tmp)==2L){
+    paste0(tmp[1L], as.character(as.integer(tmp[2L])))
+  }
+}
+
 require(data.table)
 N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-stopifnot(nas>100L, nas<0L, !sort%in%c(0L,1L))
+stopifnot(nas<100L, nas>0L, sort%in%c(0L,1L))
 set.seed(108)
-DT <- data.table(
+cat(sprintf("Producing data of %s rows and %s K groups factors\n", pretty_sci(N), pretty_sci(K)))
+DT = data.table(
   id1 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
   id2 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
   id3 = sample(sprintf("id%010d",1:(N/K)), N, TRUE), # small groups (char)
@@ -18,24 +28,19 @@ DT <- data.table(
   v3 =  sample(round(runif(100,max=100),4), N, TRUE) # numeric e.g. 23.5749
 )
 if (nas>0L) {
-  N_nas = as.integer(N*(nas/100))
+  real_nas = nas/100
+  cat(sprintf("Turning %s of data in each column to NAs\n", real_nas))
+  N_nas = as.integer(N*real_nas)
   for (col in names(DT)) {
     I_nas = sample(N, N_nas, replace=FALSE)
     set(DT, I_nas, col, NA)
   }
 }
 if (sort==1L) {
+  cat(sprintf("Sorting data\n"))
   setkeyv(DT, paste0("id", 1:6))
 }
 
-pretty_sci = function(x) {
-  tmp<-strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
-  if(length(tmp)==1L) {
-    paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
-  } else if(length(tmp)==2L){
-    paste0(tmp[1L], as.character(as.integer(tmp[2L])))
-  }
-}
 fwrite(DT, sprintf("G1_%s_%s_%s_%s.csv", pretty_sci(N), pretty_sci(K), nas, sort))
 
 quit("no", status=0)
