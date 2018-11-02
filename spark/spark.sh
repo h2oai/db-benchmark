@@ -14,11 +14,13 @@ source ./spark/py-spark/bin/activate
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
+  Rscript ./log-task-solution.R groupby spark 0
   while read line
   do 
     eval $line
     ./spark/groupby-spark.py
   done < ./loop-groupby-data.env
+  Rscript ./log-task-solution.R groupby spark 1
 fi
 
 ## sort

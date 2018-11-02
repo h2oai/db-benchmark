@@ -23,11 +23,13 @@ source ./modin/py-modin/bin/activate
 
 ## sort
 if [[ "$RUN_TASKS" =~ "sort" ]]; then
+  Rscript ./log-task-solution.R sort modin 0
   while read line
   do 
     eval $line
     ./modin/sort-modin.py
   done < ./loop-sort-data.env
+  Rscript ./log-task-solution.R sort modin 1
 fi
 
 ## read

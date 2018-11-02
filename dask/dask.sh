@@ -14,11 +14,13 @@ source ./dask/py-dask/bin/activate
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
+  Rscript ./log-task-solution.R groupby dask 0
   while read line
   do 
     eval $line
     ./dask/groupby-dask.py || true
   done < ./loop-groupby-data.env
+  Rscript ./log-task-solution.R groupby dask 1
 fi
 
 ## sort
