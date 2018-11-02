@@ -13,7 +13,7 @@ pretty_sci = function(x) {
 
 require(data.table)
 N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-stopifnot(nas<100L, nas>0L, sort%in%c(0L,1L))
+stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 set.seed(108)
 cat(sprintf("Producing data of %s rows and %s K groups factors\n", pretty_sci(N), pretty_sci(K)))
 DT = data.table(
