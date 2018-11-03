@@ -40,7 +40,8 @@ if (sort==1L) {
   cat(sprintf("Sorting data\n"))
   setkeyv(DT, paste0("id", 1:6))
 }
-
-fwrite(DT, sprintf("G1_%s_%s_%s_%s.csv", pretty_sci(N), pretty_sci(K), nas, sort))
-
+file = sprintf("G1_%s_%s_%s_%s.csv", pretty_sci(N), pretty_sci(K), nas, sort)
+cat(sprintf("Writing data to %s\n", file))
+fwrite(DT, file)
+cat(sprintf("Data written to %s, quitting\n", file))
 quit("no", status=0)
