@@ -14,9 +14,9 @@ solution = "dplyr"
 fun = "group_by"
 cache = TRUE
 
-cat("loading dataset\n")
 src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
+cat(sprintf("loading dataset %s\n", data_name))
 X = data.table::fread(if (file.exists(data_name)) data_name else src_grp, data.table=FALSE, stringsAsFactors=TRUE) # csv can be provided in local dir for faster import
 print(nrow(X))
 

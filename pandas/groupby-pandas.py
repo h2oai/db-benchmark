@@ -19,7 +19,7 @@ solution = "pandas"
 fun = ".groupby"
 cache = "TRUE"
 
-print("loading dataset...")
+print("loading dataset %s" % data_name)
 
 if os.path.isfile(data_name):
   x = pd.read_csv(data_name, dtype={'id1':'category', 'id2':'category', 'id3':'category'})

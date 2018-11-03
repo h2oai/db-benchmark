@@ -20,7 +20,7 @@ solution = "pydatatable"
 fun = "[.datatable"
 cache = "TRUE"
 
-print("loading dataset...")
+print("loading dataset %s" % data_name)
 
 if os.path.isfile(data_name):
   x = dt.fread(data_name)

@@ -20,7 +20,7 @@ solution = "spark"
 fun = ".sql"
 cache = "TRUE"
 
-print("loading dataset...")
+print("loading dataset %s" % data_name)
 
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \

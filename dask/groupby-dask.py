@@ -21,7 +21,7 @@ solution = "dask"
 fun = ".groupby"
 cache = "TRUE"
 
-print("loading dataset...")
+print("loading dataset %s" % data_name)
 
 # try parquet according to suggestions in https://github.com/dask/dask/issues/4001
 # parq created with fastparquet for 1e7, 1e8, and spark for 1e9 due to failure to read 1e9 data in
