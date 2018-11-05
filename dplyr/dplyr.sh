@@ -18,7 +18,7 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   while read line
   do
     eval $line
-    ./dplyr/groupby-dplyr.R
+    ./dplyr/groupby-dplyr.R || true
   done < ./loop-groupby-data.env
   Rscript ./log-task-solution.R groupby dplyr 1
 fi

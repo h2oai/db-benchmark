@@ -7,7 +7,7 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   while read line
   do
     eval $line
-    ./juliadf/groupby-juliadf.jl
+    ./juliadf/groupby-juliadf.jl || true
   done < ./loop-groupby-data.env
   Rscript ./log-task-solution.R groupby juliadf 1
 fi
