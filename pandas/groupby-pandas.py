@@ -28,6 +28,10 @@ else:
 
 print(len(x.index))
 
+if len(x.index)==1000000000:
+  print("skip attempt to groupby pandas on 1000000000 due to lack of memory")
+  exit(0)
+
 print("grouping...")
 
 question = "sum v1 by id1" #1

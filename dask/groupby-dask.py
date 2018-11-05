@@ -39,6 +39,10 @@ else:
 in_rows = len(x)
 print(in_rows)
 
+if in_rows==1000000000:
+  print("skip attempt to groupby dask on 1000000000 due to lack of memory")
+  exit(0)
+
 print("grouping...")
 
 question = "sum v1 by id1" #1
