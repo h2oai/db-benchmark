@@ -18,7 +18,7 @@ cache = true;
 
 src_grp = ENV["SRC_GRP_LOCAL"];
 data_name = basename(src_grp);
-print(string("loading dataset ", data_name))
+println(string("loading dataset ", data_name))
 
 x = CSV.read(data_name, categorical=true);
 in_rows = size(x, 1);
