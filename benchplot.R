@@ -102,14 +102,13 @@ textBG = function(x, y, txt, w, ...) {
 # cutoff.after numeric default 0.2, to cutoff after 120% percent of timing of solution provided to 'cutoff' argument, provide 0.5 for 150% and so on
 # .interactive default interactive(), when TRUE it will print some output to console and open png after finished
 # by.nsolutions default FALSE, when TRUE it will generate png filename as 'groupby.[nsolutions].[in_rows].png' so scaling of benchplot can be easily compared for various number of solutions
-benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE) {
+# fnam fixed filename if do not want to generate from pattern
+benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="plots") {
   stopifnot(c("task","time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch") %in% names(timings))
   stopifnot(is.character(task), length(task)==1L, !is.na(task))
   if (!is.data.table(colors)) stop("argument colors must be data.table of solutions and colors assigned to each")
   if (!is.character(cutoff) || length(cutoff)>1) stop("cutoff must be character of length 0 to 1")
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
-  if (uniqueN(timings$batch)!=1L) stop("all timings to be presented has to be produced from same benchmark batch, `uniqueN(timings$batch)` must be equal to 1, there should be no NAs in 'batch' field")
-  vbatch = timings$batch[1L]
   timings.task = unique(timings$task)
   if (length(intersect(timings.task, task))!=1L) stop("there should be only single task to present on benchplot, provide 'task' argument which exists in 'timings' dataset")
   vtask = task
@@ -126,10 +125,16 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
     pandas_git = timings[solution=="pandas" & in_rows==min(in_rows), git[1L]]
     dask_version = timings[solution=="dask" & in_rows==min(in_rows), version[1L]]
     dask_git = timings[solution=="dask" & in_rows==min(in_rows), git[1L]]
+    dplyr_version = timings[solution=="dplyr" & in_rows==min(in_rows), version[1L]]
+    dplyr_git = timings[solution=="dplyr" & in_rows==min(in_rows), git[1L]]
   }
   
   # filter timings to single in_rows
   timings = timings[in_rows==.nrow]
+  
+  # filter timings to single data
+  .data = data; rm(data)
+  timings = timings[data==.data]
   
   questions = unique(timings$question)
   nquestions = length(questions)
@@ -163,6 +168,18 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
                                ][, git:=dask_git]
       timings = rbindlist(list(timings[!daski], fix_dask))[order(solution)]
     }
+    # dplyr fails on 1e9 k=2
+    if (data=="G1_1e9_2e0_0_0.csv" && .nrow==1e9 && timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      if (timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", .N==0L]) stop("exception for dplyr 1e9 k=2e0 is fixed based on data.table, you must have data.table solution included")
+      dplyri = timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", which=TRUE] # there might be some results, so we need to handle them nicely
+      fix_dplyr = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv"][!timings[dplyri, .(question, run)], on=c("question","run")
+                           ][, time_sec:=NA_real_
+                             ][, solution:="dplyr"
+                               ][, version:=dplyr_version
+                                 ][, git:=dplyr_git
+                                   ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
+      timings = rbindlist(list(timings, fix_dplyr))[order(solution)]
+    }
   }
   #timings[,.N,solution]
   
@@ -183,7 +200,8 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
   # add question order
   timings[as.data.table(list(question=questions))[, I:=.I], nquestion := i.I, on="question"]
   
-  fnam = paste0(task, if (by.nsolutions) paste0(".", nsolutions) else "", ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
+  if (is.null(fnam)) fnam = paste0(task, if (by.nsolutions) paste0(".", nsolutions) else "", ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
+  if (!is.null(path)) fnam = file.path(path, fnam)
   if (.interactive) cat("Plotting to", fnam, "...\n")
   height = 700+120*nsolutions;
   png(file=fnam, width=800, height=height)
@@ -291,6 +309,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
       rect(0, at-w, val, at+w, col=col, xpd=NA)
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
+        else if (s%in%c("dplyr")) "Cannot allocate memory"
         else "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
@@ -308,14 +327,14 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
   cph = 0.5 # minimum on graph histories; what people will see if they check
   
   # labels for legend solutions
-  ans[, .(run12_time_sec = sum(time_sec, na.rm=TRUE), # total time of run 1 and run 2
-          version = version[1], git = git[1]),
+  ans[, .(run12_time_sec = sum(time_sec), # total time of run 1 and run 2
+          batch=batch[1], version = version[1], git = git[1]),
       keyby="solution"
       ][, sprintf(
         "%s %s  -  %s  -  Total: $%.02f for %s %s",
         if (solution=="pydatatable") "(py)datatable" else solution, # decode pydatatable to (py)datatable
         version,
-        solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
+        format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))), # solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
         cph*run12_time_sec/3600, # cost in dollars
         round(run12_time_sec/timescale, 0),
         tolower(names(timescale)) # minutes/seconds
@@ -336,7 +355,7 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, colors, cutoff="s
   legend(par()$usr[2], legend_y, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
   # footer timestamp of plot gen
-  mtext(side=1, line=-1, text=format(as.POSIXct(vbatch, origin="1970-01-01"), usetz=TRUE), adj=1, outer=TRUE, cex=1)
+  mtext(side=1, line=-1, text=format(Sys.time(), usetz=TRUE), adj=1, outer=TRUE, cex=1)
   # put link to report
   mtext(side=1, line=-1, text=" https://h2oai.github.io/db-benchmark", adj=0, outer=TRUE, cex=1)
   dev.off()

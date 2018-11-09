@@ -1,6 +1,8 @@
 ---
 title: "Single-node data aggregation benchmark"
-output: html_document
+output:
+  html_document:
+    self_contained: no
 ---
 
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add more solutions over time although the most interesting solutions seems to be not mature enough. See [README.md](https://github.com/h2oai/db-benchmark/blob/master/README.md) for detailed status.
@@ -13,13 +15,16 @@ Because we have been asked many times to do so, the first task and initial motiv
 
 ```{r load_deps, include=FALSE}
 # Rscript -e 'rmarkdown::render("index.Rmd")'
-knitr::opts_chunk$set(cache=FALSE)
+knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 library(data.table)
 source("helpers.R")
 source("benchplot.R") # also creates 'code' for groupby
+fs = function(x) factor(x, levels=unique(x))
+kk = knitr::kable
 ```
 
-```{r exceptions, include=FALSE}
+```{r exceptions, include=FALSE, eval=FALSE}
+# CURRENTLY NOT USED
 exceptions = rbindlist(list(
   data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = 1e9, data=c("G1_1e9_1e2.csv"), comment = "lack of memory to read csv")#,
     #data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = 1e9, data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
@@ -30,12 +35,15 @@ exceptions = rbindlist(list(
 
 ```{r load_data, include=FALSE}
 # all timings
-DT = read_timing("time.csv", col=NULL)
+DT = read_timing("time.csv", raw=TRUE)
 DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
 # last benchmark batch
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
-# take last batch only
-dt = dt[batch==max(batch)]
+# take last batch only, UPDATE: not anymore, allow to tasks and solutions run separately
+#dt = dt[batch==max(batch)]
+recent = dt[, .(last_batch=max(batch)), .(task, solution)]
+dt = dt[recent, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
+dt = dt[order(solution)]
 ```
 
 ```{r track_performance_change, eval=FALSE, echo=FALSE, include=FALSE}
@@ -62,29 +70,58 @@ knitr::kable(
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
+```{r filter_task, include=FALSE}
+dt = dt[task=="groupby"]
+by_data = function(dt, .in_rows) {
+  dt[in_rows==.in_rows & run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
+     ][, "data":=sprintf("[%s](%s/%s)", data, "plots", gsub(".csv", ".png", gsub("G1_", "groupby.", data, fixed=TRUE), fixed=TRUE))
+       ][, kk(.SD)]
+}
+```
+
+Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (`k=100`). To see timings for first run in other cases scroll down to summary table and read use cases according to the following pattern `G1_[in-rows]_[k-cardinality-factor]_[NA-pct]_[is-sorted].csv`.
+
 ### 0.5GB
 
 ```{r o_groupby1, echo=FALSE}
-unlink("groupby.1e7.png")
-benchplot(1e7, timings=dt, code=groupby.code, colors=solution.colors)
+for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
+  fnam = paste0("groupby.",fn,".png")
+  unlink(fnam)
+  benchplot(1e7, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+}
 ```
-![](groupby.1e7.png)
+![](plots/groupby.1e7_1e2_0_0.png)
+```{r o_groupby1_summary, echo=FALSE}
+by_data(dt, 1e7)
+```
 
 ### 5GB
 
 ```{r o_groupby2, echo=FALSE}
-unlink("groupby.1e8.png")
-benchplot(1e8, timings=dt, code=groupby.code, colors=solution.colors)
+for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
+  fnam = paste0("groupby.",fn,".png")
+  unlink(fnam)
+  benchplot(1e8, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+}
 ```
-![](groupby.1e8.png)
+![](plots/groupby.1e8_1e2_0_0.png)
+```{r o_groupby2_summary, echo=FALSE}
+by_data(dt, 1e8)
+```
 
 ### 50GB {.active}
 
 ```{r o_groupby3, echo=FALSE}
-unlink("groupby.1e9.png")
-benchplot(1e9, timings=dt, code=groupby.code, colors=solution.colors)
+for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
+  fnam = paste0("groupby.",fn,".png")
+  unlink(fnam)
+  benchplot(1e9, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+}
 ```
-![](groupby.1e9.png)
+![](plots/groupby.1e9_1e2_0_0.png)
+```{r o_groupby3_summary, echo=FALSE}
+by_data(dt, 1e9)
+```
 
 ## Hardware configuration
 
@@ -99,11 +136,23 @@ fread(
   sep=":", header=FALSE
 )[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
   ][, .(Component=V1, Value=V2)
-    ][, knitr::kable(.SD)]
+    ][, kk(.SD)]
 ```
 
 ------
 
-Benchmark run took around 10 hours.  
+```{r total_task_time, include=FALSE, message=FALSE}
+lg = fread("logs.csv")[task=="groupby"]
+recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution)]
+recent_lg = lg[recent_batch, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
+unfinished = recent_lg[, .N==1L, .(batch, task, solution)][, setNames(V1, solution)]
+if (any(unfinished)) {
+  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (might be still running): %s", "groupby", paste(names(unfinished)[unfinished], collapse=", ")))
+  hours_took = "at least "
+} else hours_took = ""
+hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[finished==1L] - timestamp[finished==0L]), .(task, solution)][, round(sum(sec_diff)/60/60, 1)])
+```
+
+Benchmark run took around `r hours_took` hours.  
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
