@@ -46,7 +46,8 @@ dt = dt[recent, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
 ```
 
-```{r track_performance_change, eval=FALSE, echo=FALSE, include=FALSE}
+```{r track_performance_change, eval=FALSE, include=FALSE}
+# ONLY FOR INTERACTIVE TRACKING FOR NOW
 dt = dt[order(solution)]
 # in case of out_rows mismatch track using below:
 #dt[solution%in%c("juliadf","data.table"), .N,, .(in_rows, question, out_rows, solution, run)
@@ -125,29 +126,37 @@ by_data(dt, 1e9)
 
 ## Hardware configuration
 
+```{r logs, echo=FALSE}
+lg = fread("logs.csv")[task=="groupby"]
+recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution)]
+recent_lg = lg[recent_batch, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
+```
+
 ```{r hardware, echo=FALSE}
-kB_to_GB = function(x) {
-  nx = nchar(x)
-  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep ^MemTotal /proc/meminfo', expects 'kB'")
-  sprintf("%.2f GB", as.numeric(trimws(gsub("kB", "", x)))/1024^2)
+if (uniqueN(recent_lg, by="nodename") > 1) {
+  warning("presented timings were gathered on multiple machines")
+} else {
+  as.data.table(na.omit(fread("nodenames.csv")[unique(recent_lg$nodename), on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=rn, Value=V1)][, kk(.SD)]
 }
-fread(
-  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep ^MemTotal /proc/meminfo",
-  sep=":", header=FALSE
-)[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
-  ][, .(Component=V1, Value=V2)
-    ][, kk(.SD)]
+#kB_to_GB = function(x) {
+#  nx = nchar(x)
+#  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep ^MemTotal /proc/meminfo', expects 'kB'")
+#  sprintf("%.2f GB", as.numeric(trimws(gsub("kB", "", x)))/1024^2)
+#}
+#fread(
+#  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep ^MemTotal /proc/meminfo",
+#  sep=":", header=FALSE
+#)[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
+#  ][, .(Component=V1, Value=V2)
+#    ][, kk(.SD)]
 ```
 
 ------
 
-```{r total_task_time, include=FALSE, message=FALSE}
-lg = fread("logs.csv")[task=="groupby"]
-recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution)]
-recent_lg = lg[recent_batch, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
+```{r total_task_time, include=FALSE}
 unfinished = recent_lg[, .N==1L, .(batch, task, solution)][, setNames(V1, solution)]
 if (any(unfinished)) {
-  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (might be still running): %s", "groupby", paste(names(unfinished)[unfinished], collapse=", ")))
+  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or killed): %s", "groupby", paste(names(unfinished)[unfinished], collapse=", ")))
   hours_took = "at least "
 } else hours_took = ""
 hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[finished==1L] - timestamp[finished==0L]), .(task, solution)][, round(sum(sec_diff)/60/60, 1)])
