@@ -103,7 +103,7 @@ textBG = function(x, y, txt, w, ...) {
 # .interactive default interactive(), when TRUE it will print some output to console and open png after finished
 # by.nsolutions default FALSE, when TRUE it will generate png filename as 'groupby.[nsolutions].[in_rows].png' so scaling of benchplot can be easily compared for various number of solutions
 # fnam fixed filename if do not want to generate from pattern
-benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="plots") {
+benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="public/plots") {
   stopifnot(c("task","time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch") %in% names(timings))
   stopifnot(is.character(task), length(task)==1L, !is.na(task))
   if (!is.data.table(colors)) stop("argument colors must be data.table of solutions and colors assigned to each")
@@ -201,7 +201,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   timings[as.data.table(list(question=questions))[, I:=.I], nquestion := i.I, on="question"]
   
   if (is.null(fnam)) fnam = paste0(task, if (by.nsolutions) paste0(".", nsolutions) else "", ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
-  if (!is.null(path)) fnam = file.path(path, fnam)
+  if (!is.null(path)) {
+    if (!dir.exists(path)) dir.create(path, recursive=TRUE)
+    fnam = file.path(path, fnam)
+  }
   if (.interactive) cat("Plotting to", fnam, "...\n")
   height = 700+120*nsolutions;
   png(file=fnam, width=800, height=height)

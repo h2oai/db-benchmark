@@ -20,19 +20,16 @@ publishGhPages(){
   git checkout -q gh-pages 2>err.txt
   git reset -q --hard "f2d1593f0e760f0526ce2d8759d16955f29e2c6b" 2>err.txt
 
-  cp ../time.csv .
-  git add time.csv 2>err.txt
-  git commit -q -m 'publish benchmark timings' 2>err.txt
-  cp ../index.html .
-  git add index.html 2>err.txt
+  cp -r ../public/* ./
+  git add -A 2>err.txt
   git commit -q -m 'publish benchmark report' 2>err.txt
-  cp ../*.png .
-  git add *.png 2>err.txt
-  git commit -q -m 'publish plots' 2>err.txt
+  cp ../time.csv .
+  cp ../logs.csv .
+  git add time.csv logs.csv 2>err.txt
+  git commit -q -m 'publish benchmark timings and logs' 2>err.txt
   git push --force upstream gh-pages 2>err.txt
   
   cd ..
-  rm -rf db-benchmark.gh-pages
   
 }
 

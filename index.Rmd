@@ -14,7 +14,7 @@ We also include the syntax being timed alongside the timing. This way you can im
 Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
 
 ```{r load_deps, include=FALSE}
-# Rscript -e 'rmarkdown::render("index.Rmd")'
+# Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 library(data.table)
 source("helpers.R")

@@ -9,6 +9,7 @@ rm -f *.png
 rm -f *.env
 rm -f rmarkdown.out
 rm -rf db-benchmark.gh-pages
+rm -rf public
 
 # produce iteration dictionaries from data.csv
 ./init-setup-iteration.R
@@ -52,7 +53,7 @@ $DO_UPGRADE && ./spark/init-spark.sh
 ./spark/spark.sh
 
 # publish report for all tasks
-Rscript -e 'rmarkdown::render("index.Rmd")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
 $DO_PUBLISH && [ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
