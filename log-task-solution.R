@@ -8,7 +8,8 @@ timestamp=as.numeric(Sys.time())
 task=args[1L]
 solution=args[2L]
 finished=args[3L]
-lg = data.table(batch=batch, task=task, solution=solution, timestamp=timestamp, finished=finished)
+nodename=Sys.info()[["nodename"]]
+lg = data.table(nodename=nodename, batch=batch, task=task, solution=solution, timestamp=timestamp, finished=finished)
 file = "logs.csv"
 fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
 
