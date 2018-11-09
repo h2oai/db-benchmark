@@ -90,7 +90,7 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   benchplot(1e7, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
-![](plots/groupby.1e7_1e2_0_0.png)
+![](public/plots/groupby.1e7_1e2_0_0.png)
 ```{r o_groupby1_summary, echo=FALSE}
 by_data(dt, 1e7)
 ```
@@ -104,7 +104,7 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   benchplot(1e8, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
-![](plots/groupby.1e8_1e2_0_0.png)
+![](public/plots/groupby.1e8_1e2_0_0.png)
 ```{r o_groupby2_summary, echo=FALSE}
 by_data(dt, 1e8)
 ```
@@ -118,7 +118,7 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   benchplot(1e9, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
-![](plots/groupby.1e9_1e2_0_0.png)
+![](public/plots/groupby.1e9_1e2_0_0.png)
 ```{r o_groupby3_summary, echo=FALSE}
 by_data(dt, 1e9)
 ```
