@@ -129,12 +129,14 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     dplyr_git = timings[solution=="dplyr" & in_rows==min(in_rows), git[1L]]
   }
   
-  # filter timings to single in_rows
-  timings = timings[in_rows==.nrow]
+  # filter timings to single in_rows # this will be handled by filter on data
+  #timings = timings[in_rows==.nrow]
   
   # filter timings to single data
   .data = data; rm(data)
   timings = timings[data==.data]
+  
+  if (uniqueN(timings$in_rows) != 1L) stop("There should be only single 'in_rows' after filtering on 'data'")
   
   questions = unique(timings$question)
   nquestions = length(questions)
@@ -217,7 +219,6 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   stopifnot(colors[, .N==1L, .(solution, colmain, collight)]$V1)
   timings[colors, c("colmain","collight") := list(i.colmain, i.collight), on="solution"]
   stopifnot(timings[is.na(colmain) | is.na(collight), .N==0L])
-  maincolors = rev(unique(timings$colmain))
   
   # cutoff
   .cutoff = cutoff; rm(cutoff)
@@ -241,7 +242,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   x_at = timings[, get_xlab_values(c(bars, cutoff.bars.after))]
   
   # order for bar horiz=TRUE does first bar from the bottom!
-  ans = timings[order(nquestion, solution, decreasing=TRUE)]
+  ans = timings[, .SD][, max_time_sec_runs:=max(time_sec), by=.(solution, question)][order(nquestion, max_time_sec_runs, na.last=FALSE, decreasing=TRUE)]
   
   # use padding to reserve extra space for solution syntax, and top X axis and its labels
   pad = as.vector(sapply(0:4, function(x) c(as.vector(rbind(x*nsolutions + 1:nsolutions, NA)), NA, NA)))
@@ -273,20 +274,29 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   abline(h=tt[seq(space+1, by=space, length=4)], col="grey", lwd=2)
   # dotted vertical lines to form grid
   for (at_x in x_at) lines(x=c(at_x, at_x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
-  # color bars according to solutions
-  barplot(ans[run==1L, cutoff_bars[pad]], horiz=TRUE, axes=FALSE,
-          col=rep(c(maincolors, "black"), each=2),
-          font=2, xpd=NA, add=TRUE)
+  
+  # first run bars according to solutions
+  ans[run==1L, #.(cutoff_bars[pad], c(colmain,"black")[pad])
+      barplot(cutoff_bars[pad], horiz=TRUE, axes=FALSE,
+              col=c(colmain,"black")[pad],
+              font=2, xpd=NA, add=TRUE)
+      ]
   
   # syntax to each question-solution, headers for each question
   for (iq in 1L:nquestions) {
     q = questions[iq]
+    q_ord_solutions = union(
+      ans[nquestion==iq & run==1L][order(max_time_sec_runs, na.last=TRUE), solution],
+      solutions # undefined exceptions
+    )
+    # plot syntax
     for (is in 1L:nsolutions) {
-      s = solutions[is]
+      s = q_ord_solutions[is]
       cod = code[[q]][[s]]
       col = colors[s, colmain, on="solution"]
       textBG(0, tt[is*2L+1L+(iq-1)*space], txt=cod, w=w, col=col, font=2)
     }
+    # plot headers
     out_rows = ans[question==q & run==1L, out_rows]
     out_cols = ans[question==q & run==1L, out_cols]
     if (length(unique(out_rows)) != 1L) stop("out_rows mismatch")
@@ -303,8 +313,12 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # bars of second timings (run==2L), or exceptions
   for (iq in 1L:nquestions) {
     q = questions[iq]
+    q_ord_solutions = union(
+      ans[nquestion==iq & run==1L][order(max_time_sec_runs, na.last=TRUE), solution],
+      solutions
+    )
     for (is in 1L:nsolutions) {
-      s = solutions[is]
+      s = q_ord_solutions[is]
       col = colors[s, collight, on="solution"]
       excol = colors[s, colmain, on="solution"]
       val = ans[solution==s & question==q & run==2L, cutoff_bars]
@@ -329,11 +343,26 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # cost per hour
   cph = 0.5 # minimum on graph histories; what people will see if they check
   
-  # labels for legend solutions
+  # legend location
+  topoffset = nsolutions*5-3
+  legend_y = par()$usr[4]+topoffset*w # usr: c(x1, x2, y1, y2)
+  
+  # legend header
+  mtext(sprintf("Input table: %s rows x %s columns ( %s GB )",
+                format_comma(.nrow), 9L, # hardcoded number of columns!
+                if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
+        line=1.5+nsolutions,
+        side=3, cex=1.5, adj=0, font=2)
+  # legend first/second timing box
+  legend(par()$usr[2], legend_y, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
+         legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
+  
+  # legend
   ans[, .(run12_time_sec = sum(time_sec), # total time of run 1 and run 2
-          batch=batch[1], version = version[1], git = git[1]),
+          batch=batch[1], version = version[1], git = git[1], colmain=colmain[1]),
       keyby="solution"
-      ][, sprintf(
+      ][order(run12_time_sec, na.last=TRUE)
+        ][, .(leg=sprintf(
         "%s %s  -  %s  -  Total: $%.02f for %s %s",
         if (solution=="pydatatable") "(py)datatable" else solution, # decode pydatatable to (py)datatable
         version,
@@ -341,22 +370,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         cph*run12_time_sec/3600, # cost in dollars
         round(run12_time_sec/timescale, 0),
         tolower(names(timescale)) # minutes/seconds
-      ),
-        by="solution"
-      ]$V1 -> leg
-  # plot legend solutions
-  topoffset = nsolutions*5-3
-  legend_y = par()$usr[4]+topoffset*w # usr: c(x1, x2, y1, y2)
-  legend(0, legend_y, pch=22, pt.bg=rev(maincolors), bty="n", cex=1.5, pt.cex=3.5,
-         text.font=1, xpd=NA, legend=leg)
-  mtext(sprintf("Input table: %s rows x %s columns ( %s GB )",
-                format_comma(.nrow), 9L, # hardcoded number of columns!
-                if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
-        line=1.5+nsolutions,
-        side=3, cex=1.5, adj=0, font=2)
-  # legend first/second timing
-  legend(par()$usr[2], legend_y, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
-         legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
+      ), colmain=colmain),
+      by="solution"
+      ][, legend(0, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
+                 text.font=1, xpd=NA, legend=leg)] -> nul
+  
   # footer timestamp of plot gen
   mtext(side=1, line=-1, text=format(Sys.time(), usetz=TRUE), adj=1, outer=TRUE, cex=1)
   # put link to report
@@ -366,6 +384,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
 }
 
 if (dev1<-FALSE) {
+  stop("adjust non-max batch only")
   d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
   .nrow=1e9
   # verify scaling across number of solutions
@@ -378,8 +397,10 @@ if (dev1<-FALSE) {
     benchplot(.nrow=.nrow, timings=d[solution%in%s], code=groupby.code, colors=solution.colors, .interactive=FALSE, by.nsolutions=TRUE)
   }
 } else if (dev2<-FALSE) {
-  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
+  d = fread("time.csv")[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)]
+  recent = d[, .(max_batch=max(batch)), .(solution, task, data)]
+  d = d[recent, on=c("solution","task","data","batch"="max_batch"), nomatch=NULL]
   .nrow=1e9
-  timings=d; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"
-  benchplot(.nrow=.nrow, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
+  timings=d; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; data="G1_1e9_1e2_0_0.csv"; fnam=NULL; path=NULL
+  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
 }
