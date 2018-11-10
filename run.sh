@@ -9,10 +9,6 @@ rm -f *.png
 rm -f *.env
 rm -f rmarkdown.out
 rm -rf db-benchmark.gh-pages
-rm -rf public
-
-# produce iteration dictionaries from data.csv
-./init-setup-iteration.R
 
 # set batch
 export BATCH=$(date +%s)
@@ -28,35 +24,49 @@ $DO_UPGRADE && ./pandas/init-pandas.sh
 $DO_UPGRADE && ./pydatatable/init-pydatatable.sh
 $DO_UPGRADE && ./spark/init-spark.sh
 
+# produce iteration dictionaries from data.csv and solutions that should be run
+./init-setup-iteration.R
+
+#source do-solutions.env
+DO_ALL=true
+DO_DASK=$DO_ALL
+DO_DATATABLE=$DO_ALL
+DO_DPLYR=$DO_ALL
+DO_JULIADF=$DO_ALL
+DO_MODIN=false
+DO_PANDAS=$DO_ALL
+DO_PYDATATABLE=$DO_ALL
+DO_SPARK=$DO_ALL
+
 # dask
-./dask/dask.sh
+$DO_DASK && ./dask/dask.sh
 
 # datatable
-./datatable/datatable.sh
+$DO_DATATABLE && ./datatable/datatable.sh
 
 # dplyr
-./dplyr/dplyr.sh
+$DO_DPLYR && ./dplyr/dplyr.sh
 
 # juliadf
-./juliadf/juliadf.sh
+$DO_JULIADF && ./juliadf/juliadf.sh
+
+# modin
+$DO_MODIN && ./modin/modin.sh
 
 # pandas
-./pandas/pandas.sh
+$DO_PANDAS && ./pandas/pandas.sh
 
 # pydatatable
-./pydatatable/pydatatable.sh
-
-## modin
-#./modin/modin.sh
+$DO_PYDATATABLE && ./pydatatable/pydatatable.sh
 
 # spark
-./spark/spark.sh
+$DO_SPARK && ./spark/spark.sh
 
 # publish report for all tasks
-Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
-$DO_PUBLISH && [ -f ./token ] && ./publish.sh && echo "# Benchmark results has been published"
+$DO_PUBLISH && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
