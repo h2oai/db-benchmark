@@ -3,44 +3,44 @@ set -e
 
 # join
 if [[ "$RUN_TASKS" =~ "join" ]]; then
-  Rscript ./log-task-solution.R join datatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R join datatable "$SRC_X"_"$SRC_Y" 0
     ./datatable/join-datatable.R
+    Rscript ./log-task-solution-data.R join datatable "$SRC_X"_"$SRC_Y" 1
   done < ./loop-join-data.env
-  Rscript ./log-task-solution.R join datatable 1
 fi
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
-  Rscript ./log-task-solution.R groupby datatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R groupby datatable $SRC_GRP_LOCAL 0
     ./datatable/groupby-datatable.R
+    Rscript ./log-task-solution-data.R groupby datatable $SRC_GRP_LOCAL 1
   done < ./loop-groupby-data.env
-  Rscript ./log-task-solution.R groupby datatable 1
 fi
 
 # sort
 if [[ "$RUN_TASKS" =~ "sort" ]]; then
-  Rscript ./log-task-solution.R sort datatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R sort datatable $SRC_X 0
     ./datatable/sort-datatable.R
+    Rscript ./log-task-solution-data.R sort datatable $SRC_X 1
   done < ./loop-sort-data.env
-  Rscript ./log-task-solution.R sort datatable 1
 fi
 
 # read
 if [[ "$RUN_TASKS" =~ "read" ]]; then
-  Rscript ./log-task-solution.R read datatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R read datatable $SRC_GRP_LOCAL 0
     ./datatable/read-datatable.R
+    Rscript ./log-task-solution-data.R read datatable $SRC_GRP_LOCAL 1
   done < ./loop-read-data.env
-  Rscript ./log-task-solution.R read datatable 1
 fi

@@ -13,7 +13,7 @@ solution = "data.table"
 fun = "fread"
 cache = TRUE
 
-src_grp = Sys.getenv("SRC_GRP")
+src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
 options("datatable.showProgress"=FALSE)
 

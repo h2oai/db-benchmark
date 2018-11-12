@@ -3,12 +3,11 @@ set -e
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
-  Rscript ./log-task-solution.R groupby juliadf 0
   while read line
   do
     eval $line
+    Rscript ./log-task-solution-data.R groupby juliadf $SRC_GRP_LOCAL 0
     ./juliadf/groupby-juliadf.jl || true
-    sleep 30
+    Rscript ./log-task-solution-data.R groupby juliadf $SRC_GRP_LOCAL 1
   done < ./loop-groupby-data.env
-  Rscript ./log-task-solution.R groupby juliadf 1
 fi

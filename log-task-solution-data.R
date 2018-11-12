@@ -1,4 +1,4 @@
-# Rscript log-task-solution.R groupby datatable 0
+# Rscript log-task-solution.R groupby datatable G1_1e9_1e2_0_0.csv 0
 
 args = commandArgs(TRUE)
 
@@ -7,9 +7,10 @@ batch=Sys.getenv("BATCH", NA)
 timestamp=as.numeric(Sys.time())
 task=args[1L]
 solution=args[2L]
-finished=args[3L]
+data=args[3L]
+finished=args[4L]
 nodename=Sys.info()[["nodename"]]
-lg = data.table(nodename=nodename, batch=batch, task=task, solution=solution, timestamp=timestamp, finished=finished)
+lg = data.table(nodename=nodename, batch=batch, task=task, solution=solution, data=data, timestamp=timestamp, finished=finished)
 file = "logs.csv"
 fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
 

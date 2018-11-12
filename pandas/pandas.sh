@@ -5,45 +5,45 @@ source ./pandas/py-pandas/bin/activate
 
 # join
 if [[ "$RUN_TASKS" =~ "join" ]]; then
-  Rscript ./log-task-solution.R join pandas 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R join pandas "$SRC_X"_"$SRC_Y" 0
     ./pandas/join-pandas.py
+    Rscript ./log-task-solution-data.R join pandas "$SRC_X"_"$SRC_Y" 1
   done < ./loop-join-data.env
-  Rscript ./log-task-solution.R join pandas 1
 fi
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
-  Rscript ./log-task-solution.R groupby pandas 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R groupby pandas $SRC_GRP_LOCAL 0
     ./pandas/groupby-pandas.py || true
+    Rscript ./log-task-solution-data.R groupby pandas $SRC_GRP_LOCAL 1
   done < ./loop-groupby-data.env
-  Rscript ./log-task-solution.R groupby pandas 1
 fi
 
 # sort
 if [[ "$RUN_TASKS" =~ "sort" ]]; then
-  Rscript ./log-task-solution.R sort pandas 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R sort pandas $SRC_X 0
     ./pandas/sort-pandas.py
+    Rscript ./log-task-solution-data.R sort pandas $SRC_X 1
   done < ./loop-sort-data.env
-  Rscript ./log-task-solution.R sort pandas 1
 fi
 
 # read
 if [[ "$RUN_TASKS" =~ "read" ]]; then
-  Rscript ./log-task-solution.R read pandas 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R read pandas $SRC_GRP_LOCAL 0
     ./pandas/read-pandas.py
+    Rscript ./log-task-solution-data.R read pandas $SRC_GRP_LOCAL 1
   done < ./loop-read-data.env
-  Rscript ./log-task-solution.R read pandas 1
 fi
 

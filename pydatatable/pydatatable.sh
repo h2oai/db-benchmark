@@ -14,34 +14,34 @@ source ./pydatatable/py-pydatatable/bin/activate
 
 # groupby
 if [[ "$RUN_TASKS" =~ "groupby" ]]; then
-  Rscript ./log-task-solution.R groupby pydatatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R groupby pydatatable $SRC_GRP_LOCAL 0
     ./pydatatable/groupby-pydatatable.py
+    Rscript ./log-task-solution-data.R groupby pydatatable $SRC_GRP_LOCAL 1
   done < ./loop-groupby-data.env
-  Rscript ./log-task-solution.R groupby pydatatable 1
 fi
 
 # sort
 if [[ "$RUN_TASKS" =~ "sort" ]]; then
-  Rscript ./log-task-solution.R sort pydatatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R sort pydatatable $SRC_X 0
     ./pydatatable/sort-pydatatable.py
+    Rscript ./log-task-solution-data.R sort pydatatable $SRC_X 1
   done < ./loop-sort-data.env
-  Rscript ./log-task-solution.R sort pydatatable 1
 fi
 
 # read
 if [[ "$RUN_TASKS" =~ "read" ]]; then
-  Rscript ./log-task-solution.R read pydatatable 0
   while read line
   do 
     eval $line
+    Rscript ./log-task-solution-data.R read pydatatable $SRC_GRP_LOCAL 0
     ./pydatatable/read-pydatatable.py
+    Rscript ./log-task-solution-data.R read pydatatable $SRC_GRP_LOCAL 1
   done < ./loop-read-data.env
-  Rscript ./log-task-solution.R read pydatatable 1
 fi
 
