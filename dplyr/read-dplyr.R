@@ -16,7 +16,7 @@ solution = "dplyr"
 fun = "readr::read_csv"
 cache = TRUE
 
-src_grp = Sys.getenv("SRC_GRP")
+src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = basename(src_grp)
 options("readr.show_progress"=FALSE)
 
