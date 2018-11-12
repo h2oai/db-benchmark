@@ -15,6 +15,6 @@ file = "logs.csv"
 fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
 
 #fread("logs.csv"
-#      )[, dcast(.SD, batch+task+solution ~ finished, value.var="timestamp")
-#        ][, .(batch, task, solution, start=as.POSIXct(`0`, origin="1970-01-01"), end=as.POSIXct(`1`, origin="1970-01-01"), elapsed_sec=`1`-`0`)
+#      )[, dcast(.SD, batch+task+solution+data ~ finished, value.var="timestamp")
+#        ][, .(batch, task, solution, data, start=as.POSIXct(`0`, origin="1970-01-01"), end=as.POSIXct(`1`, origin="1970-01-01"), elapsed_sec=`1`-`0`)
 #          ][]
