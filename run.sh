@@ -27,40 +27,32 @@ $DO_UPGRADE && ./spark/init-spark.sh
 # produce iteration dictionaries from data.csv and solutions that should be run
 ./init-setup-iteration.R
 
-#source do-solutions.env
-DO_ALL=true
-DO_DASK=$DO_ALL
-DO_DATATABLE=$DO_ALL
-DO_DPLYR=$DO_ALL
-DO_JULIADF=$DO_ALL
-DO_MODIN=false
-DO_PANDAS=$DO_ALL
-DO_PYDATATABLE=$DO_ALL
-DO_SPARK=$DO_ALL
+# get solutions to run env vars
+source do-solutions.env
 
 # dask
-$DO_DASK && ./dask/dask.sh
+if [ "$DO_DASK" == true ]; then ./dask/dask.sh; fi;
 
 # datatable
-$DO_DATATABLE && ./datatable/datatable.sh
+if [ "$DO_DATATABLE" == true ]; then ./datatable/datatable.sh; fi;
 
 # dplyr
-$DO_DPLYR && ./dplyr/dplyr.sh
+if [ "$DO_DPLYR" == true ]; then ./dplyr/dplyr.sh; fi;
 
 # juliadf
-$DO_JULIADF && ./juliadf/juliadf.sh
+if [ "$DO_JULIADF" == true ]; then ./juliadf/juliadf.sh; fi;
 
 # modin
-$DO_MODIN && ./modin/modin.sh
+if [ "$DO_MODIN" == true ]; then ./modin/modin.sh; fi;
 
 # pandas
-$DO_PANDAS && ./pandas/pandas.sh
+if [ "$DO_PANDAS" == true ]; then ./pandas/pandas.sh; fi;
 
 # pydatatable
-$DO_PYDATATABLE && ./pydatatable/pydatatable.sh
+if [ "$DO_PYDATATABLE" == true ]; then ./pydatatable/pydatatable.sh; fi;
 
 # spark
-$DO_SPARK && ./spark/spark.sh
+if [ "$DO_SPARK" == true ]; then ./spark/spark.sh; fi;
 
 # publish report for all tasks
 rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
