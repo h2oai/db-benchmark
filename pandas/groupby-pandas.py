@@ -6,6 +6,7 @@ import os
 import gc
 import timeit
 import pandas as pd
+import datatable as dt
 
 exec(open("./helpers.py").read())
 
@@ -20,17 +21,21 @@ fun = ".groupby"
 cache = "TRUE"
 
 print("loading dataset %s" % data_name)
+x = dt.fread(src_grp).topandas()
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
 
-if os.path.isfile(data_name):
-  x = pd.read_csv(data_name, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-else:
-  x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
+#if os.path.isfile(data_name):
+#  x = pd.read_csv(data_name, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
+#else:
+#  x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
 
 print(len(x.index))
 
-if len(x.index)==1000000000:
-  print("skip attempt to groupby pandas on 1000000000 due to lack of memory")
-  exit(0)
+#if len(x.index)==1000000000:
+#  print("skip attempt to groupby pandas on 1000000000 due to lack of memory")
+#  exit(0)
 
 print("grouping...")
 
