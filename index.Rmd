@@ -3,6 +3,8 @@ title: "Single-node data aggregation benchmark"
 output:
   html_document:
     self_contained: no
+    includes:
+      in_header: ga.html
 ---
 
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add more solutions over time although the most interesting solutions seems to be not mature enough. See [README.md](https://github.com/h2oai/db-benchmark/blob/master/README.md) for detailed status.
