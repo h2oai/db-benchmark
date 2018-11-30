@@ -16,46 +16,19 @@ export BATCH=$(date +%s)
 echo "# Benchmark run $BATCH started"
 
 # upgrade tools
-$DO_UPGRADE && ./dask/init-dask.sh
-$DO_UPGRADE && ./datatable/init-datatable.sh
-$DO_UPGRADE && ./dplyr/init-dplyr.sh
-$DO_UPGRADE && ./juliadf/init-juliadf.sh
-$DO_UPGRADE && ./pandas/init-pandas.sh
-$DO_UPGRADE && ./pydatatable/init-pydatatable.sh
-$DO_UPGRADE && ./spark/init-spark.sh
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/init-dask.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/init-datatable.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dplyr" ]]; then ./dplyr/init-dplyr.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "juliadf" ]]; then ./juliadf/init-juliadf.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pandas" ]]; then ./pandas/init-pandas.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pydatatable/init-pydatatable.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init-spark.sh; fi;
 
-# produce iteration dictionaries from data.csv and solutions that should be run
-./init-setup-iteration.R
-
-# get solutions to run env vars
-source do-solutions.env
-
-# dask
-if [ "$DO_DASK" == true ]; then ./dask/dask.sh; fi;
-
-# datatable
-if [ "$DO_DATATABLE" == true ]; then ./datatable/datatable.sh; fi;
-
-# dplyr
-if [ "$DO_DPLYR" == true ]; then ./dplyr/dplyr.sh; fi;
-
-# juliadf
-if [ "$DO_JULIADF" == true ]; then ./juliadf/juliadf.sh; fi;
-
-# modin
-if [ "$DO_MODIN" == true ]; then ./modin/modin.sh; fi;
-
-# pandas
-if [ "$DO_PANDAS" == true ]; then ./pandas/pandas.sh; fi;
-
-# pydatatable
-if [ "$DO_PYDATATABLE" == true ]; then ./pydatatable/pydatatable.sh; fi;
-
-# spark
-if [ "$DO_SPARK" == true ]; then ./spark/spark.sh; fi;
+# run
+Rscript ./launcher.R
 
 # publish report for all tasks
-rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+#rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
 $DO_PUBLISH && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")

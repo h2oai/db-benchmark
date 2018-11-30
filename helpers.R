@@ -7,11 +7,12 @@ write.log = function(
   stopifnot(is.character(task), is.character(data), is.character(solution), is.character(fun))
   log.file=Sys.getenv("CSV_TIME_FILE", "time.csv")
   batch=Sys.getenv("BATCH", NA)
+  nodename=toString(Sys.info()[["nodename"]])
   comment=NA_character_ # placeholder for updates to timing data
   time_sec=round(time_sec, 3)
   mem_gb=round(mem_gb, 3)
   chk_time_sec=round(chk_time_sec, 3)
-  df=data.frame(batch=as.integer(batch), timestamp=as.numeric(timestamp), 
+  df=data.frame(nodename=nodename, batch=as.integer(batch), timestamp=as.numeric(timestamp), 
                 task=task, data=data, in_rows=trunc(in_rows), question=as.character(question), out_rows=trunc(out_rows), # trunc to support big int in double
                 out_cols=as.integer(out_cols), solution=solution, version=as.character(version), git=as.character(git), fun=fun,
                 run=as.integer(run), time_sec=time_sec, mem_gb=mem_gb, cache=cache, chk=chk, chk_time_sec=chk_time_sec,
