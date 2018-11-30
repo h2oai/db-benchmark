@@ -28,7 +28,7 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init
 Rscript ./launcher.R
 
 # publish report for all tasks
-#rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
 $DO_PUBLISH && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
