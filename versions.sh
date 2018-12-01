@@ -9,7 +9,7 @@ julia -q -e 'using Pkg; f=open("juliadf/VERSION","w"); write(f, string(Pkg.insta
 source ./dask/py-dask/bin/activate
 python -c 'import dask as dk; open("dask/VERSION","w").write(dk.__version__); open("dask/REVISION","w").write(dk.__git_revision__);' > /dev/null
 source ./modin/py-modin/bin/activate
-python -c 'import modin as modin; open("modin/VERSION","w").write(modin.__version__); open("modin/REVISION","w").write(modin.__git_revision__);' > /dev/null
+python -c 'import modin as modin; open("modin/VERSION","w").write(modin.__version__); open("modin/REVISION","w").write("");' > /dev/null
 source ./pandas/py-pandas/bin/activate
 python -c 'import pandas as pd; open("pandas/VERSION","w").write(pd.__version__); open("pandas/REVISION","w").write("");' > /dev/null 2>1& # from 0.24.0 also revision
 source ./pydatatable/py-pydatatable/bin/activate
