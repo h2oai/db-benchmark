@@ -6,36 +6,24 @@ import os
 import gc
 import timeit
 import pandas as pd
-import datatable as dt
 
 exec(open("./helpers.py").read())
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-
 ver = pd.__version__
-git = ""
+git = "" # pd.__git_version__ since 0.24.0
 task = "groupby"
-data_name = os.path.basename(src_grp)
 solution = "pandas"
 fun = ".groupby"
 cache = "TRUE"
 
+src_grp = os.environ['SRC_GRP_LOCAL']
+data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
-x = dt.fread(src_grp).topandas()
-x['id1'] = x['id1'].astype('category')
-x['id2'] = x['id2'].astype('category')
-x['id3'] = x['id3'].astype('category')
 
-#if os.path.isfile(data_name):
-#  x = pd.read_csv(data_name, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-#else:
-#  x = pd.read_csv(src_grp, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-
+import feather # temp fix for pandas-dev/pandas/issues/16359
+x = pd.DataFrame(feather.read_dataframe(os.path.join("data", src_grp)))
+#x = pd.read_feather(os.path.join("data", src_grp), use_threads=True)
 print(len(x.index))
-
-#if len(x.index)==1000000000:
-#  print("skip attempt to groupby pandas on 1000000000 due to lack of memory")
-#  exit(0)
 
 print("grouping...")
 

@@ -3,7 +3,7 @@
 print("# groupby-juliadf.jl\n");
 
 using DataFrames;
-using CSV;
+using CSV; #Feather;
 using Statistics; # mean function
 using Pkg; # to get DataFrames version
 
@@ -17,10 +17,11 @@ fun = "by";
 cache = true;
 
 src_grp = ENV["SRC_GRP_LOCAL"];
-data_name = basename(src_grp);
+data_name = SubString(src_grp, 1, length(src_grp)-4);
 println(string("loading dataset ", data_name))
 
-x = CSV.read(data_name, categorical=true);
+#x = Feather.materialize(string("data/", src_grp)); # JuliaData/Feather.jl#97
+x = CSV.read(string("data/", src_grp), categorical=true);
 in_rows = size(x, 1);
 println(in_rows);
 

@@ -11,17 +11,21 @@ import dask.dataframe as dd
 
 exec(open("./helpers.py").read())
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-
 ver = dk.__version__
 git = dk.__git_revision__
 task = "groupby"
-data_name = os.path.basename(src_grp)
 solution = "dask"
 fun = ".groupby"
 cache = "TRUE"
 
+src_grp = os.environ['SRC_GRP_LOCAL']
+data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
+
+# loading from feather dask/dask#1277
+#import feather # temp fix for pandas-dev/pandas#16359
+#x = pd.DataFrame(feather.read_dataframe(os.path.join("data", src_grp)))
+##x = pd.read_feather(os.path.join("data", src_grp), use_threads=True)
 
 # try parquet according to suggestions in https://github.com/dask/dask/issues/4001
 # parq created with fastparquet for 1e7, 1e8, and spark for 1e9 due to failure to read 1e9 data in
@@ -31,17 +35,10 @@ print("loading dataset %s" % data_name)
 #x = dd.read_parquet(data_name, engine="fastparquet")
 # parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
 
-if os.path.isfile(data_name):
-  x = dd.read_csv(data_name, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
-else:
-  x = dd.read_csv(src_grp, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
+x = dd.read_csv(os.path.join("data", src_grp), na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
 
 in_rows = len(x)
 print(in_rows)
-
-if in_rows==1000000000:
-  print("skip attempt to groupby dask on 1000000000 due to lack of memory")
-  exit(0)
 
 print("grouping...")
 

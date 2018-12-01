@@ -10,22 +10,18 @@ from datatable import f, sum, mean, by
 
 exec(open("./helpers.py").read())
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-
 ver = dt.__version__
 git = dt.__git_revision__
 task = "groupby"
-data_name = os.path.basename(src_grp)
 solution = "pydatatable"
 fun = "[.datatable"
 cache = "TRUE"
 
+src_grp = os.environ['SRC_GRP_LOCAL']
+data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
 
-if os.path.isfile(data_name):
-  x = dt.fread(data_name)
-else:
-  x = dt.fread(src_grp)
+x = dt.fread(os.path.join("data", src_grp))
 
 print(x.nrows)
 

@@ -10,22 +10,18 @@ import modin.pandas as pd
 
 exec(open("./helpers.py").read())
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-
 ver = modin.__version__
 git = modin.__git_revision__
 task = "groupby"
-data_name = os.path.basename(src_grp)
 solution = "modin"
 fun = ".groupby"
 cache = "TRUE"
 
+src_grp = os.environ['SRC_GRP_LOCAL']
+data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
 
-if os.path.isfile(data_name):
-  x = pd.read_csv(data_name)
-else:
-  x = pd.read_csv(src_grp)
+x = pd.read_csv(os.path.join("data", src_grp))
 
 print("grouping...")
 

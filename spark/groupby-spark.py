@@ -10,16 +10,15 @@ from pyspark.sql import SparkSession
 
 exec(open("./helpers.py").read())
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-
 ver = pyspark.__version__
 git = ""
 task = "groupby"
-data_name = os.path.basename(src_grp)
 solution = "spark"
 fun = ".sql"
 cache = "TRUE"
 
+src_grp = os.environ['SRC_GRP_LOCAL']
+data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
 
 from pyspark.conf import SparkConf
@@ -36,10 +35,7 @@ spark = SparkSession.builder \
      .getOrCreate()
 print(spark.sparkContext._conf.getAll())
 
-if os.path.isfile(data_name):
-  x = spark.read.csv(data_name, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-else:
-  x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
+x = spark.read.csv(os.path.join("data", src_grp), header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count())
 

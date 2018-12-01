@@ -5,7 +5,7 @@ cat("# groupby-dplyr.R\n")
 source("./helpers.R")
 source("./dplyr/helpers-dplyr.R")
 
-stopifnot(requireNamespace("bit64", quietly=TRUE)) # used in chk to sum numeric columns
+stopifnot(requireNamespace(c("bit64","feather"), quietly=TRUE)) # used in chk to sum numeric columns
 suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
 git = dplyr.git()
@@ -15,9 +15,10 @@ fun = "group_by"
 cache = TRUE
 
 src_grp = Sys.getenv("SRC_GRP_LOCAL")
-data_name = basename(src_grp)
+data_name = substr(src_grp, 1, nchar(src_grp)-4)
 cat(sprintf("loading dataset %s\n", data_name))
-X = data.table::fread(if (file.exists(data_name)) data_name else src_grp, data.table=FALSE, stringsAsFactors=TRUE) # csv can be provided in local dir for faster import
+
+X = as_tibble(feather::read_feather(file.path("data", src_grp)))
 print(nrow(X))
 
 cat("grouping...\n")
