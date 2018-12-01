@@ -28,10 +28,10 @@ kk = knitr::kable
 ```{r exceptions, include=FALSE, eval=FALSE}
 # CURRENTLY NOT USED
 exceptions = rbindlist(list(
-  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = 1e9, data=c("G1_1e9_1e2.csv"), comment = "lack of memory to read csv")#,
-    #data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = 1e9, data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "lack of memory"),
-  #data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = 1e9, data=c("X1e9_2c.csv-Y1e9_2c.csv"), comment = "Cannot allocate memory"),
-  #data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = c(1e7,1e8,1e9), data=c("X1e7_2c.csv-Y1e7_2c.csv","X1e8_2c.csv-Y1e8_2c.csv","X1e9_2c.csv-Y1e9_2c.csv"), comment = "not yet implemented")
+  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = 1e9, data=c("G1_1e9_1e2_0_0"), comment = "lack of memory to read csv")#,
+    #data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = 1e9, data=c("X1e9_2c-Y1e9_2c"), comment = "lack of memory"),
+  #data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = 1e9, data=c("X1e9_2c-Y1e9_2c"), comment = "Cannot allocate memory"),
+  #data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = c(1e7,1e8,1e9), data=c("X1e7_2c-Y1e7_2c","X1e8_2c-Y1e8_2c","X1e9_2c-Y1e9_2c"), comment = "not yet implemented")
 ))
 ```
 
@@ -39,36 +39,11 @@ exceptions = rbindlist(list(
 # all timings
 DT = read_timing("time.csv", raw=TRUE)
 DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
-# last benchmark batch
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
-# take last batch only, UPDATE: not anymore, allow to tasks and solutions run separately
-#dt = dt[batch==max(batch)]
-recent = dt[, .(last_batch=max(batch)), .(task, solution)]
+if (!nrow(dt)) stop("There are no timings for defined list of solutions and data sizes")
+recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution)]
 dt = dt[recent, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
-```
-
-```{r track_performance_change, eval=FALSE, include=FALSE}
-# ONLY FOR INTERACTIVE TRACKING FOR NOW
-dt = dt[order(solution)]
-# in case of out_rows mismatch track using below:
-#dt[solution%in%c("juliadf","data.table"), .N,, .(in_rows, question, out_rows, solution, run)
-#   ][, dcast(.SD, in_rows + solution + run ~ question, value.var="out_rows")]
-DT[solution=="data.table" & batch%in%tail(b, 2), .(time_sec), .(in_rows, question=factor(question, levels=unique(question)), run, git)] -> d
-dcast(d, in_rows+question+run ~ git, value.var = "time_sec") -> dd
-gits = setdiff(names(dd), c("in_rows","question","run"))
-setnames(dd, gits, substr(gits, 1, 7))
-dd[,time_change:=round((`e59ba14`-`88439d9`)/`88439d9`, 2)]
-knitr::kable(dd)
-knitr::kable(
-  dd[, .(mean_time_change=mean(time_change)), run]
-)
-knitr::kable(
-  dd[, .(mean_time_change=mean(time_change)), question]
-)
-knitr::kable(
-  dd[, .(mean_time_change=mean(time_change)), in_rows]
-)
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -76,13 +51,15 @@ knitr::kable(
 ```{r filter_task, include=FALSE}
 dt = dt[task=="groupby"]
 by_data = function(dt, .in_rows) {
-  dt[in_rows==.in_rows & run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
-     ][, "data":=sprintf("[%s](%s/%s)", data, "plots", gsub(".csv", ".png", gsub("G1_", "groupby.", data, fixed=TRUE), fixed=TRUE))
+  dt = dt[in_rows==.in_rows]
+  if (!nrow(dt)) return(invisible(NULL))
+  dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
+     ][, "data":=sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE))
        ][, kk(.SD)]
 }
 ```
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (`k=100`). To see timings for first run in other cases scroll down to summary table and read use cases according to the following pattern `G1_[in-rows]_[k-cardinality-factor]_[NA-pct]_[is-sorted].csv`.
+Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (`k=100`). To see timings for first run in other cases scroll down to summary table and read use cases according to the following pattern `G1_[in-rows]_[k-cardinality-factor]_[NA-pct]_[is-sorted]`.
 
 ### 0.5GB
 
@@ -90,7 +67,7 @@ Below timings are presented for a single dataset case having random order, no NA
 for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e7, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e7, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
 ![](public/plots/groupby.1e7_1e2_0_0.png)
@@ -104,7 +81,7 @@ by_data(dt, 1e7)
 for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e8, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e8, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
 ![](public/plots/groupby.1e8_1e2_0_0.png)
@@ -118,7 +95,7 @@ by_data(dt, 1e8)
 for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e9, data=paste0("G1_",fn,".csv"), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e9, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
 }
 ```
 ![](public/plots/groupby.1e9_1e2_0_0.png)

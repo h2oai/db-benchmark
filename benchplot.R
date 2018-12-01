@@ -135,7 +135,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # filter timings to single data
   .data = data; rm(data)
   timings = timings[data==.data]
-  
+  if (!nrow(timings)) {
+    message(sprintf("Nothing to plot for %s %s", task, .data))
+    return(invisible(NULL))
+  }
   if (uniqueN(timings$in_rows) != 1L) stop("There should be only single 'in_rows' after filtering on 'data'")
   
   questions = unique(timings$question)
@@ -171,10 +174,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       timings = rbindlist(list(timings[!daski], fix_dask))[order(solution)]
     }
     # dplyr fails on 1e9 k=2
-    if (data=="G1_1e9_2e0_0_0.csv" && .nrow==1e9 && timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      if (timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", .N==0L]) stop("exception for dplyr 1e9 k=2e0 is fixed based on data.table, you must have data.table solution included")
-      dplyri = timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv", which=TRUE] # there might be some results, so we need to handle them nicely
-      fix_dplyr = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0.csv"][!timings[dplyri, .(question, run)], on=c("question","run")
+    if (data=="G1_1e9_2e0_0_0" && .nrow==1e9 && timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      if (timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", .N==0L]) stop("exception for dplyr 1e9 k=2e0 is fixed based on data.table, you must have data.table solution included")
+      dplyri = timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
+      fix_dplyr = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0"][!timings[dplyri, .(question, run)], on=c("question","run")
                            ][, time_sec:=NA_real_
                              ][, solution:="dplyr"
                                ][, version:=dplyr_version
@@ -401,6 +404,6 @@ if (dev1<-FALSE) {
   recent = d[, .(max_batch=max(batch)), .(solution, task, data)]
   d = d[recent, on=c("solution","task","data","batch"="max_batch"), nomatch=NULL]
   .nrow=1e9
-  timings=d; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; data="G1_1e9_1e2_0_0.csv"; fnam=NULL; path=NULL
+  timings=d; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; data="G1_1e9_1e2_0_0"; fnam=NULL; path=NULL
   benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
 }
