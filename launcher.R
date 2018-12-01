@@ -71,7 +71,6 @@ dt[, "nodename" := nodename]
 dt = format[dt, on="solution"]
 
 # filter runs to only what is new
-#TODO
 if (file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")) && nrow(logs<-fread("logs.csv"))) {
   timings[, .N, by=c("nodename","batch","task","solution","data","version","git")
           ][, "N" := NULL
@@ -84,8 +83,7 @@ if (file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("t
              ][] -> logs
   past = timings[logs, .(nodename, batch, task, solution, data, timing_version=x.version, timing_git=x.git, logs_version=i.version, logs_git=i.git), on=c("nodename","batch","task","solution","data")] # there might be no timings for solutions that crashed, thus join to logs
   # NA timing_version/git is when solution crashed
-  # NA logs_version/git is when VERSION/REVISION files where not created, TODO separate creating VERSION/REVISION from init scripts and run always
-  # mismatch of version/git might occur in 'logs.csv' when manually updating solution, and not via init shell scripts
+  # NA logs_version/git is when VERSION/REVISION files where not created but it is already part of run.sh
   # rules for running/skipping:
   # 1. compare to most recent run only
   recent = past[batch==max(batch, na.rm=TRUE)]

@@ -20,5 +20,3 @@ make install > /dev/null
 
 cd ../..
 rm -rf ./tmp/datatable
-
-python -c 'import datatable as dt; open("pydatatable/VERSION","w").write(dt.__version__); open("pydatatable/REVISION","w").write(dt.__git_revision__);' > /dev/null
