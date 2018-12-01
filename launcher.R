@@ -56,8 +56,8 @@ solution = solution[run_solutions, on="solution", nomatch=0L] # filter for env v
 
 format = rbindlist(list( # to be updated when binary files in place and benchmark scripts updated
   dask = list(format="csv"), # dask/dask#1277
-  data.table = list(format="fea"),
-  dplyr = list(format="fea"),
+  data.table = list(format="fst"),
+  dplyr = list(format="fst"),
   juliadf = list(format="csv"), # JuliaData/Feather.jl#97
   modin = list(format="csv"), # modin-project/modin#278
   pandas = list(format="fea"),

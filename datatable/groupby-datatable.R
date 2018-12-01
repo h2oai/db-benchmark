@@ -5,7 +5,7 @@ cat("# groupby-datatable.R\n")
 source("./helpers.R")
 source("./datatable/helpers-datatable.R")
 
-stopifnot(requireNamespace(c("bit64","feather"), quietly=TRUE)) # used in chk to sum numeric columns
+stopifnot(requireNamespace(c("bit64","fst"), quietly=TRUE)) # used in chk to sum numeric columns
 suppressPackageStartupMessages(library(data.table))
 ver = packageVersion("data.table")
 git = datatable.git()
@@ -18,7 +18,7 @@ src_grp = Sys.getenv("SRC_GRP_LOCAL")
 data_name = substr(src_grp, 1, nchar(src_grp)-4)
 cat(sprintf("loading dataset %s\n", data_name))
 
-X = setDT(feather::read_feather(file.path("data", src_grp)))
+X = setDT(fst::read.fst(file.path("data", src_grp)))
 print(nrow(X))
 
 cat("grouping...\n")
