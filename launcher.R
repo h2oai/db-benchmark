@@ -72,21 +72,22 @@ dt = format[dt, on="solution"]
 
 # filter runs to only what is new
 if (file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")) && nrow(logs<-fread("logs.csv"))) {
-  timings[, .N, by=c("nodename","batch","task","solution","data","version","git")
+  timings[, .N,, c("nodename","batch","solution","task","data","version","git")
           ][, "N" := NULL
             ][!nzchar(git), "git" := NA_character_
               ][] -> timings
-  logs[, .N, c("nodename","batch","task","solution","data","version","git")
+  logs[, .N,, c("nodename","batch","solution","task","data","version","git")
        ][N==2L
          ][, "N" := NULL
            ][!nzchar(git), "git" := NA_character_
              ][] -> logs
-  past = timings[logs, .(nodename, batch, task, solution, data, timing_version=x.version, timing_git=x.git, logs_version=i.version, logs_git=i.git), on=c("nodename","batch","task","solution","data")] # there might be no timings for solutions that crashed, thus join to logs
+  past = timings[logs, .(nodename, batch, solution, task, data, timing_version=x.version, timing_git=x.git, logs_version=i.version, logs_git=i.git), on=c("nodename","batch","solution","task","data")] # there might be no timings for solutions that crashed, thus join to logs
   # NA timing_version/git is when solution crashed
   # NA logs_version/git is when VERSION/REVISION files where not created but it is already part of run.sh
   # rules for running/skipping:
-  # 1. compare to most recent run only
-  recent = past[batch==max(batch, na.rm=TRUE)]
+  # 1. compare to most recent run only per expected granularity
+  past[, "recent_batch":=max(batch, na.rm=TRUE), by=c("nodename","solution","task","data")]
+  recent = past[batch==recent_batch][, c("recent_batch") := NULL][]
   # 2. where possible compare on git revision, otherwise version
   recent[, "compare" := logs_git][is.na(compare), "compare" := logs_version]
   upgraded = rbindlist(sapply(unique(dt$solution), upgraded.solution, simplify=FALSE), idcol="solution")
