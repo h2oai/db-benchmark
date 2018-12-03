@@ -37,7 +37,7 @@ print("grouping...\n");
 question = "sum v1 by id1"; #1
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, :id1, v1 = :v1=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -48,7 +48,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id1) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, :id1, v1 = :v1=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -61,7 +61,7 @@ ANS = 0;
 question = "sum v1 by id1:id2" #2
 GC.gc();
 t_start = time_ns();
-ANS = by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, [:id1, :id2], v1 = :v1=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -72,7 +72,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, [:id1, :id2]) do df; DataFrame(v1 = sum(df.v1)); end;
+ANS = by(x, [:id1, :id2], v1 = :v1=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -85,7 +85,7 @@ ANS = 0;
 question = "sum v1 mean v3 by id3" #3
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id3) do df; DataFrame(v1 = sum(df.v1), v3 = mean(df.v3)); end;
+ANS = by(x, :id3, v1 = :v1=>sum, v3 = :v3=>mean);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -96,7 +96,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id3) do df; DataFrame(v1 = sum(df.v1), v3 = mean(df.v3)); end;
+ANS = by(x, :id3, v1 = :v1=>sum, v3 = :v3=>mean);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -109,7 +109,7 @@ ANS = 0;
 question = "mean v1:v3 by id4" #4
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id4) do df; DataFrame(v1 = mean(df.v1), v2 = mean(df.v2), v3 = mean(df.v3)); end;
+ANS = by(x, :id4, v1 = :v1=>mean, v2 = :v2=>mean, v3 = :v3=>mean);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -120,7 +120,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id4) do df; DataFrame(v1 = mean(df.v1), v2 = mean(df.v2), v3 = mean(df.v3)); end;
+ANS = by(x, :id4, v1 = :v1=>mean, v2 = :v2=>mean, v3 = :v3=>mean);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -133,7 +133,7 @@ ANS = 0;
 question = "sum v1:v3 by id6" #5
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id6) do df; DataFrame(v1 = sum(df.v1), v2 = sum(df.v2), v3 = sum(df.v3)); end;
+ANS = by(x, :id6, v1 = :v1=>sum, v2 = :v2=>sum, v3 = :v3=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
@@ -144,7 +144,7 @@ write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 ANS = 0;
 GC.gc();
 t_start = time_ns();
-ANS = by(x, :id6) do df; DataFrame(v1 = sum(df.v1), v2 = sum(df.v2), v3 = sum(df.v3)); end;
+ANS = by(x, :id6, v1 = :v1=>sum, v2 = :v2=>sum, v3 = :v3=>sum);
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
