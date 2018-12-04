@@ -17,9 +17,8 @@ wcl = function(x) {
 }
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", verbose=TRUE) {
   action = match.arg(action)
-  if (!missing(this_run)) stopifnot(is.data.table(this_run))
   timestamp=as.numeric(Sys.time())
-  lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, action=action)))
+  lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)))
   file = "logs.csv"
   fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
   labels = c("start"="starting","finish"="finished","skip"="skip run")
