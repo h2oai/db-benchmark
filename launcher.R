@@ -12,13 +12,19 @@ upgraded.solution = function(x) {
   if (!nzchar(git)) git = NA_character_
   list(version=version, git=git)
 }
-
-log_run = function(solution, task, data, finished, batch, nodename, verbose=TRUE) {
+wcl = function(x) {
+  as.integer(if (!file.exists(x)) NA else system(sprintf("wc -l %s | awk '{print $1}'", x), intern=TRUE))
+}
+log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", verbose=TRUE) {
+  action = match.arg(action)
+  if (!missing(this_run)) stopifnot(is.data.table(this_run))
   timestamp=as.numeric(Sys.time())
-  lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, finished=finished)))
+  lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, action=action)))
   file = "logs.csv"
   fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
-  if (verbose) cat(sprintf("%s %s %s %s\n", if (finished) "finished:" else "starting:", solution, task, data))
+  labels = c("start"="starting","finish"="finished","skip"="skip run")
+  if (!sTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
+  if (verbose) cat(sprintf("%s %s %s %s%s\n", labels[[action]], solution, task, data, comment))
 }
 file.ext = function(x) {
   switch(x,
@@ -115,24 +121,27 @@ for (s in solutions) { #s = solutions[1]
       this_run = dt[.(s, t, d), on=c("solution","task","data")]
       if (nrow(this_run) != 1L)
         stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
-      if (!is.na(this_run$run_batch)) {
-        cat(sprintf("%s %s %s %s, %s run on %s %s\n", "skip run:", s, t, d,
-                    substr(this_run$compare, 1, 7), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"), this_run$run_batch))
-        next
-      }
-      log_run(s, t, d, finished=0, batch=batch, nodename=nodename)
-      # TODO SRC_GRP_LOCAL is groupby specific
-      Sys.setenv("SRC_GRP_LOCAL"=this_run[, paste(data, format, sep=".")])
       ns = gsub(".", "", s, fixed=TRUE)
       out_dir = "out"
       out_file = sprintf("%s/run_%s_%s_%s.out", out_dir, ns, t, d)
+      err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
+      if (!is.na(this_run$run_batch)) {
+        comment = sprintf(": %s run on %s", substr(this_run$compare, 1, 7), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
+        log_run(s, t, d, action="skip", batch=batch, nodename=nodename, stderr=wcl(err_file), comment=comment) # skip also logs number of lines stderr from previos run
+        next
+      }
+      log_run(s, t, d, action="start", batch=batch, nodename=nodename)
+      # TODO SRC_GRP_LOCAL is groupby specific
+      Sys.setenv("SRC_GRP_LOCAL"=this_run[, paste(data, format, sep=".")])
+      if (file.exists(out_file)) file.remove(out_file)
+      if (file.exists(err_file)) file.remove(err_file)
       ext = file.ext(s)
-      cmd = sprintf("./%s/%s-%s.%s > %s 2>&1", ns, t, ns, ext, out_file)
+      cmd = sprintf("./%s/%s-%s.%s > %s 2> &s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
       system(shcmd) # here script actually runs
       Sys.unsetenv("SRC_GRP_LOCAL")
-      log_run(s, t, d, finished=1, batch=batch, nodename=nodename)
+      log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file))
     }
   }
 }
