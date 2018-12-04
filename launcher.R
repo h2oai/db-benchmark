@@ -22,7 +22,7 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   file = "logs.csv"
   fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
   labels = c("start"="starting","finish"="finished","skip"="skip run")
-  if (!sTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
+  if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
   if (verbose) cat(sprintf("%s %s %s %s%s\n", labels[[action]], solution, task, data, comment))
 }
 file.ext = function(x) {
