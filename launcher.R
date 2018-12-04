@@ -81,7 +81,7 @@ if (file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("t
           ][, "N" := NULL
             ][!nzchar(git), "git" := NA_character_
               ][] -> timings
-  logs[, .N,, c("nodename","batch","solution","task","data","version","git")
+  logs[action!="skip", .N,, c("nodename","batch","solution","task","data","version","git")
        ][N==2L
          ][, "N" := NULL
            ][!nzchar(git), "git" := NA_character_
