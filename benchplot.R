@@ -367,7 +367,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       ][order(run12_time_sec, na.last=TRUE)
         ][, .(leg=sprintf(
         "%s %s  -  %s  -  Total: $%.02f for %s %s",
-        if (solution=="pydatatable") "(py)datatable" else solution, # decode pydatatable to (py)datatable
+        if (solution=="pydatatable") "(py)datatable" else if (solution=="juliadf") "DataFrames.jl" else solution, # decode names
         version,
         format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))), # solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
         cph*run12_time_sec/3600, # cost in dollars
