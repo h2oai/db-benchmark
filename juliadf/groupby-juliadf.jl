@@ -5,12 +5,12 @@ print("# groupby-juliadf.jl\n");
 using DataFrames;
 using CSV; #Feather;
 using Statistics; # mean function
-using Pkg; # to get DataFrames version
 
 include("$(pwd())/helpers.jl");
 
-ver = string(Pkg.installed()["DataFrames"]);
-git = ""; # https://github.com/JuliaLang/Pkg.jl/issues/793
+pkgmeta = getpkgmeta("DataFrames");
+ver = pkgmeta["version"];
+git = pkgmeta["git-tree-sha1"];
 task = "groupby";
 solution = "juliadf";
 fun = "by";

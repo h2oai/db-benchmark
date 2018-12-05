@@ -1,4 +1,11 @@
 using Printf; # sprintf macro to print in non-scientific format
+using Pkg;
+
+# from https://github.com/JuliaLang/Pkg.jl/issues/793
+function getpkgmeta(name::AbstractString)
+    fname = joinpath(dirname(Base.active_project()), "Manifest.toml")
+    Pkg.TOML.parse(read(fname, String))[name][1]
+end;
 
 function memory_usage()
   pid = getpid()
