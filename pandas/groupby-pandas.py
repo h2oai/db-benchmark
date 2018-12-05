@@ -20,9 +20,11 @@ src_grp = os.environ['SRC_GRP_LOCAL']
 data_name = src_grp[:-4]
 print("loading dataset %s" % data_name)
 
-import feather # temp fix for pandas-dev/pandas/issues/16359
-x = pd.DataFrame(feather.read_dataframe(os.path.join("data", src_grp)))
-#x = pd.read_feather(os.path.join("data", src_grp), use_threads=True)
+import datatable as dt # for loading data only #47
+x = dt.open(os.path.join("data", src_grp)).to_pandas()
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
 print(len(x.index))
 
 print("grouping...")
