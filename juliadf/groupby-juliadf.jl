@@ -21,7 +21,7 @@ data_name = SubString(src_grp, 1, length(src_grp)-4);
 println(string("loading dataset ", data_name))
 
 #x = Feather.materialize(string("data/", src_grp)); # JuliaData/Feather.jl#97
-x = CSV.read(string("data/", src_grp), categorical=true);
+x = CSV.read(string("data/", src_grp), categorical=0.05);
 in_rows = size(x, 1);
 println(in_rows);
 
