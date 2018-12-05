@@ -108,8 +108,8 @@ by_data(dt, 1e9)
 
 ```{r logs, echo=FALSE}
 lg = fread("logs.csv")[task=="groupby" & action!="skip"]
-recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution)]
-recent_lg = lg[recent_batch, on=c("task","solution","batch"="last_batch"), nomatch=NULL]
+recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
+recent_lg = lg[recent_batch, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
 ```
 
 ```{r hardware, echo=FALSE}
@@ -134,12 +134,12 @@ if (uniqueN(recent_lg, by="nodename") > 1) {
 ------
 
 ```{r total_task_time, include=FALSE}
-unfinished = recent_lg[, .N==1L, .(batch, task, solution)][, setNames(V1, solution)]
+unfinished = recent_lg[, .N==1L, .(batch, solution, task, data)][, setNames(V1, solution)]
 if (any(unfinished)) {
   warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or killed): %s", "groupby", paste(names(unfinished)[unfinished], collapse=", ")))
   hours_took = "at least "
 } else hours_took = ""
-hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[action=="finish"] - timestamp[action=="start"]), .(task, solution)][, round(sum(sec_diff)/60/60, 1)])
+hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[action=="finish"] - timestamp[action=="start"]), .(solution, task, data)][, round(sum(sec_diff)/60/60, 1)])
 ```
 
 Benchmark run took around `r hours_took` hours.  

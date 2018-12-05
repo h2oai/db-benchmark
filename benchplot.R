@@ -350,7 +350,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
         else if (s%in%c("dplyr")) "Cannot allocate memory"
-        else if (s%in%c("data.table")) "memory use monitor OOM"
+        else if (s%in%c("data.table")) "memory monitor OOM"
         else "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
