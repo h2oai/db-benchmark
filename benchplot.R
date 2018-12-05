@@ -127,6 +127,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     dask_git = timings[solution=="dask" & in_rows==min(in_rows), git[1L]]
     dplyr_version = timings[solution=="dplyr" & in_rows==min(in_rows), version[1L]]
     dplyr_git = timings[solution=="dplyr" & in_rows==min(in_rows), git[1L]]
+    dt_version = timings[solution=="data.table" & in_rows==min(in_rows), version[1L]]
+    dt_git = timings[solution=="data.table" & in_rows==min(in_rows), git[1L]]
   }
   
   # filter timings to single in_rows # this will be handled by filter on data
@@ -151,11 +153,12 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   #timings[,.N,solution]
   if (exceptions) {
+    ex_s = "pydatatable"
     # pandas 1e9 killed on 125GB machine due to not enough memory
     if (.nrow==1e9 && timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      if (timings[solution=="data.table" & in_rows==1e9, .N==0L]) stop("exception for pandas 1e9 is fixed based on data.table, you must have data.table solution included")
+      if (timings[solution==ex_s & in_rows==1e9, .N==0L]) stop(sprintf("exception for dask 1e9 is fixed based on %s, you must have data.table solution included", ex_s))
       pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
-      fix_pandas = timings[solution=="data.table" & in_rows==1e9
+      fix_pandas = timings[solution==ex_s & in_rows==1e9
                            ][, time_sec:=NA_real_
                              ][, solution:="pandas"
                                ][, version:=pandas_version
@@ -164,20 +167,21 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     }
     # dask 1e9 killed on 125GB machine due to not enough memory
     if (.nrow==1e9 && timings[solution=="dask" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      if (timings[solution=="data.table" & in_rows==1e9, .N==0L]) stop("exception for dask 1e9 is fixed based on data.table, you must have data.table solution included")
+      if (timings[solution==ex_s & in_rows==1e9, .N==0L]) stop(sprintf("exception for dask 1e9 is fixed based on %s, you must have data.table solution included", ex_s))
       daski = timings[solution=="dask" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
-      fix_dask = timings[solution=="data.table" & in_rows==1e9
+      fix_dask = timings[solution==ex_s & in_rows==1e9
                          ][, time_sec:=NA_real_
                            ][, solution:="dask"
                              ][, version:=dask_version
                                ][, git:=dask_git]
       timings = rbindlist(list(timings[!daski], fix_dask))[order(solution)]
     }
-    # dplyr fails on 1e9 k=2
+    # dplyr fails on 1e9 k=2 q3
     if (data=="G1_1e9_2e0_0_0" && .nrow==1e9 && timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      if (timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", .N==0L]) stop("exception for dplyr 1e9 k=2e0 is fixed based on data.table, you must have data.table solution included")
+      if (timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0", .N==0L]) stop(sprintf("exception for dplyr 1e9 k=2e0 is fixed based on %s, you must have it included in timings", ex_s))
       dplyri = timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
-      fix_dplyr = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0"][!timings[dplyri, .(question, run)], on=c("question","run")
+      fix_dplyr = timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0"
+                          ][!timings[dplyri, .(question, run)], on=c("question","run")
                            ][, time_sec:=NA_real_
                              ][, solution:="dplyr"
                                ][, version:=dplyr_version
@@ -185,6 +189,22 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
                                    ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
       timings = rbindlist(list(timings, fix_dplyr))[order(solution)]
     }
+    # data.table fails on 1e9 k=2 after q3 run=1 on system call to ps -o RSS
+    if (data=="G1_1e9_2e0_0_0" && .nrow==1e9 && timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      if (timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0", .N==0L]) stop(sprintf("exception for data.table 1e9 k=2e0 is fixed based on %s, you must have it included in timings", ex_s))
+      dti = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
+      fix_dt = timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0"
+                       ][!timings[dti, .(question, run)], on=c("question","run")
+                         ][, time_sec:=NA_real_
+                           ][, solution:="data.table"
+                             ][, version:=dt_version
+                               ][, git:=dt_git
+                                 ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
+      timings = rbindlist(list(timings, fix_dt))[order(solution)]
+    }
+    # do not plot any timings if any of two runs failed, so exception message can be visible, and there is no issue with bar shift
+    timings[, "na_time" := sum(is.na(time_sec)), by=c("solution","task","data","question")
+            ][!(na_time==0L | na_time==nruns), "time_sec" := NA_real_] # if 1 run failed, reset both
   }
   #timings[,.N,solution]
   
@@ -330,6 +350,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
         else if (s%in%c("dplyr")) "Cannot allocate memory"
+        else if (s%in%c("data.table")) "memory use monitor OOM"
         else "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
@@ -362,7 +383,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   # legend
   ans[, .(run12_time_sec = sum(time_sec), # total time of run 1 and run 2
-          batch=batch[1], version = version[1], git = git[1], colmain=colmain[1]),
+          batch=min(batch, na.rm=TRUE), version = version[1], git = git[1], colmain=colmain[1]), # batch=min(batch) in case different data tested in different benchmark runs, earliest is taken, as for all runs there should same version so we need a date of earliest run of that version
       keyby="solution"
       ][order(run12_time_sec, na.last=TRUE)
         ][, .(leg=sprintf(
