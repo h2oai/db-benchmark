@@ -1,20 +1,9 @@
 library(data.table)
+source("helpers.R")
 
 batch = Sys.getenv("BATCH", NA)
 nodename = Sys.info()[["nodename"]]
 
-upgraded.solution = function(x) {
-  ns = gsub(".","",x,fixed=TRUE)
-  f = file.path(ns, "VERSION")
-  version = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
-  f = file.path(ns, "REVISION")
-  git = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
-  if (!nzchar(git)) git = NA_character_
-  list(version=version, git=git)
-}
-wcl = function(x) {
-  as.integer(if (!file.exists(x)) NA else system(sprintf("wc -l %s | awk '{print $1}'", x), intern=TRUE))
-}
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", verbose=TRUE) {
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
@@ -23,20 +12,7 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
   labels = c("start"="starting","finish"="finished","skip"="skip run")
   if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
-  if (verbose) cat(sprintf("%s %s %s %s%s\n", labels[[action]], solution, task, data, comment))
-}
-file.ext = function(x) {
-  switch(x,
-         "data.table"=, "dplyr"="R",
-         "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
-         "juliadf"="jl")
-}
-getenv = function(x) {
-  v = Sys.getenv(x, NA_character_)
-  if (is.na(v)) stop(sprintf("%s env var not defined.", x))
-  v = strsplit(v, " ", fixed=TRUE)[[1L]]
-  if (length(v)!=length(unique(v))) stop(sprintf("%s contains non-unique values", x))
-  v
+  if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
 }
 run_tasks = getenv("RUN_TASKS") #run_tasks = "groupby"
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
@@ -65,7 +41,7 @@ format = rbindlist(list( # to be updated when binary files in place and benchmar
   dplyr = list(format="fst"),
   juliadf = list(format="csv"), # JuliaData/Feather.jl#97
   modin = list(format="csv"), # modin-project/modin#278
-  pandas = list(format="fea"),
+  pandas = list(format="jay"),
   pydatatable = list(format="csv"), # h2oai/datatable#1461
   spark = list(format="csv") # https://stackoverflow.com/questions/53569580/read-feather-file-into-spark
 ), idcol="solution")

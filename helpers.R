@@ -183,3 +183,32 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
 memory_usage = function() {
   as.numeric(system(paste("ps -o rss", Sys.getpid(), "| tail -1"), intern=TRUE)) / (1024^2) # GB units
 }
+
+upgraded.solution = function(x) {
+  ns = gsub(".","",x,fixed=TRUE)
+  f = file.path(ns, "VERSION")
+  version = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
+  f = file.path(ns, "REVISION")
+  git = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
+  if (!nzchar(git)) git = NA_character_
+  list(version=version, git=git)
+}
+
+wcl = function(x) {
+  as.integer(if (!file.exists(x)) NA else system(sprintf("wc -l %s | awk '{print $1}'", x), intern=TRUE))
+}
+
+file.ext = function(x) {
+  switch(x,
+         "data.table"=, "dplyr"="R",
+         "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
+         "juliadf"="jl")
+}
+
+getenv = function(x) {
+  v = Sys.getenv(x, NA_character_)
+  if (is.na(v)) stop(sprintf("%s env var not defined.", x))
+  v = strsplit(v, " ", fixed=TRUE)[[1L]]
+  if (length(v)!=length(unique(v))) stop(sprintf("%s contains non-unique values", x))
+  v
+}
