@@ -3,13 +3,14 @@ source("helpers.R")
 
 batch = Sys.getenv("BATCH", NA)
 nodename = Sys.info()[["nodename"]]
+mockup = as.logical(Sys.getenv("MOCKUP", "false"))
 
-log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", verbose=TRUE) {
+log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
   lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)))
   file = "logs.csv"
-  fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
+  if (!mockup) fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
   labels = c("start"="starting","finish"="finished","skip"="skip run")
   if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
   if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
@@ -102,10 +103,10 @@ for (s in solutions) { #s = solutions[1]
       err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
       if (!is.na(this_run$run_batch)) {
         comment = sprintf(": %s run on %s", substr(this_run$compare, 1, 7), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
-        log_run(s, t, d, action="skip", batch=batch, nodename=nodename, stderr=wcl(err_file), comment=comment) # skip also logs number of lines stderr from previos run
+        log_run(s, t, d, action="skip", batch=batch, nodename=nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # skip also logs number of lines stderr from previos run
         next
       }
-      log_run(s, t, d, action="start", batch=batch, nodename=nodename)
+      log_run(s, t, d, action="start", batch=batch, nodename=nodename, mockup=mockup)
       # TODO SRC_GRP_LOCAL is groupby specific
       Sys.setenv("SRC_GRP_LOCAL"=this_run[, paste(data, format, sep=".")])
       if (file.exists(out_file)) file.remove(out_file)
@@ -114,9 +115,9 @@ for (s in solutions) { #s = solutions[1]
       cmd = sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      system(shcmd) # here script actually runs
+      if (!mockup) system(shcmd) # here script actually runs
       Sys.unsetenv("SRC_GRP_LOCAL")
-      log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file))
+      log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
     }
   }
 }
