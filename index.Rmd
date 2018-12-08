@@ -50,15 +50,19 @@ dt = dt[order(solution)]
 
 ```{r filter_task, include=FALSE}
 dt = dt[task=="groupby"]
-by_data = function(dt, .in_rows) {
+by_data = function(dt, .in_rows, .task) {
   dt = dt[in_rows==.in_rows]
   if (!nrow(dt)) return(invisible(NULL))
-  decompose_dataname = function(x) {
-    y = strsplit(as.character(x), "_", fixed = TRUE)[[1L]]
-    lapply(y[-1L], as.numeric)
+  decompose_dataname = function(x, task) {
+    if (task=="groupby") {
+      y = strsplit(as.character(x), "_", fixed = TRUE)[[1L]]
+      lapply(y[-1L], as.numeric)
+    } else {
+      stop("no other task defined for decompose_dataname")
+    }
   }
   dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
-     ][, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data), by=1:length(data)
+     ][, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data, .task), by=1:length(data)
        ][question=="sum v1 by id1", "data":=sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE))
          ][question!="sum v1 by id1", "data":=""
            ] -> tmp
@@ -79,9 +83,10 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e7_1e2_0_0.png)
-
+&nbsp;  
+&nbsp;
 ```{r o_groupby1_summary, echo=FALSE}
-by_data(dt, 1e7)
+by_data(dt, 1e7, "groupby")
 ```
 
 ### 5GB
@@ -94,9 +99,10 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e8_1e2_0_0.png)
-
+&nbsp;  
+&nbsp;
 ```{r o_groupby2_summary, echo=FALSE}
-by_data(dt, 1e8)
+by_data(dt, 1e8, "groupby")
 ```
 
 ### 50GB {.active}
@@ -109,9 +115,10 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e9_1e2_0_0.png)
-
+&nbsp;  
+&nbsp;
 ```{r o_groupby3_summary, echo=FALSE}
-by_data(dt, 1e9)
+by_data(dt, 1e9, "groupby")
 ```
 
 ## Hardware configuration
