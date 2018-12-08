@@ -211,7 +211,9 @@ file.ext = function(x) {
 getenv = function(x) {
   v = Sys.getenv(x, NA_character_)
   if (is.na(v)) stop(sprintf("%s env var not defined.", x))
-  v = strsplit(v, " ", fixed=TRUE)[[1L]]
-  if (length(v)!=length(unique(v))) stop(sprintf("%s contains non-unique values", x))
+  if (nzchar(v)) {
+    v = strsplit(v, " ", fixed=TRUE)[[1L]]
+    if (length(v)!=length(unique(v))) stop(sprintf("%s contains non-unique values", x))
+  } else v = character(0)
   v
 }

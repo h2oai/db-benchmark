@@ -16,7 +16,9 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
 }
 run_tasks = getenv("RUN_TASKS") #run_tasks = "groupby"
+if (!length(run_tasks)) q("no")
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
+if (!length(run_solutions)) q("no")
 
 data = fread("data.csv")
 data = data[active==TRUE, # filter on active datasets
