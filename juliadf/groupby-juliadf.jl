@@ -20,7 +20,7 @@ src_grp = ENV["SRC_GRP_LOCAL"];
 data_name = SubString(src_grp, 1, length(src_grp)-4);
 println(string("loading dataset ", data_name)); flush(stdout);
 
-x = CSV.read(string("data/", src_grp), categorical=true);
+x = CSV.read(string("data/", src_grp), categorical=0.05);
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
 
