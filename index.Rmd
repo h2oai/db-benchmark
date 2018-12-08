@@ -53,14 +53,21 @@ dt = dt[task=="groupby"]
 by_data = function(dt, .in_rows) {
   dt = dt[in_rows==.in_rows]
   if (!nrow(dt)) return(invisible(NULL))
+  decompose_dataname = function(x) {
+    y = strsplit(as.character(x), "_", fixed = TRUE)[[1L]]
+    lapply(y[-1L], as.numeric)
+  }
   dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
-     ][question=="sum v1 by id1", "data":=sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE))
-       ][question!="sum v1 by id1", "data":=""
-         ][, kk(.SD)]
+     ][, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data), by=1:length(data)
+       ][question=="sum v1 by id1", "data":=sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE))
+         ][question!="sum v1 by id1", "data":=""
+           ] -> tmp
+  setcolorder(tmp, c("data","rows","q1_grp.size","NA_pct","sorted"))
+  kk(tmp)
 }
 ```
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (`k=100`). To see timings for first run in other cases scroll down to summary table and read use cases according to the following pattern `G1_[in-rows]_[k-cardinality-factor]_[NA-pct]_[is-sorted]`.
+Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for first run in other cases scroll down to summary table.
 
 ### 0.5GB
 
@@ -72,6 +79,7 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e7_1e2_0_0.png)
+
 ```{r o_groupby1_summary, echo=FALSE}
 by_data(dt, 1e7)
 ```
@@ -86,6 +94,7 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e8_1e2_0_0.png)
+
 ```{r o_groupby2_summary, echo=FALSE}
 by_data(dt, 1e8)
 ```
@@ -100,6 +109,7 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
 }
 ```
 ![](public/plots/groupby.1e9_1e2_0_0.png)
+
 ```{r o_groupby3_summary, echo=FALSE}
 by_data(dt, 1e9)
 ```

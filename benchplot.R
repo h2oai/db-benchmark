@@ -129,6 +129,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     dplyr_git = timings[solution=="dplyr" & in_rows==min(in_rows), git[1L]]
     dt_version = timings[solution=="data.table" & in_rows==min(in_rows), version[1L]]
     dt_git = timings[solution=="data.table" & in_rows==min(in_rows), git[1L]]
+    jl_version = timings[solution=="juliadf" & in_rows==min(in_rows), version[1L]]
+    jl_git = timings[solution=="juliadf" & in_rows==min(in_rows), git[1L]]
   }
   
   # filter timings to single in_rows # this will be handled by filter on data
@@ -202,6 +204,19 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
                                  ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
       timings = rbindlist(list(timings, fix_dt))[order(solution)]
     }
+    # julia 1e9 and k 2e0 grouping on STRINGS runs out of mem with OutOfMemoryError, todo check on categoricals!
+    if (data=="G1_1e9_2e0_0_0" && .nrow==1e9 && timings[solution=="juliadf" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+      if (timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0", .N==0L]) stop(sprintf("exception for juliadf 1e9 k=2e0 is fixed based on %s, you must have it included in timings", ex_s))
+      jli = timings[solution=="juliadf" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
+      fix_jl = timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0"
+                       ][!timings[jli, .(question, run)], on=c("question","run")
+                         ][, time_sec:=NA_real_
+                           ][, solution:="juliadf"
+                             ][, version:=jl_version
+                               ][, git:=jl_git
+                                 ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
+      timings = rbindlist(list(timings, fix_jl))[order(solution)]
+    }
     # do not plot any timings if any of two runs failed, so exception message can be visible, and there is no issue with bar shift
     timings[, "na_time" := sum(is.na(time_sec)), by=c("solution","task","data","question")
             ][!(na_time==0L | na_time==nruns), "time_sec" := NA_real_] # if 1 run failed, reset both
@@ -214,7 +229,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   if (length(cutoff) && !cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
   
   # get data size in GB from current directory by filename match
-  gb = (if (file.exists(paste(data,"csv",sep="."))) file.info(data)$size else NA_real_)/1024^3
+  gb = (if (file.exists(file.path("data", paste(data,"csv",sep=".")))) file.info(file.path("data",data))$size else NA_real_)/1024^3
   
   # keep only required columns
   timings = timings[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
@@ -351,6 +366,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
         else if (s%in%c("dplyr")) "Cannot allocate memory"
         else if (s%in%c("data.table")) "memory monitor OOM"
+        else if (s%in%c("juliadf")) "OutOfMemoryError"
         else "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
