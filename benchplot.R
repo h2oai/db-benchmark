@@ -214,7 +214,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   if (length(cutoff) && !cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
   
   # get data size in GB from current directory by filename match
-  gb = (if (file.exists(data)) file.info(data)$size else NA_real_)/1024^3
+  gb = (if (file.exists(paste(data,"csv",sep="."))) file.info(data)$size else NA_real_)/1024^3
   
   # keep only required columns
   timings = timings[, .SD, .SDcols=c("time_sec","question","solution","in_rows","out_rows","out_cols","run","version","git","batch")]
