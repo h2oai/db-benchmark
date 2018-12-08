@@ -61,13 +61,16 @@ by_data = function(dt, .in_rows, .task) {
       stop("no other task defined for decompose_dataname")
     }
   }
-  dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")
-     ][, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data, .task), by=1:length(data)
-       ][question=="sum v1 by id1", "data":=sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE))
-         ][question!="sum v1 by id1", "data":=""
-           ] -> tmp
-  setcolorder(tmp, c("data","rows","q1_grp.size","NA_pct","sorted"))
-  kk(tmp)
+  wide = dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")]
+  d = rollup(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE)
+  setorderv(d, "data", na.last = TRUE)
+  d[, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data, .task), by=1:length(data)]
+  setcolorder(d, c("data","rows","q1_grp.size","NA_pct","sorted","question"))
+  d[grouping==0L, "data":=""]
+  d[grouping==1L, c("data","question"):=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)), "[total]")]
+  d[grouping==3L, c("data","rows"):=list("[total]",.in_rows)]
+  d[, "grouping":=NULL]
+  kk(d)
 }
 ```
 
