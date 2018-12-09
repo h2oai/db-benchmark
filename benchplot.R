@@ -114,6 +114,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   vtask = task
   # filter timings to single task
   timings = timings[task==vtask]
+  
+  # new q6 not yet ready for benchplot
+  timings = timings[question!="sum v3 count by id1:id6"]
+  
   # if no .nrow argument provided then use maximum in_rows in timings
   if (!is.finite(.nrow)) .nrow = timings[, max(in_rows)]
   # filter timings to run 1 and 2

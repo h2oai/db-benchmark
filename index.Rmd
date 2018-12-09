@@ -44,6 +44,7 @@ if (!nrow(dt)) stop("There are no timings for defined list of solutions and data
 recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
 dt = dt[recent, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
+dt = dt[question!="sum v3 count by id1:id6"] # report not ready for new question, see #12
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
