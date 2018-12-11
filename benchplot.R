@@ -440,7 +440,7 @@ if (dev1<-FALSE) {
   d = fread("time.csv")[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)]
   recent = d[, .(max_batch=max(batch)), .(solution, task, data)]
   d = d[recent, on=c("solution","task","data","batch"="max_batch"), nomatch=NULL]
-  .nrow=1e9
-  timings=d; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; data="G1_1e9_1e2_0_0"; fnam=NULL; path=NULL
+  .nrow=1e7; data="G1_1e7_1e2_0_0"; 
+  timings=d[question!="sum v3 count by id1:id6"]; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; fnam=NULL; path=NULL
   benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
 }

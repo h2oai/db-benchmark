@@ -35,7 +35,7 @@ Rscript ./launcher.R
 rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
-$DO_PUBLISH && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
+$DO_PUBLISH && [ -f ./report-success ] && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"

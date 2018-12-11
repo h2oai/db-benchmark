@@ -16,13 +16,15 @@ We also include the syntax being timed alongside the timing. This way you can im
 Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
 
 ```{r load_deps, include=FALSE}
-# Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+# rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 library(data.table)
 source("helpers.R")
 source("benchplot.R") # also creates 'code' for groupby
 fs = function(x) factor(x, levels=unique(x))
 kk = knitr::kable
+report_status_file = "report-success"
+if (file.exists(report_status_file)) file.remove(report_status_file)
 ```
 
 ```{r exceptions, include=FALSE, eval=FALSE}
@@ -38,12 +40,14 @@ kk = knitr::kable
 ```{r load_data, include=FALSE}
 # all timings
 DT = read_timing("time.csv", raw=TRUE)
+DT = DT[question!="sum v3 count by id1:id6"] # q6 not yet supported on plots
 DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 if (!nrow(dt)) stop("There are no timings for defined list of solutions and data sizes")
 recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
 dt = dt[recent, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
+
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -82,7 +86,7 @@ Below timings are presented for a single dataset case having random order, no NA
 for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e7, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e7, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
 ![](public/plots/groupby.1e7_1e2_0_0.png)
@@ -98,7 +102,7 @@ by_data(dt, 1e7, "groupby")
 for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e8, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e8, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
 ![](public/plots/groupby.1e8_1e2_0_0.png)
@@ -114,7 +118,7 @@ by_data(dt, 1e8, "groupby")
 for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
-  benchplot(1e9, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="data.table")
+  benchplot(1e9, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
 ![](public/plots/groupby.1e9_1e2_0_0.png)
@@ -163,5 +167,9 @@ hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[action=="fini
 ```
 
 Benchmark run took around `r hours_took` hours.  
+
+```{r set_success_state, include=FALSE}
+writeLines("", report_status_file)
+```
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
