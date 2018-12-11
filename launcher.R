@@ -4,6 +4,7 @@ source("helpers.R")
 batch = Sys.getenv("BATCH", NA)
 nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
+forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
 
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
   action = match.arg(action)
@@ -55,7 +56,7 @@ dt[, "nodename" := nodename]
 dt = format[dt, on="solution"]
 
 # filter runs to only what is new
-if (file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")) && nrow(logs<-fread("logs.csv"))) {
+if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")) && nrow(logs<-fread("logs.csv"))) {
   timings[, .N,, c("nodename","batch","solution","task","data","version","git")
           ][, "N" := NULL
             ][!nzchar(git), "git" := NA_character_
