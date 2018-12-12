@@ -3,12 +3,7 @@ set -e
 
 # get config
 source run.conf
-
-# cleanup
-rm -f *.png
-rm -f *.env
-rm -f rmarkdown.out
-rm -rf db-benchmark.gh-pages
+source path.env
 
 # set batch
 export BATCH=$(date +%s)
@@ -32,9 +27,12 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init
 Rscript ./launcher.R
 
 # publish report for all tasks
-rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+rm -f rmarkdown.out
+rm -rf public
+Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
 
 # publish benchmark, only if token file exists
+rm -rf db-benchmark.gh-pages
 $DO_PUBLISH && [ -f ./report-success ] && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # completed
