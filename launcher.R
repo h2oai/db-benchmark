@@ -56,7 +56,8 @@ dt[, "nodename" := nodename]
 dt = format[dt, on="solution"]
 
 # filter runs to only what is new
-if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")) && nrow(logs<-fread("logs.csv"))) {
+.nodename = nodename
+if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")[nodename==.nodename]) && nrow(logs<-fread("logs.csv")[nodename==.nodename])) {
   timings[, .N,, c("nodename","batch","solution","task","data","version","git")
           ][, "N" := NULL
             ][!nzchar(git), "git" := NA_character_
