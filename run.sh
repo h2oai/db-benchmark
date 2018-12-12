@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
+# set batch
+export BATCH=$(date +%s)
+
+# exit if already running, check lock file
+if [[ -f ./run.lock ]]; then exit; else echo $BATCH > run.lock; fi;
+
 # get config
 source run.conf
 source path.env
-
-# set batch
-export BATCH=$(date +%s)
 
 echo "# Benchmark run $BATCH started"
 
@@ -34,6 +37,9 @@ Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.o
 # publish benchmark, only if token file exists
 rm -rf db-benchmark.gh-pages
 $DO_PUBLISH && [ -f ./report-success ] && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
+
+# remove run lock file
+rm -f run.lock
 
 # completed
 echo "# Benchmark run $BATCH has been completed in $(($(date +%s)-$BATCH))s"
