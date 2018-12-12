@@ -1,7 +1,16 @@
 #!/bin/bash
 set -e
 
-# Required only on client machine
+# dirs for datasets and output of benchmark, not related to datatable setup
+mkdir -p data
+mkdir -p out
 
-# install R on client machine, then from shell install data.table
-Rscript -e 'install.packages("data.table", type="source", repos="https://Rdatatable.github.io/data.table", method="curl")'
+# install R
+
+# setup ~/.R/Makevars
+mkdir -p ~/.R
+echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
+echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
+
+# install latest dev
+Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/data.table", method="curl")'

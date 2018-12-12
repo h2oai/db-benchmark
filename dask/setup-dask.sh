@@ -2,8 +2,8 @@
 set -e
 
 # install all dependencies
-#apt-get update
-#apt-get install build-essential python3-dev python3-pip
+sudo apt-get update
+sudo apt-get install build-essential python3-dev python3-pip
 
 virtualenv dask/py-dask --python=/usr/bin/python3.6
 source dask/py-dask/bin/activate

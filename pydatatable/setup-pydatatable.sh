@@ -1,31 +1,29 @@
 #!/bin/bash
 set -e
 
-cd pydatatable
-virtualenv py-pydatatable --python=/usr/bin/python3.6
-cd ..
+# install dependencies
+sudo apt-get update
+sudo apt-get install python3.6-dev gcc-8-multilib # or other multilib, depends on your gcc version
+
+virtualenv pydatatable/py-pydatatable --python=/usr/bin/python3.6
 source pydatatable/py-pydatatable/bin/activate
 
-# install all dependencies
+# install llvm to build pydatatable
+wget https://releases.llvm.org/6.0.1/clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+tar -xvf clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+sudo mv clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04 /opt
+rm clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 
-# os spec
-wget https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-mv clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz  /opt
-cd /opt
-sudo tar xvf clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-export LLVM6=/opt/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/
-#export LDFLAGS="-L/usr/lib/gcc/x86_64-linux-gnu/7/"
-
-#apt-get install python3.6-dev
 python -m pip install --upgrade llvmlite
 
 # build
+deactivate
 ./pydatatable/init-pydatatable.sh
 
-#python -m pip install https://s3.amazonaws.com/h2o-release/datatable/stable/datatable-0.5.0/datatable-0.5.0-cp35-cp35m-linux_x86_64.whl
-
 # check
+source pydatatable/py-pydatatable/bin/activate
 python
 import datatable as dt
 dt.__version__
 quit()
+deactivate
