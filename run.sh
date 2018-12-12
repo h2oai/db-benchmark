@@ -5,7 +5,7 @@ set -e
 export BATCH=$(date +%s)
 
 # exit if already running, check lock file
-if [[ -f ./run.lock ]]; then (echo "# Benchmark run $BATCH discarded due to previous run $(cat run.lock) still running" && exit); else echo $BATCH > run.lock; fi;
+if [[ -f ./run.lock ]]; then echo "# Benchmark run $BATCH discarded due to previous run $(cat run.lock) still running" && exit; else echo $BATCH > run.lock; fi;
 
 # get config
 source run.conf
