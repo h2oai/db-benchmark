@@ -2,7 +2,7 @@
 set -e
 
 ## run script the following way to exit if benchmark is already running
-#if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out" && exit; else ./run.sh > ./run.out; fi;
+#if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out"; else ./run.sh > ./run.out; fi;
 
 # set batch
 export BATCH=$(date +%s)
