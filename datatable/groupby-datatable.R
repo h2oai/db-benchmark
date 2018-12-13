@@ -5,7 +5,7 @@ cat("# groupby-datatable.R\n")
 source("./helpers.R")
 source("./datatable/helpers-datatable.R")
 
-stopifnot(requireNamespace(c("bit64","fst"), quietly=TRUE)) # used in chk to sum numeric columns
+stopifnot(requireNamespace(c("bit64"), quietly=TRUE)) # used in chk to sum numeric columns
 suppressPackageStartupMessages(library(data.table))
 ver = packageVersion("data.table")
 git = datatable.git()
@@ -14,11 +14,11 @@ solution = "data.table"
 fun = "[.data.table"
 cache = TRUE
 
-src_grp = Sys.getenv("SRC_GRP_LOCAL")
-data_name = substr(src_grp, 1, nchar(src_grp)-4)
+data_name = gsub(".fst", "", Sys.getenv("SRC_GRP_LOCAL"), fixed=TRUE)
+src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-X = setDT(fst::read.fst(file.path("data", src_grp)))
+X = fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE)
 print(nrow(X))
 
 cat("grouping...\n")

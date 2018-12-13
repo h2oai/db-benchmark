@@ -5,7 +5,7 @@ cat("# groupby-dplyr.R\n")
 source("./helpers.R")
 source("./dplyr/helpers-dplyr.R")
 
-stopifnot(requireNamespace(c("bit64","fst"), quietly=TRUE)) # used in chk to sum numeric columns
+stopifnot(requireNamespace(c("bit64","data.table"), quietly=TRUE)) # used in chk to sum numeric columns and data loading
 suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
 git = dplyr.git()
@@ -14,11 +14,11 @@ solution = "dplyr"
 fun = "group_by"
 cache = TRUE
 
-src_grp = Sys.getenv("SRC_GRP_LOCAL")
-data_name = substr(src_grp, 1, nchar(src_grp)-4)
+data_name = gsub(".fst", "", Sys.getenv("SRC_GRP_LOCAL"), fixed=TRUE)
+src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-X = as_tibble(fst::read.fst(file.path("data", src_grp)))
+X = as_tibble(fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE))
 print(nrow(X))
 
 cat("grouping...\n")
