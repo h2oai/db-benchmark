@@ -9,6 +9,7 @@ virtualenv pandas/py-pandas --python=/usr/bin/python3.6
 source pandas/py-pandas/bin/activate
 
 # install binaries
+python -m pip install --upgrade psutil
 python -m pip install --upgrade pandas
 
 # install datatable for fast data import from jay format

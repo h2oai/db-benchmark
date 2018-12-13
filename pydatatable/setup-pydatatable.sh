@@ -15,6 +15,7 @@ sudo mv clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04 /opt
 rm clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 
 python -m pip install --upgrade llvmlite
+python -m pip install --upgrade psutil
 
 # build
 deactivate
