@@ -1,17 +1,20 @@
 #!/bin/bash
 set -e
 
+## run script the following way to exit if benchmark is already running
+#if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out" && exit; else ./run.sh > ./run.out; fi;
+
 # set batch
 export BATCH=$(date +%s)
 
-# exit if already running, check lock file
-if [[ -f ./run.lock ]]; then echo "# Benchmark run $BATCH discarded due to previous run $(cat run.lock) still running" && exit; else echo $BATCH > run.lock; fi;
+# set lock
+if [[ -f ./run.lock ]]; then echo "# Benchmark run $BATCH aborted. 'run.lock' file exists, this should be checked before calling 'run.sh'. Ouput redirection mismatch might have happened if writing output to same file as currently running $(cat ./run.lock) benchmark run" && exit; else echo $BATCH > run.lock; fi;
+
+echo "# Benchmark run $BATCH started"
 
 # get config
 source run.conf
 source path.env
-
-echo "# Benchmark run $BATCH started"
 
 # upgrade tools
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/init-dask.sh; fi;
