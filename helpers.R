@@ -181,6 +181,7 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
 }
 
 memory_usage = function() {
+  return(NA_real_) # disabled for now
   cmd = paste("ps -o rss", Sys.getpid(), "| tail -1")
   # for data.table 1e9 k=2 system call kills script, it happens between q3 run1 and q3 run2
   ans = tryCatch(system(cmd, intern=TRUE, ignore.stderr=TRUE), error=function(e) NA_character_)
