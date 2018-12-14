@@ -47,7 +47,7 @@ if (!nrow(dt)) stop("There are no timings for defined list of solutions and data
 recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
 dt = dt[recent, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
-
+dt = dt[question%in%c("sum v1 by id1","sum v1 by id1:id2","sum v1 mean v3 by id3","mean v1:v3 by id4","sum v1:v3 by id6")] # report not ready for new questions, see #60
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
