@@ -18,7 +18,7 @@ data_name = gsub(".fst", "", Sys.getenv("SRC_GRP_LOCAL"), fixed=TRUE)
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-X = as_tibble(fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE))
+X = as_tibble(data.table::fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE))
 print(nrow(X))
 
 cat("grouping...\n")
