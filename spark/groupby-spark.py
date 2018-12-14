@@ -17,8 +17,8 @@ solution = "spark"
 fun = ".sql"
 cache = "TRUE"
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-data_name = src_grp[:-4]
+data_name = os.environ['SRC_GRP_LOCAL']
+src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name)
 
 from pyspark.conf import SparkConf
@@ -35,7 +35,7 @@ spark = SparkSession.builder \
      .getOrCreate()
 #print(spark.sparkContext._conf.getAll())
 
-x = spark.read.csv(os.path.join("data", src_grp), header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
+x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count())
 

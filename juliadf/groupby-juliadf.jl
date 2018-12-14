@@ -16,11 +16,11 @@ solution = "juliadf";
 fun = "by";
 cache = true;
 
-src_grp = ENV["SRC_GRP_LOCAL"];
-data_name = SubString(src_grp, 1, length(src_grp)-4);
+data_name = ENV["SRC_GRP_LOCAL"];
+src_grp = string("data/", data_name, ".csv")
 println(string("loading dataset ", data_name)); flush(stdout);
 
-x = CSV.read(string("data/", src_grp), categorical=0.05);
+x = CSV.read(src_grp, categorical=0.05);
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
 

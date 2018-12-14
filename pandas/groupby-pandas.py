@@ -16,12 +16,12 @@ solution = "pandas"
 fun = ".groupby"
 cache = "TRUE"
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-data_name = src_grp[:-4]
+data_name = os.environ['SRC_GRP_LOCAL']
+src_grp = os.path.join("data", data_name+".jay")
 print("loading dataset %s" % data_name)
 
 import datatable as dt # for loading data only, see #47
-x = dt.open(os.path.join("data", src_grp)).to_pandas()
+x = dt.open(src_grp).to_pandas()
 x['id1'] = x['id1'].astype('category')
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')

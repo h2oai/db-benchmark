@@ -17,11 +17,11 @@ solution = "modin"
 fun = ".groupby"
 cache = "TRUE"
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-data_name = src_grp[:-4]
+data_name = os.environ['SRC_GRP_LOCAL']
+src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name)
 
-x = pd.read_csv(os.path.join("data", src_grp))
+x = pd.read_csv(src_grp)
 
 print("grouping...")
 

@@ -14,7 +14,7 @@ solution = "data.table"
 fun = "[.data.table"
 cache = TRUE
 
-data_name = gsub(".fst", "", Sys.getenv("SRC_GRP_LOCAL"), fixed=TRUE)
+data_name = Sys.getenv("SRC_GRP_LOCAL")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 

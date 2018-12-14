@@ -39,21 +39,9 @@ solution = rbindlist(list(
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=0L] # filter for env var RUN_SOLUTIONS
 
-format = rbindlist(list( # to be updated when binary files in place and benchmark scripts updated
-  dask = list(format="csv"), # dask/dask#1277
-  data.table = list(format="fst"),
-  dplyr = list(format="fst"),
-  juliadf = list(format="csv"), # JuliaData/Feather.jl#97
-  modin = list(format="csv"), # modin-project/modin#278
-  pandas = list(format="jay"),
-  pydatatable = list(format="csv"), # h2oai/datatable#1461
-  spark = list(format="csv") # https://stackoverflow.com/questions/53569580/read-feather-file-into-spark
-), idcol="solution")
-
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]
 dt[, "nodename" := nodename]
-dt = format[dt, on="solution"]
 
 # filter runs to only what is new
 .nodename = nodename
@@ -112,7 +100,7 @@ for (s in solutions) { #s = solutions[1]
       }
       log_run(s, t, d, action="start", batch=batch, nodename=nodename, mockup=mockup)
       # TODO SRC_GRP_LOCAL is groupby specific
-      Sys.setenv("SRC_GRP_LOCAL"=this_run[, paste(data, format, sep=".")])
+      Sys.setenv("SRC_GRP_LOCAL"=d)
       if (!mockup) {
         if (file.exists(out_file)) file.remove(out_file)
         if (file.exists(err_file)) file.remove(err_file)

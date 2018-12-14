@@ -18,8 +18,8 @@ solution = "dask"
 fun = ".groupby"
 cache = "TRUE"
 
-src_grp = os.environ['SRC_GRP_LOCAL']
-data_name = src_grp[:-4]
+data_name = os.environ['SRC_GRP_LOCAL']
+src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name)
 
 # loading from feather dask/dask#1277
@@ -35,7 +35,7 @@ print("loading dataset %s" % data_name)
 #x = dd.read_parquet(data_name, engine="fastparquet")
 # parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
 
-x = dd.read_csv(os.path.join("data", src_grp), na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
+x = dd.read_csv(src_grp, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
 
 in_rows = len(x)
 print(in_rows)
