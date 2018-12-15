@@ -149,28 +149,28 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 del ans
 
-question = "sum v3 count by id1:id6" # q6
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v3'].sum(), ans['v1'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
-print(ans.shape)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v3'].sum(), ans['v1'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-del ans
+# question = "sum v3 count by id1:id6" # q6
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
+# print(ans.shape)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v3'].sum(), ans['v1'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
+# print(ans.shape)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v3'].sum(), ans['v1'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# del ans
 
 exit(0)

@@ -172,30 +172,30 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 del ans
 
-question = "sum v3 count by id1:id6" # q6
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute() # column name different than expected, ignore it because: ValueError: Metadata inference failed in `rename`: Original error is below: ValueError('Level values must be unique: [nan, nan] on level 0',)
-print((len(ans), len(ans.columns)))
-t = timeit.default_timer() - t_start
-out_rows = len(ans)
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans.v3.sum(), ans.v1.sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()
-print((len(ans), len(ans.columns)))
-t = timeit.default_timer() - t_start
-out_rows = len(ans)
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans.v3.sum(), ans.v1.sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-del ans
+# question = "sum v3 count by id1:id6" # q6
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute() # column name different than expected, ignore it because: ValueError: Metadata inference failed in `rename`: Original error is below: ValueError('Level values must be unique: [nan, nan] on level 0',)
+# print((len(ans), len(ans.columns)))
+# t = timeit.default_timer() - t_start
+# out_rows = len(ans)
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans.v3.sum(), ans.v1.sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()
+# print((len(ans), len(ans.columns)))
+# t = timeit.default_timer() - t_start
+# out_rows = len(ans)
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans.v3.sum(), ans.v1.sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# del ans
 
 exit(0)

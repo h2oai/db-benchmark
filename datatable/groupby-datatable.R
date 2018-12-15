@@ -83,16 +83,16 @@ chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(v1)), sum(bit64::as.inte
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
 
-question = "sum v3 count by id1:id6" # q6
-t = system.time(print(dim(ans<-X[, .(v3=sum(v3), count=.N), by=id1:id6])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v3), sum(bit64::as.integer64(count)))])[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-rm(ans)
-t = system.time(print(dim(ans<-X[, .(v3=sum(v3), count=.N), by=id1:id6])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v3), sum(bit64::as.integer64(count)))])[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-rm(ans)
+# question = "sum v3 count by id1:id6" # q6
+# t = system.time(print(dim(ans<-X[, .(v3=sum(v3), count=.N), by=id1:id6])))[["elapsed"]]
+# m = memory_usage()
+# chkt = system.time(chk<-ans[, .(sum(v3), sum(bit64::as.integer64(count)))])[["elapsed"]]
+# write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# rm(ans)
+# t = system.time(print(dim(ans<-X[, .(v3=sum(v3), count=.N), by=id1:id6])))[["elapsed"]]
+# m = memory_usage()
+# chkt = system.time(chk<-ans[, .(sum(v3), sum(bit64::as.integer64(count)))])[["elapsed"]]
+# write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# rm(ans)
 
 if( !interactive() ) q("no", status=0)
