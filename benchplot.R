@@ -213,18 +213,18 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     # julia 1e9 and k 2e0 grouping uns out of mem with OutOfMemoryError
     if (data %in% c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1")) { # catch all 1e9 sizes as timeout proc can kill
       d = data
-    }
-    if (data==d && .nrow==1e9 && timings[solution=="juliadf" & in_rows==1e9 & data==d, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
-      if (timings[solution==ex_s & in_rows==1e9 & data==d, .N==0L]) stop(sprintf("exception for juliadf 1e9 k=2e0 is fixed based on %s, you must have it included in timings", ex_s))
-      jli = timings[solution=="juliadf" & in_rows==1e9 & data==d, which=TRUE] # there might be some results, so we need to handle them nicely
-      fix_jl = timings[solution==ex_s & in_rows==1e9 & data==d
-                       ][!timings[jli, .(question, run)], on=c("question","run")
-                         ][, time_sec:=NA_real_
-                           ][, solution:="juliadf"
-                             ][, version:=jl_version
-                               ][, git:=jl_git
-                                 ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
-      timings = rbindlist(list(timings, fix_jl))[order(solution)]
+      if (data==d && .nrow==1e9 && timings[solution=="juliadf" & in_rows==1e9 & data==d, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
+        if (timings[solution==ex_s & in_rows==1e9 & data==d, .N==0L]) stop(sprintf("exception for juliadf 1e9 k=2e0 is fixed based on %s, you must have it included in timings", ex_s))
+        jli = timings[solution=="juliadf" & in_rows==1e9 & data==d, which=TRUE] # there might be some results, so we need to handle them nicely
+        fix_jl = timings[solution==ex_s & in_rows==1e9 & data==d
+                         ][!timings[jli, .(question, run)], on=c("question","run")
+                           ][, time_sec:=NA_real_
+                             ][, solution:="juliadf"
+                               ][, version:=jl_version
+                                 ][, git:=jl_git
+                                   ][, `:=`(mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_)]
+        timings = rbindlist(list(timings, fix_jl))[order(solution)]
+      }
     }
     if (timings[solution=="juliadf", .N] != nquestions*nruns) browser()
     # do not plot any timings if any of two runs failed, so exception message can be visible, and there is no issue with bar shift
