@@ -128,7 +128,12 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
 by_data(dt, 1e9, "groupby")
 ```
 
-## Hardware configuration
+## Environment configuration
+
+Listed solutions where run using following versions of languages
+- R 3.5.1
+- python 3.6
+- Julia 1.0.2
 
 ```{r logs, echo=FALSE}
 lg = fread("logs.csv")[task=="groupby" & action!="skip"]
