@@ -66,19 +66,24 @@ by_data = function(dt, .in_rows, .task) {
     }
   }
   wide = dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")]
-  d = rollup(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE)
+  #d = rollup(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE) # including sub totals
+  d = groupingsets(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE, sets=list(c("data","question"), character(0)))
   setorderv(d, "data", na.last = TRUE)
-  d[, c("rows","q1_grp.size","NA_pct","sorted") := decompose_dataname(data, .task), by=1:length(data)]
-  setcolorder(d, c("data","rows","q1_grp.size","NA_pct","sorted","question"))
-  d[grouping==0L, "data":=""]
-  d[grouping==1L, c("data","question"):=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)), "[total]")]
+  d[, c("rows","q1_grp.size","NA_pct","pre_sorted") := decompose_dataname(data, .task), by=1:length(data)]
+  setcolorder(d, c("data","rows","q1_grp.size","NA_pct","pre_sorted","question"))
+  #d[grouping==0L, "data":=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)))]
+  #d[grouping==1L, c("data","question"):=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)), "[total]")]
   d[grouping==3L, c("data","rows"):=list("[total]",.in_rows)]
-  d[, "grouping":=NULL]
+  d[, c("grouping","data"):=NULL]
   kk(d)
 }
 ```
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for first run in other cases scroll down to summary table.
+```{r link_plots}
+link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
+```
+
+Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table.
 
 ### 0.5GB
 
@@ -89,9 +94,10 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   benchplot(1e7, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
-![](public/plots/groupby.1e7_1e2_0_0.png)
+![](public/plots/groupby.1e7_1e2_0_0.png)  
 &nbsp;  
-&nbsp;
+Plots of all cases can be found at `r dt[in_rows==1e7, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+
 ```{r o_groupby1_summary, echo=FALSE}
 by_data(dt, 1e7, "groupby")
 ```
@@ -105,9 +111,10 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   benchplot(1e8, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
-![](public/plots/groupby.1e8_1e2_0_0.png)
+![](public/plots/groupby.1e8_1e2_0_0.png)  
 &nbsp;  
-&nbsp;
+Plots of all cases can be found at `r dt[in_rows==1e8, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+
 ```{r o_groupby2_summary, echo=FALSE}
 by_data(dt, 1e8, "groupby")
 ```
@@ -121,19 +128,20 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   benchplot(1e9, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
 }
 ```
-![](public/plots/groupby.1e9_1e2_0_0.png)
+![](public/plots/groupby.1e9_1e2_0_0.png)  
 &nbsp;  
-&nbsp;
+Plots of all cases can be found at `r dt[in_rows==1e9, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+
 ```{r o_groupby3_summary, echo=FALSE}
 by_data(dt, 1e9, "groupby")
 ```
 
 ## Environment configuration
 
-Listed solutions where run using following versions of languages
-- R 3.5.1
-- python 3.6
-- Julia 1.0.2
+Listed solutions where run using following versions of languages:  
+- R 3.5.1  
+- python 3.6  
+- Julia 1.0.2  
 
 ```{r logs, echo=FALSE}
 lg = fread("logs.csv")[task=="groupby" & action!="skip"]
