@@ -83,7 +83,7 @@ by_data = function(dt, .in_rows, .task) {
 link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
 ```
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table.
+Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table. If a solution is missing on particular data size timings table refer to benchplot for a reason and check its speed on smaller data size tab.
 
 ### 0.5GB
 
