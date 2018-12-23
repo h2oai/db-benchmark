@@ -363,7 +363,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       excol = colors[s, colmain, on="solution"]
       val = ans[solution==s & question==q & run==2L, cutoff_bars]
       at = tt[(is+1)*2+(iq-1)*space]
-      if (identical(tryCatch(rect(0, at-w, val, at+w, col=col, xpd=NA), error=function(e) -1L), -1L)) browser()
+      if (identical(tryCatch(rect(0, at-w, val, at+w, col=col, xpd=NA), error=function(e) -1L), -1L)) stop("unhandled exception when plotting second timings/printing exception label") #browser()
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
         else if (s%in%c("dplyr")) "Cannot allocate memory"
@@ -377,10 +377,15 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   # plot timing values next to each bar
   max_t = ans[, pmax(cutoff_bars[run==1L], cutoff_bars[run==2L])] # max(run1, run2) otherwise bigger bar could overlaps text
+  both_t = ans[, paste(unique(round(cutoff_bars,2)), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
+  stopifnot(length(max_t)==length(both_t))
   max_t_x_pos = max_t
-  if (length(.cutoff)) max_t_x_pos[max_t>cutoff.bars.after] = x_at[length(x_at)-1L] #cutoff.bars.after
+  if (length(.cutoff) && length(cutoff.i<-which(max_t>cutoff.bars.after))) {
+    both_t[cutoff.i] = paste("...", both_t[cutoff.i])
+    max_t_x_pos[cutoff.i] = x_at[length(x_at)-2L] #cutoff.bars.after, shifted by 2 x axis ticks to fit values in the plot
+  }
   max_t_y_pos = rev(tt)[!is.na(pad)]-w/2
-  text(max_t_x_pos, max_t_y_pos, round(max_t, 2), pos=4, cex=1.25) # round to 2 decimals places to avoid 0.0 cases
+  text(max_t_x_pos, max_t_y_pos, both_t, pos=4, cex=1.25)
   
   # cost per hour
   cph = 0.5 # minimum on graph histories; what people will see if they check
@@ -442,7 +447,7 @@ if (dev1<-FALSE) {
   d = fread("time.csv")[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)]
   recent = d[, .(max_batch=max(batch)), .(solution, task, data)]
   d = d[recent, on=c("solution","task","data","batch"="max_batch"), nomatch=NULL]
-  .nrow=1e7; data="G1_1e7_1e2_0_0"; 
+  .nrow=1e9; data="G1_1e9_2e0_0_0"; 
   timings=d[question!="sum v3 count by id1:id6"]; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; fnam=NULL; path=NULL
   benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
 }
