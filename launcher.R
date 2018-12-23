@@ -109,7 +109,19 @@ for (s in solutions) { #s = solutions[1]
       cmd = sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      if (!mockup) system(shcmd) # here script actually runs
+      timeout = 60*60*1 # 1 hour
+      if (!mockup) {
+        tryCatch(
+          system(shcmd, timeout=timeout), # here script actually runs
+          warning = function(w) {
+            # this is to catch and log timeout but we want every warning to be written to stderr
+            if (grepl("timed out", w[["message"]], fixed=TRUE)) {
+              # input NA timings? would require to push up 'question' factor here but would simplify(?) exception handling on benchplot
+            }
+            cat(w[["message"]], file=err_file, append=TRUE)
+          }
+        )
+      }
       Sys.unsetenv("SRC_GRP_LOCAL")
       log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
     }
