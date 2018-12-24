@@ -69,6 +69,8 @@ ans.createOrReplaceTempView("ans")
 chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -99,6 +101,8 @@ ans.createOrReplaceTempView("ans")
 chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -131,6 +135,8 @@ tempchk = spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0]
 chk = [tempchk['v1'], tempchk['v3']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -163,6 +169,8 @@ tempchk = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans
 chk = [tempchk['v1'], tempchk['v2'], tempchk['v3']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -195,6 +203,8 @@ tempchk = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans
 chk = [tempchk['v1'], tempchk['v2'], tempchk['v3']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -227,6 +237,8 @@ del ans
 # chk = [tempchk['v3'], tempchk['count']]
 # chkt = timeit.default_timer() - t_start
 # write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# print(ans.head(3))
+# # print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
 # ans.unpersist()
 # spark.catalog.uncacheTable("ans")
 # del ans

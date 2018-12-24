@@ -48,6 +48,8 @@ t_start = time_ns();
 chk = sum(ANS.v1);
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println(first(ANS, 3));
+println(last(ANS, 3));
 ANS = 0;
 
 question = "sum v1 by id1:id2"; # q2
@@ -72,6 +74,8 @@ t_start = time_ns();
 chk = sum(ANS.v1);
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println(first(ANS, 3));
+println(last(ANS, 3));
 ANS = 0;
 
 question = "sum v1 mean v3 by id3"; # q3
@@ -96,6 +100,8 @@ t_start = time_ns();
 chk = [sum(ANS.v1), sum(ANS.v3)];
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println(first(ANS, 3));
+println(last(ANS, 3));
 ANS = 0;
 
 question = "mean v1:v3 by id4"; # q4
@@ -120,6 +126,8 @@ t_start = time_ns();
 chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println(first(ANS, 3));
+println(last(ANS, 3));
 ANS = 0;
 
 question = "sum v1:v3 by id6"; # q5
@@ -144,6 +152,8 @@ t_start = time_ns();
 chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println(first(ANS, 3));
+println(last(ANS, 3));
 ANS = 0;
 
 # question = "sum v3 count by id1:id6"; # q6
@@ -168,6 +178,8 @@ ANS = 0;
 # chk = [sum(ANS.v3), sum(ANS.count)];
 # chkt = (time_ns() - t_start)/1.0e9;
 # write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+# println(first(ANS, 3));
+# println(last(ANS, 3));
 # ANS = 0;
 
 exit();

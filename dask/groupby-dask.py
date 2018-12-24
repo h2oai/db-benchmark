@@ -66,6 +66,8 @@ t_start = timeit.default_timer()
 chk = [ans.v1.sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+print(ans.tail(3))
 del ans
 
 question = "sum v1 by id1:id2" # q2
@@ -92,6 +94,8 @@ t_start = timeit.default_timer()
 chk = [ans.v1.sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+print(ans.tail(3))
 del ans
 
 question = "sum v1 mean v3 by id3" # q3
@@ -118,6 +122,8 @@ t_start = timeit.default_timer()
 chk = [ans.v1.sum(), ans.v3.sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+print(ans.tail(3))
 del ans
 
 question = "mean v1:v3 by id4" # q4
@@ -144,6 +150,8 @@ t_start = timeit.default_timer()
 chk = [ans.v1.sum(), ans.v2.sum(), ans.v3.sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+print(ans.tail(3))
 del ans
 
 question = "sum v1:v3 by id6" # q5
@@ -170,6 +178,8 @@ t_start = timeit.default_timer()
 chk = [ans.v1.sum(), ans.v2.sum(), ans.v3.sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+print(ans.tail(3))
 del ans
 
 # question = "sum v3 count by id1:id6" # q6
@@ -196,6 +206,8 @@ del ans
 # chk = [ans.v3.sum(), ans.v1.sum()]
 # chkt = timeit.default_timer() - t_start
 # write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# print(ans.head(3))
+# print(ans.tail(3))
 # del ans
 
 exit(0)

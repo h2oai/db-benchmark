@@ -16,9 +16,12 @@ cache = TRUE
 
 data_name = Sys.getenv("SRC_GRP_LOCAL")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
+#src_grp = file.path("data", paste(data_name, "rds", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
 X = fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE)
+#X = readRDS(src_grp)
+#setDT(X)
 print(nrow(X))
 
 cat("grouping...\n")
@@ -33,6 +36,8 @@ t = system.time(print(dim(ans<-X[, .(v1=sum(v1)), by=id1])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(v1)))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1 by id1:id2" # q2
@@ -45,6 +50,8 @@ t = system.time(print(dim(ans<-X[, .(v1=sum(v1)), by=.(id1, id2)])))[["elapsed"]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(v1)))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1 mean v3 by id3" # q3
@@ -57,6 +64,8 @@ t = system.time(print(dim(ans<-X[, .(v1=sum(v1), v3=mean(v3)), by=id3])))[["elap
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(v1)), sum(v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
 
 question = "mean v1:v3 by id4" # q4
@@ -69,6 +78,8 @@ t = system.time(print(dim(ans<-X[, lapply(.SD, mean), by=id4, .SDcols=v1:v3])))[
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(v1), sum(v2), sum(v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
 
 question = "sum v1:v3 by id6" # q5
@@ -81,6 +92,8 @@ t = system.time(print(dim(ans<-X[, lapply(.SD, sum), by=id6, .SDcols=v1:v3])))[[
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(v1)), sum(bit64::as.integer64(v2)), sum(v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
 rm(ans)
 
 # question = "sum v3 count by id1:id6" # q6
@@ -93,6 +106,8 @@ rm(ans)
 # m = memory_usage()
 # chkt = system.time(chk<-ans[, .(sum(v3), sum(bit64::as.integer64(count)))])[["elapsed"]]
 # write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+# print(head(ans, 3))
+# print(tail(ans, 3))
 # rm(ans)
 
 if( !interactive() ) q("no", status=0)
