@@ -124,24 +124,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   if (!is.finite(.nrow)) .nrow = timings[, max(in_rows)]
   # filter timings to run 1 and 2
   timings = timings[run%in%c(1L, 2L)]
+  timings[!nzchar(git), "git" := NA_character_]
   
   exceptions = TRUE
   if (exceptions) {
-    pandas_version = timings[solution=="pandas" & in_rows==min(in_rows), version[1L]]
-    pandas_git = timings[solution=="pandas" & in_rows==min(in_rows), git[1L]]
-    pandas_batch = timings[solution=="pandas" & in_rows==min(in_rows), batch[1L]]
-    dask_version = timings[solution=="dask" & in_rows==min(in_rows), version[1L]]
-    dask_git = timings[solution=="dask" & in_rows==min(in_rows), git[1L]]
-    dask_batch = timings[solution=="dask" & in_rows==min(in_rows), batch[1L]]
-    dplyr_version = timings[solution=="dplyr" & in_rows==min(in_rows), version[1L]]
-    dplyr_git = timings[solution=="dplyr" & in_rows==min(in_rows), git[1L]]
-    dplyr_batch = timings[solution=="dplyr" & in_rows==min(in_rows), batch[1L]]
-    dt_version = timings[solution=="data.table" & in_rows==min(in_rows), version[1L]]
-    dt_git = timings[solution=="data.table" & in_rows==min(in_rows), git[1L]]
-    dt_batch = timings[solution=="data.table" & in_rows==min(in_rows), batch[1L]]
-    jl_version = timings[solution=="juliadf" & in_rows==min(in_rows), version[1L]]
-    jl_git = timings[solution=="juliadf" & in_rows==min(in_rows), git[1L]]
-    jl_batch = timings[solution=="juliadf" & in_rows==min(in_rows), batch[1L]]
+    min_versions = timings[in_rows==min(in_rows), head(.SD, 1L), "solution", .SDcols=c("version","git","batch")]
   }
   
   # filter timings to single in_rows # this will be handled by filter on data
@@ -172,8 +159,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       if (timings[solution==ex_s & in_rows==1e9, .N==0L]) stop(sprintf("exception for dask 1e9 is fixed based on %s, you must have data.table solution included", ex_s))
       pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
       fix_pandas = timings[solution==ex_s & in_rows==1e9
-                           ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_,
-                                    solution="pandas", version=pandas_version, git=pandas_git, batch=pandas_batch)]
+                           ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk=NA_character_, chk_time_sec=NA_real_, solution="pandas")
+                             ]
       timings = rbindlist(list(timings[!pandasi], fix_pandas))[order(solution)]
     }
     # dask 1e9 killed on 125GB machine due to not enough memory
@@ -181,8 +168,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       if (timings[solution==ex_s & in_rows==1e9, .N==0L]) stop(sprintf("exception for dask 1e9 is fixed based on %s, you must have data.table solution included", ex_s))
       daski = timings[solution=="dask" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
       fix_dask = timings[solution==ex_s & in_rows==1e9
-                         ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_,
-                                  solution="dask", version=dask_version, git=dask_git, batch=dask_batch)]
+                         ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk=NA_character_, chk_time_sec=NA_real_, solution="dask")
+                           ]
       timings = rbindlist(list(timings[!daski], fix_dask))[order(solution)]
     }
     # dplyr fails on 1e9 k=2 q3
@@ -191,8 +178,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       dplyri = timings[solution=="dplyr" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
       fix_dplyr = timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0"
                           ][!timings[dplyri, .(question, run)], on=c("question","run")
-                            ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_,
-                                     solution="dplyr", version=dplyr_version, git=dplyr_git, batch=dplyr_batch)]
+                            ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk=NA_character_, chk_time_sec=NA_real_, solution="dplyr")
+                              ]
       timings = rbindlist(list(timings, fix_dplyr))[order(solution)]
     }
     # data.table fails on 1e9 k=2 after q3 run=1 on system call to ps -o RSS
@@ -201,8 +188,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       dti = timings[solution=="data.table" & in_rows==1e9 & data=="G1_1e9_2e0_0_0", which=TRUE] # there might be some results, so we need to handle them nicely
       fix_dt = timings[solution==ex_s & in_rows==1e9 & data=="G1_1e9_2e0_0_0"
                        ][!timings[dti, .(question, run)], on=c("question","run")
-                         ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_,
-                                  solution="data.table", version=dt_version, git=dt_git, batch=dt_batch)]
+                         ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk=NA_character_, chk_time_sec=NA_real_, solution="data.table")
+                           ]
       timings = rbindlist(list(timings, fix_dt))[order(solution)]
     }
     # julia 1e9 and k 2e0 grouping uns out of mem with OutOfMemoryError
@@ -213,11 +200,20 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         jli = timings[solution=="juliadf" & in_rows==1e9 & data==d, which=TRUE] # there might be some results, so we need to handle them nicely
         fix_jl = timings[solution==ex_s & in_rows==1e9 & data==d
                          ][!timings[jli, .(question, run)], on=c("question","run")
-                           ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk_time_sec=NA_real_,
-                                    solution="juliadf", version=jl_version, git=jl_git, batch=jl_batch)]
+                           ][, `:=`(time_sec=NA_real_, mem_gb=NA_real_, fun=NA_character_, chk=NA_character_, chk_time_sec=NA_real_, solution="juliadf")
+                             ]
         timings = rbindlist(list(timings, fix_jl))[order(solution)]
       }
     }
+    # timeout exception handling
+    fix_general = timings[solution==ex_s
+            ][, c("version","git","time_sec","mem_gb","chk","chk_time_sec","fun","timestamp","batch","solution") := NA
+              ][]
+    fix_all = rbindlist(lapply(unique(timings$solution), function(s) fix_general[,.SD][, "solution":=s]))
+    timings = timings[fix_all, on=c("solution","task","data","question","run"), .SD]
+    decode = function(x, y) {nax = is.na(x); x[nax] = y[nax]; x}
+    timings[min_versions, on="solution", `:=`(version=decode(version, i.version), git=decode(git, i.git), batch=decode(batch, i.batch))]
+    
     if (timings[solution=="juliadf", .N] != nquestions*nruns) stop("juliadf timings execeptions not fully inputed") #browser()
     # do not plot any timings if any of two runs failed, so exception message can be visible, and there is no issue with bar shift
     timings[, "na_time" := sum(is.na(time_sec)), by=c("solution","task","data","question")
@@ -339,7 +335,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     # plot headers
     out_rows = ans[question==q & run==1L, out_rows]
     out_cols = ans[question==q & run==1L, out_cols]
-    if (length(unique(out_rows)) != 1L) stop("out_rows mismatch")
+    if (length(unique(na.omit(out_rows))) != 1L) stop("out_rows mismatch") # na.omit as timeouted entries have NA
     #if (length(unique(out_cols)) != 1L) stop("out_cols mismatch") # pd.ans.shape[1] does not return the actual columns and ans is pivot like
     out_rows = out_rows[1L]
     Mode = function(x) {tx<-table(x); as.numeric(names(tx)[which.max(tx)])}
@@ -363,13 +359,16 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       excol = colors[s, colmain, on="solution"]
       val = ans[solution==s & question==q & run==2L, cutoff_bars]
       at = tt[(is+1)*2+(iq-1)*space]
-      if (identical(tryCatch(rect(0, at-w, val, at+w, col=col, xpd=NA), error=function(e) -1L), -1L)) stop("unhandled exception when plotting second timings/printing exception label") #browser()
+      if (identical(tryCatch(rect(0, at-w, val, at+w, col=col, xpd=NA), error=function(e) -1L), -1L)) {
+        #browser()
+        stop("unhandled exception when plotting second timings/printing exception label")
+      }
       if (is.na(val)) { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
-        else if (s%in%c("dplyr")) "Cannot allocate memory"
-        else if (s%in%c("data.table")) "memory monitor OOM"
+        else if (s%in%c("dplyr")) "timeout / Cannot allocate memory"
+        else if (s%in%c("data.table")) "timeout / memory monitor OOM"
         else if (s%in%c("juliadf")) "timeout / OutOfMemoryError"
-        else "undefined exception"
+        else "timeout / undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=excol, font=2)
       }
     }
@@ -448,6 +447,7 @@ if (dev1<-FALSE) {
   recent = d[, .(max_batch=max(batch)), .(solution, task, data)]
   d = d[recent, on=c("solution","task","data","batch"="max_batch"), nomatch=NULL]
   .nrow=1e9; data="G1_1e9_2e0_0_0"; 
+  .nrow=1e9; data="G1_1e9_1e1_0_0"; 
   timings=d[question!="sum v3 count by id1:id6"]; code=groupby.code; task="groupby"; .interactive=TRUE; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; fnam=NULL; path=NULL
   benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=solution.colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
 }
