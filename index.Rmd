@@ -44,10 +44,20 @@ DT = DT[question!="sum v3 count by id1:id6"] # q6 not yet supported on plots
 DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
 dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
 if (!nrow(dt)) stop("There are no timings for defined list of solutions and data sizes")
-recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
-dt = dt[recent, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
+lg = fread("logs.csv")[action=="start" & nzchar(solution)]
+stopifnot(nrow(lg[, .N, c("nodename","batch","solution","task","data")][N>1])==0L)
+#dt[lg, on=c("nodename","batch","solution","task","data"), nomatch=NA]
+#lg[dt, on=c("nodename","batch","solution","task","data"), nomatch=NA]
+#lg[solution=="juliadf", tail(.SD, 10)]
+#dt[solution=="juliadf", tail(.SD, 10), .SDcols=c("nodename","batch","solution","task","data","version","question","run","time_sec")]
+recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(nodename, task, solution, data)]
+#recent = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(nodename, task, solution, data)]
+#dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch==1545469252, .N]==10L
+dt = dt[recent, on=c("nodename","task","solution","data","batch"="last_batch"), nomatch=NULL]
 dt = dt[order(solution)]
 dt = dt[question%in%c("sum v1 by id1","sum v1 by id1:id2","sum v1 mean v3 by id3","mean v1:v3 by id4","sum v1:v3 by id6")] # report not ready for new questions, see #60
+#stopifnot(dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch==1545469252, .N]==10L,
+#          dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch>1545469252, .N]==0L)
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
