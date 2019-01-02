@@ -118,7 +118,7 @@ for (s in solutions) { #s = solutions[1]
             if (grepl("timed out", w[["message"]], fixed=TRUE)) {
               # input NA timings? would require to push up 'question' factor here but would simplify(?) exception handling on benchplot
             }
-            cat(c(w[["message"]]," "), file=err_file, append=TRUE)
+            cat(paste0(w[["message"]],"\n"), file=err_file, append=TRUE)
           }
         )
       }
