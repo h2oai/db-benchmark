@@ -35,7 +35,8 @@ Rscript ./launcher.R
 # publish report for all tasks
 rm -f rmarkdown.out
 rm -rf public
-Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown.out 2>&1 && echo "# Benchmark report produced"
+Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown-index.out 2>&1 && echo "# Benchmark report produced"
+Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./rmarkdown-tech.out 2>&1 && echo "# Benchmark tech report produced"
 
 # publish benchmark, only if token file exists
 rm -rf db-benchmark.gh-pages

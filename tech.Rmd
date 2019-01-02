@@ -1,0 +1,85 @@
+---
+title: "Technical measures of db-benchmark"
+output:
+  html_document:
+    self_contained: yes
+    toc: true
+---
+
+```{r init, echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
+library(data.table)
+library(lattice)
+ft = function(x) factor(x, levels=unique(x))
+kk = knitr::kable
+```
+
+```{r loading}
+d = fread("~/git/db-benchmark/time.csv")[!is.na(batch) & in_rows %in% c(1e7, 1e8, 1e9)]
+l = fread("~/git/db-benchmark/logs.csv")[nzchar(solution)]
+```
+
+```{r cleaning}
+ftdata = function(x) {
+  k=ft(substr(x, 8, 10))
+  in_rows=ft(substr(x, 4, 6))
+  tsorted = function(x) {
+    ans = rep("unsorted", length(x))
+    ans[as.logical(x)] = "sorted"
+    ans
+  }
+  nasorted=ft(sprintf("%s%% NAs, %s", substr(x, 12, 12), tsorted(as.integer(substr(x, 14, 14)))))
+  list(k=k, in_rows=in_rows, nasorted=nasorted)
+}
+l = l[, c(list(nodename=ft(nodename), ibatch=as.integer(ft(as.character(batch))), solution=ft(solution),
+           action=ft(action), stderr=stderr, version=ft(version), git=ft(git), task=ft(task), data=ft(data), timestamp=timestamp, batch=batch),
+      ftdata(data))]
+l[, max_batch:=max(batch, na.rm=TRUE), c("nodename","solution","task","data")]
+l[, is_max_batch:=FALSE][batch==max_batch, is_max_batch:=TRUE][, max_batch:=NULL]
+
+d = d[, c(list(nodename=ft(nodename), ibatch=as.integer(ft(as.character(batch))), solution=ft(solution),
+           question=ft(question), run=run, version=ft(version), git=ft(git), task=ft(task), data=ft(data), 
+           timestamp=timestamp, batch=batch, time_sec=time_sec),
+      ftdata(data))]
+d[, max_batch:=max(batch, na.rm=TRUE), c("nodename","solution","task","data")]
+d[, is_max_batch:=FALSE][batch==max_batch, is_max_batch:=TRUE][, max_batch:=NULL]
+
+ld = d[l[action=="start"], on=c("nodename","batch","solution","task","data","in_rows","k","nasorted"), nomatch=NA]
+```
+
+## Incompleted timings of last run
+
+```{r completed}
+ll = ld[i.is_max_batch==TRUE, .(completed=sum(!is.na(time_sec))), c("nodename","batch","solution","task","data","in_rows","k","nasorted")]
+stopifnot(length(unique(ll$nodename))==1L)
+```
+
+### groupby
+
+```{r completed_groupby}
+kk(ll[completed<max(completed), .(solution, in_rows, k, `NA, sorted`=nasorted, completed)])
+```
+
+## Full scripts executions
+
+### groupby
+
+```{r logs_plot, fig.width=8, fig.height=48}
+ll = dcast(l, nodename+task+ibatch+solution+in_rows+k+nasorted ~ action, value.var="timestamp", subset=.(action!="skip")
+           )[, elapsed_min:=(finish-start)/60]
+stopifnot(length(unique(ll$nodename))==1L)
+p = sapply(setNames(nm=as.character(unique(ll$solution))), simplify = FALSE, function(s)
+  lattice::xyplot(elapsed_min ~ ibatch | k+in_rows, ll,
+                type="l", grid=TRUE, groups=nasorted,
+                subset=solution==s, main=s,
+                panel=panel.superpose,
+                panel.groups=function(x, y, col, col.symbol, ...) {
+                  panel.lines(x, y, col=col.symbol, ...)
+                  panel.abline(h=60, col="red", lty=3)
+                },
+                ylab = "minutes",
+                scales=list(y=list(relation="free")),
+                auto.key=list(points=FALSE, lines=TRUE))
+)
+sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
+```
