@@ -18,23 +18,10 @@ Because we have been asked many times to do so, the first task and initial motiv
 ```{r load_deps, include=FALSE}
 # rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
-library(data.table)
+source("report.R")
+report_status_file = get_report_status_file()
 source("helpers.R")
 source("benchplot.R") # also creates 'code' for groupby
-fs = function(x) factor(x, levels=unique(x))
-kk = knitr::kable
-report_status_file = "report-success"
-if (file.exists(report_status_file)) file.remove(report_status_file)
-```
-
-```{r exceptions, include=FALSE, eval=FALSE}
-# CURRENTLY NOT USED
-#exceptions = rbindlist(list(
-#  data.table(solution = "pandas", version="0.23.4", task = "groupby", in_rows = 1e9, data=c("G1_1e9_1e2_0_0"), comment = "lack of memory to read csv")#,
-    #data.table(solution = "pandas", version="0.23.4", task = "join", in_rows = 1e9, data=c("X1e9_2c-Y1e9_2c"), comment = "lack of memory"),
-  #data.table(solution = "dplyr", version="0.7.99.9000", task = "join", in_rows = 1e9, data=c("X1e9_2c-Y1e9_2c"), comment = "Cannot allocate memory"),
-  #data.table(solution = "pydatatable", version="0.6.0", task = "join", in_rows = c(1e7,1e8,1e9), data=c("X1e7_2c-Y1e7_2c","X1e8_2c-Y1e8_2c","X1e9_2c-Y1e9_2c"), comment = "not yet implemented")
-#))
 ```
 
 ```{r load_data, include=FALSE}
@@ -75,7 +62,7 @@ by_data = function(dt, .in_rows, .task) {
       stop("no other task defined for decompose_dataname")
     }
   }
-  wide = dt[run==1L, dcast(.SD, fs(data)+fs(question) ~ fs(solution), value.var="time_sec")]
+  wide = dt[run==1L, dcast(.SD, ft(data)+ft(question) ~ ft(solution), value.var="time_sec")]
   #d = rollup(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE) # including sub totals
   d = groupingsets(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE, sets=list(c("data","question"), character(0)))
   setorderv(d, "data", na.last = TRUE)
@@ -192,7 +179,7 @@ hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[action=="fini
 Benchmark run took around `r hours_took` hours.  
 
 ```{r set_success_state, include=FALSE}
-writeLines("", report_status_file)
+cat("groupby\n", file=report_status_file, append=TRUE)
 ```
 
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.

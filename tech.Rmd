@@ -8,10 +8,8 @@ output:
 
 ```{r init, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
-library(data.table)
-library(lattice)
-ft = function(x) factor(x, levels=unique(x))
-kk = knitr::kable
+source("report.R")
+report_status_file = get_report_status_file()
 ```
 
 ```{r loading}
@@ -20,30 +18,8 @@ l = fread("~/git/db-benchmark/logs.csv")[nzchar(solution)]
 ```
 
 ```{r cleaning}
-ftdata = function(x) {
-  k=ft(substr(x, 8, 10))
-  in_rows=ft(substr(x, 4, 6))
-  tsorted = function(x) {
-    ans = rep("unsorted", length(x))
-    ans[as.logical(x)] = "sorted"
-    ans
-  }
-  nasorted=ft(sprintf("%s%% NAs, %s", substr(x, 12, 12), tsorted(as.integer(substr(x, 14, 14)))))
-  list(k=k, in_rows=in_rows, nasorted=nasorted)
-}
-l = l[, c(list(nodename=ft(nodename), ibatch=as.integer(ft(as.character(batch))), solution=ft(solution),
-           action=ft(action), stderr=stderr, version=ft(version), git=ft(git), task=ft(task), data=ft(data), timestamp=timestamp, batch=batch),
-      ftdata(data))]
-l[, max_batch:=max(batch, na.rm=TRUE), c("nodename","solution","task","data")]
-l[, is_max_batch:=FALSE][batch==max_batch, is_max_batch:=TRUE][, max_batch:=NULL]
-
-d = d[, c(list(nodename=ft(nodename), ibatch=as.integer(ft(as.character(batch))), solution=ft(solution),
-           question=ft(question), run=run, version=ft(version), git=ft(git), task=ft(task), data=ft(data), 
-           timestamp=timestamp, batch=batch, time_sec=time_sec),
-      ftdata(data))]
-d[, max_batch:=max(batch, na.rm=TRUE), c("nodename","solution","task","data")]
-d[, is_max_batch:=FALSE][batch==max_batch, is_max_batch:=TRUE][, max_batch:=NULL]
-
+l = clean_logs(l)
+d = clean_time(d)
 ld = d[l[action=="start"], on=c("nodename","batch","solution","task","data","in_rows","k","nasorted"), nomatch=NA]
 ```
 
@@ -82,4 +58,8 @@ p = sapply(setNames(nm=as.character(unique(ll$solution))), simplify = FALSE, fun
                 auto.key=list(points=FALSE, lines=TRUE))
 )
 sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
+```
+
+```{r set_success_state, include=FALSE}
+cat("tech\n", file=report_status_file, append=TRUE)
 ```

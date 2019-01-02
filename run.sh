@@ -35,12 +35,17 @@ Rscript ./launcher.R
 # publish report for all tasks
 rm -f rmarkdown.out
 rm -rf public
+rm -f report-done
 Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown-index.out 2>&1 && echo "# Benchmark report produced"
 Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./rmarkdown-tech.out 2>&1 && echo "# Benchmark tech report produced"
 
-# publish benchmark, only if token file exists
+# publish benchmark, only if reports successfully generated (groupby, tech), token file exists
 rm -rf db-benchmark.gh-pages
-$DO_PUBLISH && [ -f ./report-success ] && [ -f ./token ] && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
+$DO_PUBLISH \
+  && [ -f ./report-done ] \
+  && [ $(wc -l report-done | awk '{print $1}') -eq 2 ] \
+  && [ -f ./token ] \
+  && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # remove run lock file
 rm -f run.lock
