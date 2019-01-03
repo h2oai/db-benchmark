@@ -8,32 +8,23 @@ output:
 
 ```{r init, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
+library(lattice)
 source("report.R")
 report_status_file = get_report_status_file()
-```
-
-```{r loading}
-d = fread("~/git/db-benchmark/time.csv")[!is.na(batch) & in_rows %in% c(1e7, 1e8, 1e9)]
-l = fread("~/git/db-benchmark/logs.csv")[nzchar(solution)]
-```
-
-```{r cleaning}
-l = clean_logs(l)
-d = clean_time(d)
-ld = d[l[action=="start"], on=c("nodename","batch","solution","task","data","in_rows","k","nasorted"), nomatch=NA]
+ld = time_logs()
 ```
 
 ## Incompleted timings of last run
 
 ```{r completed}
-ll = ld[i.is_max_batch==TRUE, .(completed=sum(!is.na(time_sec))), c("nodename","batch","solution","task","data","in_rows","k","nasorted")]
+ll = ld[script_recent==TRUE, .(completed=sum(!is.na(c(time_sec_1, time_sec_2)))), c("nodename","batch","solution","task","data","in_rows","k","nasorted")]
 stopifnot(length(unique(ll$nodename))==1L)
 ```
 
 ### groupby
 
 ```{r completed_groupby}
-kk(ll[completed<max(completed), .(solution, in_rows, k, `NA, sorted`=nasorted, completed)])
+kk(ll[task=="groupby"][completed<max(completed), .(solution, in_rows, k, `NA, sorted`=nasorted, completed)])
 ```
 
 ## Full scripts executions
@@ -41,11 +32,9 @@ kk(ll[completed<max(completed), .(solution, in_rows, k, `NA, sorted`=nasorted, c
 ### groupby
 
 ```{r logs_plot, fig.width=8, fig.height=48}
-ll = dcast(l, nodename+task+ibatch+solution+in_rows+k+nasorted ~ action, value.var="timestamp", subset=.(action!="skip")
-           )[, elapsed_min:=(finish-start)/60]
-stopifnot(length(unique(ll$nodename))==1L)
-p = sapply(setNames(nm=as.character(unique(ll$solution))), simplify = FALSE, function(s)
-  lattice::xyplot(elapsed_min ~ ibatch | k+in_rows, ll,
+stopifnot(length(unique(ld$nodename))==1L)
+p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
+  lattice::xyplot(script_time_sec/60 ~ ibatch | k+in_rows, ld,
                 type="l", grid=TRUE, groups=nasorted,
                 subset=solution==s, main=s,
                 panel=panel.superpose,

@@ -15,76 +15,41 @@ We also include the syntax being timed alongside the timing. This way you can im
 
 Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
 
-```{r load_deps, include=FALSE}
+```{r init, echo=FALSE}
 # rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 source("report.R")
 report_status_file = get_report_status_file()
+ld = time_logs()
 source("helpers.R")
+source("report-code.R")
 source("benchplot.R") # also creates 'code' for groupby
-```
-
-```{r load_data, include=FALSE}
-# all timings
-DT = read_timing("time.csv", raw=TRUE)
-DT = DT[question!="sum v3 count by id1:id6"] # q6 not yet supported on plots
-DT = DT[solution%in%c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf")] # modin not yet support grouping
-dt = DT[!is.na(batch)][in_rows %in% c(1e7, 1e8, 1e9)] # filter out 1e6, and eventually others
-if (!nrow(dt)) stop("There are no timings for defined list of solutions and data sizes")
-lg = fread("logs.csv")[action=="start" & nzchar(solution)]
-stopifnot(nrow(lg[, .N, c("nodename","batch","solution","task","data")][N>1])==0L)
-#dt[lg, on=c("nodename","batch","solution","task","data"), nomatch=NA]
-#lg[dt, on=c("nodename","batch","solution","task","data"), nomatch=NA]
-#lg[solution=="juliadf", tail(.SD, 10)]
-#dt[solution=="juliadf", tail(.SD, 10), .SDcols=c("nodename","batch","solution","task","data","version","question","run","time_sec")]
-recent = dt[, .(last_batch=max(batch, na.rm=TRUE)), .(nodename, task, solution, data)]
-#recent = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(nodename, task, solution, data)]
-#dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch==1545469252, .N]==10L
-dt = dt[recent, on=c("nodename","task","solution","data","batch"="last_batch"), nomatch=NULL]
-dt = dt[order(solution)]
-dt = dt[question%in%c("sum v1 by id1","sum v1 by id1:id2","sum v1 mean v3 by id3","mean v1:v3 by id4","sum v1:v3 by id6")] # report not ready for new questions, see #60
-#stopifnot(dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch==1545469252, .N]==10L,
-#          dt[solution=="data.table" & data=="G1_1e9_2e0_0_0" & batch>1545469252, .N]==0L)
+link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
-```{r filter_task, include=FALSE}
-dt = dt[task=="groupby"]
+```{r filter_task}
+dt = ld[task=="groupby" & script_recent==TRUE]
 by_data = function(dt, .in_rows, .task) {
-  dt = dt[in_rows==.in_rows]
+  dt = dt[in_rows==as.character(.in_rows)]
   if (!nrow(dt)) return(invisible(NULL))
-  decompose_dataname = function(x, task) {
-    if (task=="groupby") {
-      y = strsplit(as.character(x), "_", fixed = TRUE)[[1L]]
-      lapply(y[-1L], as.numeric)
-    } else {
-      stop("no other task defined for decompose_dataname")
-    }
-  }
-  wide = dt[run==1L, dcast(.SD, ft(data)+ft(question) ~ ft(solution), value.var="time_sec")]
-  #d = rollup(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE) # including sub totals
-  d = groupingsets(wide, by=c("data","question"), j=lapply(.SD, sum), id=TRUE, sets=list(c("data","question"), character(0)))
-  setorderv(d, "data", na.last = TRUE)
-  d[, c("rows","q1_grp.size","NA_pct","pre_sorted") := decompose_dataname(data, .task), by=1:length(data)]
-  setcolorder(d, c("data","rows","q1_grp.size","NA_pct","pre_sorted","question"))
-  #d[grouping==0L, "data":=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)))]
-  #d[grouping==1L, c("data","question"):=list(sprintf("[%s](%s/%s.png)", data, "plots", gsub("G1_", "groupby.", data, fixed=TRUE)), "[total]")]
-  d[grouping==3L, c("data","rows"):=list("[total]",.in_rows)]
+  wide = dcast(dt, data+in_rows+as.integer(as.character(k))+na+sorted+question ~ solution, value.var="time_sec_1")
+  d = groupingsets(wide[!is.na(question)], by=c("data","in_rows","k","na","sorted","question"), j=lapply(.SD, sum), id=TRUE, sets=list(c("data","in_rows","k","na","sorted","question"), character(0)))
+  setorderv(d, c("data","question"), na.last=TRUE)
+  setcolorder(d, c("data","in_rows","k","na","sorted","question"))
+  d[grouping==63L, c("in_rows"):=list(.in_rows)]
   d[, c("grouping","data"):=NULL]
+  setnames(d, c("in_rows","k","na","sorted"), c("rows","q1_grp.size","NA_pct","pre_sorted"))
   kk(d)
 }
-```
-
-```{r link_plots}
-link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
 ```
 
 Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table. If a solution is missing on particular data size timings table refer to benchplot for a reason and check its speed on smaller data size tab.
 
 ### 0.5GB
 
-```{r o_groupby1, echo=FALSE}
+```{r o_groupby1_plot}
 for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
@@ -93,15 +58,15 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
 ```
 ![](public/plots/groupby.1e7_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows==1e7, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt[in_rows=="1e7", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
-```{r o_groupby1_summary, echo=FALSE}
-by_data(dt, 1e7, "groupby")
+```{r o_groupby1_table}
+by_data(dt, "1e7", "groupby")
 ```
 
 ### 5GB
 
-```{r o_groupby2, echo=FALSE}
+```{r o_groupby2_plot}
 for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
@@ -110,15 +75,15 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
 ```
 ![](public/plots/groupby.1e8_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows==1e8, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt[in_rows=="1e8", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
-```{r o_groupby2_summary, echo=FALSE}
-by_data(dt, 1e8, "groupby")
+```{r o_groupby2_table}
+by_data(dt, "1e8", "groupby")
 ```
 
 ### 50GB {.active}
 
-```{r o_groupby3, echo=FALSE}
+```{r o_groupby3_plot}
 for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
   unlink(fnam)
@@ -127,10 +92,10 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
 ```
 ![](public/plots/groupby.1e9_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows==1e9, paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt[in_rows=="1e9", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
-```{r o_groupby3_summary, echo=FALSE}
-by_data(dt, 1e9, "groupby")
+```{r o_groupby3_table}
+by_data(dt, "1e9", "groupby")
 ```
 
 ## Environment configuration
@@ -140,18 +105,16 @@ Listed solutions where run using following versions of languages:
 - python 3.6  
 - Julia 1.0.2  
 
-```{r logs, echo=FALSE}
-lg = fread("logs.csv")[task=="groupby" & action!="skip"]
-recent_batch = lg[, .(last_batch=max(batch, na.rm=TRUE)), .(task, solution, data)]
-recent_lg = lg[recent_batch, on=c("task","solution","data","batch"="last_batch"), nomatch=NULL]
+```{r logs}
+recent_l = dt[script_recent==TRUE, .(unq_nodename=uniqueN(nodename), nodename=nodename[1L], unq_script_time_sec=uniqueN(script_time_sec), script_time_sec=script_time_sec[1L]), .(solution, task, data)]
+if (nrow(recent_l[unq_script_time_sec>1]))
+  stop("There are multiple different 'script_time_sec' for solution+task+data run")
+if (nrow(recent_l[unq_nodename>1]))
+  stop("There are multiple different 'nodename' for same solution+task+data run")
 ```
 
-```{r hardware, echo=FALSE}
-if (uniqueN(recent_lg, by="nodename") > 1) {
-  warning("presented timings were gathered on multiple machines")
-} else {
-  as.data.table(na.omit(fread("nodenames.csv")[unique(recent_lg$nodename), on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=rn, Value=V1)][, kk(.SD)]
-}
+```{r hardware}
+as.data.table(na.omit(fread("nodenames.csv")[as.character(unique(recent_l$nodename)), on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=rn, Value=V1)][, kk(.SD)]
 #kB_to_GB = function(x) {
 #  nx = nchar(x)
 #  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep ^MemTotal /proc/meminfo', expects 'kB'")
@@ -167,18 +130,18 @@ if (uniqueN(recent_lg, by="nodename") > 1) {
 
 ------
 
-```{r total_task_time, include=FALSE}
-unfinished = recent_lg[, .N==1L, .(batch, solution, task, data)][, setNames(V1, solution)]
-if (any(unfinished)) {
-  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or killed): %s", "groupby", paste(names(unfinished)[unfinished], collapse=", ")))
+```{r total_task_time}
+unfinished = recent_l[is.na(script_time_sec)]
+if (nrow(unfinished)) {
+  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or killed): %s", "groupby", paste(unique(unfinished$solution), collapse=", ")))
   hours_took = "at least "
 } else hours_took = ""
-hours_took = paste0(hours_took, recent_lg[, .(sec_diff = timestamp[action=="finish"] - timestamp[action=="start"]), .(solution, task, data)][, round(sum(sec_diff)/60/60, 1)])
+hours_took = paste0(hours_took, recent_l[, round(sum(script_time_sec)/60/60, 1)])
 ```
 
 Benchmark run took around `r hours_took` hours.  
 
-```{r set_success_state, include=FALSE}
+```{r set_success_state}
 cat("groupby\n", file=report_status_file, append=TRUE)
 ```
 
