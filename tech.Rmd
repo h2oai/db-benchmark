@@ -42,8 +42,12 @@ p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, fun
                   panel.lines(x, y, col=col.symbol, ...)
                   panel.abline(h=60, col="red", lty=3)
                 },
+                xlab = "benchmark run",
                 ylab = "minutes",
-                scales=list(y=list(relation="free")),
+                scales=list(y=list(
+                  relation="free",
+                  limits=rep(ld[solution==s, list(list(c(0, max(script_time_sec)/60))), in_rows]$V1, each=3)
+                )),
                 auto.key=list(points=FALSE, lines=TRUE))
 )
 sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
