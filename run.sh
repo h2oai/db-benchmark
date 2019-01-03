@@ -33,7 +33,7 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init
 Rscript ./launcher.R
 
 # publish report for all tasks
-rm -f rmarkdown.out
+rm -f rmarkdown-index.out rmarkdown-tech.out
 rm -rf public
 rm -f report-done
 Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown-index.out 2>&1 && echo "# Benchmark report produced"
