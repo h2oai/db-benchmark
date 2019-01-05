@@ -36,7 +36,7 @@ Rscript ./launcher.R
 rm -f rmarkdown-index.out rmarkdown-tech.out rmarkdown-history.out
 rm -rf public
 rm -f report-done
-Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown-index.out 2>&1 && echo "# Benchmark report produced"
+Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./rmarkdown-index.out 2>&1 && echo "# Benchmark index report produced"
 Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./rmarkdown-history.out 2>&1 && echo "# Benchmark history report produced"
 Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./rmarkdown-tech.out 2>&1 && echo "# Benchmark tech report produced"
 

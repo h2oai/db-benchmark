@@ -38,5 +38,5 @@ sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more
 ```
 
 ```{r set_success_state, include=FALSE}
-#cat("history\n", file=report_status_file, append=TRUE)
+cat("history\n", file=report_status_file, append=TRUE)
 ```
