@@ -2,7 +2,7 @@
 title: "Technical measures of db-benchmark"
 output:
   html_document:
-    self_contained: yes
+    self_contained: no
     toc: true
 ---
 
