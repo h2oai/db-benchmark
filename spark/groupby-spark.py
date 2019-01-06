@@ -46,7 +46,7 @@ print("grouping...")
 question = "sum v1 by id1" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id1, sum(v1) as v1 from x group by id1").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -60,7 +60,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id1, sum(v1) as v1 from x group by id1").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -78,7 +78,7 @@ del ans
 question = "sum v1 by id1:id2" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1, id2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id1, id2, sum(v1) as v1 from x group by id1, id2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -92,7 +92,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1 from x group by id1, id2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id1, id2, sum(v1) as v1 from x group by id1, id2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -110,7 +110,7 @@ del ans
 question = "sum v1 mean v3 by id3" # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, mean(v3) as v3 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -125,7 +125,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, mean(v3) as v3 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -144,7 +144,7 @@ del ans
 question = "mean v1:v3 by id4" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -159,7 +159,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -178,7 +178,7 @@ del ans
 question = "sum v1:v3 by id6" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -193,7 +193,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns))) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -212,7 +212,7 @@ del ans
 # question = "sum v3 count by id1:id6" # q6
 # gc.collect()
 # t_start = timeit.default_timer()
-# ans = spark.sql("select sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+# ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
 # print((ans.count(), len(ans.columns))) # shape
 # t = timeit.default_timer() - t_start
 # m = memory_usage()
@@ -227,7 +227,7 @@ del ans
 # del ans
 # gc.collect()
 # t_start = timeit.default_timer()
-# ans = spark.sql("select sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+# ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
 # print((ans.count(), len(ans.columns))) # shape
 # t = timeit.default_timer() - t_start
 # m = memory_usage()

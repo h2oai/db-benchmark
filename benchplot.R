@@ -103,8 +103,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     
     timings[is.na(time_sec_2), "time_sec_1" := NA_real_] # if 2 run failed, reset first one
     
-    # spark, pandas does not return grouping columns so out_cols measure is incorrect
-    timings[solution%in%c("spark","pandas","dask"), "out_cols" := NA_integer_]
+    # pandas does not return grouping columns so out_cols measure is incorrect
+    timings[solution%in%c("pandas","dask"), "out_cols" := NA_integer_]
   }
   
   solutions = unique(timings$solution)
