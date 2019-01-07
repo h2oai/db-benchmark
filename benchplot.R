@@ -88,6 +88,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   questions = unique(na.omit(timings$question)) # NA questions for those who failed
   nquestions = length(questions)
+  if (nquestions > 5L)
+    stop("Number of questions to plot should be at most 5, run benchplot on a subset of 5 questions")
+  if (!all(code_q_ok<-questions %in% names(code)))
+    stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
   data = unique(timings$data)
   ndata = length(data)
   if (ndata!=1L) stop("only single 'data' field supported, run benchplot for each 'data'")
@@ -108,6 +112,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   }
   
   solutions = unique(timings$solution)
+  if (!all(code_q_s_ok<-sapply(code[questions], function(c_q) all(solutions%in%names(c_q)))))
+    stop(sprintf("Some question(s) does not have corresponding entry for some solutions in argument 'code': %s", paste(questions[!code_q_s_ok], collapse=", ")))
   nsolutions = length(solutions)
   
   if (length(cutoff) && !cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
@@ -307,6 +313,7 @@ if (dev1<-FALSE) {
     benchplot(.nrow=.nrow, timings=d[solution%in%s], code=groupby.code, colors=solution.colors, .interactive=FALSE, by.nsolutions=TRUE)
   }
 } else if (dev2<-FALSE) {
+  source("benchplot.R")
   source("report.R")
   source("report-code.R")
   ld = time_logs()
