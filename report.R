@@ -26,22 +26,25 @@ load_logs = function() {
 # clean ----
 
 clean_time = function(d) {
-  d[!nzchar(git), git := NA_character_]
+  d[!nzchar(git), git := NA_character_
+    ][solution=="spark" & batch<1546755894, out_cols := NA_integer_ # spark initially was not returning grouping columns, this has been fixed starting from batch 1546755894
+      ]
 }
 clean_logs = function(l) {
-  l[!nzchar(git), git := NA_character_]
+  l[!nzchar(git), git := NA_character_
+    ]
 }
 
 # model ----
 
 model_time = function(d) {
-  if (nrow(d[, .(unq_chk=uniqueN(chk)), .(task, solution, data, question)][unq_chk>1]))
+  if (nrow(d[!is.na(chk), .(unq_chk=uniqueN(chk)), .(task, solution, data, question)][unq_chk>1]))
     stop("Value of 'chk' varies for different runs for single solution+question")
-  if (nrow(d[, .(unq_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unq_out_rows>1]))
+  if (nrow(d[!is.na(out_rows), .(unq_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unq_out_rows>1]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
-  if (nrow(d[, .(unq_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unq_out_cols>1]))
+  if (nrow(d[!is.na(out_cols), .(unq_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unq_out_cols>1]))
     stop("Value of 'out_cols' varies for different runs for single solution+question")
-  if (nrow(d[, .(unq_cache=uniqueN(cache))][unq_cache>1]))
+  if (nrow(d[!is.na(cache), .(unq_cache=uniqueN(cache))][unq_cache>1]))
     stop("Value of 'cache' should be constant for all solutions")
   d = dcast(d, ft(nodename)+batch+ft(in_rows)+ft(question)+ft(solution)+ft(fun)+ft(version)+ft(git)+ft(task)+ft(data) ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
   d[, c("chk_2","out_rows_2","out_cols_2") := NULL]
