@@ -3,7 +3,7 @@ groupby.code = list(
     "dask"="x.groupby(['id1']).agg({'v1':'sum'}).compute()",
     "data.table"="DT[, .(v1=sum(v1)), by=id1]",
     "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
-    "juliadf"="by(x, :id1, v1 = :v1=>sum)",
+    "juliadf"="by(x, :id1, v1 = :v1 => sum)",
     "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1)}, by(f.id1)]",
     "spark"="spark.sql('select id1, sum(v1) as v1 from x group by id1')"
@@ -12,7 +12,7 @@ groupby.code = list(
     "dask"="x.groupby(['id1','id2']).agg({'v1':'sum'}).compute()",
     "data.table"="DT[, .(v1=sum(v1)), by=.(id1, id2)]",
     "dplyr"="DF %>% group_by(id1,id2) %>% summarise(sum(v1))",
-    "juliadf"="by(x, [:id1, :id2], v1 = :v1=>sum)",
+    "juliadf"="by(x, [:id1, :id2], v1 = :v1 => sum)",
     "pandas"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]",
     "spark"="spark.sql('select id1, id2, sum(v1) as v1 from x group by id1, id2')"
@@ -21,7 +21,7 @@ groupby.code = list(
     "dask"="x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()",
     "data.table"="DT[, .(v1=sum(v1), v3=mean(v3)), by=id3]",
     "dplyr"="DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))",
-    "juliadf"="by(x, :id3, v1 = :v1=>sum, v3 = :v3=>mean)",
+    "juliadf"="by(x, :id3, v1 = :v1 => sum, v3 = :v3 => mean)",
     "pandas"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]",
     "spark"="spark.sql('select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3')"
@@ -30,7 +30,7 @@ groupby.code = list(
     "dask"="x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
     "data.table"="DT[, lapply(.SD, mean), by=id4, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id4) %>% summarise_each(funs(mean), vars=7:9)",
-    "juliadf"="by(x, :id4, v1 = :v1=>mean, v2 = :v2=>mean, v3 = :v3=>mean)",
+    "juliadf"="by(x, :id4, v1 = :v1 => mean, v2 = :v2 => mean, v3 = :v3 => mean)",
     "pandas"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
     "pydatatable"="DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]",
     "spark"="spark.sql('select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')"
@@ -39,7 +39,7 @@ groupby.code = list(
     "dask"="x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
     "data.table"="DT[, lapply(.SD, sum), by=id6, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id6) %>% summarise_each(funs(sum), vars=7:9)",
-    "juliadf"="by(x, :id6, v1 = :v1=>sum, v2 = :v2=>sum, v3 = :v3=>sum)",
+    "juliadf"="by(x, :id6, v1 = :v1 => sum, v2 = :v2 => sum, v3 = :v3 => sum)",
     "pandas"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]",
     "spark"="spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')"
@@ -48,7 +48,7 @@ groupby.code = list(
     "dask" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()",
     "data.table" = "DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
-    "juliadf" = "",
+    "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
     "pydatatable" = "",
     "spark" = ""
@@ -57,7 +57,7 @@ groupby.code = list(
     "dask" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()})).compute()",
     "data.table" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2))",
-    "juliadf" = "",
+    "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
     "pandas" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}))",
     "pydatatable" = "",
     "spark" = ""
@@ -66,7 +66,7 @@ groupby.code = list(
     "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'))[['v3']].compute()",
     "data.table" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=.(id2, id4)]",
     "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L)",
-    "juliadf" = "",
+    "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
     "pydatatable" = "",
     "spark" = ""
@@ -75,7 +75,7 @@ groupby.code = list(
     "dask" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()",
     "data.table" = "DT[, .(r2=cor(v1, v2)^2), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2)",
-    "juliadf" = "",
+    "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
     "pydatatable" = "",
     "spark" = ""
@@ -84,7 +84,7 @@ groupby.code = list(
     "dask" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()",
     "data.table" = "DT[, .(v3=sum(v3), count=.N), by=id1:id6]",
     "dplyr" = "DF %>% group_by(id1, id2, id3, id4, id5, id6) %>% summarise(v3=sum(v3), count=n())",
-    "juliadf" = "by(x, [:id1, :id2, :id3, :id4, :id5, :id6], v3 = :v3=>sum, count = :v3=>length)",
+    "juliadf" = "by(x, [:id1, :id2, :id3, :id4, :id5, :id6], v3 = :v3 => sum, count = :v3 => length)",
     "pandas" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})",
     "pydatatable" = "x[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]",
     "spark" = "select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6"
