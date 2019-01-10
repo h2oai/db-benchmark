@@ -109,7 +109,7 @@ for (s in solutions) { #s = solutions[1]
       cmd = sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      timeout = 60*60*1 # 1 hour
+      timeout = 60*60*2 # 2 hours from now on due to new groupby questions q6-q10
       if (!mockup) {
         tryCatch(
           system(shcmd, timeout=timeout), # here script actually runs

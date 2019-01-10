@@ -164,8 +164,6 @@ chkt = system.time(chk<-ans[, .(sum(r2))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
-print(head(ans[order(id2, id4)], 3))
-print(tail(ans[order(id2, id4)], 3))
 rm(ans)
 
 if( !interactive() ) q("no", status=0)

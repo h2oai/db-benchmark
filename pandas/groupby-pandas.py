@@ -6,7 +6,6 @@ import os
 import gc
 import timeit
 import pandas as pd
-from scipy import stats # for q10 regression
 
 exec(open("./helpers.py").read())
 
@@ -267,7 +266,8 @@ del ans
 question = "regression v1 v2 by id2 id4" # q10
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': stats.pearsonr(x.v1, x.v2)[0]**2}))
+x[['v1','v2']].corr()
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -278,7 +278,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': stats.pearsonr(x.v1, x.v2)[0]**2}))
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
