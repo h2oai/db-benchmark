@@ -50,7 +50,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
     "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
-    "pydatatable" = "",
+    "pydatatable" = "x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]",
     "spark" = ""
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
@@ -59,7 +59,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2))",
     "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
     "pandas" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}))",
-    "pydatatable" = "",
+    "pydatatable" = "NA",
     "spark" = ""
   ),
   "largest two v3 by id2 id4" = c ( # q8
@@ -68,7 +68,7 @@ groupby.code = list(
     "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L)",
     "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
-    "pydatatable" = "",
+    "pydatatable" = "NA",
     "spark" = ""
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
@@ -77,7 +77,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
-    "pydatatable" = "",
+    "pydatatable" = "x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)]",
     "spark" = ""
   ),
   "sum v3 count by id1:id6" = c( # q10
