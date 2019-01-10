@@ -209,39 +209,175 @@ ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
 
-# question = "sum v3 count by id1:id6" # q6
-# gc.collect()
-# t_start = timeit.default_timer()
-# ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
-# print((ans.count(), len(ans.columns))) # shape
-# t = timeit.default_timer() - t_start
-# m = memory_usage()
-# t_start = timeit.default_timer()
-# ans.createOrReplaceTempView("ans")
-# tempchk = spark.sql("select sum(v3) as v3, sum(count) as count from ans").collect()[0].asDict()
-# chk = [tempchk['v3'], tempchk['count']]
-# chkt = timeit.default_timer() - t_start
-# write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-# ans.unpersist()
-# spark.catalog.uncacheTable("ans")
-# del ans
-# gc.collect()
-# t_start = timeit.default_timer()
-# ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
-# print((ans.count(), len(ans.columns))) # shape
-# t = timeit.default_timer() - t_start
-# m = memory_usage()
-# t_start = timeit.default_timer()
-# ans.createOrReplaceTempView("ans")
-# tempchk = spark.sql("select sum(v3) as v3, sum(count) as count from ans").collect()[0].asDict()
-# chk = [tempchk['v3'], tempchk['count']]
-# chkt = timeit.default_timer() - t_start
-# write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-# print(ans.head(3))
-# # print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
-# ans.unpersist()
-# spark.catalog.uncacheTable("ans")
-# del ans
+#question = "median v3 sd v3 by id2 id4" # q6 # median not yet implemented https://issues.apache.org/jira/browse/SPARK-26589
+#gc.collect()
+#t_start = timeit.default_timer()
+#ans = spark.sql("select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+#print((ans.count(), len(ans.columns))) # shape
+#t = timeit.default_timer() - t_start
+#m = memory_usage()
+#t_start = timeit.default_timer()
+#ans.createOrReplaceTempView("ans")
+#tempchk = spark.sql("select sum(median_v3) as median_v3, sum(sd_v3) as sd_v3 from ans").collect()[0].asDict()
+#chk = [tempchk['median_v3'], tempchk['sd_v3']]
+#chkt = timeit.default_timer() - t_start
+#write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#ans.unpersist()
+#spark.catalog.uncacheTable("ans")
+#del ans
+#gc.collect()
+#t_start = timeit.default_timer()
+#ans = spark.sql("select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+#print((ans.count(), len(ans.columns))) # shape
+#t = timeit.default_timer() - t_start
+#m = memory_usage()
+#t_start = timeit.default_timer()
+#ans.createOrReplaceTempView("ans")
+#tempchk = spark.sql("select sum(median_v3) as median_v3, sum(sd_v3) as sd_v3 from ans").collect()[0].asDict()
+#chk = [tempchk['median_v3'], tempchk['sd_v3']]
+#chkt = timeit.default_timer() - t_start
+#write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#print(ans.head(3))
+## print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+#ans.unpersist()
+#spark.catalog.uncacheTable("ans")
+#del ans
+
+question = "max v1 - min v2 by id2 id4" # q7
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(range_v1_v2) as range_v1_v2 from ans").collect()[0].asDict()
+chk = [tempchk['range_v1_v2']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(range_v1_v2) as range_v1_v2 from ans").collect()[0].asDict()
+chk = [tempchk['range_v1_v2']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+
+question = "largest two v3 by id2 id4" # q8
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(largest2_v3) as largest2_v3 from ans").collect()[0].asDict()
+chk = [tempchk['largest2_v3']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(largest2_v3) as largest2_v3 from ans").collect()[0].asDict()
+chk = [tempchk['largest2_v3']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+
+question = "regression v1 v2 by id2 id4" # q9
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(r2) as r2 from ans").collect()[0].asDict()
+chk = [tempchk['r2']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(r2) as r2 from ans").collect()[0].asDict()
+chk = [tempchk['r2']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+
+question = "sum v3 count by id1:id6" # q10
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(v3) as v3, sum(count) as count from ans").collect()[0].asDict()
+chk = [tempchk['v3'], tempchk['count']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = spark.sql("select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6").persist(pyspark.StorageLevel.MEMORY_ONLY)
+print((ans.count(), len(ans.columns))) # shape
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+ans.createOrReplaceTempView("ans")
+tempchk = spark.sql("select sum(v3) as v3, sum(count) as count from ans").collect()[0].asDict()
+chk = [tempchk['v3'], tempchk['count']]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3))
+# print(ans.tail(3)) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+ans.unpersist()
+spark.catalog.uncacheTable("ans")
+del ans
 
 spark.stop()
 
