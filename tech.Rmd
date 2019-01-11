@@ -4,6 +4,8 @@ output:
   html_document:
     self_contained: no
     toc: true
+    includes:
+      in_header: ga.html
 ---
 
 ```{r init, echo=FALSE}
@@ -29,9 +31,15 @@ kk(ll[task=="groupby"][completed<max(completed), .(solution, in_rows, k, `NA, so
 
 ## Full scripts executions
 
+Red dotted line refers to script timeout which initially was not set up. Later it was set on 60 minutes, more recently after adding new set of questions it was increased to 120 minutes. Up to date timeout value can be looked up in `timeout.csv` file.
+
 ### groupby
 
 ```{r logs_plot, fig.width=8, fig.height=48}
+timeout = fread("timeout.csv")
+timeout = timeout["groupby", on="task", nomatch=NULL] # filter for env var RUN_TASKS
+stopifnot(nrow(timeout)==1L)
+timeout_m = timeout[["minutes"]]
 stopifnot(length(unique(ld$nodename))==1L)
 p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
   lattice::xyplot(script_time_sec/60 ~ ibatch | k+in_rows, ld,
@@ -40,7 +48,7 @@ p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, fun
                 panel=panel.superpose,
                 panel.groups=function(x, y, col, col.symbol, ...) {
                   panel.lines(x, y, col=col.symbol, ...)
-                  panel.abline(h=60, col="red", lty=3)
+                  panel.abline(h=timeout_m, col="red", lty=3)
                 },
                 xlab = "benchmark run",
                 ylab = "minutes",
@@ -56,3 +64,5 @@ sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more
 ```{r set_success_state, include=FALSE}
 cat("tech\n", file=report_status_file, append=TRUE)
 ```
+
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.

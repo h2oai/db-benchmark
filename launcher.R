@@ -23,9 +23,13 @@ if (!length(run_solutions)) q("no")
 
 data = fread("data.csv")
 data = data[active==TRUE, # filter on active datasets
-            ][run_tasks, on="task", nomatch=0L # filter for env var RUN_TASKS
+            ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
               ][, c("active","gb","rows","cardinality","id","seq","path") := NULL # remove unused, id+seq to be used for join
                 ][]
+
+timeout = fread("timeout.csv")
+timeout = timeout[run_tasks, on="task", nomatch=NULL] # filter for env var RUN_TASKS
+stopifnot(nrow(timeout)==1L)
 
 solution = rbindlist(list(
   dask = list(task=c("groupby","join","sort")),
@@ -37,7 +41,7 @@ solution = rbindlist(list(
   pydatatable = list(task=c("groupby","join","sort")),
   spark = list(task=c("groupby","join","sort"))
 ), idcol="solution")
-solution = solution[run_solutions, on="solution", nomatch=0L] # filter for env var RUN_SOLUTIONS
+solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
 
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]
@@ -109,10 +113,10 @@ for (s in solutions) { #s = solutions[1]
       cmd = sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      timeout = 60*60*2 # 2 hours from now on due to new groupby questions q6-q10
+      timeout_s = 60*timeout[["minutes"]] # see timeout.csv
       if (!mockup) {
         tryCatch(
-          system(shcmd, timeout=timeout), # here script actually runs
+          system(shcmd, timeout=timeout_s), # here script actually runs
           warning = function(w) {
             # this is to catch and log timeout but we want every warning to be written to stderr
             if (grepl("timed out", w[["message"]], fixed=TRUE)) {

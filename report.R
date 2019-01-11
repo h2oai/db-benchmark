@@ -8,7 +8,7 @@ get_report_status_file = function() {
 # load ----
 
 load_time = function() {
-  fread("~/git/db-benchmark/time.csv")[
+  fread("time.csv")[
     !is.na(batch) &
       in_rows %in% c(1e7, 1e8, 1e9) &
       solution %in% c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf") &
@@ -16,7 +16,7 @@ load_time = function() {
     ][order(timestamp)]
 }
 load_logs = function() {
-  fread("~/git/db-benchmark/logs.csv")[
+  fread("logs.csv")[
     !is.na(batch) &
       nzchar(solution) &
       solution %in% c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf") &
@@ -24,7 +24,7 @@ load_logs = function() {
     ][order(timestamp)]
 }
 load_questions = function() {
-  fread("~/git/db-benchmark/questions.csv")
+  fread("questions.csv")
 }
 
 # clean ----

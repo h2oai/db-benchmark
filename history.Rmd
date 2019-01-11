@@ -4,6 +4,8 @@ output:
   html_document:
     self_contained: no
     toc: false
+    includes:
+      in_header: ga.html
 ---
 
 ```{r init, echo=FALSE}
@@ -40,3 +42,5 @@ sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more
 ```{r set_success_state, include=FALSE}
 cat("history\n", file=report_status_file, append=TRUE)
 ```
+
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
