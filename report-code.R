@@ -54,7 +54,7 @@ groupby.code = list(
     "spark" = "NA"
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
-    "dask" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()})).compute()",
+    "dask" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()",
     "data.table" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2))",
     "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
@@ -63,7 +63,7 @@ groupby.code = list(
     "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')"
   ),
   "largest two v3 by id2 id4" = c ( # q8
-    "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'))[['v3']].compute()",
+    "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()",
     "data.table" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=.(id2, id4)]",
     "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L)",
     "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
@@ -72,7 +72,7 @@ groupby.code = list(
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
-    "dask" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()",
+    "dask" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()",
     "data.table" = "DT[, .(r2=cor(v1, v2)^2), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",

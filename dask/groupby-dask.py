@@ -36,7 +36,6 @@ print("loading dataset %s" % data_name)
 # parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
 
 x = dd.read_csv(src_grp, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
-
 in_rows = len(x)
 print(in_rows)
 
@@ -201,7 +200,7 @@ del ans
 question = "max v1 - min v2 by id2 id4" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()})).compute()
+ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -212,7 +211,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()})).compute()
+ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -227,7 +226,7 @@ del ans
 question = "largest two v3 by id2 id4" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'))[['v3']].compute() # TODO remove extra field added by nlargest method, ideally after: https://github.com/h2oai/db-benchmark/issues/68
+ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute() # TODO remove extra field added by nlargest method, ideally after: https://github.com/h2oai/db-benchmark/issues/68
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -238,7 +237,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'))[['v3']].compute()
+ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -253,7 +252,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -264,7 +263,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
 print(ans.shape)
 t = timeit.default_timer() - t_start
 m = memory_usage()
