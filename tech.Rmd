@@ -32,7 +32,7 @@ stopifnot(length(unique(ll$nodename))==1L)
 ### groupby
 
 ```{r completed_groupby}
-kk(ll[task=="groupby"][failed>0L, .(solution, in_rows, k, `NA, sorted`=nasorted, n_completed, n_failed, q_failed)])
+kk(ll[task=="groupby"][n_failed>0L, .(solution, in_rows, k, `NA, sorted`=nasorted, n_completed, n_failed, q_failed)])
 ```
 
 ## Full scripts executions
