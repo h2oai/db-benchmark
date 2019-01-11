@@ -19,19 +19,25 @@ ld = time_logs()
 ## Incompleted timings of last run
 
 ```{r completed}
-ll = ld[script_recent==TRUE, .(completed=sum(!is.na(c(time_sec_1, time_sec_2)))), c("nodename","batch","solution","task","data","in_rows","k","nasorted")]
+ll = ld[script_recent==TRUE, {
+  n_na = is.na(c(time_sec_1, time_sec_2))
+  n_completed=sum(!n_na)
+  n_failed=sum(n_na)
+  .(n_completed=n_completed, n_failed=n_failed, q_failed=if(n_failed==0L) NA_character_ else paste(paste0("q", iquestion[is.na(time_sec_1) | is.na(time_sec_2)]), collapse=","))
+  },
+   c("nodename","batch","solution","task","data","in_rows","k","nasorted")]
 stopifnot(length(unique(ll$nodename))==1L)
 ```
 
 ### groupby
 
 ```{r completed_groupby}
-kk(ll[task=="groupby"][completed<max(completed), .(solution, in_rows, k, `NA, sorted`=nasorted, completed)])
+kk(ll[task=="groupby"][failed>0L, .(solution, in_rows, k, `NA, sorted`=nasorted, n_completed, n_failed, q_failed)])
 ```
 
 ## Full scripts executions
 
-Red dotted line refers to script timeout which initially was not set up. Later it was set on 60 minutes, more recently after adding new set of questions it was increased to 120 minutes. Up to date timeout value can be looked up in `timeout.csv` file.
+Red dotted line refers to script timeout which initially was not set up. Later it was set to 60 minutes, more recently, after adding new set of questions, it was increased to 120 minutes. Up to date timeout value can be looked up in `timeout.csv` file.
 
 ### groupby
 
