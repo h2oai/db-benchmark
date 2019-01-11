@@ -111,12 +111,12 @@ question = "max v1 - min v2 by id2 id4" # q7
 t = system.time(print(dim(ans<-DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2)))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), range_v1_v2=sum(bit64::as.integer64(range_v1_v2))))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
 t = system.time(print(dim(ans<-DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2)))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), range_v1_v2=sum(bit64::as.integer64(range_v1_v2))))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -125,12 +125,12 @@ question = "largest two v3 by id2 id4" # q8
 t = system.time(print(dim(ans<-DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), largest2_v3=sum(largest2_v3)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
 t = system.time(print(dim(ans<-DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), largest2_v3=sum(largest2_v3)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -139,12 +139,12 @@ question = "regression v1 v2 by id2 id4" # q9
 t = system.time(print(dim(ans<-DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), r2=sum(r2)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
 t = system.time(print(dim(ans<-DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), r2=sum(r2)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
