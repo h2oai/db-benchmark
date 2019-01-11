@@ -58,7 +58,7 @@ if (!interactive()) browser = function(...) stop("some new exception in timings 
 # by.nsolutions default FALSE, when TRUE it will generate png filename as 'groupby.[nsolutions].[in_rows].png' so scaling of benchplot can be easily compared for various number of solutions
 # fnam fixed filename if do not want to generate from pattern
 benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="public/plots") {
-  stopifnot(c("task","time_sec_1","time_sec_2","question","solution","in_rows","out_rows","out_cols","version","git","batch") %in% names(timings))
+  stopifnot(c("task","time_sec_1","time_sec_2","question","question_group","solution","in_rows","out_rows","out_cols","version","git","batch") %in% names(timings))
   stopifnot(is.character(task), length(task)==1L, !is.na(task))
   if (!is.data.table(colors)) stop("argument colors must be data.table of solutions and colors assigned to each")
   if (!is.character(cutoff) || length(cutoff)>1) stop("cutoff must be character of length 0 to 1")
@@ -71,11 +71,6 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   # if no .nrow argument provided then use maximum in_rows in timings
   if (!is.finite(.nrow)) .nrow = timings[, max(as.numeric(in_rows))]
-  
-  exceptions = TRUE
-  if (exceptions) {
-    min_versions = timings[as.numeric(in_rows)==min(as.numeric(in_rows)), head(.SD, 1L), "solution", .SDcols=c("version","git","batch")]
-  }
   
   # filter timings to single data
   .data = data; rm(data)
@@ -95,21 +90,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   data = unique(timings$data)
   ndata = length(data)
   if (ndata!=1L) stop("only single 'data' field supported, run benchplot for each 'data'")
-  if (exceptions) { # general exception handling
-    ex_s = "pydatatable"
-    fix_general = timings[solution==ex_s
-            ][, c("version","git","time_sec_1","time_sec_2","mem_gb_1","mem_gb_2","chk","chk_time_sec","fun","timestamp_1","timestamp_2","ibatch","batch","solution","script_time_sec","script_start","script_finish","chk_time_sec_1","chk_time_sec_2") := NA
-              ][]
-    fix_all = rbindlist(lapply(unique(timings$solution), function(s) fix_general[,.SD][, "solution":=s]))
-    decode = function(x, y) {nax = is.na(x); x[nax] = y[nax]; x}
-    timings = timings[fix_all, on=c("solution","task","data","question","iquestion"), .SD]
-    timings[min_versions, on="solution", `:=`(version=decode(version, i.version), git=decode(git, i.git), batch=decode(batch, i.batch))]
-    
-    timings[is.na(time_sec_2), "time_sec_1" := NA_real_] # if 2 run failed, reset first one
-    
-    # pandas does not return grouping columns so out_cols measure is incorrect
-    timings[solution%in%c("pandas","dask"), "out_cols" := NA_integer_]
-  }
+  
+  timings[na_time_sec==TRUE, c("time_sec_1","time_sec_2") := NA_real_] # if any of timings failed do not plot just one
   
   solutions = unique(timings$solution)
   if (!all(code_q_s_ok<-sapply(code[questions], function(c_q) all(solutions%in%names(c_q)))))

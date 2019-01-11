@@ -30,7 +30,7 @@ link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby."
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
 ```{r filter_task}
-dt = ld[task=="groupby" & script_recent==TRUE]
+dt = ld[task=="groupby" & script_recent==TRUE & question_group=="basic"]
 by_data = function(dt, .in_rows, .task) {
   dt = dt[in_rows==as.character(.in_rows)]
   if (!nrow(dt)) return(invisible(NULL))
