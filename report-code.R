@@ -59,7 +59,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(range_v1_v2=max(v1)-min(v2))",
     "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
     "pandas" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}))",
-    "pydatatable" = "NA",
+    "pydatatable" = "x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]",
     "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')"
   ),
   "largest two v3 by id2 id4" = c ( # q8
