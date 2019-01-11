@@ -4,6 +4,9 @@ kk = knitr::kable
 get_report_status_file = function() {
   "report-done"
 }
+get_report_solutions = function() {
+  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
+}
 
 # load ----
 
@@ -11,15 +14,14 @@ load_time = function() {
   fread("time.csv")[
     !is.na(batch) &
       in_rows %in% c(1e7, 1e8, 1e9) &
-      solution %in% c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf") &
-      question %in% c("sum v1 by id1", "sum v1 by id1:id2", "sum v1 mean v3 by id3", "mean v1:v3 by id4", "sum v1:v3 by id6")
+      solution %in% get_report_solutions()
     ][order(timestamp)]
 }
 load_logs = function() {
   fread("logs.csv")[
     !is.na(batch) &
       nzchar(solution) &
-      solution %in% c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf") &
+      solution %in% get_report_solutions() &
       action %in% c("start","finish")
     ][order(timestamp)]
 }
