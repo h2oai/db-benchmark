@@ -8,11 +8,18 @@ output:
       in_header: ga.html
 ---
 
-```{r init, echo=FALSE}
+```{r opts, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
+```
+
+```{r render}
+report_name = "tech"
+# Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+```
+
+```{r init}
 library(lattice)
 source("report.R")
-report_status_file = get_report_status_file()
 ld = time_logs()
 ```
 
@@ -67,8 +74,5 @@ p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, fun
 sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
 ```
 
-Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
-
-```{r set_success_state, include=FALSE}
-cat("tech\n", file=report_status_file, append=TRUE)
+```{r status, child="rmarkdown_child/status.Rmd"}
 ```
