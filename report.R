@@ -10,23 +10,23 @@ get_report_solutions = function() {
 
 # load ----
 
-load_time = function() {
-  fread("time.csv")[
+load_time = function(path=getwd()) {
+  fread(file.path(path, "time.csv"))[
     !is.na(batch) &
       in_rows %in% c(1e7, 1e8, 1e9) &
       solution %in% get_report_solutions()
     ][order(timestamp)]
 }
-load_logs = function() {
-  fread("logs.csv")[
+load_logs = function(path=getwd()) {
+  fread(file.path(path, "logs.csv"))[
     !is.na(batch) &
       nzchar(solution) &
       solution %in% get_report_solutions() &
       action %in% c("start","finish")
     ][order(timestamp)]
 }
-load_questions = function() {
-  fread("questions.csv")
+load_questions = function(path=getwd()) {
+  fread(file.path(path, "questions.csv"))
 }
 
 # clean ----
@@ -147,10 +147,10 @@ transform = function(ld) {
 
 # all ----
 
-time_logs = function() {
-  d = model_time(clean_time(load_time()))
-  l = model_logs(clean_logs(load_logs()))
-  q = model_questions(clean_questions(load_questions()))
+time_logs = function(path=getwd()) {
+  d = model_time(clean_time(load_time(path=path)))
+  l = model_logs(clean_logs(load_logs(path=path)))
+  q = model_questions(clean_questions(load_questions(path=path)))
   
   lq = merge_logs_questions(l, q)
   ld = merge_time_logsquestions(d, lq)

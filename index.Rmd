@@ -1,0 +1,77 @@
+---
+title: "Database-like ops benchmark"
+output:
+  html_document:
+    self_contained: no
+    includes:
+      in_header: ga.html
+---
+
+This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add more solutions over time although the most interesting solutions seems to be not mature enough. See [README.md](https://github.com/h2oai/db-benchmark/blob/master/README.md) for detailed status.
+
+We limit the scope to what can be achieved on a single machine. Laptop size memory (8GB) and server size memory (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope. Multi-node systems such as Spark running in single machine mode is in scope, too. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
+
+We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
+
+Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
+
+```{r opts, echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
+```
+
+```{r render}
+report_name = "index"
+# Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+```
+
+```{r init, child="rmarkdown_child/init.Rmd"}
+```
+
+## Groupby {.tabset .tabset-fade .tabset-pills}
+
+Plot below presents just single input data and _basic_ set of questions. Complete results of _groupby_ task benchmark can be found in [h2oai.github.io/db-benchmark/groupby.html](./groupby.html) report.  
+
+```{r filter_task_groupby}
+dt_task = lld[task=="groupby" & question_group=="basic"]
+```
+
+### 0.5 GB
+
+```{r o_groupby1_plot}
+fn = "1e7_1e2_0_0"
+fnam = paste0("groupby.",fn,".png")
+unlink(file.path("public",report_name,"plots", fnam))
+benchplot(1e7, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+```
+![](public/index/plots/groupby.1e7_1e2_0_0.png)  
+
+### 5 GB
+
+```{r o_groupby2_plot}
+fn = "1e8_1e2_0_0"
+fnam = paste0("groupby.",fn,".png")
+unlink(file.path("public",report_name,"plots", fnam))
+benchplot(1e8, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+```
+![](public/index/plots/groupby.1e8_1e2_0_0.png)  
+
+### 50 GB {.active}
+
+```{r o_groupby3_plot}
+fn = "1e9_1e2_0_0"
+fnam = paste0("groupby.",fn,".png")
+unlink(file.path("public",report_name,"plots", fnam))
+benchplot(1e9, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+```
+![](public/index/plots/groupby.1e9_1e2_0_0.png)  
+
+```{r environment, child="rmarkdown_child/environment.Rmd"}
+```
+
+------
+
+```{r timetaken, child="rmarkdown_child/timetaken.Rmd"}
+```
+
+```{r status, child="rmarkdown_child/status.Rmd"}
+```

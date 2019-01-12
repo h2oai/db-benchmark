@@ -1,5 +1,5 @@
 ---
-title: "Single-node data aggregation benchmark"
+title: "Aggregation benchmark"
 output:
   html_document:
     self_contained: no
@@ -7,30 +7,28 @@ output:
       in_header: ga.html
 ---
 
-This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. We hope to add joins and updates with a focus on ordered operations which are hard to achieve in (unordered) SQL. We hope to add more solutions over time although the most interesting solutions seems to be not mature enough. See [README.md](https://github.com/h2oai/db-benchmark/blob/master/README.md) for detailed status.
+This page presents results of [h2oai.github.io/db-benchmark](./index.html) _groupby_ task benchmark for various datasizes and various data characteristis (cardinality, percentage of missing values, pre-sorted input). There are 10 different questions run for each input data, questions are categorized into two groups. _Basic_ questions refers to set of 5 questions designed by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). _Advanced_ questions are 5 new questions meant to cover more complex queries, which are also less obvious to optimize.  
 
-We limit the scope to what can be achieved on a single machine. Laptop size memory (8GB) and server size memory (250GB) are in scope. Out-of-memory using local disk such as NVMe is in scope. Multi-node systems such as Spark running in single machine mode is in scope, too. Machines are getting bigger: EC2 X1 has 2TB RAM and 1TB NVMe disk is under $300. If you can perform the task on a single machine, then perhaps you should. To our knowledge, nobody has yet compared this software in this way and published results too.
-
-We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
-
-Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.  
-
-```{r init, echo=FALSE}
-# rm -rf public && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+```{r opts, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
-source("report.R")
-report_status_file = get_report_status_file()
-ld = time_logs()
-source("helpers.R")
-source("report-code.R")
-source("benchplot.R") # also creates 'code' for groupby
+```
+
+```{r render}
+report_name = "groupby"
+# Rscript -e 'rmarkdown::render("groupby.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+```
+
+```{r init, child="rmarkdown_child/init.Rmd"}
+```
+
+```{r links_plots}
 link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
-```{r filter_task}
-dt = ld[task=="groupby" & script_recent==TRUE & question_group=="basic"]
+```{r filter_task_groupby}
+dt_task = lld[task=="groupby" & question_group=="basic"]
 by_data = function(dt, .in_rows, .task) {
   dt = dt[in_rows==as.character(.in_rows)]
   if (!nrow(dt)) return(invisible(NULL))
@@ -47,102 +45,64 @@ by_data = function(dt, .in_rows, .task) {
 
 Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table. If a solution is missing on particular data size timings table refer to benchplot for a reason and check its speed on smaller data size tab.
 
-### 0.5GB
+### 0.5 GB
 
 ```{r o_groupby1_plot}
 for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
-  unlink(fnam)
-  benchplot(1e7, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
+  unlink(file.path("public",report_name,"plots", fnam))
+  benchplot(1e7, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 }
 ```
-![](public/plots/groupby.1e7_1e2_0_0.png)  
+![](public/groupby/plots/groupby.1e7_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows=="1e7", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e7", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby1_table}
-by_data(dt, "1e7", "groupby")
+by_data(dt_task, "1e7", "groupby")
 ```
 
-### 5GB
+### 5 GB
 
 ```{r o_groupby2_plot}
 for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
-  unlink(fnam)
-  benchplot(1e8, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
+  unlink(file.path("public",report_name,"plots", fnam))
+  benchplot(1e8, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 }
 ```
-![](public/plots/groupby.1e8_1e2_0_0.png)  
+![](public/groupby/plots/groupby.1e8_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows=="1e8", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e8", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby2_table}
-by_data(dt, "1e8", "groupby")
+by_data(dt_task, "1e8", "groupby")
 ```
 
-### 50GB {.active}
+### 50 GB {.active}
 
 ```{r o_groupby3_plot}
 for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
   fnam = paste0("groupby.",fn,".png")
-  unlink(fnam)
-  benchplot(1e9, data=paste0("G1_",fn), timings=dt, code=groupby.code, colors=solution.colors, fnam=fnam, cutoff="spark")
+  unlink(file.path("public",report_name,"plots", fnam))
+  benchplot(1e9, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 }
 ```
-![](public/plots/groupby.1e9_1e2_0_0.png)  
+![](public/groupby/plots/groupby.1e9_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt[in_rows=="1e9", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e9", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby3_table}
-by_data(dt, "1e9", "groupby")
+by_data(dt_task, "1e9", "groupby")
 ```
 
-## Environment configuration
-
-Listed solutions where run using following versions of languages:  
-- R 3.5.1  
-- python 3.6  
-- Julia 1.0.2  
-
-```{r logs}
-recent_l = dt[script_recent==TRUE, .(unq_nodename=uniqueN(nodename), nodename=nodename[1L], unq_script_time_sec=uniqueN(script_time_sec), script_time_sec=script_time_sec[1L]), .(solution, task, data)]
-if (nrow(recent_l[unq_script_time_sec>1]))
-  stop("There are multiple different 'script_time_sec' for solution+task+data run")
-if (nrow(recent_l[unq_nodename>1]))
-  stop("There are multiple different 'nodename' for same solution+task+data run")
-```
-
-```{r hardware}
-as.data.table(na.omit(fread("nodenames.csv")[as.character(unique(recent_l$nodename)), on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=rn, Value=V1)][, kk(.SD)]
-#kB_to_GB = function(x) {
-#  nx = nchar(x)
-#  if (!identical(substring(x, nx-1, nx), "kB")) stop("unexpected units of memory returned from 'grep ^MemTotal /proc/meminfo', expects 'kB'")
-#  sprintf("%.2f GB", as.numeric(trimws(gsub("kB", "", x)))/1024^2)
-#}
-#fread(
-#  cmd="lscpu | grep '^Model name:\\|^CPU(s):' && grep ^MemTotal /proc/meminfo",
-#  sep=":", header=FALSE
-#)[V1=="MemTotal", `:=`(V1="Memory", V2=kB_to_GB(V2))
-#  ][, .(Component=V1, Value=V2)
-#    ][, kk(.SD)]
+```{r environment, child="rmarkdown_child/environment.Rmd"}
 ```
 
 ------
 
-```{r total_task_time}
-unfinished = recent_l[is.na(script_time_sec)]
-if (nrow(unfinished)) {
-  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or killed): %s", "groupby", paste(unique(unfinished$solution), collapse=", ")))
-  hours_took = "at least "
-} else hours_took = ""
-hours_took = paste0(hours_took, recent_l[, round(sum(script_time_sec)/60/60, 1)])
+```{r timetaken, child="rmarkdown_child/timetaken.Rmd"}
 ```
 
-Benchmark run took around `r hours_took` hours.  
-
-```{r set_success_state}
-cat("groupby\n", file=report_status_file, append=TRUE)
+```{r status, child="rmarkdown_child/status.Rmd"}
 ```
-
-Report was generated on: `r format(Sys.time(), usetz=TRUE)`.

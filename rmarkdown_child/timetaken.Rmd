@@ -1,0 +1,15 @@
+
+```{r timetaken_text_items}
+lld_script_time = lld[, .(n_script_time_sec=uniqueN(script_time_sec), script_time_sec=unique(script_time_sec)), .(solution, task, data)]
+if (nrow(lld_script_time[n_script_time_sec>1L]))
+  stop(sprintf("There are multiple different 'script_time_sec' for single solution+task+data on report '%s'", report_name))
+if (report_name=="index") {
+  what_bench = "Benchmark"
+  hours_took = lld_script_time[, round(sum(script_time_sec, na.rm=TRUE)/60/60, 1)]
+} else {
+  what_bench = paste(tools::toTitleCase(report_name), "benchmark")
+  hours_took = lld_script_time[task==report_name, round(sum(script_time_sec, na.rm=TRUE)/60/60, 1)]
+}
+```
+
+`r what_bench` run took around `r hours_took` hours.  
