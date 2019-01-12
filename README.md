@@ -1,4 +1,5 @@
-Repository for reproducible benchmarking of database-like operations.  
+Repository for reproducible benchmarking of database-like operations in single-node environment.  
+For benchmark report see [h2oai.github.io/db-benchmark](https://h2oai.github.io/db-benchmark).  
 Benchmark is mainly focused on portability and reproducibility. This benchmark is meant to compare scalability both in data volume and data complexity.  
 
 # Tasks
@@ -18,13 +19,14 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
   - [ ] [modin](https://github.com/modin-project/modin) (for status see [#38](https://github.com/h2oai/db-benchmark/issues/38))
+  - [ ] [cudf](https://github.com/rapidsai/cudf) (for status see [#44](https://github.com/h2oai/db-benchmark/issues/44))
 
 # Reproduce
 
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
 - install every solution (if needed activate each `virtualenv`)
 - edit `run.conf` to define solutions and tasks to benchmark
-- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary data where needed, creata `data` directory and keep all data files there
+- generate data, for `groupby` use `Rscript groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary data where needed, create `data` directory and keep all data files there
 - edit `data.csv` to define data sizes to benchmark using `active` flag
 - start benchmark with `./run.sh`
 
@@ -35,4 +37,4 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 # Acknowledgment
 
-- It might eventually happens that on the report `spark` will not have a date for its corresponding version. It is because of [SPARK-16864](https://issues.apache.org/jira/browse/SPARK-16864) "resolved" as "Won't Fix", thus we are unable to lookup that information from GitHub repo.  
+- Timings for some solutions might be missing for particular datasizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutins might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.  
