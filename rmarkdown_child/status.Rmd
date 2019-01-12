@@ -2,5 +2,5 @@
 Report was generated on: `r format(Sys.time(), usetz=TRUE)`.  
 
 ```{r status_set_success}
-cat(paste0(report_name,"\n"), file=get_report_status_file(), append=TRUE)
+cat(paste0(report_name,"\n"), file=get_report_status_file(path=".."), append=TRUE)
 ```
