@@ -1,5 +1,5 @@
 ---
-title: "History of db-benchmark"
+title: "History of db-benchmark timings"
 output:
   html_document:
     self_contained: no
@@ -39,8 +39,8 @@ p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, fun
 sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
 ```
 
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
+
 ```{r set_success_state, include=FALSE}
 cat("history\n", file=report_status_file, append=TRUE)
 ```
-
-Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
