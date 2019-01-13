@@ -11,7 +11,7 @@ pretty_sci = function(x) {
   }
 }
 
-require(data.table)
+library(data.table)
 N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 set.seed(108)

@@ -59,6 +59,7 @@ if (!interactive()) browser = function(...) stop("some new exception in timings 
 # fnam fixed filename if do not want to generate from pattern
 benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="public/dev/plots") {
   stopifnot(c("task","time_sec_1","time_sec_2","question","question_group","solution","in_rows","out_rows","out_cols","version","git","batch") %in% names(timings))
+  unlink(file.path(path, fnam))
   stopifnot(is.character(task), length(task)==1L, !is.na(task))
   if (!is.data.table(colors)) stop("argument colors must be data.table of solutions and colors assigned to each")
   if (!is.character(cutoff) || length(cutoff)>1) stop("cutoff must be character of length 0 to 1")
@@ -79,6 +80,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     message(sprintf("Nothing to plot for %s %s", task, .data))
     return(invisible(NULL))
   }
+  if (timings[, all(is.na(c(time_sec_1, time_sec_1)))]) {
+    message(sprintf("All timings are NAs, nothing to plot for %s %s", task, .data))
+    return(invisible(NULL))
+  }
+  
   if (uniqueN(timings$in_rows) != 1L) stop("There should be only single 'in_rows' after filtering on 'data'")
   
   questions = unique(na.omit(timings$question)) # NA questions for those who failed
@@ -106,14 +112,15 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # keep only required columns
   timings = timings[, .SD, .SDcols=c("time_sec_1","time_sec_2","question","iquestion","solution","in_rows","out_rows","out_cols","version","git","batch")]
   
-  if (is.null(fnam)) fnam = paste0(task, if (by.nsolutions) paste0(".", nsolutions) else "", ".", gsub("e[+]0", "E", pretty_sci(.nrow)), ".png")
+  if (missing(fnam) || is.null(fnam))
+    stop("Provide filename in 'fnam' argument")
   if (!is.null(path)) {
     if (!dir.exists(path)) dir.create(path, recursive=TRUE)
-    fnam = file.path(path, fnam)
+    filepath = file.path(path, fnam)
   }
-  if (.interactive) cat("Plotting to", fnam, "...\n")
+  if (.interactive) cat("Plotting to", filepath, "...\n")
   height = 700+120*nsolutions;
-  png(file=fnam, width=800, height=height)
+  png(file=filepath, width=800, height=height)
 
   mar.top = 3.1+nsolutions
   mar.bot = 3.3/nsolutions
@@ -128,7 +135,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   .cutoff = cutoff; rm(cutoff)
   timings[, c("cutoff_1","cutoff_2"):=FALSE]
   if (length(.cutoff)) {
-    cutoff.time = timings[solution==.cutoff, max(c(time_sec_1, time_sec_2), na.rm=TRUE)]
+    cutoff.time = if (timings[solution==.cutoff, all(is.na(c(time_sec_1, time_sec_2)))]) { # if all .cutoff timings are NAs use cutoff=max of all thus no cutoff
+      timings[, max(c(time_sec_1, time_sec_2), na.rm=TRUE)]
+    } else {
+      timings[solution==.cutoff, max(c(time_sec_1, time_sec_2), na.rm=TRUE)]
+    }
     cutoff.time.after = cutoff.time * (1+cutoff.after)
     if (is.na(cutoff.time)) stop("cutoff.time value is NA")
     timings[time_sec_1 > cutoff.time.after, "cutoff_1":=TRUE]
@@ -189,7 +200,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   for (iq in 1L:nquestions) {
     
     # determine order of solutions according to max time_sec for this question
-    q_ord_solutions = ans[iquestion==iq][order(max_time_sec, na.last=TRUE), as.character(solution)]
+    q_ord_solutions = ans[question==questions[iq]][order(max_time_sec, na.last=TRUE), as.character(solution)]
     stopifnot(length(q_ord_solutions)==nsolutions)
     
     # plot solutions syntax
@@ -201,16 +212,16 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     }
     
     # plot question headers
-    out_rows = ans[iquestion==iq, na.omit(out_rows)]
+    out_rows = ans[question==questions[iq], na.omit(out_rows)]
     if (length(unique(out_rows)) != 1L) stop("out_rows mismatch")
-    out_cols = ans[iquestion==iq, na.omit(out_cols)]
+    out_cols = ans[question==questions[iq], na.omit(out_cols)]
     if (length(unique(out_cols)) != 1L) stop("out_cols mismatch")
     textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L]))
     
     # second timing bars
     for (is in 1L:nsolutions) {
       s = q_ord_solutions[is]
-      val = ans[solution==s & iquestion==iq, cutoff_bars_2]
+      val = ans[solution==s & question==questions[iq], cutoff_bars_2]
       at = tt[(is+1)*2+(iq-1)*space]
       if (!is.na(val)) {
         rect(0, at-w, val, at+w, col=colors[s, collight, on="solution"], xpd=NA)
@@ -278,7 +289,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # put link to report
   mtext(side=1, line=-1, text=" https://h2oai.github.io/db-benchmark", adj=0, outer=TRUE, cex=1)
   dev.off()
-  if (.interactive) system(paste("/usr/bin/xdg-open",fnam), wait=FALSE) else invisible(TRUE)
+  if (.interactive) system(paste("/usr/bin/xdg-open",filepath), wait=FALSE) else invisible(TRUE)
 }
 
 if (dev1<-FALSE) {

@@ -45,13 +45,13 @@ groupby.code = list(
     "spark"="spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')"
   ),
   "median v3 sd v3 by id2 id4" = c ( # q6
-    "dask" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()",
+    "dask" = "median not yet implemented: dask#4362", # x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
     "data.table" = "DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
     "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
-    "pydatatable" = "x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]",
-    "spark" = "NA"
+    "pydatatable" = "median not yet implemented: datatable#1530", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]
+    "spark" = "median not yet implemented: SPARK-26589" # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
     "dask" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()",
@@ -68,7 +68,7 @@ groupby.code = list(
     "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4) %>% filter(row_number() <= 2L)",
     "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
-    "pydatatable" = "NA",
+    "pydatatable" = "not yet implemented: datatable#1531",
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
@@ -77,7 +77,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
-    "pydatatable" = "x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)]",
+    "pydatatable" = "not yet implemented: datatable#1543", # x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)],
     "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')"
   ),
   "sum v3 count by id1:id6" = c( # q10

@@ -1,11 +1,13 @@
 
 ```{r init_source_data}
+# setwd("rmarkdown_child")
 source("../report.R", chdir=TRUE)
 source("../helpers.R", chdir=TRUE)
 source("../report-code.R", chdir=TRUE)
 source("../benchplot.R", chdir=TRUE)
 ld = time_logs(path="..")
 lld = ld[script_recent==TRUE]
+# setwd("..")
 ```
 
 ```{r init_validation}

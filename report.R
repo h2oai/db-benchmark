@@ -33,10 +33,11 @@ load_questions = function(path=getwd()) {
 
 clean_time = function(d) {
   d[!nzchar(git), git := NA_character_
-    ][solution=="spark" & batch<1546755894, out_cols := NA_integer_ # spark initially was not returning grouping columns, this has been fixed starting from batch 1546755894
-      ][solution%in%c("pandas","dask"), "out_cols" := NA_integer_ # pandas and dask could return correct out_cols: https://github.com/h2oai/db-benchmark/issues/68
-        ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
-          ][]
+    ][task=="groupby" & solution=="spark" & batch<1546755894, out_cols := NA_integer_ # spark initially was not returning grouping columns, this has been fixed starting from batch 1546755894
+      ][task=="groupby" & solution%in%c("pandas","dask"), "out_cols" := NA_integer_ # pandas and dask could return correct out_cols: https://github.com/h2oai/db-benchmark/issues/68
+        ][task=="groupby" & solution=="dask" & question%in%c("max v1 - min v2 by id2 id4","regression v1 v2 by id2 id4"), "out_rows" := NA_integer_ # verify correctness of syntax and answer: https://github.com/dask/dask/issues/4372
+          ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
+            ][]
 }
 clean_logs = function(l) {
   l[!nzchar(git), git := NA_character_
