@@ -22,7 +22,7 @@ report_name = "groupby"
 ```
 
 ```{r links_plots}
-link = function(x) sprintf("[%s](%s/%s.png)", x, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
+link = function(x, report_name) sprintf("[%s](%s/%s.png)", x, report_name, "plots", gsub("G1_", "groupby.", x, fixed=TRUE))
 ```
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
@@ -56,7 +56,7 @@ for (fn in c("1e7_1e2_0_0","1e7_1e1_0_0","1e7_2e0_0_0","1e7_1e2_0_1")) {
 ```
 ![](public/groupby/plots/groupby.1e7_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt_task[in_rows=="1e7", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e7", paste(link(unique(data), report_name=report_name), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby1_table}
 by_data(dt_task, "1e7", "groupby")
@@ -73,7 +73,7 @@ for (fn in c("1e8_1e2_0_0","1e8_1e1_0_0","1e8_2e0_0_0","1e8_1e2_0_1")) {
 ```
 ![](public/groupby/plots/groupby.1e8_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt_task[in_rows=="1e8", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e8", paste(link(unique(data), report_name=report_name), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby2_table}
 by_data(dt_task, "1e8", "groupby")
@@ -90,7 +90,7 @@ for (fn in c("1e9_1e2_0_0","1e9_1e1_0_0","1e9_2e0_0_0","1e9_1e2_0_1")) {
 ```
 ![](public/groupby/plots/groupby.1e9_1e2_0_0.png)  
 &nbsp;  
-Plots of all cases can be found at `r dt_task[in_rows=="1e9", paste(link(unique(data)), collapse=", ")]`. Below first run timings.
+Plots of all cases can be found at `r dt_task[in_rows=="1e9", paste(link(unique(data), report_name=report_name), collapse=", ")]`. Below first run timings.
 
 ```{r o_groupby3_table}
 by_data(dt_task, "1e9", "groupby")
