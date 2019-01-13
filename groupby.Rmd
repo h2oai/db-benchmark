@@ -49,7 +49,7 @@ by_data = function(dt, .in_rows, .task) {
 
 Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table. If a solution is missing on particular data size timings table refer to benchplot for a reason and check its speed on smaller data size tab.
 
-```{r o_groupby_plot}
+```{r o_groupby_plot, message=FALSE}
 path = file.path("public", report_name, "plots")
 for (in_rows in c("1e7","1e8","1e9")) {
   for (data_name in paste("G1", in_rows, c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1"), sep="_")) {
@@ -68,7 +68,10 @@ if (dev<-FALSE) {
 
 ### 0.5 GB
 
+Set of basic questions:  
 ![](public/groupby/plots/G1_1e7_1e2_0_0.basic.png)  
+
+Set of advanced questions:  
 ![](public/groupby/plots/G1_1e7_1e2_0_0.advanced.png)  
 &nbsp;  
 Plots of all cases can be found at `r dt_task[in_rows=="1e7", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
@@ -79,7 +82,10 @@ by_data(dt_task, "1e7", "groupby")
 
 ### 5 GB
 
+Set of basic questions:  
 ![](public/groupby/plots/G1_1e8_1e2_0_0.basic.png)  
+
+Set of advanced questions:  
 ![](public/groupby/plots/G1_1e8_1e2_0_0.advanced.png)  
 &nbsp;  
 Plots of all cases can be found at `r dt_task[in_rows=="1e8", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
@@ -90,7 +96,10 @@ by_data(dt_task, "1e8", "groupby")
 
 ### 50 GB {.active}
 
+Set of basic questions:  
 ![](public/groupby/plots/G1_1e9_1e2_0_0.basic.png)  
+
+Set of advanced questions:  
 ![](public/groupby/plots/G1_1e9_1e2_0_0.advanced.png)  
 &nbsp;  
 Plots of all cases can be found at `r dt_task[in_rows=="1e9", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
