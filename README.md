@@ -23,6 +23,7 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 # Reproduce
 
+- edit `path.env` and set `julia` and `java` paths
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
 - install every solution (if needed activate each `virtualenv`)
 - edit `run.conf` to define solutions and tasks to benchmark
