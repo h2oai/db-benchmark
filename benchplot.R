@@ -45,7 +45,7 @@ textBG = function(x, y, txt, w, ...) {
   text(x, y, txt, adj=c(0, 0.7), ...)
 }
 
-if (!interactive()) browser = function(...) stop("some new exception in timings data to handle, go interactive mode")
+if (!interactive()) browser = function(...) stop("some new exception in data to handle in benchplot, go interactive mode")
 
 # .nrow default Inf, numeric to filter out timingsto single in_rows, Inf will results to use maximum in_rows from timings
 # task default "groupby", character scalar to filter out timings to single task, currently benchplot is used only for groupby task
@@ -77,11 +77,16 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   .data = data; rm(data)
   timings = timings[data==.data]
   if (!nrow(timings)) {
-    message(sprintf("Nothing to plot for %s %s", task, .data))
+    message(sprintf("Benchplot skipped as nothing to plot for %s %s", task, .data))
     return(invisible(NULL))
   }
-  if (timings[, all(is.na(c(time_sec_1, time_sec_1)))]) {
-    message(sprintf("All timings are NAs, nothing to plot for %s %s", task, .data))
+  
+  if (timings[, all(is.na(c(time_sec_1, time_sec_2)))]) {
+    message(sprintf("Benchplot skipped as all timings are NAs, nothing to plot for %s %s", task, .data))
+    return(invisible(NULL))
+  }
+  if (timings[!is.na(time_sec_1), uniqueN(solution)] < 2L) {
+    message(sprintf("Benchplot skipped as there is only single solution to plot for %s %s", task, .data))
     return(invisible(NULL))
   }
   
@@ -201,6 +206,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     
     # determine order of solutions according to max time_sec for this question
     q_ord_solutions = ans[question==questions[iq]][order(max_time_sec, na.last=TRUE), as.character(solution)]
+    if (interactive() && (!length(q_ord_solutions)==nsolutions)) browser()
     stopifnot(length(q_ord_solutions)==nsolutions)
     
     # plot solutions syntax
@@ -213,7 +219,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     
     # plot question headers
     out_rows = ans[question==questions[iq], na.omit(out_rows)]
-    if (length(unique(out_rows)) != 1L) stop("out_rows mismatch")
+    if (length(unique(out_rows)) != 1L) if (interactive()) browser() else stop("out_rows mismatch")
     out_cols = ans[question==questions[iq], na.omit(out_cols)]
     if (length(unique(out_cols)) != 1L) stop("out_cols mismatch")
     textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L]))

@@ -9,7 +9,11 @@ forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
-  lg = as.data.table(c(list(nodename=nodename, batch=batch, solution=solution), upgraded.solution(solution), list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)))
+  lg = as.data.table(c(
+    list(nodename=nodename, batch=batch, solution=solution),
+    upgraded.solution(solution), # list(version, git) based on VERSION and REVISION files, and extra validation so VERSION has to be always present
+    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)
+  ))
   file = "logs.csv"
   if (!mockup) fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
   labels = c("start"="starting","finish"="finished","skip"="skip run")

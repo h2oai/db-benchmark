@@ -188,14 +188,17 @@ memory_usage = function() {
   as.numeric(ans) / (1024^2) # GB units
 }
 
-upgraded.solution = function(x) {
+upgraded.solution = function(x, validate=TRUE) {
   ns = gsub(".","",x,fixed=TRUE)
   f = file.path(ns, "VERSION")
   version = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
   f = file.path(ns, "REVISION")
   git = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
   if (!nzchar(git)) git = NA_character_
-  list(version=version, git=git)
+  ans = list(version=version, git=git)
+  if (validate && (is.na(ans[["version"]]) || !nzchar(ans[["version"]]))) # for some reasom it happened that one pandas run has empty char version, raise early such cases
+    stop(sprintf("version of %s could not be determined based on %s/VERSION file, investigate and fix logs.csv if needed", x, ns))
+  ans
 }
 
 wcl = function(x) {

@@ -32,6 +32,8 @@ load_questions = function(path=getwd()) {
 # clean ----
 
 clean_time = function(d) {
+  if (nrow(d[!nzchar(version) | is.na(version)]))
+    stop("timings data contains NA or '' as version field, that should not happen")
   d[!nzchar(git), git := NA_character_
     ][task=="groupby" & solution=="spark" & batch<1546755894, out_cols := NA_integer_ # spark initially was not returning grouping columns, this has been fixed starting from batch 1546755894
       ][task=="groupby" & solution%in%c("pandas","dask"), "out_cols" := NA_integer_ # pandas and dask could return correct out_cols: https://github.com/h2oai/db-benchmark/issues/68
@@ -40,6 +42,8 @@ clean_time = function(d) {
             ][]
 }
 clean_logs = function(l) {
+  if (nrow(l[!nzchar(version) | is.na(version)]))
+    stop("logs data contains NA or '' as version field, that should not happen")
   l[!nzchar(git), git := NA_character_
     ][, `:=`(nodename=ft(nodename), solution=ft(solution), version=ft(version), git=ft(git), task=ft(task), data=ft(data), action=ft(action))
       ][]
@@ -89,7 +93,7 @@ model_questions = function(q) {
 }
 merge_logs_questions = function(l, q) {
   grain_l = l[, c(list(ii=1L), .SD), c("nodename","batch","solution","task","data")]
-  lq = copy(q)[, "ii":=1L
+  lq = copy(q)[, "ii":=1L # used for cartesian product
                ][grain_l, on=c("task","ii"), allow.cartesian=TRUE, j=.(
                  nodename, batch, solution, task, data,
                  question=x.question, question_group=x.question_group,
@@ -99,7 +103,8 @@ merge_logs_questions = function(l, q) {
   lq
 }
 merge_time_logsquestions = function(d, lq) {
-  ld = d[lq, on=c("nodename","batch","solution","task","data","question"), nomatch=NA, allow.cartesian=TRUE]
+  ld = d[lq, on=c("nodename","batch","solution","task","data","question"),
+         nomatch=NULL] # filter out timings for which logs were invalid or uncompleted
   if (nrow(ld[as.character(version)!=as.character(i.version)])) # one side NAs are skipped
     stop("Solution version in 'version' does not match between 'time' and 'logs', different 'version' reported from solution script vs launcher script")
   if (nrow(ld[as.character(git)!=as.character(i.git)])) # one side NAs are skipped
