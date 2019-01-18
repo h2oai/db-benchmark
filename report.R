@@ -145,7 +145,7 @@ transform = function(ld) {
          ftdata(data), .SD),
      .SDcols=c(paste(rep(c("timestamp","time_sec","mem_gb","chk_time_sec"), each=2), 1:2, sep="_"),
                paste("script", c("finish","start","stderr","recent"), sep="_"),
-               "na_time_sec","out_rows","out_cols")
+               "na_time_sec","out_rows","out_cols","chk")
      ][, `:=`(iquestion=as.integer(question), script_time_sec=script_finish-script_start)
        ][] -> lld
   lld
