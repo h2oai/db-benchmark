@@ -1,7 +1,6 @@
 
 ## Environment configuration
 
-Listed solutions where run using following versions of languages:  
 - R 3.5.1  
 - python 3.6  
 - Julia 1.0.2  
