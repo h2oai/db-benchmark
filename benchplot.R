@@ -20,7 +20,7 @@ solution.colors = rbindlist(list(
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
 
 get_xlab_values = function(x) {
-  at = pretty(x, 10)
+  at = pretty(x, 8, 4)
   at[at!=0]
 }
 
@@ -42,7 +42,7 @@ textBG = function(x, y, txt, w, ...) {
   txtw = strwidth(txt, ...); txth = strheight(txt, ...);
   txty = y-2*w;  # w from calling scope above
   rect(x, txty, x+txtw, txty+1.8*txth, col="white", border=NA)
-  text(x, y, txt, adj=c(0, 0.7), ...)
+  text(x, y, txt, adj=c(0, 0.7), xpd=NA, ...)
 }
 
 if (!interactive()) browser = function(...) stop("some new exception in data to handle in benchplot, go interactive mode")
@@ -129,7 +129,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
 
   mar.top = 3.1+nsolutions
   mar.bot = 3.3/nsolutions
-  par(mar=c(mar.bot, 1.1, mar.top, 2.1)) # shift to the left: c(bottom, left, top, right)
+  par(mar=c(mar.bot, 5.1, mar.top, 6.1)) # shift to the left: c(bottom, left, top, right)
   
   # veriyfy colors unique and defined for every solution
   stopifnot(colors[, .N==1L, .(solution, colmain, collight)]$V1)
@@ -161,9 +161,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   # X axis values
   x_at = timings[, get_xlab_values(c(bars_1, bars_2, cutoff.bars.after))]
+  offset_x = (x_at[2L]-x_at[1L])/2
   
   # order for bar horiz=TRUE does first bar from the bottom!
-  ans = timings[, .SD][, max_time_sec:=max(c(time_sec_1, time_sec_2)), by=.(solution, question)][order(iquestion, max_time_sec, na.last=FALSE, decreasing=TRUE)]
+  ans = timings[, .SD][, max_time_sec:=max(c(time_sec_1, time_sec_2)), by=.(solution, question)][order(iquestion, max_time_sec, solution, na.last=FALSE, decreasing=TRUE)]
   
   # use padding to reserve extra space for solution syntax, and top X axis and its labels
   pad = as.vector(sapply(0:4, function(x) c(as.vector(rbind(x*nsolutions + 1:nsolutions, NA)), NA, NA)))
@@ -175,20 +176,20 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # calculate half of bar width used later on in many places
   w = (tt[1]-tt[2])/4
   
-  # upper line break to separate legend from timings
+  # upper horizontal line of X axis, separate legend from barplots
   h1 = tt[1]
   abline(h=h1)
   # X axis upper label (seconds, minutes) and values
   ff = if (length(x_at)<=8) TRUE else -1  # ff = first first X axis label overlap
   text(x=x_at[ff], y=h1, labels=format(x_at[ff]), adj=c(0.5, -0.5), cex=1.5, font=2, xpd=NA)
-  text(x=0, y=h1, labels=names(timescale), adj=c(0, -0.5), font=2, cex=1.5, xpd=NA)
+  text(x=-offset_x, y=h1, labels=names(timescale), adj=c(0, -0.5), font=2, cex=1.5, xpd=NA)
   
   # bottom horizontal line of X axis
   h2 = tail(tt, 1)-4*w
   abline(h=h2)
   # X axis lower label (seconds/minutes) and values
   text(x=x_at[ff], y=h2, labels=format(x_at[ff]), adj=c(0.5, 1.5), cex=1.5, font=2, xpd=NA)
-  text(x=0, y=h2, labels=names(timescale), adj=c(0, 1.5), font=2, cex=1.5, xpd=NA)
+  text(x=-offset_x, y=h2, labels=names(timescale), adj=c(0, 1.5), font=2, cex=1.5, xpd=NA)
   
   space = nsolutions*2 + 2
   # grey horizontal lines separating questions
@@ -196,8 +197,13 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # dotted vertical lines to form grid
   for (at_x in x_at) lines(x=c(at_x, at_x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
   
-  # first run bars according to solutions
-  ans[, barplot(cutoff_bars_1[pad], horiz=TRUE, axes=FALSE,
+  # first run bars
+  limit_x = function(x, lim) {
+    x[x > lim] = lim # do not plot bar outside plot region to not overlap on timing values on margin
+    x
+  }
+  ans[, barplot(limit_x(x=cutoff_bars_1, lim=x_at[length(x_at)])[pad],
+                horiz=TRUE, axes=FALSE,
                 col=c(colmain,"black")[pad],
                 font=2, xpd=NA, add=TRUE)]
   
@@ -205,16 +211,18 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   for (iq in 1L:nquestions) {
     
     # determine order of solutions according to max time_sec for this question
-    q_ord_solutions = ans[question==questions[iq]][order(max_time_sec, na.last=TRUE), as.character(solution)]
+    q_ord_solutions = ans[question==questions[iq]][order(max_time_sec, solution, na.last=TRUE), as.character(solution)]
     if (interactive() && (!length(q_ord_solutions)==nsolutions)) browser()
     stopifnot(length(q_ord_solutions)==nsolutions)
     
-    # plot solutions syntax
+    # plot solutions syntax above the timing bar and solution name on the margin
     for (is in 1L:nsolutions) {
       s = q_ord_solutions[is]
       cod = code[[questions[iq]]][[s]]
       col = colors[s, colmain, on="solution"]
-      textBG(0, tt[is*2L+1L+(iq-1)*space], txt=cod, w=w, col=col, font=2)
+      text_y = tt[is*2L+1L+(iq-1)*space]
+      textBG(0, text_y, txt=cod, w=w, col=col, font=2)
+      text(0, text_y-2*w, s, col=col, font=2, xpd=NA, pos=2)
     }
     
     # plot question headers
@@ -230,6 +238,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       val = ans[solution==s & question==questions[iq], cutoff_bars_2]
       at = tt[(is+1)*2+(iq-1)*space]
       if (!is.na(val)) {
+        if (val > x_at[length(x_at)]) val = x_at[length(x_at)] # do not plot bar outside plot region to not overlap on timing values on margin
         rect(0, at-w, val, at+w, col=colors[s, collight, on="solution"], xpd=NA)
       } else { # we should use dictionary here instead of hardcoded
         exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
@@ -244,16 +253,12 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   }
   
   # plot timing values next to each bar
-  max_t = ans[, pmax(cutoff_bars_1, cutoff_bars_2)]
-  both_t = ans[, paste(unique(round(c(cutoff_bars_1, cutoff_bars_2),2)), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
-  stopifnot(length(max_t)==length(both_t))
-  max_t_x_pos = max_t
-  if (length(.cutoff) && length(cutoff.i<-which(max_t>cutoff.bars.after))) {
-    both_t[cutoff.i] = paste("...", both_t[cutoff.i])
-    max_t_x_pos[cutoff.i] = x_at[length(x_at)-2L] #cutoff.bars.after, shifted by 2 x axis ticks to fit values in the plot
-  }
+  both_t = ans[, paste(sprintf("%.2f", c(cutoff_bars_1, cutoff_bars_2)), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
+  max_t_x_pos = x_at[length(x_at)]
   max_t_y_pos = rev(tt)[!is.na(pad)]-w/2
-  text(max_t_x_pos, max_t_y_pos, both_t, pos=4, cex=1.25)
+  text(max_t_x_pos, max_t_y_pos, both_t, pos=4, cex=1.25, xpd=NA)
+  
+  # legends
   
   # cost per hour
   cph = 0.5 # minimum on graph histories; what people will see if they check
@@ -263,16 +268,17 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   legend_y = par()$usr[4]+topoffset*w # usr: c(x1, x2, y1, y2)
   
   # legend header
-  mtext(sprintf("Input table: %s rows x %s columns ( %s GB )",
-                format_comma(.nrow), 9L, # hardcoded number of columns!
-                if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
-        line=1.5+nsolutions,
-        side=3, cex=1.5, adj=0, font=2)
-  # legend first/second timing box
-  legend(par()$usr[2], legend_y, pch=22, xpd=NA, xjust=1, bty="n", pt.lwd=1,
+  text(-offset_x*1.5, legend_y+w/2,
+       sprintf("Input table: %s rows x %s columns ( %s GB )",
+               format_comma(.nrow), 9L, # hardcoded number of columns!
+               if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
+       cex=1.5, font=2, xpd=NA, pos=4)
+  
+  # first, second timing top right legend
+  legend(x_at[length(x_at)]-offset_x*2, legend_y, pch=22, xpd=NA, bty="n", pt.lwd=1,
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
   
-  # legend
+  # solutions legend
   ans[, .(total_time_sec = sum(c(time_sec_1, time_sec_2)), # total time of run 1 and run 2 for all questions
           batch=min(batch), version=version[1], git=git[1], colmain=colmain[1]), # batch=min(batch) in case different data tested in different benchmark runs, earliest is taken, as for all runs there should same version so we need a date of earliest run of that version
       keyby="solution"
@@ -287,15 +293,16 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         tolower(names(timescale)) # minutes/seconds
       ), colmain=colmain),
       by="solution"
-      ][, legend(0, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
+      ][, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
                  text.font=1, xpd=NA, legend=leg)] -> nul
   
+  # footer link to report
+  text(0-1.5*offset_x, par()$usr[3]+0.15, "https://h2oai.github.io/db-benchmark", pos=4, xpd=NA)
   # footer timestamp of plot gen
-  mtext(side=1, line=-1, text=format(Sys.time(), usetz=TRUE), adj=1, outer=TRUE, cex=1)
-  # put link to report
-  mtext(side=1, line=-1, text=" https://h2oai.github.io/db-benchmark", adj=0, outer=TRUE, cex=1)
+  text(x_at[length(x_at)]+1.5*offset_x, par()$usr[3]+0.15, format(Sys.time(), usetz=TRUE), pos=2, xpd=NA)
+  
   dev.off()
-  if (.interactive) system(paste("/usr/bin/xdg-open",filepath), wait=FALSE) else invisible(TRUE)
+  if (.interactive) system(paste("/usr/bin/xdg-open", filepath), wait=FALSE) else invisible(TRUE)
 }
 
 if (dev1<-FALSE) {
@@ -316,12 +323,17 @@ if (dev1<-FALSE) {
   source("report.R")
   source("report-code.R")
   ld = time_logs()
-  dt = ld[task=="groupby" & script_recent==TRUE]
+  dt = ld[task=="groupby" & script_recent==TRUE & question_group=="basic"]
   .nrow=1e7; data="G1_1e7_1e2_0_0"; 
   .nrow=1e8; data="G1_1e8_1e2_0_0"; 
   .nrow=1e9; data="G1_1e9_1e2_0_0"; 
   .nrow=1e9; data="G1_1e9_2e0_0_0"; 
   .nrow=1e9; data="G1_1e9_1e1_0_0"; 
-  timings=copy(dt); code=groupby.code; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; fnam=NULL; path=NULL
-  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions)
+  timings=dt; code=groupby.code; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; path=NULL
+  .nrow=1e7; data="G1_1e7_1e2_0_0"; 
+  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
+  .nrow=1e8; data="G1_1e8_1e2_0_0"; 
+  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
+  .nrow=1e9; data="G1_1e9_1e2_0_0"; 
+  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
 }
