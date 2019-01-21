@@ -253,8 +253,14 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   }
   
   # plot timing values next to each bar
-  both_t = ans[, paste(sprintf("%.2f", c(cutoff_bars_1, cutoff_bars_2)), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
-  max_t_x_pos = x_at[length(x_at)]
+  max_t = ans[, pmax(cutoff_bars_1, cutoff_bars_2)]
+  both_t = ans[, paste(unique(sprintf("%.2f", c(cutoff_bars_1, cutoff_bars_2))), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
+  stopifnot(length(max_t)==length(both_t))
+  max_t_x_pos = max_t
+  if (length(.cutoff) && length(cutoff.i<-which(max_t>cutoff.bars.after))) {
+    both_t[cutoff.i] = paste("...", both_t[cutoff.i])
+    max_t_x_pos[cutoff.i] = limit_x(x=max_t_x_pos[cutoff.i], lim=x_at[length(x_at)]) #cutoff.bars.after, on right margin
+  }
   max_t_y_pos = rev(tt)[!is.na(pad)]-w/2
   text(max_t_x_pos, max_t_y_pos, both_t, pos=4, cex=1.25, xpd=NA)
   
