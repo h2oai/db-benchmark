@@ -45,6 +45,13 @@ textBG = function(x, y, txt, w, ...) {
   text(x, y, txt, adj=c(0, 0.7), xpd=NA, ...)
 }
 
+solution_name = function(solution, where) {
+  if (solution=="pydatatable" && where=="legend") "(py)datatable"
+  else if (solution=="juliadf" && where=="legend") "DataFrames.jl"
+  else if (solution=="juliadf" && where=="margin") "DF.jl"
+  else solution
+}
+
 if (!interactive()) browser = function(...) stop("some new exception in data to handle in benchplot, go interactive mode")
 
 # .nrow default Inf, numeric to filter out timingsto single in_rows, Inf will results to use maximum in_rows from timings
@@ -222,7 +229,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       col = colors[s, colmain, on="solution"]
       text_y = tt[is*2L+1L+(iq-1)*space]
       textBG(0, text_y, txt=cod, w=w, col=col, font=2)
-      text(0, text_y-2*w, s, col=col, font=2, xpd=NA, pos=2)
+      text(0, text_y-2*w, solution_name(s, where="margin"), col=col, font=2, xpd=NA, pos=2)
     }
     
     # plot question headers
@@ -291,7 +298,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       ][order(total_time_sec, na.last=TRUE)
         ][, .(leg=sprintf(
         "%s %s  -  %s  -  Total: $%.02f for %s %s",
-        if (solution=="pydatatable") "(py)datatable" else if (solution=="juliadf") "DataFrames.jl" else solution, # decode names
+        solution_name(solution, "legend"), # decode names
         version,
         format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))), # solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
         cph*total_time_sec/3600, # cost in dollars
