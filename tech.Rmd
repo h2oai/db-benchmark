@@ -45,8 +45,10 @@ kk(ll[task=="groupby"][n_failed>0L, .(solution, in_rows, k, `NA, sorted`=nasorte
 ## Full scripts executions
 
 Things to consider when looking at below plots.  
+
 - Red dotted line refers to script timeout which initially was not set up. Later it was set to 60 minutes, more recently, after adding new set of questions, it was increased to 120 minutes. Up to date timeout value can be looked up in `timeout.csv` file.  
 - It might happen that script was terminated by _out of memory killer_ an OS feature. In result script timing will be smaller than in reality it should be.  
+
 Refer to table above to see which script has been fully completed.  
 
 ### groupby
