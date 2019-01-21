@@ -20,6 +20,7 @@ grain = c("task","data","iquestion","question")
 d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique(out_rows), collapse=",")), by=grain
   ][unqn_out_rows>1L
     ] -> check[["out_rows"]]
+# detect lack of chk match in query output between median chk from all solutions with tolerance=0.005
 chk_check = function(chk, tolerance=sqrt(.Machine$double.eps)) {
   len = unique(sapply(chk, length))
   if (length(len)!=1L) stop("some solutions returns chk for less variables than others")
