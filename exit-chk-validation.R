@@ -1,66 +1,58 @@
-suppressPackageStartupMessages({
-  library(bit64)
-  library(data.table)
-})
-source("helpers.R")
+source("report.R")
+d = time_logs()
 
-DT = read_timing("time.csv")
-# recent timings, single cache=FALSE scenario where available
-dt = last_timing(x=DT)
-dt=dt[batch==max(batch, na.rm=TRUE)]
+# this script meant to detect some inconsistencies within a solution results and between solutions results
+# note that known exceptions has been already filtered out in report.R in clean_time function
 
-# uniqueness HAVING - detect lack of consistency in query output within single benchmark runs - only recent benchmark run
-uniqueness = function(dt, const=c("out_rows","chk","batch"), const.by=c("task", "data", "in_rows", "question", "solution")) {
-  l = lapply(const, function(col) call(">", as.name(paste0("unq_",col)), 1L))
-  ii = Reduce(function(c1, c2) substitute(.c1 | .c2, list(.c1=c1, .c2=c2)), l)
-  dt[,.SD
-     ][, paste0("unq_",const) := lapply(.SD, uniqueN), const.by, .SDcols=const
-       ][eval(ii)
-         ]
-}
-uniqueness(dt, c("out_rows","chk","batch")) -> const.check
+check = list()
 
-# detect lack of consistency in query output between benchmark runs (just 2 most recent runs)
-cby=c("task", "data", "in_rows", "question", "solution", "cache", "fun", "run")
-DT[order(timestamp), tail(.SD, 2L), by=cby
-   ][!is.na(chk), uniqueness(.SD, c("out_rows","chk"))
-     ] -> change.check
+# detect lack of consistency in query output within single benchmark runs within each solution separately
+grain = c("solution","task","data","iquestion")
+d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique(out_rows), collapse=",")), by=grain
+  ][unqn_out_rows>1L
+    ] -> check[["solution_out_rows"]]
+d[!is.na(chk), .(unqn_chk=uniqueN(chk), unq_chk=paste(unique(chk), collapse=",")), by=grain
+  ][unqn_chk>1L
+    ] -> check[["solution_chk"]]
 
 # detect lack of out_rows match in query output between solutions
-uniqueness(dt, const = "out_rows", const.by = c("task", "data", "in_rows", "question")) -> count.check
-
-# detect lack of chk approximate match in query output between solutions
-chk.approx = function(dt, precision=4) {
-  # we split processing as chk has various number of fields
-  split(dt[!is.na(chk), .(chk), c("task","data","in_rows","question","solution")],
-        by=c("task","data","in_rows","question")) -> ldt
-  diff.chk = function(x) {
-    vcols = paste0("V",seq_along(strsplit(x[1L,chk],";")[[1L]]))
-    copy(x)[, c(vcols) := tstrsplit(chk, ";")
-            ][, c(vcols) := lapply(.SD, type.convert), .SDcols=vcols
-              ][, paste0("mean_",vcols) := lapply(.SD, mean), .SDcols=vcols
-                ][, paste0("rel_",vcols) := eval(as.call(c(as.name("list"), lapply(vcols, function(col) substitute(round(abs(x-mean_x)/mean_x, precision), list(x=as.name(col), mean_x=as.name(paste0("mean_", col))))))))
-                  ][, .(mean_rel_chk = format(mean(unlist(.SD)), scientific = FALSE)), c("task","data","in_rows","question","solution","chk"), .SDcols=paste0("rel_",vcols)
-                    ]
-  }
-  rbindlist(lapply(ldt, diff.chk))
+grain = c("task","data","iquestion","question")
+d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique(out_rows), collapse=",")), by=grain
+  ][unqn_out_rows>1L
+    ] -> check[["out_rows"]]
+chk_check = function(chk, tolerance=sqrt(.Machine$double.eps)) {
+  len = unique(sapply(chk, length))
+  if (length(len)!=1L) stop("some solutions returns chk for less variables than others")
+  med = sapply(seq.int(len), function(i) median(sapply(chk, `[[`, i)))
+  eq_txt = sapply(chk, all.equal, med, tolerance=tolerance, simplify=FALSE)
+  #if (any(!sapply(eq_txt, isTRUE))) browser()
+  eq = sapply(eq_txt, isTRUE)
+  ans = list()
+  ans$n_match = sum(eq)
+  ans$n_mismatch = sum(!eq)
+  ans$med_chk = paste0(format(med, scientific=FALSE, trim=TRUE), collapse=";")
+  ans$sol_mismatch = if (!ans$n_mismatch) NA_character_ else paste0(names(eq)[!eq], collapse=",")
+  ans$sol_chk_mismatch = if (!ans$n_mismatch) NA_character_ else paste(paste0(names(eq)[!eq], ":", sapply(sapply(chk[names(eq)[!eq]], format, scientific=FALSE, trim=TRUE, simplify=FALSE), paste, collapse=";")), collapse=",")
+  ans
 }
-chk.approx(dt, 8)[mean_rel_chk > 0] -> chk.check
+(if (nrow(check[["solution_chk"]])) NULL else { # only proceed if chk was not mismatched within a solution
+  d[!is.na(chk), .(unqn_chk=uniqueN(chk), chk=unique(chk)), by=c("solution", grain)
+    ][, if (any(unqn_chk>1L)) stop("this check should not be performed, should be escaped in 'if' branch") else .SD # ensure chk is unique
+      ][, .(chk, chk_l=sapply(strsplit(chk, ";", fixed=TRUE), as.numeric, simplify=FALSE)), by=c("solution", grain)
+        ][, chk_check(setNames(chk_l, solution), tolerance=0.005), keyby=grain
+          ][n_mismatch>0L]
+}) -> check[["chk"]]
 
-# send data quality report
-submit = function(x) {
-  lf <- file.path(getwd(), "validation.csv")
-  write.table(x[, reporter_batch_id := as.integer(Sys.getenv("BATCH", NA))][, reported_datetime := as.POSIXct(reporter_batch_id, origin="1970-01-01")], # current workflow
-              file=lf,
-              row.names = FALSE,
-              col.names = !file.exists(lf),
-              append = file.exists(lf),
-              sep = ",")
+# detect solutions for which chk calculation timing was relatively big comparing to query timing
+grain = c("solution","task","data","iquestion","question")
+d[, .(time_sec_1, chk_time_sec_1, time_sec_2, chk_time_sec_2, time_to_chk_1=time_sec_1/chk_time_sec_1, time_to_chk_2=time_sec_2/chk_time_sec_2), by=grain
+  ][!(time_to_chk_1>2.5 & time_to_chk_2>2.5) # spark chk is only 2.6+ times faster than query
+    ] -> check[["chk_time_sec"]]
+
+# print results
+if (any(sapply(check, nrow))) {
+  cat("db-benchmark answers consistency check failed, see details below\n")
+  print(check)
+} else {
+  cat("db-benchmark answers consistency check successfully passed\n")
 }
-if (nrow(report <- rbindlist(c(
-  list(const = const.check),
-  list(change = change.check),
-  list(count = count.check),
-  list(chk = chk.check) # not yet approximate
-), use.names = TRUE, fill = TRUE, idcol = "check"))) submit(report)
-
