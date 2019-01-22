@@ -52,6 +52,16 @@ solution_name = function(solution, where) {
   else solution
 }
 
+format_num = function(x, digits=3L) { # at least 3+1 chars on output, there is surely some setting to achieve that with base R but it is not obvious to find that among all features there
+  cx = sprintf("%0.2f", x)
+  int = sapply(strsplit(cx, ".", fixed=TRUE), `[`, 1L)
+  int_digits = sapply(int, nchar)
+  stopifnot(int_digits > 0L)
+  cx[int_digits == 2L] = substr(cx[int_digits == 2L], 1L, 4L)
+  cx[int_digits > 2L] = int[int_digits > 2L]
+  cx
+}
+
 if (!interactive()) browser = function(...) stop("some new exception in data to handle in benchplot, go interactive mode")
 
 # .nrow default Inf, numeric to filter out timingsto single in_rows, Inf will results to use maximum in_rows from timings
@@ -261,7 +271,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   
   # plot timing values next to each bar
   max_t = ans[, pmax(cutoff_bars_1, cutoff_bars_2)]
-  both_t = ans[, paste(unique(sprintf("%.2f", c(cutoff_bars_1, cutoff_bars_2))), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
+  both_t = ans[, paste(format_num(c(cutoff_bars_1, cutoff_bars_2)), collapse="; "), by=c("solution","question")]$V1  # print both runs timings #31 (unless same), round to 2 decimals places to avoid 0.0 cases
   stopifnot(length(max_t)==length(both_t))
   max_t_x_pos = max_t
   if (length(.cutoff) && length(cutoff.i<-which(max_t>cutoff.bars.after))) {
