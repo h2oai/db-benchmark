@@ -68,7 +68,7 @@ groupby.code = list(
     "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4, .drop=TRUE) %>% filter(row_number() <= 2L)",
     "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
-    "pydatatable" = "not yet implemented: datatable#1531",
+    "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id2, f.id4), sort(-f.v3)]",
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
