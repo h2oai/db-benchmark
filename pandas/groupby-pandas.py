@@ -10,7 +10,7 @@ import pandas as pd
 exec(open("./helpers.py").read())
 
 ver = pd.__version__
-git = "" # pd.__git_version__ since 0.24.0
+git = pd.__git_version__
 task = "groupby"
 solution = "pandas"
 fun = ".groupby"
