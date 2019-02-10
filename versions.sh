@@ -11,7 +11,7 @@ python -c 'import dask as dk; open("dask/VERSION","w").write(dk.__version__); op
 source ./modin/py-modin/bin/activate
 python -c 'import modin as modin; open("modin/VERSION","w").write(modin.__version__); open("modin/REVISION","w").write("");' > /dev/null
 source ./pandas/py-pandas/bin/activate
-python -c 'import pandas as pd; open("pandas/VERSION","w").write(pd.__version__); open("pandas/REVISION","w").write("");' > /dev/null 2>1& # from 0.24.0 also revision
+python -c 'import pandas as pd; open("pandas/VERSION","w").write(pd.__version__); open("pandas/REVISION","w").write(pd.__git_version__);' > /dev/null 2>1&
 source ./pydatatable/py-pydatatable/bin/activate
 python -c 'import datatable as dt; open("pydatatable/VERSION","w").write(dt.__version__); open("pydatatable/REVISION","w").write(dt.__git_revision__);' > /dev/null
 source ./spark/py-spark/bin/activate
