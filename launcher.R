@@ -107,8 +107,11 @@ for (s in solutions) { #s = solutions[1]
         next
       }
       log_run(s, t, d, action="start", batch=batch, nodename=nodename, mockup=mockup)
-      # TODO SRC_GRP_LOCAL is groupby specific
-      Sys.setenv("SRC_GRP_LOCAL"=d)
+      if (t=="groupby") {
+        Sys.setenv("SRC_GRP_LOCAL"=d)
+      } else if (t=="join") {
+        Sys.setenv("SRC_JN_LOCAL"=d)
+      } else stop("unknown task in launcher.R script")
       if (!mockup) {
         if (file.exists(out_file)) file.remove(out_file)
         if (file.exists(err_file)) file.remove(err_file)
@@ -130,7 +133,11 @@ for (s in solutions) { #s = solutions[1]
           }
         )
       }
-      Sys.unsetenv("SRC_GRP_LOCAL")
+      if (t=="groupby") {
+        Sys.unsetenv("SRC_GRP_LOCAL")
+      } else if (t=="join") {
+        Sys.unsetenv("SRC_JN_LOCAL")
+      }
       log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
     }
   }
