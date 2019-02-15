@@ -28,7 +28,7 @@ if (!length(run_solutions)) q("no")
 data = fread("data.csv")
 data = data[active==TRUE, # filter on active datasets
             ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
-              ][, c("active","gb","rows","cardinality","id","seq","path") := NULL # remove unused, id+seq to be used for join
+              ][, c("active") := NULL # remove unused, id+seq to be used for join
                 ][]
 
 timeout = fread("timeout.csv")
