@@ -28,30 +28,104 @@ sapply(sapply(JN, nrow), print) -> nul
 
 cat("joining...\n")
 
-#inner, singlecol, integer, big-big
-#inner, singlecol, integer, big-medium
-#inner, singlecol, integer, big-small
-
-#outer, singlecol, integer, big-medium
-
-#inner, singlecol, factor, big-medium
-
-#inner, multicol, integer, big-medium
-
-#inner, singlecol, integer, big-medium, update on join
-
 question = "big inner join on unique int" # q1
-t = system.time(print(dim(ans<-DT[JN$big, on="id1", nomatch=NULL])))[["elapsed"]]
+t = system.time(print(dim(ans<-DT[JN$big, on="id4", nomatch=NULL])))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(X2)), sum(bit64::as.integer64(Y2)))])[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
-t = system.time(print(dim(ans<-X[Y, on="KEY", nomatch=NULL])))[["elapsed"]]
+t = system.time(print(dim(ans<-DT[JN$big, on="id4", nomatch=NULL])))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(X2)), sum(bit64::as.integer64(Y2)))])[["elapsed"]]
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-if( !interactive() ) q("no", status=0)
+question = "medium inner join on unique int" # q2
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+
+question = "small inner join on unique int" # q3
+t = system.time(print(dim(ans<-DT[JN$small, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+t = system.time(print(dim(ans<-DT[JN$small, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+
+question = "medium outer join on unique int" # q4
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+
+question = "medium outer join on unique factor" # q5
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+t = system.time(print(dim(ans<-DT[JN$medium, on="id4", nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+
+question = "medium inner join on unique int factor" # q6
+t = system.time(print(dim(ans<-DT[JN$medium, on=c("id4","id1"), nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+t = system.time(print(dim(ans<-DT[JN$medium, on=c("id4","id1"), nomatch=NULL])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+
+question = "medium update on join on unique int" # q7
+t = system.time(print(dim(ans <- DT[JN$medium, v2:=i.v1, on="id4"])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+rm(ans)
+DT[, v2:=NULL]
+t = system.time(print(dim(ans<-DT[JN$medium, v2:=i.v1, on="id4"])))[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(X), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(head(ans, 3))
+print(tail(ans, 3))
+rm(ans)
+DT[, v2:=NULL]
+
+if (!interactive()) q("no", status=0)
