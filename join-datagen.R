@@ -39,10 +39,15 @@ y_N = setNames(c(N, N/1e3, N/1e6), c("big","medium","small"))
 cat(sprintf("Producing join tables of %s rows\n", paste(collapse=", ", sapply(y_N, pretty_sci))))
 # create join tables
 y_DT = lapply(y_N, function(n) DT[sample(n)])
-
-y_data_name = sapply(sapply(y_N, pretty_sci), gsub, pattern="NA", x=data_name)
+join_to_tbls = function(data_name) {
+  x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
+  y_n = setNames(c(x_n, x_n/1e3, x_n/1e6), c("big","medium","small"))
+  sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
+}
+y_data_name = join_to_tbls(data_name)
 
 if (nas>0L) {
+  stop("not yet implemented")
   real_nas = nas/100
   cat(sprintf("Turning %s of data in each column to NAs\n", real_nas))
   N_nas = as.integer(N*real_nas)
@@ -52,6 +57,7 @@ if (nas>0L) {
   }
 }
 if (sort==1L) {
+  stop("not yet implemented")
   cat(sprintf("Sorting data\n"))
   setkeyv(DT, paste0("id", 1:6))
 }

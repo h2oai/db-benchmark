@@ -16,7 +16,7 @@ cache = TRUE
 
 data_name = Sys.getenv("SRC_JN_LOCAL") # "J1_1e6_NA_0_0"
 src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
-y_data_name = sapply((function(x) sapply(setNames(c(x, x/1e3, x/1e6), c("big","medium","small")), pretty_sci))(as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])), gsub, pattern="NA", x=data_name)
+y_data_name = join_to_tbls(data_name)
 src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names(y_data_name))
 stopifnot(length(src_jn_y)==3L)
 cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse=", ")))
