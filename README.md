@@ -20,6 +20,7 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
   - [x] [spark](https://github.com/apache/spark)
   - [ ] [modin](https://github.com/modin-project/modin) (for status see [#38](https://github.com/h2oai/db-benchmark/issues/38))
   - [ ] [cudf](https://github.com/rapidsai/cudf) (for status see [#44](https://github.com/h2oai/db-benchmark/issues/44))
+  - [ ] [clickhouse](https://github.com/yandex/ClickHouse) (for status see [#73](https://github.com/h2oai/db-benchmark/issues/73))
 
 # Reproduce
 
