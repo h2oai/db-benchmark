@@ -2,17 +2,18 @@
 
 cat("# clickhouse-parse-log.R\n")
 
+source("helpers.R")
 args = commandArgs(TRUE)
 stopifnot(length(args)==1L)
 task = args[1L]
 
 library(data.table)
-d = rbindlist(lapply(f<-list.files("clickhouse", sprintf("^log_%s_q.*\\.csv$", task), full.names=TRUE), fread))
-stopifnot(nrow(d)==f) # there should be no 0 rows files
+d = rbindlist(lapply(f<-list.files("clickhouse", sprintf("^log_%s_q.*\\.csv$", task), full.names=TRUE), fread, na.strings="\\N"))
+stopifnot(nrow(d)==length(f)) # there should be no 0 rows files
 d[,
-  write.log(run=run, task=task, data=data_name, in_rows=in_rows, question=question, 
-            out_rows=out_rows, out_cols=out_cols, solution=solution, version=ver, git=git, fun=fun, 
-            time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt),
+  write.log(run=as.integer(run), task=as.character(task), data=as.character(data_name), in_rows=as.numeric(in_rows), question=as.character(question), 
+            out_rows=as.numeric(out_rows), out_cols=as.integer(out_cols), solution=as.character(solution), version=as.character(version), git=as.character(git), fun=as.character(fun), 
+            time_sec=as.numeric(time_sec), mem_gb=as.numeric(mem_gb), cache=as.logical(cache), chk=as.character(chk), chk_time_sec=as.character(chk_time_sec)),
   by = seq_len(nrow(d))] -> nul
 
 if (!interactive()) {
