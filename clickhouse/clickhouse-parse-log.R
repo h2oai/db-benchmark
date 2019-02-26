@@ -8,7 +8,9 @@ stopifnot(length(args)==1L)
 task = args[1L]
 
 library(data.table)
-d = rbindlist(lapply(f<-list.files("clickhouse", sprintf("^log_%s_q.*\\.csv$", task), full.names=TRUE), fread, na.strings="\\N"))
+f = list.files("clickhouse", sprintf("^log_%s_q.*\\.csv$", task), full.names=TRUE)
+if (!length(f)) stop("no log files produced, did you run clickhouse sql script that will output such to clickhouse/log_[task]_q[i].csv")
+d = rbindlist(lapply(f, fread, na.strings="\\N"))
 stopifnot(nrow(d)==length(f)) # there should be no 0 rows files
 d[,
   write.log(run=as.integer(run), task=as.character(task), data=as.character(data_name), in_rows=as.numeric(in_rows), question=as.character(question), 
