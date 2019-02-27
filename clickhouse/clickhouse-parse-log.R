@@ -18,7 +18,4 @@ d[,
             time_sec=as.numeric(time_sec), mem_gb=as.numeric(mem_gb), cache=as.logical(cache), chk=as.character(chk), chk_time_sec=as.numeric(chk_time_sec)),
   by = seq_len(nrow(d))] -> nul
 
-if (!interactive()) {
-  unlink(f)
-  q("no")
-}
+if (!interactive()) q("no")
