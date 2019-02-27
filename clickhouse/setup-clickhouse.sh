@@ -37,7 +37,7 @@ clickhouse-client --query="SELECT count(*) FROM G1_1e9_1e2_0_0"
 
 # cleanup timings from last run
 
-rm -f clickhouse/log_groupby_q*.csv
+rm -f clickhouse/log_groupby_*_q*.csv
 
 # try some query
 
