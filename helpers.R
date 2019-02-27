@@ -1,5 +1,5 @@
 write.log = function(
-  timestamp=Sys.time(), # this has to be here to support timestamp provided when parsing impala sql logs
+  timestamp=Sys.time(), # this has to be here to support timestamp provided when parsing impala or clickhouse sql logs
   task=NA_character_, data=NA_character_, in_rows=NA_integer_, question=NA_character_, out_rows=NA_integer_,
   out_cols=NA_integer_, solution=NA_character_, version=NA_character_, git=NA_character_, fun=NA_character_,
   run=NA_integer_, time_sec=NA_real_, mem_gb=NA_real_, cache=NA, chk=NA_character_, chk_time_sec=NA_real_
