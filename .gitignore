@@ -5,3 +5,15 @@ time.md
 *.html
 *.csv
 .Rproj.user
+db-benchmark.Rproj
+*/REVISION
+*/VERSION
+token
+public/
+out/
+data/
+clickhouse/log/
+clickhouse/*-clickhouse.sql
+clickhouse/unused/
+*/py-*/
+report-done
