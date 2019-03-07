@@ -17,3 +17,5 @@ clickhouse/*-clickhouse.sql
 clickhouse/unused/
 */py-*/
 report-done
+db-benchmark.gh-pages/
+run.out
