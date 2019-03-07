@@ -117,7 +117,9 @@ for (s in solutions) { #s = solutions[1]
         if (file.exists(err_file)) file.remove(err_file)
       }
       ext = file.ext(s)
-      cmd = sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
+      cmd = if (ext=="sql") { # only clickhouse for now
+        sprintf("./%s-exec.sh %s %s > %s 2> %s", ns, t, d, out_file, err_file)
+      } else sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
       timeout_s = 60*timeout[["minutes"]] # see timeout.csv
