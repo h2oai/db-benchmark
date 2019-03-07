@@ -43,9 +43,11 @@ solution = rbindlist(list(
   modin = list(task=c("sort")),
   pandas = list(task=c("groupby","join","sort")),
   pydatatable = list(task=c("groupby","join","sort")),
-  spark = list(task=c("groupby","join","sort"))
+  spark = list(task=c("groupby","join","sort")),
+  clickhouse = list(task=c("groupby"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
+stopifnot(nrow(solution) > 0L) # when added new solution and forget to add here this will catch
 
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]

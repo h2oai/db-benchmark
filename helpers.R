@@ -192,7 +192,7 @@ upgraded.solution = function(x, validate=TRUE) {
   git = if (!file.exists(f)) NA_character_ else toString(readLines(f, warn=FALSE))
   if (!nzchar(git)) git = NA_character_
   ans = list(version=version, git=git)
-  if (validate && (is.na(ans[["version"]]) || !nzchar(ans[["version"]]))) # for some reasom it happened that one pandas run has empty char version, raise early such cases
+  if (validate && (is.na(ans[["version"]]) || !nzchar(ans[["version"]]))) # for some reason it happened that one pandas run has empty char version, raise early such cases
     stop(sprintf("version of %s could not be determined based on %s/VERSION file, investigate and fix logs.csv if needed", x, ns))
   ans
 }
