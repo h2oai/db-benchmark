@@ -30,7 +30,8 @@ write.log = function(
 }
 
 # extract dataset volume from SRC_X and SRC_Y env vars for join tests, specific to our source filenames
-get.nrow = function(x) {
+get.nrow = function(x, data_name) {
+  if (!missing(data_name)) return(as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][[2L]]))
   if(any(is.na(x) | nchar(x)==0L)) stop("env vars SRC_X and SRC_Y must be defined, see run.conf")
   # get total sum of row count from X and Y
   Reduce("+", as.integer(substr(tmp<-sapply(strsplit(sapply(strsplit(x, "/", fixed=TRUE), function(x) x[length(x)]), "_", fixed=TRUE), `[`, 1L), 2L, nchar(tmp))))
