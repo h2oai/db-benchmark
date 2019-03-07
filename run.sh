@@ -36,14 +36,14 @@ Rscript ./launcher.R
 # publish report for all tasks
 rm -rf public
 rm -f report-done
-Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
-Rscript -e 'rmarkdown::render("groupby.Rmd", output_dir="public")' > ./out/rmarkdown_groupby.out 2>&1 && echo "# Benchmark groupby report produced"
-Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
-Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("groupby.Rmd", output_dir="public")' > ./out/rmarkdown_groupby.out 2>&1 && echo "# Benchmark groupby report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
 
 # publish benchmark, only if all reports successfully generated (logged in ./report-done file), and token file exists
 rm -rf db-benchmark.gh-pages
-$DO_PUBLISH \
+$DO_REPORT && $DO_PUBLISH \
   && [ -f ./report-done ] \
   && [ $(wc -l report-done | awk '{print $1}') -eq 4 ] \
   && [ -f ./token ] \
