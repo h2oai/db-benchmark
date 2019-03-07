@@ -224,3 +224,11 @@ join_to_tbls = function(data_name) {
   y_n = setNames(c(x_n, x_n/1e3, x_n/1e6), c("big","medium","small"))
   sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
 }
+
+is.sigint = function() {
+  if (file.exists("stop")) {
+    cat(sprintf("'stop' file detected, interrupting benchmark\n"))
+    q("no")
+  }
+  invisible()
+}

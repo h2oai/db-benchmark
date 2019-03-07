@@ -1,6 +1,8 @@
 library(data.table)
 source("helpers.R")
 
+is.sigint()
+
 batch = Sys.getenv("BATCH", NA)
 nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
@@ -96,6 +98,7 @@ for (s in solutions) { #s = solutions[1]
     #### data
     data = dt[.(s, t), data, on=c("solution","task")]
     for (d in data) { #d=data[1]
+      is.sigint() # interrupt using 'stop' file #74
       this_run = dt[.(s, t, d), on=c("solution","task","data")]
       if (nrow(this_run) != 1L)
         stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
