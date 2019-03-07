@@ -16,6 +16,7 @@ echo -e "clickhouse-client --query=\"SELECT count(*) FROM $2\"\n$2" | Rscript -e
 sed "s/DATA_NAME/$2/g" < "clickhouse/$1-clickhouse.sql.in" > "clickhouse/$1-clickhouse.sql"
 
 # cleanup timings from last run if they have not been cleaned up after parsing
+mkdir -p clickhouse/log
 rm -f clickhouse/log/$1_$2_q*.csv
 rm -f clickhouse/log/$1_$2.out clickhouse/log/$1_$2_q*.csv
 
