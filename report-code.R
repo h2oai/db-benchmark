@@ -50,7 +50,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
     "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
-    "pydatatable" = "median not yet implemented: datatable#1530", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]
+    "pydatatable" = "DT[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]",
     "spark" = "median not yet implemented: SPARK-26589" # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7

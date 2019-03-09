@@ -6,7 +6,7 @@ import os
 import gc
 import timeit
 import datatable as dt
-from datatable import f, sum, mean, count, sd, min, max, by, sort
+from datatable import f, sum, mean, count, sd, min, max, by, sort, median
 
 exec(open("./helpers.py").read())
 
@@ -156,31 +156,31 @@ print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
 
-#question = "median v3 sd v3 by id2 id4" # q6 # median not yet implemented https://github.com/h2oai/datatable/issues/1530
-#gc.collect()
-#t_start = timeit.default_timer()
-#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
-#print(ans.shape, flush=True)
-#t = timeit.default_timer() - t_start
-#m = memory_usage()
-#t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.median_v3), sum(f.sd_v3)]]
-#chkt = timeit.default_timer() - t_start
-#write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
-#del ans
-#gc.collect()
-#t_start = timeit.default_timer()
-#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
-#print(ans.shape, flush=True)
-#t = timeit.default_timer() - t_start
-#m = memory_usage()
-#t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.median_v3), sum(f.sd_v3)]]
-#chkt = timeit.default_timer() - t_start
-#write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
-#print(ans.head(3).to_pandas(), flush=True)
-#print(ans.tail(3).to_pandas(), flush=True)
-#del ans
+question = "median v3 sd v3 by id2 id4" # q6
+gc.collect()
+t_start = timeit.default_timer()
+ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = ans[:, [sum(f.median_v3), sum(f.sd_v3)]]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = ans[:, [sum(f.median_v3), sum(f.sd_v3)]]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+print(ans.head(3).to_pandas(), flush=True)
+print(ans.tail(3).to_pandas(), flush=True)
+del ans
 
 question = "max v1 - min v2 by id2 id4" # q7
 gc.collect()
