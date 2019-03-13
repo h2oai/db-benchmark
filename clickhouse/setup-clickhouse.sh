@@ -1,8 +1,7 @@
 
 # install
 
-sudo apt-get install dirmngr    # optional
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4    # optional
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4
 
 echo "deb https://repo.yandex.ru/clickhouse/deb/stable/ main/" | sudo tee /etc/apt/sources.list.d/clickhouse.list
 sudo apt-get update
@@ -23,7 +22,7 @@ Rscript -e 'all_data=data.table::fread("data.csv")[task=="groupby", data]; setNa
 #clickhouse-client --max_memory_usage=109951162777600 --query="INSERT INTO G1_1e6_1e2_0_0 FORMAT CSVWithNames" < data/G1_1e6_1e2_0_0.csv
 #clickhouse-client --query="SELECT count(*) FROM G1_1e6_1e2_0_0"
 #clickhouse-client --max_memory_usage=109951162777600 --query="INSERT INTO G1_1e7_1e2_0_0 FORMAT CSVWithNames" < data/G1_1e7_1e2_0_0.csv
-#clickhouse-client --query="SELECT count(*) FROM G1_1e7_1e2_0_0"
+#clickhouse-client --max_memory_usage=109951162777600 --query="SELECT count(*) FROM G1_1e7_1e2_0_0"
 # try some query
 #clickhouse-client --max_memory_usage=109951162777600 --output_format_pretty_max_rows 10
 #SELECT id1, sum(v1) AS v1 FROM G1_1e7_1e2_0_0 GROUP BY id1;
