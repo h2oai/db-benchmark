@@ -7,6 +7,11 @@ get_report_status_file = function(path=getwd()) {
 get_report_solutions = function() {
   c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
 }
+get_excluded_batch = function() {
+  c(
+    1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
+    )
+}
 
 # load ----
 
@@ -14,7 +19,8 @@ load_time = function(path=getwd()) {
   fread(file.path(path, "time.csv"))[
     !is.na(batch) &
       in_rows %in% c(1e7, 1e8, 1e9) &
-      solution %in% get_report_solutions()
+      solution %in% get_report_solutions() &
+      !batch %in% get_excluded_batch()
     ][order(timestamp)]
 }
 load_logs = function(path=getwd()) {
@@ -22,7 +28,8 @@ load_logs = function(path=getwd()) {
     !is.na(batch) &
       nzchar(solution) &
       solution %in% get_report_solutions() &
-      action %in% c("start","finish")
+      action %in% c("start","finish") &
+      !batch %in% get_excluded_batch()
     ][order(timestamp)]
 }
 load_questions = function(path=getwd()) {
