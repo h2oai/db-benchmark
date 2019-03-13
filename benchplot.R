@@ -93,6 +93,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   # filter timings to single data
   .data = data; rm(data)
   timings = timings[data==.data]
+  
   if (!nrow(timings)) {
     message(sprintf("Benchplot skipped as nothing to plot for %s %s", task, .data))
     return(invisible(NULL))
@@ -113,6 +114,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   nquestions = length(questions)
   if (nquestions > 5L)
     stop("Number of questions to plot should be at most 5, run benchplot on a subset of 5 questions")
+  if (timings[!is.na(time_sec_1), uniqueN(question)] < nquestions) {
+    message(sprintf("Benchplot skipped as there are some questions not answered by any solutions for %s %s", task, .data))
+    return(invisible(NULL))
+  }
+  
   if (!all(code_q_ok<-questions %in% names(code)))
     stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
   data = unique(timings$data)
