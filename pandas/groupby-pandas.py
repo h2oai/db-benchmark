@@ -213,7 +213,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}))
-ans.reset_index(inplace=True)s
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
