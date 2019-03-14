@@ -45,6 +45,7 @@ question = "sum v1 by id1" # q1
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'}).compute()
+ans.reset_index(inplace=True) # #68
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -56,6 +57,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1']).agg({'v1':'sum'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -71,6 +73,7 @@ question = "sum v1 by id1:id2" # q2
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -82,6 +85,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2']).agg({'v1':'sum'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -97,6 +101,7 @@ question = "sum v1 mean v3 by id3" # q3
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -108,6 +113,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -123,6 +129,7 @@ question = "mean v1:v3 by id4" # q4
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -134,6 +141,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -149,6 +157,7 @@ question = "sum v1:v3 by id6" # q5
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -160,6 +169,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -175,6 +185,7 @@ del ans
 #gc.collect()
 #t_start = timeit.default_timer()
 #ans = x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
+#ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -186,6 +197,7 @@ del ans
 #gc.collect()
 #t_start = timeit.default_timer()
 #ans = x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
+#ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -201,6 +213,7 @@ question = "max v1 - min v2 by id2 id4" # q7
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -212,6 +225,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -226,7 +240,9 @@ del ans
 question = "largest two v3 by id2 id4" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute() # TODO remove extra field added by nlargest method, ideally after: https://github.com/h2oai/db-benchmark/issues/68
+ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()
+ans.reset_index(level=("id2","id4"), inplace=True)
+ans.reset_index(drop=True, inplace=True) # drop because nlargest creates some extra new index field
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -238,6 +254,8 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()
+ans.reset_index(level=("id2","id4"), inplace=True)
+ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -253,6 +271,7 @@ question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -264,6 +283,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -279,6 +299,7 @@ question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute() # column name different than expected, ignore it because: ValueError: Metadata inference failed in `rename`: Original error is below: ValueError('Level values must be unique: [nan, nan] on level 0',)
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -290,6 +311,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()
+ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
