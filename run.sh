@@ -10,6 +10,10 @@ export BATCH=$(date +%s)
 # confirm stop flag disabled
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
+# confirm clickhouse is not running
+if [[ ./clickhouse-active.sh ]]; then echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit; fi;
+
+
 # set lock
 if [[ -f ./run.lock ]]; then echo "# Benchmark run $BATCH aborted. 'run.lock' file exists, this should be checked before calling 'run.sh'. Ouput redirection mismatch might have happened if writing output to same file as currently running $(cat ./run.lock) benchmark run" && exit; else echo $BATCH > run.lock; fi;
 
@@ -30,7 +34,7 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pyda
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init-spark.sh; fi;
 #if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/init-clickhouse.sh; fi; # for now manual as requires sudo
 
-# produce VERSION, REVISION files for each solution, this will crash if clickhouse server not started
+# produce VERSION, REVISION files for each solution
 ./versions.sh
 
 # run

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# this will crash if clickhouse server not started
-clickhouse-client --query="SELECT version()" > clickhouse/VERSION && echo "" > clickhouse/REVISION
+# we assume client was installed/upgraded together with server
+clickhouse-client --version-clean > clickhouse/VERSION && echo "" > clickhouse/REVISION
 
 Rscript -e 'v=read.dcf(system.file(package="data.table", "DESCRIPTION"), fields=c("Version","Revision")); invisible(mapply(function(f, v) writeLines(v, file.path("datatable", f)), toupper(colnames(v)), c(v)))'
 Rscript -e 'v=read.dcf(system.file(package="dplyr", "DESCRIPTION"), fields=c("Version","RemoteSha")); colnames(v)[colnames(v)=="RemoteSha"]="Revision"; invisible(mapply(function(f, v) writeLines(v, file.path("dplyr", f)), toupper(colnames(v)), c(v)))'
@@ -14,7 +14,7 @@ python -c 'import dask as dk; open("dask/VERSION","w").write(dk.__version__); op
 source ./modin/py-modin/bin/activate
 python -c 'import modin as modin; open("modin/VERSION","w").write(modin.__version__); open("modin/REVISION","w").write("");' > /dev/null
 source ./pandas/py-pandas/bin/activate
-python -c 'import pandas as pd; open("pandas/VERSION","w").write(pd.__version__); open("pandas/REVISION","w").write(pd.__git_version__);' > /dev/null 2>1&
+python -c 'import pandas as pd; open("pandas/VERSION","w").write(pd.__version__); open("pandas/REVISION","w").write(pd.__git_version__);' > /dev/null 2>&1
 source ./pydatatable/py-pydatatable/bin/activate
 python -c 'import datatable as dt; open("pydatatable/VERSION","w").write(dt.__version__); open("pydatatable/REVISION","w").write(dt.__git_revision__);' > /dev/null
 source ./spark/py-spark/bin/activate
