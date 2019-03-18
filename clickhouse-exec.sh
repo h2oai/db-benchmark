@@ -6,11 +6,13 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi;
 
+source ch.sh
+
 # start server
 ch_start
 
 # confirm server working
-ch_active || (echo "clickhouse-server should be already running, investigate" && exit; fi;)
+ch_active || (echo "clickhouse-server should be already running, investigate" && exit)
 
 # load data
 clickhouse-client --query="TRUNCATE TABLE $2"
