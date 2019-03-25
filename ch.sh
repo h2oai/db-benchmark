@@ -1,10 +1,10 @@
 ch_start() {
   echo 'starting clickhouse-server'
-  service clickhouse-server start && sleep 10
+  sudo /usr/sbin/service clickhouse-server start && sleep 10
 }
 ch_stop() {
   echo 'stopping clickhouse-server'
-  service clickhouse-server stop && sleep 10
+  sudo /usr/sbin/service clickhouse-server stop && sleep 10
 }
 ch_active() {
   clickhouse-client --query="SELECT 0;" > /dev/null 2>&1
