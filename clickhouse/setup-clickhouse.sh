@@ -33,5 +33,5 @@ Rscript -e 'all_data=data.table::fread("data.csv")[task=="groupby", data]; setNa
 # server start/stop without sudo: use visudo to edit sudoers
 #sudo cp /etc/sudoers ~/etc_sudoers.bak
 #sudo EDITOR=vim visudo
-#jan     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
-#jan     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
+#user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
+#user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
