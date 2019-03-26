@@ -9,14 +9,15 @@ fi;
 source ch.sh
 
 # start server
-ch_start
+#ch_start
 
 # confirm server working
 ch_active || (echo "clickhouse-server should be already running, investigate" && exit)
 
 # load data
+CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
 clickhouse-client --query="TRUNCATE TABLE $2"
-clickhouse-client --max_memory_usage=109951162777600 --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
+clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
 # confirm all data loaded yandex/ClickHouse#4463
 echo -e "clickhouse-client --query=\"SELECT count(*) FROM $2\"\n$2" | Rscript -e 'source("helpers.R"); stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=get.nrow(data_name=stdin[2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 
@@ -38,4 +39,4 @@ Rscript clickhouse/clickhouse-parse-log.R "$1" "$2"
 clickhouse-client --query="TRUNCATE TABLE $2"
 
 # stop server
-ch_stop
+#ch_stop
