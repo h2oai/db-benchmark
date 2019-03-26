@@ -35,3 +35,16 @@ Rscript -e 'all_data=data.table::fread("data.csv")[task=="groupby", data]; setNa
 #sudo EDITOR=vim visudo
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
+
+# prepare primary key for mergetree table engine
+awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e6_1e2_0_0.csv > data/G2_1e6_1e2_0_0.csv
+
+awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e9_1e2_0_0.csv > data/G2_1e9_1e2_0_0.csv
+awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e9_1e1_0_0.csv > data/G2_1e9_1e1_0_0.csv
+awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e9_2e0_0_0.csv > data/G2_1e9_2e0_0_0.csv
+awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e9_1e2_0_1.csv > data/G2_1e9_1e2_0_1.csv
+clickhouse-client --query="CREATE TABLE IF NOT EXISTS G2_1e9_1e2_0_0 (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)"
+clickhouse-client --query="CREATE TABLE IF NOT EXISTS G2_1e9_1e1_0_0 (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)"
+clickhouse-client --query="CREATE TABLE IF NOT EXISTS G2_1e9_2e0_0_0 (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)"
+clickhouse-client --query="CREATE TABLE IF NOT EXISTS G2_1e9_1e2_0_1 (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)"
+# same for 1e8 so we can compare memory table engine vs mergetree
