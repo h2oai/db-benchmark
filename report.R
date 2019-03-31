@@ -151,20 +151,27 @@ transform = function(ld) {
   ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
   ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
   
-  # for clickhouse take in-memory timing, unless there is no, then take disk table engine timing
-  if (nrow(ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & na_time_sec==TRUE])) {
-    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2"
-       ][, `:=`(data=gsub("G2", "G1", data, fixed=TRUE),  # only to join to G1 timings
-                disk_na_time_sec=na_time_sec, # original na_time_sec
-                na_time_sec=TRUE, # only to join to na_time_sec=TRUE
-                disk_time_sec_1=time_sec_1, disk_time_sec_2=time_sec_2)] -> ch_disk_time
-    ld[ch_disk_time, on=c("batch","task","solution","data","question","na_time_sec"),
-       `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2, na_time_sec=i.disk_na_time_sec)]
+  { # for clickhouse take in-memory timing, unless there is no, then take disk table engine timing
+    ld[, "engine":=NA_character_]
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1", engine:="memory"]
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2", engine:="mergetree"]
+    if (nrow(ld[task=="groupby" & solution=="clickhouse" & engine=="memory" & na_time_sec==TRUE])) {
+      ld[task=="groupby" & solution=="clickhouse" & engine=="mergetree"
+         ][, `:=`(
+           disk_na_time_sec=na_time_sec, # original na_time_sec
+           disk_time_sec_1=time_sec_1, disk_time_sec_2=time_sec_2,
+           disk_engine=engine,
+           data=gsub("G2", "G1", data, fixed=TRUE),  # only to join to G1 timings
+           na_time_sec=TRUE                          # only to join to na_time_sec=TRUE
+         )] -> ch_disk_time
+      ld[ch_disk_time, on=c("batch","task","solution","data","question","na_time_sec"),
+         `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2, na_time_sec=i.disk_na_time_sec, engine=i.disk_engine)]
+    }
+    ld = ld[!(task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2")] # G2 (engine="mergetree") might have been reused and appears as G1 marked by engine field
   }
-  ld = ld[!(task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2")] # G2 might have been reused as G1 if needed
-
+  
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
-              question=question, question_group=question_group, fun=fun, version=version, git=git, task=task, data=data),
+              question=question, question_group=question_group, fun=fun, version=version, git=git, task=task, data=data, engine=engine),
          ftdata(data), .SD),
      .SDcols=c(paste(rep(c("timestamp","time_sec","mem_gb","chk_time_sec"), each=2), 1:2, sep="_"),
                paste("script", c("finish","start","stderr","recent"), sep="_"),
