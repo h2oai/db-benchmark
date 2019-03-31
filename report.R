@@ -5,11 +5,13 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
+  "clickhouse"
+  #c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
 }
 get_excluded_batch = function() {
   c(
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
+    , 1552454531L # dl11 testing
     )
 }
 
@@ -148,6 +150,11 @@ transform = function(ld) {
   ld[, max_batch:=max(batch), c("nodename","solution","task","data")]
   ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
   ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
+  if (ld[task=="groupby" & solution=="clickhouse" & na_time_sec==TRUE, .N>0L]) {
+    # for clickhouse take in-memory timing, unless there is no, then take disk table engine timing
+    ch_disk_time = ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2"]
+    # na_time_sec==TRUE
+  }
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
               question=question, question_group=question_group, fun=fun, version=version, git=git, task=task, data=data),
          ftdata(data), .SD),

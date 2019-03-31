@@ -10,7 +10,7 @@ export BATCH=$(date +%s)
 # confirm stop flag disabled
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
-# confirm clickhouse is not running
+# confirm clickhouse is not running - TODO resolve sudo-less start/stop clickhouse first
 #source ./ch.sh
 #ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
 
