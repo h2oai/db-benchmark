@@ -150,11 +150,19 @@ transform = function(ld) {
   ld[, max_batch:=max(batch), c("nodename","solution","task","data")]
   ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
   ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
-  if (ld[task=="groupby" & solution=="clickhouse" & na_time_sec==TRUE, .N>0L]) {
-    # for clickhouse take in-memory timing, unless there is no, then take disk table engine timing
-    ch_disk_time = ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2"]
-    # na_time_sec==TRUE
+  
+  # for clickhouse take in-memory timing, unless there is no, then take disk table engine timing
+  if (nrow(ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & na_time_sec==TRUE])) {
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2"
+       ][, `:=`(data=gsub("G2", "G1", data, fixed=TRUE),  # only to join to G1 timings
+                disk_na_time_sec=na_time_sec, # original na_time_sec
+                na_time_sec=TRUE, # only to join to na_time_sec=TRUE
+                disk_time_sec_1=time_sec_1, disk_time_sec_2=time_sec_2)] -> ch_disk_time
+    ld[ch_disk_time, on=c("batch","task","solution","data","question","na_time_sec"),
+       `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2, na_time_sec=i.disk_na_time_sec)]
   }
+  ld = ld[!(task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2")] # G2 might have been reused as G1 if needed
+
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
               question=question, question_group=question_group, fun=fun, version=version, git=git, task=task, data=data),
          ftdata(data), .SD),

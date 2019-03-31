@@ -8,7 +8,7 @@ fi;
 
 source ch.sh
 
-# start server
+# start server - TODO resolve sudo-less start/stop clickhouse first
 #ch_start
 
 # confirm server working
@@ -38,5 +38,5 @@ Rscript clickhouse/clickhouse-parse-log.R "$1" "$2"
 # cleanup data
 clickhouse-client --query="TRUNCATE TABLE $2"
 
-# stop server
+# stop server - TODO resolve sudo-less start/stop clickhouse first
 #ch_stop
