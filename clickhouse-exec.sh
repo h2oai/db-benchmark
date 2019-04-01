@@ -11,8 +11,10 @@ source ch.sh
 # start server - TODO resolve sudo-less start/stop clickhouse first
 #ch_start
 
-# confirm server working
-ch_active || (echo "clickhouse-server should be already running, investigate" && exit)
+# confirm server working, wait if it crashed in last run
+ch_active || sleep 120
+ch_active || echo "clickhouse-server should be already running, investigate" >&2
+ch_active || exit
 
 # load data
 CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
