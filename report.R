@@ -160,14 +160,20 @@ transform = function(ld) {
          ][, `:=`(
            disk_na_time_sec=na_time_sec, # original na_time_sec
            disk_time_sec_1=time_sec_1, disk_time_sec_2=time_sec_2,
+           disk_timestamp_1=timestamp_1, disk_timestamp_2=timestamp_2,
            disk_engine=engine,
+           disk_fun=fun,
+           disk_script_stderr=script_stderr,
            data=gsub("G2", "G1", data, fixed=TRUE),  # only to join to G1 timings
            na_time_sec=TRUE                          # only to join to na_time_sec=TRUE
          )] -> ch_disk_time
       ld[ch_disk_time, on=c("batch","task","solution","data","question","na_time_sec"),
-         `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2, na_time_sec=i.disk_na_time_sec, engine=i.disk_engine)]
+         `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2,
+              timestamp_1=i.disk_timestamp_1, timestamp_2=i.disk_timestamp_2,
+              fun=i.disk_fun, na_time_sec=i.disk_na_time_sec, engine=i.disk_engine, script_stderr=i.disk_script_stderr)]
     }
-    ld = ld[!(task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2")] # G2 (engine="mergetree") might have been reused and appears as G1 marked by engine field
+    #ld = ld[!(task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2")] # G2 (engine="mergetree") might have been reused and appears as G1 marked by engine field
+    # G2 has to be filtered in benchplot as of now
   }
   
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
