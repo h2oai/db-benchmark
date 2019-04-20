@@ -11,12 +11,15 @@ source ch.sh
 # start server
 ch_start
 
-# confirm server working
-ch_active || (echo "clickhouse-server should be already running, investigate" && exit)
+# confirm server working, wait if it crashed in last run
+ch_active || sleep 120
+ch_active || echo "clickhouse-server should be already running, investigate" >&2
+ch_active || exit 1
 
 # load data
+CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
 clickhouse-client --query="TRUNCATE TABLE $2"
-clickhouse-client --max_memory_usage=109951162777600 --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
+clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
 # confirm all data loaded yandex/ClickHouse#4463
 echo -e "clickhouse-client --query=\"SELECT count(*) FROM $2\"\n$2" | Rscript -e 'source("helpers.R"); stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=get.nrow(data_name=stdin[2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 
@@ -26,16 +29,16 @@ sed "s/DATA_NAME/$2/g" < "clickhouse/$1-clickhouse.sql.in" > "clickhouse/$1-clic
 # cleanup timings from last run if they have not been cleaned up after parsing
 mkdir -p clickhouse/log
 rm -f clickhouse/log/$1_$2_q*.csv
-rm -f clickhouse/log/$1_$2.out clickhouse/log/$1_$2_q*.csv
 
 # execute sql script on clickhouse
-cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -t -mn --max_memory_usage=109951162777600 --format=Pretty --output_format_pretty_max_rows 1 2> clickhouse/log/$1_$2.out
+clickhouse-client --query="TRUNCATE TABLE system.query_log"
+cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 1
 
 # parse timings from clickhouse/log/[task]_[data_name].out and clickhouse/log/[task]_[data_name]_q[i]_r[j].csv
 Rscript clickhouse/clickhouse-parse-log.R "$1" "$2"
 
 # cleanup data
-clickhouse-client --query="TRUNCATE TABLE $2"
+ch_active && echo "# clickhouse-exec.sh: finishing, truncating table $2" && clickhouse-client --query="TRUNCATE TABLE $2" || echo "# clickhouse-exec.sh: finishing, clickhouse server down, possibly crashed, could not truncate table $2"
 
 # stop server
 ch_stop
