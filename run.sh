@@ -35,7 +35,7 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init
 #if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/init-clickhouse.sh; fi; # for now manual as requires sudo
 
 # produce VERSION, REVISION files for each solution
-./versions.sh
+#./versions.sh
 
 # run
 Rscript ./launcher.R

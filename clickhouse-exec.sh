@@ -8,8 +8,8 @@ fi;
 
 source ch.sh
 
-# start server - TODO resolve sudo-less start/stop clickhouse first
-#ch_start
+# start server
+ch_start
 
 # confirm server working, wait if it crashed in last run
 ch_active || sleep 120
@@ -29,17 +29,16 @@ sed "s/DATA_NAME/$2/g" < "clickhouse/$1-clickhouse.sql.in" > "clickhouse/$1-clic
 # cleanup timings from last run if they have not been cleaned up after parsing
 mkdir -p clickhouse/log
 rm -f clickhouse/log/$1_$2_q*.csv
-rm -f clickhouse/log/$1_$2.out clickhouse/log/$1_$2_q*.csv
 
 # execute sql script on clickhouse
-# 2> is used to redirect benchmark timings of the queries that are in stderr when using ` -t` but it also redirects server errors, reported FR yandex/ClickHouse#4872
-cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -t -mn --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 1 2> clickhouse/log/$1_$2.out || echo "# clickhouse-exec.sh: query unexpectedly terminated" >&2
+clickhouse-client --query="TRUNCATE TABLE system.query_log"
+cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 1
 
 # parse timings from clickhouse/log/[task]_[data_name].out and clickhouse/log/[task]_[data_name]_q[i]_r[j].csv
 Rscript clickhouse/clickhouse-parse-log.R "$1" "$2"
 
 # cleanup data
-ch_active && echo "# clickhouse-exec.sh: finishing, truncating table $2" && clickhouse-client --query="TRUNCATE TABLE $2" || echo "# clickhouse-exec.sh: finishing, clickhouse server down, could not truncate table $2"
+ch_active && echo "# clickhouse-exec.sh: finishing, truncating table $2" && clickhouse-client --query="TRUNCATE TABLE $2" || echo "# clickhouse-exec.sh: finishing, clickhouse server down, possibly crashed, could not truncate table $2"
 
-# stop server - TODO resolve sudo-less start/stop clickhouse first
-#ch_stop
+# stop server
+ch_stop
