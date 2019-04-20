@@ -5,8 +5,8 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  "clickhouse"
-  #c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
+  #"clickhouse"
+  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
 }
 get_excluded_batch = function() {
   c(
