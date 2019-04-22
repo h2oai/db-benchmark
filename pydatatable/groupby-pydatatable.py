@@ -234,7 +234,7 @@ print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
 
-#question = "regression v1 v2 by id2 id4" # q9 # cor or cov+var not yet implemeneted https://github.com/h2oai/datatable/issues/290#issuecomment-453075433
+#question = "regression v1 v2 by id2 id4" # q9 # not yet implemeneted https://github.com/h2oai/datatable/issues/1543
 #gc.collect()
 #t_start = timeit.default_timer()
 #ans = x[:, {"r2": cor(v1, v2)^2}, by(f.id2, f.id4)]
