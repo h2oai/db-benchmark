@@ -11,7 +11,7 @@ get_report_solutions = function() {
 get_excluded_batch = function() {
   c(
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
-    , 1552454531L # dl11 testing
+    , 1552454531L, 1555929111L, 1555754148L # dl11 testing
     )
 }
 
