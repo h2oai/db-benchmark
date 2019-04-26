@@ -38,7 +38,10 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init
 #if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/init-clickhouse.sh; fi; # manual as requires sudo: apt-get install --only-upgrade clickhouse-server clickhouse-client
 
 # produce VERSION, REVISION files for each solution
+set +e
 ./versions.sh
+if [[ $? -ne 0 ]]; then echo "# Benchmark run $BATCH failed to check versions of currently installed solutions" && rm -f ./run.lock && exit; fi;
+set -e
 
 # run
 Rscript ./launcher.R
