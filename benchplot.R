@@ -15,7 +15,7 @@ solution.colors = rbindlist(list(
   list(solution="spark", "#8000FFFF", "#CC66FF"),
   list(solution="dask", "slategrey", "lightgrey"),
   list(solution="juliadf", "deepskyblue", "darkturquoise")
-))
+), use.names=FALSE)
 
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
 
