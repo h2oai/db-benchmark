@@ -147,7 +147,7 @@ ftdata = function(x, task="groupby") {
   }
 }
 transform = function(ld) {
-  ld[, max_batch:=max(batch), c("nodename","solution","task","data")]
+  ld[, max_batch:=max(batch), c("solution","task","data")]
   ld[, script_recent:=FALSE][batch==max_batch, script_recent:=TRUE][, max_batch:=NULL]
   ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
   
