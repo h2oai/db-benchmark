@@ -21,6 +21,9 @@ report_name = "tech"
 library(lattice)
 source("report.R")
 ld = time_logs()
+recent_nodename = ld[script_recent==TRUE, unique(nodename)]
+stopifnot(length(recent_nodename)==1L)
+ld = ld[nodename==recent_nodename]
 ```
 
 ## Incompleted timings of last run
@@ -58,7 +61,6 @@ timeout = fread("timeout.csv")
 timeout = timeout["groupby", on="task", nomatch=NULL] # filter for env var RUN_TASKS
 stopifnot(nrow(timeout)==1L)
 timeout_m = timeout[["minutes"]]
-stopifnot(length(unique(ld$nodename))==1L)
 p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
   lattice::xyplot(script_time_sec/60 ~ ibatch | k+in_rows, ld,
                 type="l", grid=TRUE, groups=nasorted,

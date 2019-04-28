@@ -21,6 +21,9 @@ report_name = "history"
 library(lattice)
 source("report.R")
 ld = time_logs()
+recent_nodename = ld[script_recent==TRUE, unique(nodename)]
+stopifnot(length(recent_nodename)==1L)
+ld = ld[nodename==recent_nodename]
 ```
 
 ## Timings over time
@@ -30,7 +33,6 @@ ld = time_logs()
 0% NAs, unsorted
 
 ```{r hist_groupby_plot, fig.width=8, fig.height=48}
-stopifnot(length(unique(ld$nodename))==1L)
 p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
   lattice::xyplot(time_sec_1 ~ ibatch | k+in_rows, ld[nasorted=="0% NAs, unsorted"],
                 type="l", grid=TRUE, groups=question,
