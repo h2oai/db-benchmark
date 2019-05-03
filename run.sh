@@ -4,6 +4,13 @@ set -e
 ## run script the following way to exit if benchmark is already running
 #if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out"; else ./run.sh > ./run.out; fi;
 
+# test whether cgmemtime is on system path. Since setting up cgroup requires knowledge of user group and sudo, we can't do it programmatically.
+if ! [ -x "$(cgmemtime echo)" ]; then
+    echo "found cgmemtime.";
+else
+    echo "cgmemtime not found.  Set it up from https://github.com/gsauthof/cgmemtime.git".
+fi;
+
 # set batch
 export BATCH=$(date +%s)
 
