@@ -39,4 +39,4 @@ Benchmark is mainly focused on portability and reproducibility. This benchmark i
 
 # Acknowledgment
 
-- Timings for some solutions might be missing for particular datasizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutins might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.  
+- Timings for some solutions might be missing for particular datasizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.  
