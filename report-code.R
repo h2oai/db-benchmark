@@ -91,7 +91,55 @@ groupby.code = list(
   )
 )
 
-#"" = c ( # q0
+join.code = list(
+  "small inner on int" = c( # q1
+    "dask" = "",
+    "data.table" = "DT[small, on=.(id4), nomatch=NULL]",
+    "dplyr" = "inner_join(DF, small, by='id4')",
+    "juliadf" = "",
+    "pandas" = "x.merge(small, how='inner', on='id4')",
+    "pydatatable" = "",
+    "spark" = ""
+  ),
+  "medium inner on int" = c( # q2
+    "dask" = "",
+    "data.table" = "DT[medium, on=.(id4), nomatch=NULL]",
+    "dplyr" = "inner_join(DF, medium, by='id4')",
+    "juliadf" = "",
+    "pandas" = "x.merge(medium, how='inner', on='id4')",
+    "pydatatable" = "",
+    "spark" = ""
+  ),
+  "medium outer on int" = c( # q3
+    "dask" = "",
+    "data.table" = "DT[medium, on=.(id4), nomatch=NA]",
+    "dplyr" = "left_join(DF, medium, by='id4')",
+    "juliadf" = "",
+    "pandas" = "x.merge(medium, how='left', on='id4')",
+    "pydatatable" = "",
+    "spark" = ""
+  ),
+  "medium inner on factor" = c( # q4
+    "dask" = "",
+    "data.table" = "DT[medium, on=.(id1), nomatch=NULL]",
+    "dplyr" = "inner_join(DF, medium, by='id1')",
+    "juliadf" = "",
+    "pandas" = "x.merge(medium, how='inner', on='id1')",
+    "pydatatable" = "",
+    "spark" = ""
+  ),
+  "big inner on int" = c( # q5
+    "dask" = "",
+    "data.table" = "DT[big, on=.(id4), nomatch=NULL]",
+    "dplyr" = "inner_join(DF, big, by='id4')",
+    "juliadf" = "",
+    "pandas" = "x.merge(big, how='inner', on='id4')",
+    "pydatatable" = "",
+    "spark" = ""
+  )
+)
+
+#"" = c( # q0
 #  "dask" = "",
 #  "data.table" = "",
 #  "dplyr" = "",

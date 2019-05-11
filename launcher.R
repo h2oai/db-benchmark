@@ -8,6 +8,8 @@ nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
 forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
 
+if (packageVersion("data.table") <= "1.12.0") stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0. If you need to benchmark older data.table tweak script to use custom library where older version is installed.")
+
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
@@ -38,14 +40,14 @@ timeout = timeout[run_tasks, on="task", nomatch=NULL] # filter for env var RUN_T
 stopifnot(nrow(timeout)==1L)
 
 solution = rbindlist(list(
-  dask = list(task=c("groupby","join","sort")),
-  data.table = list(task=c("groupby","join","sort")),
-  dplyr = list(task=c("groupby","join","sort")),
-  juliadf = list(task=c("groupby","join")),
-  modin = list(task=c("sort")),
-  pandas = list(task=c("groupby","join","sort")),
-  pydatatable = list(task=c("groupby","join","sort")),
-  spark = list(task=c("groupby","join","sort")),
+  dask = list(task=c("groupby")),
+  data.table = list(task=c("groupby","join")),
+  dplyr = list(task=c("groupby","join")),
+  juliadf = list(task=c("groupby")),
+  modin = list(task=c()),
+  pandas = list(task=c("groupby","join")),
+  pydatatable = list(task=c("groupby")),
+  spark = list(task=c("groupby")),
   clickhouse = list(task=c("groupby"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS

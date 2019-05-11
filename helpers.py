@@ -50,3 +50,8 @@ def memory_usage():
     process = psutil.Process(os.getpid())
     return process.memory_info().rss/(1024**3) # GB units
 
+def join_to_tbls(data_name):
+    x_n = int(float(data_name.split("_")[1]))
+    y_n = ["{:.0e}".format(x_n), "{:.0e}".format(x_n/1e3), "{:.0e}".format(x_n/1e6)]
+    y_n = [y_n[0].replace('+0', ''), y_n[1].replace('+0', ''), y_n[2].replace('+0', '')]
+    return [data_name.replace('NA', y_n[0]), data_name.replace('NA', y_n[1]), data_name.replace('NA', y_n[2])]

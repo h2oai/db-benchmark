@@ -9,3 +9,8 @@ groupby,max v1 - min v2 by id2 id4,advanced
 groupby,largest two v3 by id2 id4,advanced
 groupby,regression v1 v2 by id2 id4,advanced
 groupby,sum v3 count by id1:id6,advanced
+join,small inner on int,basic
+join,medium inner on int,basic
+join,medium outer on int,basic
+join,medium inner on factor,basic
+join,big inner on int,basic
