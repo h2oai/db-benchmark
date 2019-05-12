@@ -25,9 +25,9 @@ DT = fread(src_jn_x, showProgress=FALSE, stringsAsFactors=TRUE)
 JN = sapply(simplify=FALSE, src_jn_y, fread, showProgress=FALSE, stringsAsFactors=TRUE)
 print(nrow(DT))
 sapply(sapply(JN, nrow), print) -> nul
-small = JN$small
-medium = JN$medium
 big = JN$big
+medium = JN$medium
+small = JN$small
 
 cat("joining...\n")
 

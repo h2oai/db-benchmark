@@ -26,9 +26,9 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 x = pd.read_csv(src_jn_x, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-small = pd.read_csv(src_jn_y[2], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-medium = pd.read_csv(src_jn_y[1], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
 big = pd.read_csv(src_jn_y[0], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
+medium = pd.read_csv(src_jn_y[1], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
+small = pd.read_csv(src_jn_y[2], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
 
 #import datatable as dt # for loading data only, see #47
 #x = dt.open(src_grp).to_pandas()

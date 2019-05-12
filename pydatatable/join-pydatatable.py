@@ -27,9 +27,9 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 x = dt.fread(src_jn_x)
-small = dt.fread(src_jn_y[2])
-medium = dt.fread(src_jn_y[1])
 big = dt.fread(src_jn_y[0])
+medium = dt.fread(src_jn_y[1])
+small = dt.fread(src_jn_y[2])
 
 print(x.nrows, flush=True)
 print(big.nrows, flush=True)

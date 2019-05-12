@@ -24,9 +24,9 @@ DF = as_tibble(data.table::fread(src_jn_x, showProgress=FALSE, stringsAsFactors=
 JN = lapply(sapply(simplify=FALSE, src_jn_y, data.table::fread, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE), as_tibble)
 print(nrow(DF))
 sapply(sapply(JN, nrow), print) -> nul
-small = JN$small
-medium = JN$medium
 big = JN$big
+medium = JN$medium
+small = JN$small
 
 cat("joining...\n")
 
