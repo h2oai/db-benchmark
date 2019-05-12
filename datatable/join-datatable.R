@@ -60,12 +60,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "medium outer on int" # q3
-t = system.time(print(dim(ans<-medium[DT, on=.(id4), nomatch=NA])))[["elapsed"]]
+t = system.time(print(dim(ans<-medium[DT, on=.(id4)])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
-t = system.time(print(dim(ans<-medium[DT, on=.(id4), nomatch=NA])))[["elapsed"]]
+t = system.time(print(dim(ans<-medium[DT, on=.(id4)])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(v1), sum(i.v1))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
