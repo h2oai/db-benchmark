@@ -66,7 +66,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -80,7 +80,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -98,7 +98,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -112,7 +112,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -130,7 +130,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -144,7 +144,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -162,7 +162,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -176,7 +176,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -194,7 +194,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -208,7 +208,7 @@ t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-#chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
