@@ -10,7 +10,7 @@ include("$(pwd())/helpers.jl");
 pkgmeta = getpkgmeta("DataFrames");
 ver = pkgmeta["version"];
 git = pkgmeta["git-tree-sha1"];
-task = "groupby";
+task = "join";
 solution = "juliadf";
 fun = "join";
 cache = true;
