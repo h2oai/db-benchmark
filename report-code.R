@@ -99,7 +99,7 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(small, on='id4')",
     "pydatatable" = "x[:, :, join(small, on='id4)]",
-    "spark" = ""
+    "spark" = "spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
   ),
   "medium inner on int" = c( # q2
     "dask" = "x.merge(medium, on='id4').compute()",
@@ -108,7 +108,7 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id4')",
     "pydatatable" = "x[:, :, join(medium, on='id4')]",
-    "spark" = ""
+    "spark" = "spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
   ),
   "medium outer on int" = c( # q3
     "dask" = "x.merge(medium, how='left', on='id4').compute()",
@@ -117,7 +117,7 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, how='left', on='id4')",
     "pydatatable" = "x[:, :, join(medium, on='id4', how='outer')]",
-    "spark" = ""
+    "spark" = "spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
   ),
   "medium inner on factor" = c( # q4
     "dask" = "x.merge(medium, on='id1').compute()",
@@ -126,7 +126,7 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id1')",
     "pydatatable" = "x[:, :, join(medium, on='id1')]",
-    "spark" = ""
+    "spark" = "spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)"
   ),
   "big inner on int" = c( # q5
     "dask" = "x.merge(big, on='id4').compute()",
@@ -135,7 +135,7 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(big, on='id4')",
     "pydatatable" = "x[:, :, join(big, on='id4')]",
-    "spark" = ""
+    "spark" = "spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
   )
 )
 
