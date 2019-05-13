@@ -17,7 +17,7 @@ fun = "by";
 cache = true;
 
 data_name = ENV["SRC_GRP_LOCAL"];
-src_grp = string("data/", data_name, ".csv")
+src_grp = string("data/", data_name, ".csv");
 println(string("loading dataset ", data_name)); flush(stdout);
 
 x = DataFrame(CSV.File(src_grp, pool=true));

@@ -17,7 +17,7 @@ N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=a
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 set.seed(108)
 cat(sprintf("Producing data of %s rows\n", pretty_sci(N)))
-all_levels = sprintf("id%011.0fd", 1:(2*N)) # up to 1e11-1 fixed char size
+all_levels = sprintf("id%011.0f", 1:(2*N)) # up to 1e11-1 fixed char size
 some_dups = function(N, ratio) {
   tmp = sample(N, N*(1-ratio))
   sample(c(tmp, sample(tmp, N*ratio)))
@@ -38,7 +38,7 @@ y_N = setNames(c(N, N/1e3, N/1e6), c("big","medium","small"))
 
 cat(sprintf("Producing join tables of %s rows\n", paste(collapse=", ", sapply(y_N, pretty_sci))))
 # create join tables
-y_DT = lapply(y_N, function(n) DT[sample(n)])
+y_DT = lapply(y_N, function(n) DT[sample(n)]) # TODO recreate new, not sample
 join_to_tbls = function(data_name) {
   x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
   y_n = setNames(c(x_n, x_n/1e3, x_n/1e6), c("big","medium","small"))

@@ -44,3 +44,10 @@ function write_log(run, task, data, in_rows, question, out_rows, out_cols, solut
   log = DataFrame(nodename=nodename, batch=batch, timestamp=timestamp, task=task, data=data, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=out_cols, solution=solution, version=version, git=git, fun=fun, run=run, time_sec=time_sec, mem_gb=mem_gb, cache=uppercase(string(cache)), chk=chk, chk_time_sec=chk_time_sec, comment=comment)
   CSV.write(file, log, append=true)
 end;
+
+function join_to_tbls(data_name)
+  x_n = Int(parse(Float64, split(data_name, "_")[2]))
+  y_n = [x_n, x_n/1e3, x_n/1e6]
+  y_n = [replace(@sprintf("%.0e", y_n[1]), "+0" => ""), replace(@sprintf("%.0e", y_n[2]), "+0" => ""), replace(@sprintf("%.0e", y_n[3]), "+0" => "")]
+  [replace(data_name, "NA" => y_n[1]), replace(data_name, "NA" => y_n[2]), replace(data_name, "NA" => y_n[3])]
+end;

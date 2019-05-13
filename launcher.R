@@ -43,11 +43,11 @@ solution = rbindlist(list(
   dask = list(task=c("groupby","join")),
   data.table = list(task=c("groupby","join")),
   dplyr = list(task=c("groupby","join")),
-  juliadf = list(task=c("groupby")),
+  juliadf = list(task=c("groupby","join")),
   modin = list(task=c()),
   pandas = list(task=c("groupby","join")),
   pydatatable = list(task=c("groupby")), # join after https://github.com/h2oai/datatable/issues/1080
-  spark = list(task=c("groupby")),
+  spark = list(task=c("groupby","join")),
   clickhouse = list(task=c("groupby"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS

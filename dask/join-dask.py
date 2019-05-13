@@ -25,7 +25,7 @@ src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
-print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
+print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
 x = dd.read_csv(src_jn_x, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
 big = dd.read_csv(src_jn_y[0], na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
