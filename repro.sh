@@ -3,14 +3,9 @@
 sudo apt-get -qq update
 sudo apt-get -qq install -y lsb-release software-properties-common wget curl vim htop git byobu libcurl4-openssl-dev libssl-dev
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-sudo add-apt-repository "deb [arch=amd64,i386] https://cran.r-project.org/bin/linux/ubuntu `lsb_release -sc`/"
+sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu `lsb_release -sc`-cran35/"
 sudo apt-get -qq update
-sudo apt-get -qq install -y r-base-dev virtualenv python3.5-dev
-
-wget https://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-sudo mv clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz /opt
-cd /opt
-sudo tar xvf clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+sudo apt-get -qq install -y r-base-dev virtualenv
 
 cd /usr/local/lib/R
 sudo chmod o+w site-library
@@ -20,6 +15,8 @@ mkdir -p .R
 echo 'CFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
+mkdir -p git
+cd git
 git clone http://github.com/h2oai/datatable
 git clone http://github.com/h2oai/db-benchmark
 
@@ -44,12 +41,8 @@ source ./modin/py-modin/bin/activate
 python -m pip install --upgrade modin
 deactivate
 
-# install pydatatable
 source ./pydatatable/py-pydatatable/bin/activate
-export LLVM6=/opt/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04
-cd datatable
-make build
-make install
+pip install --upgrade git+https://github.com/h2oai/datatable
 deactivate
 
 # install dplyr
@@ -62,10 +55,9 @@ Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/d
 cd db-benchmark
 
 # generate data for groupby
-Rscript groupby-datagen.R 1e7 1e2
-Rscript groupby-datagen.R 1e8 1e2
-Rscript groupby-datagen.R 1e9 1e2
-#Rscript groupby-datagen.R 2e9 1e2 # https://github.com/Rdatatable/data.table/issues/2956
+Rscript groupby-datagen.R 1e7 1e2 0 0
+Rscript groupby-datagen.R 1e8 1e2 0 0
+Rscript groupby-datagen.R 1e9 1e2 0 0
 
 # set only groupby task
 vim run.conf
