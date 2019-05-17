@@ -209,41 +209,33 @@ del ans
 #print(ans.tail(3), flush=True)
 #del ans
 
-#question = "max v1 - min v2 by id2 id4" # q7
-# rewrite apply using dd.Aggregation, waiting for https://github.com/dask/dask/issues/4372#issuecomment-493322149
-#def range2_chunk(grouped): return grouped.max(), grouped.min()
-#
-#def range2_agg(chunk_maxes, chunk_mins): return chunk_maxes.max(), chunk_mins.min()
-#
-#def range2_finalize(maxima, minima): return maxima - minima
-#
-#range2 = dd.Aggregation('range2', range2_chunk, range2_agg, finalize=range2_finalize)
-#gc.collect()
-#t_start = timeit.default_timer()
-#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).agg(range2).compute()
-#ans.reset_index(inplace=True)
-#print(ans.shape, flush=True)
-#t = timeit.default_timer() - t_start
-#m = memory_usage()
-#t_start = timeit.default_timer()
-#chk = [ans['range_v1_v2'].sum()]
-#chkt = timeit.default_timer() - t_start
-#write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-#del ans
-#gc.collect()
-#t_start = timeit.default_timer()
-#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).agg(range2).compute()
-#ans.reset_index(inplace=True)
-#print(ans.shape, flush=True)
-#t = timeit.default_timer() - t_start
-#m = memory_usage()
-#t_start = timeit.default_timer()
-#chk = [ans['range_v1_v2'].sum()]
-#chkt = timeit.default_timer() - t_start
-#write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-#print(ans.head(3), flush=True)
-#print(ans.tail(3), flush=True)
-#del ans
+question = "max v1 - min v2 by id2 id4" # q7
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
+ans.reset_index(inplace=True)
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['range_v1_v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
+ans.reset_index(inplace=True)
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['range_v1_v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
 
 question = "largest two v3 by id2 id4" # q8
 gc.collect()
@@ -275,7 +267,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-#question = "regression v1 v2 by id2 id4" # q9 - rewrite using dd.Aggregation, see comments in q7
+#question = "regression v1 v2 by id2 id4" # q9 - rewrite using dd.Aggregation https://github.com/dask/dask/issues/4372#issuecomment-493491021
 #gc.collect()
 #t_start = timeit.default_timer()
 #ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
