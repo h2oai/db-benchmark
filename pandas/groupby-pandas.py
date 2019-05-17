@@ -254,9 +254,9 @@ print(ans.tail(3), flush=True)
 del ans
 
 question = "regression v1 v2 by id2 id4" # q9
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).corr().iloc[0::2][['v2']]**2 # slower, 76s vs 47s on 1e8 1e2
 gc.collect()
 t_start = timeit.default_timer()
-x[['v1','v2']].corr()
 ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)

@@ -54,7 +54,7 @@ groupby.code = list(
     "spark" = "median not yet implemented: SPARK-26589" # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
-    "dask" = "x.groupby(['id2','id4']).apply(lambda x: pd.Series({'range_v1_v2': x['v1'].max()-x['v2'].min()}), meta={'range_v1_v2': 'int64'}).compute()",
+    "dask" = "waiting for feedback in dask/dask#4372", #"range2=dd.Aggregation(...); x[['id2','id4','v1','v2']].groupby(['id2','id4']).agg(range2).compute()",
     "data.table" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(range_v1_v2=max(v1)-min(v2))",
     "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
@@ -72,7 +72,7 @@ groupby.code = list(
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
-    "dask" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()",
+    "dask" = "waiting for feedback in dask/dask#4372", #"x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()",
     "data.table" = "DT[, .(r2=cor(v1, v2)^2), by=.(id2, id4)]",
     "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
