@@ -44,12 +44,12 @@ clean_time = function(d) {
   if (nrow(d[!nzchar(version) | is.na(version)]))
     stop("timings data contains NA or '' as version field, that should not happen")
   d[!nzchar(git), git := NA_character_
-    ][task=="groupby" & solution=="spark" & batch<1546755894, out_cols := NA_integer_ # spark initially was not returning grouping columns, this has been fixed starting from batch 1546755894
-      ][task=="groupby" & solution%in%c("pandas","dask"), "out_cols" := NA_integer_ # pandas and dask could return correct out_cols: https://github.com/h2oai/db-benchmark/issues/68
-        ][task=="groupby" & solution=="dask" & question%in%c("max v1 - min v2 by id2 id4","regression v1 v2 by id2 id4"), "out_rows" := NA_integer_ # verify correctness of syntax and answer: https://github.com/dask/dask/issues/4372
-          ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
-            ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
-              ][]
+      ][task=="groupby" & solution%in%c("pandas","dask","spark") & batch<1558106628, "out_cols" := NA_integer_
+        ][task=="groupby" & solution=="dask" & batch<1558106628 & question%in%c("max v1 - min v2 by id2 id4","regression v1 v2 by id2 id4"), c("out_rows","out_cols","chk") := .(NA_integer_, NA_integer_, NA_character_)
+          ][task=="groupby" & solution=="pandas" & batch<=1558106628 & question=="largest two v3 by id2 id4", "out_cols" := NA_integer_
+            ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
+              ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
+                ][]
 }
 clean_logs = function(l) {
   if (nrow(l[!nzchar(version) | is.na(version)]))
@@ -71,7 +71,7 @@ model_time = function(d) {
   if (nrow(d[!is.na(out_rows), .(unq_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unq_out_rows>1]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_cols), .(unq_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unq_out_cols>1]))
-    stop("Value of 'out_cols' varies for different runs for single solution+question")
+    stop("Value of 'out_cols' varies for different runs for single solution+question") #d[,.SD][!is.na(out_cols), `:=`(unq_out_cols=uniqueN(out_cols), paste_unq_out_cols=paste(unique(out_cols), collapse=",")), .(task, solution, data, question)][unq_out_cols>1, paste_unq_out_cols, .(task, solution, data, question, batch)]
   if (nrow(d[!is.na(cache), .(unq_cache=uniqueN(cache))][unq_cache>1]))
     stop("Value of 'cache' should be constant for all solutions")
   d = dcast(d, nodename+batch+in_rows+question+solution+fun+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))

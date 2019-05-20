@@ -253,6 +253,8 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     if (length(unique(out_rows)) != 1L) if (interactive()) browser() else stop("out_rows mismatch")
     out_cols = ans[question==questions[iq], na.omit(out_cols)]
     if (length(unique(out_cols)) != 1L) stop("out_cols mismatch")
+    # d[script_recent==TRUE, .(unqn=uniqueN(na.omit(out_cols)), v=paste(unique(na.omit(out_cols)), collapse=",")), .(data, iquestion, question, batch)][unqn>1]
+    # d[batch==1558106628 & task=="groupby" & iquestion==8 & !is.na(out_cols), .(out_cols), .(solution, data)]
     textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L]))
     
     # second timing bars

@@ -229,7 +229,7 @@ question = "largest two v3 by id2 id4" # q8
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)
-ans.reset_index(inplace=True)
+ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -241,7 +241,7 @@ del ans
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)
-ans.reset_index(inplace=True)
+ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
