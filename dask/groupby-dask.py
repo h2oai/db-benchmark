@@ -267,7 +267,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-#question = "regression v1 v2 by id2 id4" # q9 - rewrite using dd.Aggregation https://github.com/dask/dask/issues/4372#issuecomment-493491021
+#question = "regression v1 v2 by id2 id4" # q9 - https://github.com/dask/dask/issues/4828
 #gc.collect()
 #t_start = timeit.default_timer()
 #ans = x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2': 'float64'}).compute()
