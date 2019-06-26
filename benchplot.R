@@ -147,10 +147,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     filepath = file.path(path, fnam)
   }
   if (.interactive) cat("Plotting to", filepath, "...\n")
-  height = 700+120*nsolutions;
+  height = 700+120*nsolutions + 30; # 30 for legend entry for unsupported
   png(file=filepath, width=800, height=height)
 
-  mar.top = 3.1+nsolutions
+  mar.top = 3.1+nsolutions+1L # +1 for unsupported solutions legend entry
   mar.bot = 3.3/nsolutions
   par(mar=c(mar.bot, 5.1, mar.top, 6.1)) # shift to the left: c(bottom, left, top, right)
   
@@ -295,11 +295,11 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
   cph = 0.5 # minimum on graph histories; what people will see if they check
   
   # legend location
-  topoffset = nsolutions*5-3
-  legend_y = par()$usr[4]+topoffset*w # usr: c(x1, x2, y1, y2)
+  topoffset = (nsolutions+1)*5 # +1 for unsupported solutions in legend entry
+  legend_y = par()$usr[4]+topoffset*w-4*w # usr: c(x1, x2, y1, y2)
   
   # legend header
-  text(-offset_x*1.5, legend_y+w/2,
+  text(-offset_x*1.5, legend_y+w/2-0.25,
        sprintf("Input table: %s rows x %s columns ( %s GB )",
                format_comma(.nrow), 9L, # hardcoded number of columns!
                if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
@@ -324,7 +324,13 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         tolower(names(timescale)) # minutes/seconds
       ), colmain=colmain),
       by="solution"
-      ][, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
+      ] -> lg
+  unsupported = c("modin","clickhouse","cudf")
+  lg2 = data.table(solution="unsupported",
+                   leg=paste(paste(unsupported, collapse=", "), "  -  unimplemented, see README for details", sep=""),
+                   colmain="black")
+  lg = rbindlist(list(lg, lg2))
+  lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
                  text.font=1, xpd=NA, legend=leg)] -> nul
   
   # footer link to report
@@ -349,8 +355,8 @@ if (dev1<-FALSE) {
   for (s in sols) {
     benchplot(.nrow=.nrow, timings=d[solution%in%s], code=groupby.code, colors=solution.colors, .interactive=FALSE, by.nsolutions=TRUE)
   }
-} else if (dev2<-FALSE) {
-  source("benchplot.R")
+} else if (dev2<-T) {
+  if (!dev2) source("benchplot.R")
   source("report.R")
   source("report-code.R")
   ld = time_logs()
