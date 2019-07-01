@@ -355,7 +355,7 @@ if (dev1<-FALSE) {
   for (s in sols) {
     benchplot(.nrow=.nrow, timings=d[solution%in%s], code=groupby.code, colors=solution.colors, .interactive=FALSE, by.nsolutions=TRUE)
   }
-} else if (dev2<-T) {
+} else if (dev2<-F) {
   if (!dev2) source("benchplot.R")
   source("report.R")
   source("report-code.R")
