@@ -325,9 +325,9 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       ), colmain=colmain),
       by="solution"
       ] -> lg
-  unsupported = c("modin","clickhouse","cudf")
+  unsupported = c("Modin","ClickHouse","cuDF")
   lg2 = data.table(solution="unsupported",
-                   leg=paste(paste(unsupported, collapse=", "), "  -  unimplemented, see README for details", sep=""),
+                   leg=paste(paste(unsupported, collapse=", "), "  -  pending, see README.md", sep=""),
                    colmain="black")
   lg = rbindlist(list(lg, lg2))
   lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
