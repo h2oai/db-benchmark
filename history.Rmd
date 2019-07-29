@@ -20,7 +20,8 @@ report_name = "history"
 ```{r init}
 library(lattice)
 source("report.R")
-ld = time_logs()
+ld = time_logs()[task=="groupby"]
+ld[, "question" := droplevels(question)]
 recent_nodename = ld[script_recent==TRUE, unique(nodename)]
 stopifnot(length(recent_nodename)==1L)
 ld = ld[nodename==recent_nodename]
