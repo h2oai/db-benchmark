@@ -13,6 +13,10 @@ SET log_queries = 1;
 SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
+-- debug start
+SELECT type, query, 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, read_rows AS in_rows, 'sum v1 by id1' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 0 AS cache, NULL AS chk, NULL AS chk_time_sec
+FROM system.query_log /*WHERE type=2 AND query='SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1;'*/ ORDER BY query_start_time DESC LIMIT 1;
+-- debug end
 /* old? SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, 'sum v1 by id1' AS question, 'clickhouse' AS solution, version() AS version, 'select group by' AS fun, 0 AS cache INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q1_r1.csv' FORMAT CSVWithNames; */
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, read_rows AS in_rows, 'sum v1 by id1' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 0 AS cache, NULL AS chk, NULL AS chk_time_sec
 FROM system.query_log WHERE type=2 AND query='SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1;' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q1_r1.csv' FORMAT CSVWithNames;
