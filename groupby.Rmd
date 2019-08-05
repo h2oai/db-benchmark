@@ -32,7 +32,7 @@ link = function(data_name, q_group, report_name) {
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
 ```{r filter_task_groupby}
-dt_task = lld[task=="groupby"]
+dt_task = lld[task=="groupby" & substr(data,1,2)=="G1"]
 by_data = function(dt, .in_rows, .task) {
   dt = dt[in_rows==as.character(.in_rows)]
   if (!nrow(dt)) return(invisible(NULL))
