@@ -6,7 +6,8 @@ groupby.code = list(
     "juliadf"="by(x, :id1, v1 = :v1 => sum)",
     "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1)}, by(f.id1)]",
-    "spark"="spark.sql('select id1, sum(v1) as v1 from x group by id1')"
+    "spark"="spark.sql('select id1, sum(v1) as v1 from x group by id1')",
+    "clickhouse"="SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1"
   ),
   "sum v1 by id1:id2" = c( # q2
     "dask"="x.groupby(['id1','id2']).agg({'v1':'sum'}).compute()",
@@ -15,7 +16,8 @@ groupby.code = list(
     "juliadf"="by(x, [:id1, :id2], v1 = :v1 => sum)",
     "pandas"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]",
-    "spark"="spark.sql('select id1, id2, sum(v1) as v1 from x group by id1, id2')"
+    "spark"="spark.sql('select id1, id2, sum(v1) as v1 from x group by id1, id2')",
+    "clickhouse"="SELECT id1, id2, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1, id2"
   ),
   "sum v1 mean v3 by id3" = c( # q3
     "dask"="x.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()",
@@ -24,7 +26,8 @@ groupby.code = list(
     "juliadf"="by(x, :id3, v1 = :v1 => sum, v3 = :v3 => mean)",
     "pandas"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]",
-    "spark"="spark.sql('select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3')"
+    "spark"="spark.sql('select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3')",
+    "clickhouse"="SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM DATA_NAME GROUP BY id3;"
   ),
   "mean v1:v3 by id4" = c( # q4
     "dask"="x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
@@ -33,7 +36,8 @@ groupby.code = list(
     "juliadf"="by(x, :id4, v1 = :v1 => mean, v2 = :v2 => mean, v3 = :v3 => mean)",
     "pandas"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
     "pydatatable"="DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]",
-    "spark"="spark.sql('select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')"
+    "spark"="spark.sql('select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')",
+    "clickhouse"="SELECT id4, avg(v1) AS v1, avg(v2) AS v2, avg(v3) AS v3 FROM DATA_NAME GROUP BY id4"
   ),
   "sum v1:v3 by id6" = c( # q5
     "dask"="x.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
@@ -42,7 +46,8 @@ groupby.code = list(
     "juliadf"="by(x, :id6, v1 = :v1 => sum, v2 = :v2 => sum, v3 = :v3 => sum)",
     "pandas"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
     "pydatatable"="DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]",
-    "spark"="spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')"
+    "spark"="spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')",
+    "clickhouse"="SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM DATA_NAME GROUP BY id6"
   ),
   "median v3 sd v3 by id2 id4" = c ( # q6
     "dask" = "median not yet implemented: dask#4362", # x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
@@ -51,7 +56,8 @@ groupby.code = list(
     "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
     "pydatatable" = "median not yet implemented: datatable#1530", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]
-    "spark" = "median not yet implemented: SPARK-26589" # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
+    "spark" = "median not yet implemented: SPARK-26589", # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
+    "clickhouse"=""
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
     "dask" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()",
@@ -60,7 +66,8 @@ groupby.code = list(
     "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
     "pandas" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
     "pydatatable" = "x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]",
-    "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')"
+    "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')",
+    "clickhouse"=""
   ),
   "largest two v3 by id2 id4" = c ( # q8
     "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()",
@@ -69,7 +76,8 @@ groupby.code = list(
     "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
     "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id2, f.id4), sort(-f.v3)]",
-    "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')"
+    "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
+    "clickhouse"=""
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
     "dask" = "not yet implemented: dask/dask#4828",
@@ -78,7 +86,8 @@ groupby.code = list(
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
     "pydatatable" = "not yet implemented: datatable#1543", # x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)],
-    "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')"
+    "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')",
+    "clickhouse"=""
   ),
   "sum v3 count by id1:id6" = c( # q10
     "dask" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()",
@@ -87,7 +96,8 @@ groupby.code = list(
     "juliadf" = "by(x, [:id1, :id2, :id3, :id4, :id5, :id6], v3 = :v3 => sum, count = :v3 => length)",
     "pandas" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})",
     "pydatatable" = "x[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]",
-    "spark" = "spark.sql('select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6')"
+    "spark" = "spark.sql('select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6')",
+    "clickhouse"=""
   )
 )
 
@@ -99,7 +109,8 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(small, on='id4')",
     "pydatatable" = "x[:, :, join(small, on='id4)]",
-    "spark" = "spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
+    "spark" = "spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "clickhouse"=""
   ),
   "medium inner on int" = c( # q2
     "dask" = "x.merge(medium, on='id4').compute()",
@@ -108,7 +119,8 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id4')",
     "pydatatable" = "x[:, :, join(medium, on='id4')]",
-    "spark" = "spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
+    "spark" = "spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "clickhouse"=""
   ),
   "medium outer on int" = c( # q3
     "dask" = "x.merge(medium, how='left', on='id4').compute()",
@@ -117,7 +129,8 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, how='left', on='id4')",
     "pydatatable" = "x[:, :, join(medium, on='id4', how='outer')]",
-    "spark" = "spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
+    "spark" = "spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "clickhouse"=""
   ),
   "medium inner on factor" = c( # q4
     "dask" = "x.merge(medium, on='id1').compute()",
@@ -126,7 +139,8 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id1')",
     "pydatatable" = "x[:, :, join(medium, on='id1')]",
-    "spark" = "spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)"
+    "spark" = "spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "clickhouse"=""
   ),
   "big inner on int" = c( # q5
     "dask" = "x.merge(big, on='id4').compute()",
@@ -135,7 +149,8 @@ join.code = list(
     "juliadf" = "",
     "pandas" = "x.merge(big, on='id4')",
     "pydatatable" = "x[:, :, join(big, on='id4')]",
-    "spark" = "spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)"
+    "spark" = "spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "clickhouse"=""
   )
 )
 

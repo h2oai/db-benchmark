@@ -5,8 +5,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  #"clickhouse"
-  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf")
+  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse")
 }
 get_excluded_batch = function() {
   c(
@@ -72,9 +71,7 @@ model_time = function(d) {
     stop("Value of 'out_rows' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_cols), .(unq_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unq_out_cols>1]))
     stop("Value of 'out_cols' varies for different runs for single solution+question") #d[,.SD][!is.na(out_cols), `:=`(unq_out_cols=uniqueN(out_cols), paste_unq_out_cols=paste(unique(out_cols), collapse=",")), .(task, solution, data, question)][unq_out_cols>1, paste_unq_out_cols, .(task, solution, data, question, batch)]
-  if (nrow(d[!is.na(cache), .(unq_cache=uniqueN(cache))][unq_cache>1]))
-    stop("Value of 'cache' should be constant for all solutions")
-  d = dcast(d, nodename+batch+in_rows+question+solution+fun+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
+  d = dcast(d, nodename+batch+in_rows+question+solution+fun+cache+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
   d[, c("chk_2","out_rows_2","out_cols_2") := NULL]
   setnames(d, c("chk_1","out_rows_1","out_cols_1"), c("chk","out_rows","out_cols"))
   d
@@ -91,16 +88,6 @@ model_questions = function(q) {
 
 # merge ----
 
-.merge_time_logs = function(d, l) {
-  warning("deprecated, use merge_logs_questions followed by merge_time_logsquestions")
-  ld = d[l, on=c("nodename","batch","solution","task","data"), nomatch=NA]
-  if (nrow(ld[as.character(version)!=as.character(i.version)]))
-    stop("Solution version in 'version' does not match between 'time' and 'logs'")
-  if (nrow(ld[as.character(git)!=as.character(i.git)]))
-    stop("Solution revision in 'git' does not match between 'time' and 'logs'")
-  ld[, c("i.version","i.git") := NULL]
-  ld
-}
 merge_logs_questions = function(l, q) {
   grain_l = l[, c(list(ii=1L), .SD), c("nodename","batch","solution","task","data")]
   lq = copy(q)[, "ii":=1L # used for cartesian product

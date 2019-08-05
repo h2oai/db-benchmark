@@ -14,7 +14,8 @@ solution.colors = rbindlist(list(
   list(solution="pydatatable", "darkorange", "orange"),
   list(solution="spark", "#8000FFFF", "#CC66FF"),
   list(solution="dask", "slategrey", "lightgrey"),
-  list(solution="juliadf", "deepskyblue", "darkturquoise")
+  list(solution="juliadf", "deepskyblue", "darkturquoise"),
+  list(solution="clickhouse", "hotpink4", "hotpink1")
 ), use.names=FALSE)
 
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
@@ -147,7 +148,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
     filepath = file.path(path, fnam)
   }
   if (.interactive) cat("Plotting to", filepath, "...\n")
-  height = 700+120*nsolutions + 30; # 30 for legend entry for unsupported
+  height = 700+125*nsolutions + 30; # 30 for legend entry for unsupported
   png(file=filepath, width=800, height=height)
 
   mar.top = 3.1+nsolutions+1L # +1 for unsupported solutions legend entry
@@ -266,7 +267,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
         if (val > x_at[length(x_at)]) val = x_at[length(x_at)] # do not plot bar outside plot region to not overlap on timing values on margin
         rect(0, at-w, val, at+w, col=colors[s, collight, on="solution"], xpd=NA)
       } else { # we should use dictionary here instead of hardcoded
-        exception = if (s%in%c("pandas","dask")) "Lack of memory to read data"
+        exception = if (s%in%c("pandas","dask")) "Lack of memory to read data / out of memory"
         else if (s%in%c("dplyr")) "timeout / Cannot allocate memory"
         else if (s%in%c("data.table")) "timeout / memory monitor OOM"
         else if (s%in%c("juliadf")) "timeout / OutOfMemoryError"
@@ -325,7 +326,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       ), colmain=colmain),
       by="solution"
       ] -> lg
-  unsupported = c("Modin","ClickHouse","cuDF")
+  unsupported = c("Modin","cuDF")
   lg2 = data.table(solution="unsupported",
                    leg=paste(paste(unsupported, collapse=", "), "  -  pending, see README.md", sep=""),
                    colmain="black")
