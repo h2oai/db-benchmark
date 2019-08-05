@@ -120,6 +120,10 @@ Plots of all cases can be found at `r dt_task[in_rows=="1e9", .(q_grp_links=past
 by_data(dt_task, "1e9", "groupby")
 ```
 
+## Notes
+
+- ClickHouse timings are lower from among memory and mergeetree table engines, for each question separately.
+
 ```{r environment, child="rmarkdown_child/environment.Rmd"}
 ```
 

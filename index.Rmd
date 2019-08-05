@@ -71,6 +71,7 @@ benchplot(1e9, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, colors
 - Data used to generate plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [report.R](https://github.com/h2oai/db-benchmark/blob/master/report.R) for quick introduction how to work with those.  
 - We ensure that calculations are not deferred by solution.  
 - We also tested that answers produced from different solutions match each others, for details see [answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/answers-validation.R).  
+- ClickHouse timings are lower from among memory and mergeetree table engines, for each question separately.
 
 
 ```{r environment, child="rmarkdown_child/environment.Rmd"}

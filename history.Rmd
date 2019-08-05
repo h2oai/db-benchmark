@@ -20,7 +20,7 @@ report_name = "history"
 ```{r init}
 library(lattice)
 source("report.R")
-ld = time_logs()[task=="groupby"]
+ld = time_logs()[task=="groupby" & substr(data,1,2)=="G1"] # substr for clickhouse on-disk reported as G2
 ld[, "question" := droplevels(question)]
 recent_nodename = ld[script_recent==TRUE, unique(nodename)]
 stopifnot(length(recent_nodename)==1L)
