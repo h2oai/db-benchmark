@@ -134,7 +134,8 @@ for (s in solutions) { #s = solutions[1]
         sprintf("./%s-exec.sh %s %s > %s 2> %s", ns, t, d, out_file, err_file)
       } else sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
       venv = if (ext=="py") {
-        if (ns%in%c("cudf")) sprintf("conda activate %s && ", ns)
+        # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
+        if (ns%in%c("cudf")) sprintf("source ~/anaconda3/etc/profile.d/conda.sh && conda activate %s && ", ns)
         else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
       } else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)

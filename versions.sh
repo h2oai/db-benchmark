@@ -3,6 +3,8 @@ set -e
 
 source ./ch.sh
 source ./run.conf
+# https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
+source ~/anaconda3/etc/profile.d/conda.sh
 
 # we assume client was installed/upgraded together with server
 if [[ "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ch_installed && clickhouse-client --version-clean > clickhouse/VERSION && echo "" > clickhouse/REVISION; fi;
