@@ -48,7 +48,8 @@ solution = rbindlist(list(
   pandas = list(task=c("groupby","join")),
   pydatatable = list(task=c("groupby")), # join after https://github.com/h2oai/datatable/issues/1080
   spark = list(task=c("groupby","join")),
-  clickhouse = list(task=c("groupby"))
+  clickhouse = list(task=c("groupby")),
+  cudf = list(task=c("groupby"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
 stopifnot(nrow(solution) > 0L) # when added new solution and forget to add here this will catch
@@ -132,7 +133,10 @@ for (s in solutions) { #s = solutions[1]
       cmd = if (ext=="sql") { # only clickhouse for now
         sprintf("./%s-exec.sh %s %s > %s 2> %s", ns, t, d, out_file, err_file)
       } else sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
-      venv = if (ext=="py") sprintf("source ./%s/py-%s/bin/activate && ", ns, ns) else ""
+      venv = if (ext=="py") {
+        if (ns%in%c("cudf")) sprintf("conda activate %s && ", ns)
+        else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
+      } else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
       timeout_s = 60*timeout[["minutes"]] # see timeout.csv
       if (!mockup) {
