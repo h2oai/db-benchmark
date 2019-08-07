@@ -9,7 +9,7 @@ import cudf as cu
 
 exec(open("./helpers.py").read())
 
-ver = cu.__version__
+ver = cu.__version__.split("+", 1)[0]
 git = ""
 task = "groupby"
 solution = "cudf"
