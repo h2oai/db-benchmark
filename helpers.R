@@ -105,6 +105,7 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
   if (use.cache) cache <- if(exists(cache.obj<-".solution.date.cache", envir=.GlobalEnv)) get(cache.obj, envir=.GlobalEnv) else list()
   gh_repos = c("h2o"="h2oai/h2o-3",
                "clickhouse"="yandex/clickhouse",
+               "cudf"="rapidsai/cudf",
                "impala"="cloudera/Impala",
                "data.table"="Rdatatable/data.table",
                "dplyr"="tidyverse/dplyr",
@@ -136,7 +137,8 @@ solution.date = function(solution, version, git, only.date=FALSE, use.cache=TRUE
     julia = c("1.0.0" = "2018-08-09"), # not used not as switched to juliadf
     juliadf = c("0.14.0" = "2018-09-26",
                 "0.14.1" = "2018-10-03"),
-    clickhouse = character(0)
+    clickhouse = character(0),
+    cudf = character(0)
   )
   if (!is.na(git)) {
     if (use.cache && !is.null(cgit<-cache[[solution]][[git]])) {
@@ -204,7 +206,7 @@ wcl = function(x) {
 file.ext = function(x) {
   switch(x,
          "data.table"=, "dplyr"="R",
-         "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
+         "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
          "clickhouse"="sql",
          "juliadf"="jl")
 }

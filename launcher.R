@@ -130,6 +130,7 @@ for (s in solutions) { #s = solutions[1]
         if (file.exists(err_file)) file.remove(err_file)
       }
       ext = file.ext(s)
+      if (!length(ext)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", ns))
       cmd = if (ext=="sql") { # only clickhouse for now
         sprintf("./%s-exec.sh %s %s > %s 2> %s", ns, t, d, out_file, err_file)
       } else sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
