@@ -15,7 +15,8 @@ solution.colors = rbindlist(list(
   list(solution="spark", "#8000FFFF", "#CC66FF"),
   list(solution="dask", "slategrey", "lightgrey"),
   list(solution="juliadf", "deepskyblue", "darkturquoise"),
-  list(solution="clickhouse", "hotpink4", "hotpink1")
+  list(solution="clickhouse", "hotpink4", "hotpink1"),
+  list(solution="cudf", "peachpuff3", "peachpuff1")
 ), use.names=FALSE)
 
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
@@ -50,6 +51,8 @@ solution_name = function(solution, where) {
   if (solution=="pydatatable" && where=="legend") "(py)datatable"
   else if (solution=="juliadf" && where=="legend") "DataFrames.jl"
   else if (solution=="juliadf" && where=="margin") "DF.jl"
+  else if (solution=="clickhouse" && where=="legend") "ClickHouse"
+  else if (solution=="cudf") "cuDF"
   else solution
 }
 
@@ -326,7 +329,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, colors, cut
       ), colmain=colmain),
       by="solution"
       ] -> lg
-  unsupported = c("Modin","cuDF")
+  unsupported = c("Modin")
   lg2 = data.table(solution="unsupported",
                    leg=paste(paste(unsupported, collapse=", "), "  -  pending, see README.md", sep=""),
                    colmain="black")
