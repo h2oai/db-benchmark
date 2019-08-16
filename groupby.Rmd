@@ -122,7 +122,7 @@ by_data(dt_task, "1e9", "groupby")
 
 ## Notes
 
-- ClickHouse timings are mixed from two different table engines, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
+- ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
 
 ```{r environment, child="rmarkdown_child/environment.Rmd"}
 ```

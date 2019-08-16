@@ -57,8 +57,10 @@ stopifnot(nrow(solution) > 0L) # when added new solution and forget to add here 
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]
 
-# G2 grouping data only relevant for clickhouse
+# "G2" grouping data only relevant for clickhouse
 dt = dt[!(substr(data, 1L, 2L)=="G2" & solution!="clickhouse")]
+# clickhouse memory table engine "G1", disabled as per #91
+dt = dt[!(substr(data, 1L, 2L)=="G1" & solution=="clickhouse")]
 
 # log current machine name
 dt[, "nodename" := nodename]
