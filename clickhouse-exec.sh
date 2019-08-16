@@ -32,13 +32,13 @@ rm -f clickhouse/log/$1_$2_q*.csv
 
 # execute sql script on clickhouse
 clickhouse-client --query="TRUNCATE TABLE system.query_log"
-cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 1
+cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 1 || echo "# clickhouse-exec.sh: benchmark sql script for $2 terminated with error" >&2
 
-# parse timings from clickhouse/log/[task]_[data_name].out and clickhouse/log/[task]_[data_name]_q[i]_r[j].csv
+# parse timings from clickhouse/log/[task]_[data_name]_q[i]_r[j].csv
 Rscript clickhouse/clickhouse-parse-log.R "$1" "$2"
 
 # cleanup data
-ch_active && echo "# clickhouse-exec.sh: finishing, truncating table $2" && clickhouse-client --query="TRUNCATE TABLE $2" || echo "# clickhouse-exec.sh: finishing, clickhouse server down, possibly crashed, could not truncate table $2"
+ch_active && echo "# clickhouse-exec.sh: finishing, truncating table $2" && clickhouse-client --query="TRUNCATE TABLE $2" || echo "# clickhouse-exec.sh: finishing, clickhouse server down, possibly crashed, could not truncate table $2" >&2
 
 # stop server
-ch_stop
+ch_stop && echo "# clickhouse-exec.sh: stopping server finished" || echo "# clickhouse-exec.sh: stopping server failed" >&2
