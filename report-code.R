@@ -62,8 +62,8 @@ groupby.code = list(
     "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
     "pydatatable" = "median not yet implemented: datatable#1530", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]
     "spark" = "median not yet implemented: SPARK-26589", # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
-    "clickhouse"="",
-    "cudf"="median not yet implemented: cudf#1085"
+    "clickhouse" = "SELECT id2, id4, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM x GROUP BY id2, id4",
+    "cudf" = "median not yet implemented: cudf#1085"
   ),
   "max v1 - min v2 by id2 id4" = c ( # q7
     "dask" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()",
@@ -73,8 +73,8 @@ groupby.code = list(
     "pandas" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
     "pydatatable" = "x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]",
     "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')",
-    "clickhouse"="",
-    "cudf"="not yet implemented: cudf#2591"
+    "clickhouse" ="SELECT id2, id4, max(v1) - min(v2) AS range_v1_v2 FROM x GROUP BY id2, id4",
+    "cudf" = "not yet implemented: cudf#2591"
   ),
   "largest two v3 by id2 id4" = c ( # q8
     "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()",
@@ -84,8 +84,8 @@ groupby.code = list(
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
     "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id2, f.id4), sort(-f.v3)]",
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
-    "clickhouse"="",
-    "cudf"="not yet implemented: cudf#2592"
+    "clickhouse" = "SELECT id2, id4, arrayJoin(arraySlice(arraySort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id2, id4",
+    "cudf" = "not yet implemented: cudf#2592"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9
     "dask" = "not yet implemented: dask/dask#4828",
@@ -95,8 +95,8 @@ groupby.code = list(
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
     "pydatatable" = "not yet implemented: datatable#1543", # x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)],
     "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')",
-    "clickhouse"="",
-    "cudf"="not yet implemented: cudf#1267"
+    "clickhouse" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4",
+    "cudf" = "not yet implemented: cudf#1267"
   ),
   "sum v3 count by id1:id6" = c( # q10
     "dask" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()",
@@ -106,8 +106,8 @@ groupby.code = list(
     "pandas" = "x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})",
     "pydatatable" = "x[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]",
     "spark" = "spark.sql('select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6')",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6",
+    "cudf" = "x.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False).agg({'v3':'sum', 'v1':'count'})"
   )
 )
 
