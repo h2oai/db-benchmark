@@ -48,7 +48,8 @@ clean_time = function(d) {
           ][task=="groupby" & solution=="pandas" & batch<=1558106628 & question=="largest two v3 by id2 id4", "out_cols" := NA_integer_
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
-                ][]
+                ][task=="join" & batch<=1566379460, "chk":=NA_character_ # solution_chk fails in answers-validation.R script, update batch id when join scripts amended to produce chk of same length (number of ';')
+                  ][]
 }
 clean_logs = function(l) {
   if (nrow(l[!nzchar(version) | is.na(version)]))
@@ -65,14 +66,16 @@ clean_questions = function(q) {
 # model ----
 
 model_time = function(d) {
+  # chk tolerance for cudf disabled as of now: https://github.com/rapidsai/cudf/issues/2494
+  #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
   if (nrow(
-    d[!is.na(chk) & solution!="cudf", # skip check for cudf till following issue resolved https://github.com/rapidsai/cudf/issues/2494
-      .(unq_chk=uniqueN(chk)), .(task, solution, data, question)][unq_chk>1]
-    )) #browser() # d[!is.na(chk), .(unq_chk=uniqueN(chk), unq_chk2=paste(unique(chk), collapse=",")), .(task, solution, data, question)][unq_chk>1]
+    d[!is.na(chk) & solution!="cudf",
+      .(unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
+    ))
     stop("Value of 'chk' varies for different runs for single solution+question")
-  if (nrow(d[!is.na(out_rows), .(unq_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unq_out_rows>1]))
+  if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unqn_out_rows>1L]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
-  if (nrow(d[!is.na(out_cols), .(unq_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unq_out_cols>1]))
+  if (nrow(d[!is.na(out_cols), .(unqn_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unqn_out_cols>1L]))
     stop("Value of 'out_cols' varies for different runs for single solution+question") #d[,.SD][!is.na(out_cols), `:=`(unq_out_cols=uniqueN(out_cols), paste_unq_out_cols=paste(unique(out_cols), collapse=",")), .(task, solution, data, question)][unq_out_cols>1, paste_unq_out_cols, .(task, solution, data, question, batch)]
   d = dcast(d, nodename+batch+in_rows+question+solution+fun+cache+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
   d[, c("chk_2","out_rows_2","out_cols_2") := NULL]

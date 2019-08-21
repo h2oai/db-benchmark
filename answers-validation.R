@@ -11,7 +11,8 @@ grain = c("solution","task","data","iquestion")
 d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique(out_rows), collapse=",")), by=grain
   ][unqn_out_rows>1L
     ] -> check[["solution_out_rows"]]
-d[!is.na(chk), .(unqn_chk=uniqueN(chk), unq_chk=paste(unique(chk), collapse=",")), by=grain
+d[!is.na(chk) & solution!="cudf", # cudf check disabled as of now, see comment in model_time() in report.R
+  .(unqn_chk=uniqueN(chk), unq_chk=paste(unique(chk), collapse=",")), by=grain
   ][unqn_chk>1L
     ] -> check[["solution_chk"]]
 
@@ -23,7 +24,7 @@ d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique
 # detect lack of chk match in query output between median chk from all solutions with tolerance=0.005
 chk_check = function(chk, tolerance=sqrt(.Machine$double.eps)) {
   len = unique(sapply(chk, length))
-  if (length(len)!=1L) stop("some solutions returns chk for less variables than others")
+  if (length(len)!=1L) stop("some solutions returns chk for less variables than others") # note that join task as of 1566379460 was producing incorrect chk for some solutions
   med = sapply(seq.int(len), function(i) median(sapply(chk, `[[`, i)))
   eq_txt = sapply(chk, all.equal, med, tolerance=tolerance, simplify=FALSE)
   #if (any(!sapply(eq_txt, isTRUE))) browser()
@@ -37,7 +38,8 @@ chk_check = function(chk, tolerance=sqrt(.Machine$double.eps)) {
   ans
 }
 (if (nrow(check[["solution_chk"]])) NULL else { # only proceed if chk was not mismatched within a solution
-  d[!is.na(chk), .(unqn_chk=uniqueN(chk), chk=unique(chk)), by=c("solution", grain)
+  d[!is.na(chk) & solution!="cudf", # cudf chk validation disabled due to issue described in model_time() in report.R
+    .(unqn_chk=uniqueN(chk), chk=unique(chk)), by=c("solution", grain)
     ][, if (any(unqn_chk>1L)) stop("this check should not be performed, should be escaped in 'if' branch") else .SD # ensure chk is unique
       ][, .(chk, chk_l=sapply(strsplit(chk, ";", fixed=TRUE), as.numeric, simplify=FALSE)), by=c("solution", grain)
         ][, chk_check(setNames(chk_l, solution), tolerance=0.005), keyby=grain
