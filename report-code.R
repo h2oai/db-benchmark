@@ -84,7 +84,7 @@ groupby.code = list(
     "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
     "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id2, f.id4), sort(-f.v3)]",
     "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
-    "clickhouse" = "SELECT id2, id4, arrayJoin(arraySlice(arraySort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id2, id4",
+    "clickhouse" = "SELECT id2, id4, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id2, id4",
     "cudf" = "not yet implemented: cudf#2592"
   ),
   "regression v1 v2 by id2 id4" = c ( # q9

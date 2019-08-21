@@ -57,15 +57,15 @@ awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
 
-# reproduce interactive environment, hardcoded clickhouse-exec.sh for G1_1e7_1e2_0_0
+# reproduce interactive environment, hardcoded clickhouse-exec.sh for G2_1e7_1e2_0_0
 ch_start
 CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
-clickhouse-client --query="TRUNCATE TABLE G1_1e7_1e2_0_0"
-clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO G1_1e7_1e2_0_0 FORMAT CSVWithNames" < "data/G1_1e7_1e2_0_0.csv"
-echo -e "clickhouse-client --query=\"SELECT count(*) FROM G1_1e7_1e2_0_0\"\nG1_1e7_1e2_0_0" | Rscript -e 'source("helpers.R"); stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=get.nrow(data_name=stdin[2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
-sed "s/DATA_NAME/G1_1e7_1e2_0_0/g" < "clickhouse/groupby-clickhouse.sql.in" > "clickhouse/groupby-clickhouse.sql"
+clickhouse-client --query="TRUNCATE TABLE G2_1e7_1e2_0_0"
+clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO G2_1e7_1e2_0_0 FORMAT CSVWithNames" < "data/G2_1e7_1e2_0_0.csv"
+echo -e "clickhouse-client --query=\"SELECT count(*) FROM G2_1e7_1e2_0_0\"\nG2_1e7_1e2_0_0" | Rscript -e 'source("helpers.R"); stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=get.nrow(data_name=stdin[2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
+sed "s/DATA_NAME/G2_1e7_1e2_0_0/g" < "clickhouse/groupby-clickhouse.sql.in" > "clickhouse/groupby-clickhouse.sql"
 clickhouse-client --query="TRUNCATE TABLE system.query_log"
 clickhouse-client --max_memory_usage=$CH_MEM --format=Pretty --output_format_pretty_max_rows 3
 # go interactive clickhouse-client and use clickhouse/groupby-clickhouse.sql
-clickhouse-client --query="TRUNCATE TABLE G1_1e7_1e2_0_0"
+clickhouse-client --query="TRUNCATE TABLE G2_1e7_1e2_0_0"
 ch_stop
