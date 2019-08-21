@@ -2,11 +2,11 @@ ch_installed() {
   dpkg-query -Wf'${db:Status-abbrev}' clickhouse-server 2>/dev/null | grep -q '^i'
 }
 ch_start() {
-  echo 'starting clickhouse-server'
+  echo '# ch_start: starting clickhouse-server'
   sudo /usr/sbin/service clickhouse-server start && sleep 10
 }
 ch_stop() {
-  echo 'stopping clickhouse-server'
+  echo '# ch_stop: stopping clickhouse-server'
   sudo /usr/sbin/service clickhouse-server stop && sleep 10
 }
 ch_active() {

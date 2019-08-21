@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-cat("# clickhouse-parse-log.R\n")
+cat("# clickhouse-parse-log.R: starting to parse timings from clickhouse/log/.\n")
 
 source("helpers.R")
 args = commandArgs(TRUE) # args = c("groupby","G1_1e6_1e2_0_0")
@@ -20,5 +20,7 @@ d[,
             out_rows=as.numeric(NA), out_cols=as.integer(NA), solution=as.character(solution), version=as.character(version), git=as.character(NA), fun=as.character(fun), 
             time_sec=as.numeric(time_sec), mem_gb=as.numeric(NA), cache=as.logical(cache), chk=as.character(NA), chk_time_sec=as.numeric(NA)),
   by = seq_len(nrow(d))] -> nul
+
+cat("# clickhouse-parse-log.R: parsing timings to time.csv finished\n")
 
 if (!interactive()) q("no")
