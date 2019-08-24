@@ -9,19 +9,21 @@ export PATH=/usr/local/cuda-9.2/bin:$PATH
 # confirm 9.2 used
 nvcc --version
 
-# conda env
-conda install --name cudf -c nvidia -c rapidsai -c numba -c conda-forge -c pytorch -c defaults cudf=0.8 cuml=0.8 cugraph=0.8 python=3.6 cudatoolkit=9.2
+# setup conda env based on cudf/init-cudf.py
+
 # test
 conda activate cudf
-python -c 'import cudf'
-conda install psutil
-
-x = cudf.read_csv("data/G1_1e7_1e2_0_0.csv", skiprows=1, # header arg not there yet as of cudf 0.4
-                  names=['id1','id2','id3','id4','id5','id6','v1','v2','v3'],
-                  dtype=['str','str','str','int','int','int','int','int','float']) # category type not supported
-# factor type does not yet work
-#x = cudf.read_csv("data/G1_1e7_1e2_0_0.csv", skiprows=1, # header arg not there yet as of cudf 0.4
-#                  names=['id1','id2','id3','id4','id5','id6','v1','v2','v3'],
-#                  dtype=['category','category','category','int','int','int','int','int','float']) # category type not supported
-
-print(x.head(3))
+python
+import cudf as cu
+cu.__version__.split("+", 1)[0]
+x = cu.read_csv("data/G1_1e7_1e2_0_0.csv", skiprows=1,
+                names=['id1','id2','id3','id4','id5','id6','v1','v2','v3'],
+                dtype=['str','str','str','int32','int32','int32','int32','int32','float64'])
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
+print(len(x.index), flush=True)
+print(x.head(3), flush=True)
+print(x.dtypes, flush=True)
+exit()
+conda deactivate
