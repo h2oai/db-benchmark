@@ -29,7 +29,6 @@ echo "# Benchmark run $BATCH started"
 # get config
 source ./run.conf
 source ./path.env
-source ~/anaconda3/etc/profile.d/conda.sh # conda required for cudf
 
 # upgrade tools and VERSION, REVISION metadata files
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/init-dask.sh; fi;
