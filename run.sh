@@ -10,7 +10,6 @@ export BATCH=$(date +%s)
 # confirm stop flag disabled
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
-source ~/anaconda3/etc/profile.d/conda.sh # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
 # confirm clickhouse is not running
 source ./ch.sh
 ch_installed && ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
@@ -30,24 +29,29 @@ echo "# Benchmark run $BATCH started"
 # get config
 source ./run.conf
 source ./path.env
+source ~/anaconda3/etc/profile.d/conda.sh # conda required for cudf
 
-# upgrade tools
+# upgrade tools and VERSION, REVISION metadata files
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/init-dask.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/ver-dask.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/init-datatable.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/ver-datatable.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dplyr" ]]; then ./dplyr/init-dplyr.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "dplyr" ]]; then ./dplyr/ver-dplyr.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "juliadf" ]]; then ./juliadf/init-juliadf.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "juliadf" ]]; then ./juliadf/ver-juliadf.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "modin" ]]; then ./modin/init-modin.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "modin" ]]; then ./modin/ver-modin.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pandas" ]]; then ./pandas/init-pandas.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "pandas" ]]; then ./pandas/ver-pandas.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pydatatable/init-pydatatable.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pydatatable/ver-pydatatable.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/init-spark.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/ver-spark.sh; fi;
+#if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/init-cudf.sh; fi; # upgrade manually as full re-install
+if [[ "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/ver-cudf.sh; fi;
 #if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/init-clickhouse.sh; fi; # manual as requires sudo: apt-get install --only-upgrade clickhouse-server clickhouse-client
-#if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/init-cudf.sh; fi; # upgrade probably better as full reinstall
-
-# produce VERSION, REVISION files for each solution
-set +e
-./versions.sh
-if [[ $? -ne 0 ]]; then echo "# Benchmark run $BATCH failed to check versions of currently installed solutions" && rm -f ./run.lock && exit; fi;
-set -e
+if [[ "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/ver-clickhouse.sh; fi;
 
 # run
 Rscript ./launcher.R
