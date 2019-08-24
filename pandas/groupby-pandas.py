@@ -20,9 +20,13 @@ data_name = os.environ['SRC_GRP_LOCAL']
 src_grp = os.path.join("data", data_name+".jay")
 print("loading dataset %s" % data_name, flush=True)
 
+## failed attempt to improve read_csv to read 1e9 rows #99
+#dtype = {"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"}
+#x = pd.read_csv(src_grp, dtype=dtype, engine="c", low_memory=True)
+
 import datatable as dt # for loading data only, see #47
 x = dt.open(src_grp).to_pandas()
-x['id1'] = x['id1'].astype('category')
+x['id1'] = x['id1'].astype('category') # remove after datatable#1691
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
 print(len(x.index), flush=True)

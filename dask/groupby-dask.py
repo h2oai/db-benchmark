@@ -35,7 +35,8 @@ print("loading dataset %s" % data_name, flush=True)
 #x = dd.read_parquet(data_name, engine="fastparquet")
 # parquet timings slower, 1e9 not possible to read due to parquet format portability issue of spark-fastparquet
 
-x = dd.read_csv(src_grp, na_filter=False, dtype={'id1':'category', 'id2':'category', 'id3':'category'}).persist()
+dtype = {"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"}
+x = dd.read_csv(src_grp, na_filter=False, dtype=dtype).persist()
 in_rows = len(x)
 print(in_rows, flush=True)
 
