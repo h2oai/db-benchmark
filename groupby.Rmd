@@ -54,7 +54,7 @@ path = file.path("public", report_name, "plots")
 for (in_rows in c("1e7","1e8","1e9")) {
   for (data_name in paste("G1", in_rows, c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1"), sep="_")) {
     for (q_group in c("basic","advanced")) {
-      benchplot(as.numeric(in_rows), data=data_name, timings=dt_task[question_group==q_group], code=groupby.code, colors=solution.colors, fnam=paste(data_name, q_group, "png", sep="."), path=path, .interactive=FALSE)
+      benchplot(as.numeric(in_rows), data=data_name, timings=dt_task[question_group==q_group], code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=paste(data_name, q_group, "png", sep="."), path=path, .interactive=FALSE)
     }
   }
 }
@@ -62,7 +62,7 @@ if (dev<-FALSE) {
   in_rows = "1e9"
   data_name = "G1_1e9_2e0_0_0"
   q_group = "advanced"
-  benchplot(as.numeric(in_rows), data=data_name, timings=dt_task[question_group==q_group], code=groupby.code, colors=solution.colors, fnam=paste(data_name, q_group, "png", sep="."), path=path, .interactive=TRUE)
+  benchplot(as.numeric(in_rows), data=data_name, timings=dt_task[question_group==q_group], code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=paste(data_name, q_group, "png", sep="."), path=path, .interactive=TRUE)
 }
 ```
 
