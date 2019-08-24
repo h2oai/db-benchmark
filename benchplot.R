@@ -120,10 +120,10 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, exceptions,
   nquestions = length(questions)
   if (nquestions > 5L)
     stop("Number of questions to plot should be at most 5, run benchplot on a subset of 5 questions")
-  if (timings[!is.na(time_sec_1), uniqueN(question)] < nquestions) {
-    message(sprintf("Benchplot skipped as there are some questions not answered by any solutions for %s %s", task, .data))
-    return(invisible(NULL))
-  }
+  #if (timings[!is.na(time_sec_1), uniqueN(question)] < nquestions) {
+  #  message(sprintf("Benchplot skipped as there are some questions not answered by any solutions for %s %s", task, .data))
+  #  return(invisible(NULL))
+  #} # benchplot now is able to plot empty result question #100
   
   if (!all(code_q_ok<-questions %in% names(code)))
     stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
@@ -256,9 +256,9 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, exceptions,
     
     # plot question headers
     out_rows = ans[question==questions[iq], na.omit(out_rows)]
-    if (length(unique(out_rows)) != 1L) if (interactive()) browser() else stop("out_rows mismatch")
+    if (length(unique(out_rows)) > 1L) if (interactive()) browser() else stop("out_rows mismatch") # len 0 when none completed answers for this question
     out_cols = ans[question==questions[iq], na.omit(out_cols)]
-    if (length(unique(out_cols)) != 1L) stop("out_cols mismatch")
+    if (length(unique(out_cols)) > 1L) stop("out_cols mismatch")
     textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L]))
     
     # second timing bars
@@ -271,6 +271,7 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, exceptions,
         rect(0, at-w, val, at+w, col=colors[s, collight, on="solution"], xpd=NA)
       } else {
         get_exception = function(e, s, key) {
+          if (!s %in% names(e)) stop(sprintf("missing exception for %s", s))
           if (!length(e[[s]])) return(character())
           ex = sapply(e[[s]], function(vec, key) sum(key%in%vec), key)
           sum_ex = sum(ex)
@@ -352,35 +353,14 @@ benchplot = function(.nrow=Inf, task="groupby", data, timings, code, exceptions,
   if (.interactive) system(paste("/usr/bin/xdg-open", filepath), wait=FALSE) else invisible(TRUE)
 }
 
-if (dev1<-FALSE) {
-  stop("adjust non-max batch only")
-  d = fread("time.csv")[!is.na(batch)][batch==max(batch)]
-  .nrow=1e9
-  # verify scaling across number of solutions
-  sols = list(c("data.table","pandas","dplyr"),
-              c("data.table","pandas","dplyr","pydatatable"),
-              c("data.table","spark","pydatatable","pandas","dplyr"),
-              c("data.table","spark","pydatatable","pandas","dplyr","dask"),
-              c("data.table","juliadf","dask","spark","pydatatable","pandas","dplyr"))
-  for (s in sols) {
-    benchplot(.nrow=.nrow, timings=d[solution%in%s], code=groupby.code, colors=solution.colors, .interactive=FALSE, by.nsolutions=TRUE)
-  }
-} else if (dev2<-F) {
-  if (!dev2) source("benchplot.R")
+if (dev<-FALSE) {
+  #source("benchplot.R")
   source("report.R")
   source("report-code.R")
   ld = time_logs()
-  dt = ld[task=="groupby" & script_recent==TRUE & question_group=="basic"]
-  .nrow=1e7; data="G1_1e7_1e2_0_0"; 
-  .nrow=1e8; data="G1_1e8_1e2_0_0"; 
-  .nrow=1e9; data="G1_1e9_1e2_0_0"; 
+  q_group = "advanced"
+  dt = ld[task=="groupby" & script_recent==TRUE & question_group==q_group]
+  timings=dt; code=groupby.code; exceptions=groupby.exceptions; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; path=NULL
   .nrow=1e9; data="G1_1e9_2e0_0_0"; 
-  .nrow=1e9; data="G1_1e9_1e1_0_0"; 
-  timings=dt; code=groupby.code; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; path=NULL
-  .nrow=1e7; data="G1_1e7_1e2_0_0"; 
-  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
-  .nrow=1e8; data="G1_1e8_1e2_0_0"; 
-  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
-  .nrow=1e9; data="G1_1e9_1e2_0_0"; 
-  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
+  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, exceptions=exceptions, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
 }

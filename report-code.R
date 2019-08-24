@@ -115,7 +115,7 @@ groupby.code = list(
 )
 
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1566398304
-  "datatable" = {list(
+  "data.table" = {list(
     "timeout" = c("G1_1e9_2e0_0_0")                                                          # q3
   )},
   "dplyr" = {list(
@@ -152,7 +152,7 @@ groupby.data.exceptions = {list(                                                
   )}
 )}
 groupby.query.exceptions = {list(
-  "datatable" =   list(),
+  "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
   "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id2 id4",
