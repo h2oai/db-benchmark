@@ -1,4 +1,17 @@
 
+# exceptions helper ----
+
+task.exceptions = function(query, data) {
+  ex = list(query = query, data = data)
+  unq_in_list = function(x) {
+    y = unlist(x, use.names=FALSE)
+    length(unique(y))==length(y)
+  }
+  if (!all(sapply(ex$query, unq_in_list))) stop("task.exceptions detected invalid entries in 'query' exceptions")
+  if (!all(sapply(ex$data, unq_in_list))) stop("task.exceptions detected invalid entries in 'data' exceptions")
+  ex
+}
+
 # groupby ----
 
 groupby.code = list(
@@ -114,6 +127,22 @@ groupby.code = list(
   )} # q10
 )
 
+groupby.query.exceptions = {list(
+  "data.table" =  list(),
+  "dplyr" =       list(),
+  "pandas" =      list(),
+  "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id2 id4",
+                       "not yet implemented: datatable#1543" = "regression v1 v2 by id2 id4"),
+  "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id2 id4"),
+  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id2 id4",
+                       "not yet implemented: dask#4828" = "regression v1 v2 by id2 id4"),
+  "juliadf" =     list(),
+  "cudf" =        list("not yet implemented: cudf#1085" = "median v3 sd v3 by id2 id4",
+                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id2 id4",
+                       "not yet implemented: cudf#2592" = "largest two v3 by id2 id4",
+                       "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
+  "clickhouse" =  list()
+)}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1566398304
   "data.table" = {list(
     "timeout" = c("G1_1e9_2e0_0_0")                                                          # q3
@@ -151,32 +180,12 @@ groupby.data.exceptions = {list(                                                
     "CH server crash" = "G1_1e9_2e0_0_0"                                                     # q3
   )}
 )}
-groupby.query.exceptions = {list(
-  "data.table" =  list(),
-  "dplyr" =       list(),
-  "pandas" =      list(),
-  "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id2 id4",
-                       "not yet implemented: datatable#1543" = "regression v1 v2 by id2 id4"),
-  "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id2 id4"),
-  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id2 id4",
-                       "not yet implemented: dask#4828" = "regression v1 v2 by id2 id4"),
-  "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#1085" = "median v3 sd v3 by id2 id4",
-                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id2 id4",
-                       "not yet implemented: cudf#2592" = "largest two v3 by id2 id4",
-                       "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
-  "clickhouse" =  list()
-)}
-groupby.exceptions = list(query = groupby.query.exceptions, data = groupby.data.exceptions)
-stopifnot(
-  sapply(groupby.exceptions$query, function(x) {y<-unlist(x, use.names=FALSE);length(unique(y))==length(y)}),
-  sapply(groupby.exceptions$data, function(x) {y<-unlist(x, use.names=FALSE);length(unique(y))==length(y)})
-)
+groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
 
 # join ----
 
 join.code = list(
-  "small inner on int" = c( # q1
+  "small inner on int" = {c(
     "dask" = "x.merge(small, on='id4').compute()",
     "data.table" = "DT[small, on=.(id4), nomatch=NULL]",
     "dplyr" = "inner_join(DF, small, by='id4')",
@@ -186,8 +195,8 @@ join.code = list(
     "spark" = "spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
-  ),
-  "medium inner on int" = c( # q2
+  )}, # q1
+  "medium inner on int" = {c(
     "dask" = "x.merge(medium, on='id4').compute()",
     "data.table" = "DT[medium, on=.(id4), nomatch=NULL]",
     "dplyr" = "inner_join(DF, medium, by='id4')",
@@ -197,8 +206,8 @@ join.code = list(
     "spark" = "spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
-  ),
-  "medium outer on int" = c( # q3
+  )}, # q2
+  "medium outer on int" = {c(
     "dask" = "x.merge(medium, how='left', on='id4').compute()",
     "data.table" = "DT[medium, on=.(id4)]",
     "dplyr" = "left_join(DF, medium, by='id4')",
@@ -208,8 +217,8 @@ join.code = list(
     "spark" = "spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
-  ),
-  "medium inner on factor" = c( # q4
+  )}, # q3
+  "medium inner on factor" = {c(
     "dask" = "x.merge(medium, on='id1').compute()",
     "data.table" = "DT[medium, on=.(id1), nomatch=NULL]",
     "dplyr" = "inner_join(DF, medium, by='id1')",
@@ -219,8 +228,8 @@ join.code = list(
     "spark" = "spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
-  ),
-  "big inner on int" = c( # q5
+  )}, # q4
+  "big inner on int" = {c(
     "dask" = "x.merge(big, on='id4').compute()",
     "data.table" = "DT[big, on=.(id4), nomatch=NULL]",
     "dplyr" = "inner_join(DF, big, by='id4')",
@@ -230,19 +239,113 @@ join.code = list(
     "spark" = "spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
-  )
+  )} # q5
 )
 
-# template ----
+join.query.exceptions = {list(
+  "data.table" =  list(),
+  "dplyr" =       list(),
+  "pandas" =      list(),
+  "pydatatable" = list(),
+  "spark" =       list(),
+  "dask" =        list(),
+  "juliadf" =     list(),
+  "cudf" =        list(),
+  "clickhouse" =  list()
+)}
+join.data.exceptions = {list(                                                             # exceptions as of run ?
+  "data.table" = {list()},
+  "dplyr" = {list()},
+  "pandas" = {list()},
+  "pydatatable" = {list()},
+  "spark" = {list()},
+  "dask" = {list()},
+  "juliadf" = {list()},
+  "cudf" = {list()},
+  "clickhouse" = {list()}
+)}
+join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
 
-#"" = c( # q0
-#  "dask" = "",
-#  "data.table" = "",
-#  "dplyr" = "",
-#  "juliadf" = "",
-#  "pandas" = "",
-#  "pydatatable" = "",
-#  "spark" = ""
-#  "clickhouse" = "",
-#  "cudf" = ""
-#)
+# task template ----
+
+.task.code = list(
+  "question1" = {c(
+    "dask" = "",
+    "data.table" = "",
+    "dplyr" = "",
+    "juliadf" = "",
+    "pandas" = "",
+    "pydatatable" = "",
+    "spark" = "",
+    "clickhouse" = "",
+    "cudf" = ""
+  )}, # q1
+  "question2" = {c(
+    "dask" = "",
+    "data.table" = "",
+    "dplyr" = "",
+    "juliadf" = "",
+    "pandas" = "",
+    "pydatatable" = "",
+    "spark" = "",
+    "clickhouse" = "",
+    "cudf" = ""
+  )}, # q2
+  "question3" = {c(
+    "dask" = "",
+    "data.table" = "",
+    "dplyr" = "",
+    "juliadf" = "",
+    "pandas" = "",
+    "pydatatable" = "",
+    "spark" = "",
+    "clickhouse" = "",
+    "cudf" = ""
+  )}, # q3
+  "question4" = {c(
+    "dask" = "",
+    "data.table" = "",
+    "dplyr" = "",
+    "juliadf" = "",
+    "pandas" = "",
+    "pydatatable" = "",
+    "spark" = "",
+    "clickhouse" = "",
+    "cudf" = ""
+  )}, # q4
+  "question5" = {c(
+    "dask" = "",
+    "data.table" = "",
+    "dplyr" = "",
+    "juliadf" = "",
+    "pandas" = "",
+    "pydatatable" = "",
+    "spark" = "",
+    "clickhouse" = "",
+    "cudf" = ""
+  )} # q5
+)
+
+.task.query.exceptions = {list(
+  "data.table" =  list(),
+  "dplyr" =       list(),
+  "pandas" =      list(),
+  "pydatatable" = list(),
+  "spark" =       list(),
+  "dask" =        list(),
+  "juliadf" =     list(),
+  "cudf" =        list(),
+  "clickhouse" =  list()
+)}
+.task.data.exceptions = {list(                                                             # exceptions as of run ?
+  "data.table" = {list()},
+  "dplyr" = {list()},
+  "pandas" = {list()},
+  "pydatatable" = {list()},
+  "spark" = {list()},
+  "dask" = {list()},
+  "juliadf" = {list()},
+  "cudf" = {list()},
+  "clickhouse" = {list()}
+)}
+.task.exceptions = task.exceptions(.task.query.exceptions, .task.data.exceptions)
