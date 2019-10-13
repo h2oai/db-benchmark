@@ -223,7 +223,7 @@ getenv = function(x) {
 
 join_to_tbls = function(data_name) {
   x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
-  y_n = setNames(c(x_n, x_n/1e3, x_n/1e6), c("big","medium","small"))
+  y_n = setNames(c(x_n/1e6, x_n/1e3, x_n), c("small","medium","big"))
   sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
 }
 

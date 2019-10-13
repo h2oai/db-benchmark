@@ -79,9 +79,6 @@ y_DT = list(
   big = y_gen(DT, DT_except, size=y_N[["big"]], on="id3", cols=c("id1","id2","id3","id4","id5","id6"))
 )
 DT[, "v1" := round(runif(.N, max=100), 6)]
-#y_DT$small[DT, on="id1", nomatch=NULL]
-#y_DT$medium[DT, on="id2", nomatch=NULL]
-#y_DT$big[DT, on="id3", nomatch=NULL]
 
 # data_name of table to join
 join_to_tbls = function(data_name) {
