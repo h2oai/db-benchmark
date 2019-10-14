@@ -46,7 +46,7 @@ DT = data.table(
   id2 = sample_unq(N/1e3, 1, N),
   id3 = sample_unq(N, 1, N)
 )
-y_N = setNames(c(N/1e6, N/1e3, N), c("small","medium","big"))
+y_N = setNames(as.integer(c(N/1e6L, N/1e3L, N)), c("small","medium","big"))
 DT_except = DT[sample(.N), mapply(`+`, .SD, y_N, SIMPLIFY=FALSE)]
 
 all_levels = sprintf("id%011.0f", 1:(2L*N)) # char size fixed up to 1e11-1
@@ -79,6 +79,9 @@ y_DT = list(
   big = y_gen(DT, DT_except, size=y_N[["big"]], on="id3", cols=c("id1","id2","id3","id4","id5","id6"))
 )
 DT[, "v1" := round(runif(.N, max=100), 6)]
+
+areInts = function(dt) all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
+stopifnot(areInts(DT), sapply(y_DT, areInts))
 
 # data_name of table to join
 join_to_tbls = function(data_name) {
