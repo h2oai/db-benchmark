@@ -41,32 +41,32 @@ spark = SparkSession.builder \
 #print(spark.sparkContext._conf.getAll(), flush=True)
 
 x = spark.read.csv(src_jn_x, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-big = spark.read.csv(src_jn_y[0], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
+small = spark.read.csv(src_jn_y[0], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 medium = spark.read.csv(src_jn_y[1], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-small = spark.read.csv(src_jn_y[2], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
+big = spark.read.csv(src_jn_y[2], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count(), flush=True)
-print(big.count(), flush=True)
-print(medium.count(), flush=True)
 print(small.count(), flush=True)
+print(medium.count(), flush=True)
+print(big.count(), flush=True)
 
 x.createOrReplaceTempView("x")
-big.createOrReplaceTempView("big")
-medium.createOrReplaceTempView("medium")
 small.createOrReplaceTempView("small")
+medium.createOrReplaceTempView("medium")
+big.createOrReplaceTempView("big")
 
 print("joining...", flush=True)
 
 question = "small inner on int" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join small on x.id1 = small.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -74,13 +74,13 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join small on x.id4 = small.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join small on x.id1 = small.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -92,13 +92,13 @@ del ans
 question = "medium inner on int" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -106,13 +106,13 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #[spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -124,13 +124,13 @@ del ans
 question = "medium outer on int" # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x left join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -138,13 +138,13 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x left join medium on x.id4 = medium.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x left join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -156,13 +156,13 @@ del ans
 question = "medium inner on factor" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium on x.id5 = medium.id5').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -170,13 +170,13 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id1 = medium.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium on x.id5 = medium.id5').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
@@ -188,13 +188,13 @@ del ans
 question = "big inner on int" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join big on x.id3 = big.id3').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 ans.unpersist()
@@ -202,13 +202,13 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join big on x.id4 = big.id4').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join big on x.id3 = big.id3').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
 ans.createOrReplaceTempView("ans")
 t_start = timeit.default_timer()
-chk = [0] #list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from ans").collect()[0].asDict().values())
+chk = spark.sql("select sum(v1) as v1, sum(v2) as v2 from ans").collect()[0].asDict().values()
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(ans.head(3), flush=True)
