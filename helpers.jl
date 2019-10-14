@@ -47,7 +47,7 @@ end;
 
 function join_to_tbls(data_name)
   x_n = Int(parse(Float64, split(data_name, "_")[2]))
-  y_n = [x_n, x_n/1e3, x_n/1e6]
+  y_n = [x_n/1e6, x_n/1e3, x_n]
   y_n = [replace(@sprintf("%.0e", y_n[1]), r"[+]0?"=>""), replace(@sprintf("%.0e", y_n[2]), r"[+]0?"=>""), replace(@sprintf("%.0e", y_n[3]), r"[+]0?"=>"")]
   [replace(data_name, "NA" => y_n[1]), replace(data_name, "NA" => y_n[2]), replace(data_name, "NA" => y_n[3])]
 end;
