@@ -27,39 +27,49 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 x = dt.fread(src_jn_x)
-big = dt.fread(src_jn_y[0])
+small = dt.fread(src_jn_y[0])
 medium = dt.fread(src_jn_y[1])
-small = dt.fread(src_jn_y[2])
+big = dt.fread(src_jn_y[2])
 
 print(x.nrows, flush=True)
-print(big.nrows, flush=True)
-print(medium.nrows, flush=True)
 print(small.nrows, flush=True)
+print(medium.nrows, flush=True)
+print(big.nrows, flush=True)
+
+y = small.copy()
+t_start = timeit.default_timer()
+y.key = 'id1'
+ans = x[:, :, join(y)] # , on='id1'
+y = medium.copy()
+y.key = 'id2'
+ans = x[:, :, join(y)] # , on='id2'
 
 print("joining...", flush=True)
 
-exit(0) # https://github.com/h2oai/datatable/issues/1080
-
 question = "small inner on int" # q1
 gc.collect()
+y = small.copy() # https://github.com/h2oai/datatable/issues/1080
 t_start = timeit.default_timer()
-ans = x[:, :, join(small, on='id4')]
+y.key = 'id1'
+ans = x[:, :, join(y)] # , on='id1'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, sum(f.v1)]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
+y = small.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(small, on='id4')]
+y.key = 'id1'
+ans = x[:, :, join(y)] # , on='id1'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, sum(f.v1)]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 print(ans.head(3).to_pandas(), flush=True)
@@ -68,76 +78,89 @@ del ans
 
 question = "medium inner on int" # q2
 gc.collect()
+y = medium.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(medium, on='id4')]
+y.key = 'id2'
+ans = x[:, :, join(y)] # , on='id2'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, sum(f.v1)]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
+y = medium.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(small, on='id4')]
+y.key = 'id2'
+ans = x[:, :, join(y)] # , on='id2'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, sum(f.v1)]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
 
-question = "medium outer on int" # q3
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, :, join(medium, on='id4', how='outer')]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v3)]]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:, :, join(medium, on='id4', how='outer')]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v3)]]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
-del ans
+#question = "medium outer on int" # q3
+#gc.collect()
+#y = medium.copy()
+#t_start = timeit.default_timer()
+#y.key = 'id2'
+#ans = x[:, :, join(y, how='left')] # , on='id2'
+#print(ans.shape, flush=True)
+#t = timeit.default_timer() - t_start
+#m = memory_usage()
+#t_start = timeit.default_timer()
+#chk = ans[:, [sum(f.v1), sum(f.v2)]]
+#chkt = timeit.default_timer() - t_start
+#write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+#del ans
+#gc.collect()
+#y = medium.copy()
+#t_start = timeit.default_timer()
+#y.key = 'id2'
+#ans = x[:, :, join(y, how='left')] # , on='id2'
+#print(ans.shape, flush=True)
+#t = timeit.default_timer() - t_start
+#m = memory_usage()
+#t_start = timeit.default_timer()
+#chk = ans[:, [sum(f.v1), sum(f.v2)]]
+#chkt = timeit.default_timer() - t_start
+#write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+#print(ans.head(3).to_pandas(), flush=True)
+#print(ans.tail(3).to_pandas(), flush=True)
+#del ans
 
 question = "medium inner on factor" # q4
 gc.collect()
+y = medium.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(medium, on='id1')]
+y.key = 'id5'
+ans = x[:, :, join(y)] # , on='id5'
+t_start = timeit.default_timer()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
+y = medium.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(medium, on='id1')]
+y.key = 'id5'
+ans = x[:, :, join(y)] # , on='id5'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 print(ans.head(3).to_pandas(), flush=True)
@@ -146,24 +169,28 @@ del ans
 
 question = "big inner on int" # q5
 gc.collect()
+y = big.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(big, on='id4')]
+y.key = 'id3'
+ans = x[:, :, join(y)] # , on='id3'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
+y = big.copy()
 t_start = timeit.default_timer()
-ans = x[:, :, join(big, on='id4')]
+y.key = 'id3'
+ans = x[:, :, join(y)] # , on='id3'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-#chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
+chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 print(ans.head(3).to_pandas(), flush=True)
