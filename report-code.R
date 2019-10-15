@@ -264,7 +264,9 @@ join.data.exceptions = {list(                                                   
   "dask" = {list(
     "timeout" = c("J1_1e8_NA_0_0")
   )},
-  "juliadf" = {list()},
+  "juliadf" = {list(
+    "timeout" = c("J1_1e8_NA_0_0")
+  )},
   "cudf" = {list()},
   "clickhouse" = {list()}
 )}
