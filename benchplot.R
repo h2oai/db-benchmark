@@ -79,7 +79,7 @@ if (!interactive()) browser = function(...) stop("some new exception in data to 
 # .interactive default interactive(), when TRUE it will print some output to console and open png after finished
 # by.nsolutions default FALSE, when TRUE it will generate png filename as 'groupby.[nsolutions].[in_rows].png' so scaling of benchplot can be easily compared for various number of solutions
 # fnam fixed filename if do not want to generate from pattern
-benchplot = function(.nrow=Inf, task="groupby", data, timings, code, exceptions, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="public/dev/plots") {
+benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, cutoff="spark", cutoff.after=0.2, .interactive=interactive(), by.nsolutions=FALSE, fnam=NULL, path="public/dev/plots") {
   stopifnot(c("task","time_sec_1","time_sec_2","question","question_group","solution","in_rows","out_rows","out_cols","version","git","batch") %in% names(timings))
   unlink(file.path(path, fnam))
   stopifnot(is.character(task), length(task)==1L, !is.na(task))
