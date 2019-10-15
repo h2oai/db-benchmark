@@ -119,11 +119,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   nquestions = length(questions)
   if (nquestions > 5L)
     stop("Number of questions to plot should be at most 5, run benchplot on a subset of 5 questions")
-  #if (timings[!is.na(time_sec_1), uniqueN(question)] < nquestions) {
-  #  message(sprintf("Benchplot skipped as there are some questions not answered by any solutions for %s %s", task, .data))
-  #  return(invisible(NULL))
-  #} # benchplot now is able to plot empty result question #100
-  
+
   if (!all(code_q_ok<-as.character(questions) %in% names(code)))
     stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
   data = unique(timings$data)
@@ -258,7 +254,14 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
     if (length(unique(out_rows)) > 1L) if (interactive()) browser() else stop("out_rows mismatch") # len 0 when none completed answers for this question
     out_cols = ans[question==questions[iq], na.omit(out_cols)]
     if (length(unique(out_cols)) > 1L) stop("out_cols mismatch")
-    textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L]))
+    if (timings.task=="groupby") {
+      qtxt = sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iq, format_comma(out_rows[1L]), format_comma(.nrow/out_rows[1L]), format_comma(out_rows[1L]), out_cols[1L])
+    } else if (timings.task=="join") {
+      qtxt = sprintf("Question %s: result %s x %s", iq, format_comma(out_rows[1L]), out_cols[1L])
+    } else {
+      stop(sprintf("task %s has to be defined in plot question headers in benchplot", timings.task))
+    }
+    textBG(0, tt[2+(iq-1)*space], w=w, font=2, txt=qtxt)
     
     # second timing bars
     for (is in 1L:nsolutions) {
