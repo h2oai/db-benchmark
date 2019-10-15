@@ -89,9 +89,8 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   if (missing(exceptions)) stop("provide 'exceptions' argument, list of query and data exceptions for each solution")
   timings.task = unique(timings$task)
   if (length(intersect(timings.task, task))!=1L) stop("there should be only single task to present on benchplot, provide 'task' argument which exists in 'timings' dataset")
-  vtask = task
   # filter timings to single task
-  timings = timings[task==vtask]
+  timings = timings[task==timings.task]
   
   # if no .nrow argument provided then use maximum in_rows in timings
   if (!is.finite(.nrow)) .nrow = timings[, max(as.numeric(in_rows))]
@@ -125,7 +124,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   #  return(invisible(NULL))
   #} # benchplot now is able to plot empty result question #100
   
-  if (!all(code_q_ok<-questions %in% names(code)))
+  if (!all(code_q_ok<-as.character(questions) %in% names(code)))
     stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
   data = unique(timings$data)
   ndata = length(data)
@@ -134,7 +133,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   timings[na_time_sec==TRUE, c("time_sec_1","time_sec_2") := NA_real_] # if any of timings failed do not plot just one
   
   solutions = unique(timings$solution)
-  if (!all(code_q_s_ok<-sapply(code[questions], function(c_q) all(solutions%in%names(c_q)))))
+  if (!all(code_q_s_ok<-sapply(code[as.character(questions)], function(c_q) all(solutions%in%names(c_q)))))
     stop(sprintf("Some question(s) does not have corresponding entry for some solutions in argument 'code': %s", paste(questions[!code_q_s_ok], collapse=", ")))
   nsolutions = length(solutions)
   
@@ -247,7 +246,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
     # plot solutions syntax above the timing bar and solution name on the margin
     for (is in 1L:nsolutions) {
       s = q_ord_solutions[is]
-      cod = code[[questions[iq]]][[s]]
+      cod = code[[as.character(questions[iq])]][[s]]
       col = colors[s, colmain, on="solution"]
       text_y = tt[is*2L+1L+(iq-1)*space]
       textBG(0, text_y, txt=cod, w=w, col=col, font=2)
@@ -312,7 +311,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   # legend header
   text(-offset_x*1.5, legend_y+w/2-0.25,
        sprintf("Input table: %s rows x %s columns ( %s GB )",
-               format_comma(.nrow), 9L, # hardcoded number of columns!
+               format_comma(.nrow), c("groupby"=9L, "join"=7L)[[timings.task]], # hardcoded number of columns!
                if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "NA"),
        cex=1.5, font=2, xpd=NA, pos=4)
   
