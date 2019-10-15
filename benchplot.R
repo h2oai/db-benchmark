@@ -87,6 +87,10 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   if (!is.character(cutoff) || length(cutoff)>1) stop("cutoff must be character of length 0 to 1")
   if (missing(code)) stop("provide 'code' argument, list of questions and respective queries in each solution")
   if (missing(exceptions)) stop("provide 'exceptions' argument, list of query and data exceptions for each solution")
+  if (!nrow(timings)) {
+    message(sprintf("Benchplot skipped as nothing to plot for %s %s", task, data))
+    return(invisible(NULL))
+  }
   timings.task = unique(timings$task)
   if (length(intersect(timings.task, task))!=1L) stop("there should be only single task to present on benchplot, provide 'task' argument which exists in 'timings' dataset")
   # filter timings to single task
