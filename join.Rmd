@@ -67,7 +67,7 @@ if (dev<-FALSE) {
 }
 ```
 
-### 0.6 GB {.active}
+### 0.6 GB
 
 #### <u>**Set of basic questions**</u>
 
@@ -91,7 +91,7 @@ by_data(dt_task, "1e7", report_name)
 
 ---
 
-### 6 GB
+### 6 GB {.active}
 
 #### <u>**Set of basic questions**</u>
 
