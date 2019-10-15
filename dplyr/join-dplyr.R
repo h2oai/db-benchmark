@@ -78,12 +78,12 @@ question = "medium inner on factor" # q4
 fun = "inner_join"
 t = system.time(print(dim(ans<-inner_join(DF, medium, by="id5"))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1), sum(v1)))[["elapsed"]]
+chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
 t = system.time(print(dim(ans<-inner_join(DF, medium, by="id5"))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1), sum(v1)))[["elapsed"]]
+chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DF), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 print(head(ans, 3))
 print(tail(ans, 3))
