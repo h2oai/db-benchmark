@@ -60,7 +60,7 @@ print("joining...", flush=True)
 question = "small inner on int" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join small on x.id1 = small.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join small using (id1)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -74,7 +74,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join small on x.id1 = small.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join small using (id1)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -92,7 +92,7 @@ del ans
 question = "medium inner on int" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -106,7 +106,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -124,7 +124,7 @@ del ans
 question = "medium outer on int" # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x left join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x left join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -138,7 +138,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x left join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x left join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -156,7 +156,7 @@ del ans
 question = "medium inner on factor" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id5 = medium.id5').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium using (id5)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -170,7 +170,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join medium on x.id5 = medium.id5').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join medium using (id5)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -188,7 +188,7 @@ del ans
 question = "big inner on int" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join big on x.id3 = big.id3').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join big using (id3)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -202,7 +202,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql('select * from x join big on x.id3 = big.id3').persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql('select * from x join big using (id3)').persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
