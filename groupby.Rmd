@@ -31,8 +31,9 @@ link = function(data_name, q_group, report_name) {
 
 ## Groupby {.tabset .tabset-fade .tabset-pills}
 
-```{r filter_task_groupby}
-dt_task = lld[task=="groupby" & substr(data,1,2)=="G1"]
+```{r filter_task}
+dt_task = lld[task==report_name]
+dt_task = dt_task[substr(data,1,2)=="G1"] ## groupby specific
 by_data = function(dt, .in_rows, .task) {
   dt = dt[in_rows==as.character(.in_rows)]
   if (!nrow(dt)) return(invisible(NULL))
@@ -49,7 +50,7 @@ by_data = function(dt, .in_rows, .task) {
 
 Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases scroll down to full timings table. If a solution is missing on particular data size timings table refer to benchplot for a reason and check its speed on smaller data size tab.
 
-```{r o_groupby_plot, message=FALSE}
+```{r o_task_plot, message=FALSE}
 path = file.path("public", report_name, "plots")
 for (in_rows in c("1e7","1e8","1e9")) {
   for (data_name in paste("G1", in_rows, c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1"), sep="_")) {
@@ -68,57 +69,75 @@ if (dev<-FALSE) {
 
 ### 0.5 GB
 
-#### Set of basic questions
+#### <u>**Set of basic questions**</u>
 
 ![](public/groupby/plots/G1_1e7_1e2_0_0.basic.png)  
 
-#### Set of advanced questions
+---
+
+#### <u>**Set of advanced questions**</u>
 
 ![](public/groupby/plots/G1_1e7_1e2_0_0.advanced.png)  
 
-#### Details table
+---
+
+#### <u>**Details table**</u>
 
 Plots of all cases can be found at `r dt_task[in_rows=="1e7", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
 
-```{r o_groupby1e7_table}
-by_data(dt_task, "1e7", "groupby")
+```{r o_task_1e7_table}
+by_data(dt_task, "1e7", report_name)
 ```
+
+---
 
 ### 5 GB
 
-#### Set of basic questions
+#### <u>**Set of basic questions**</u>
 
 ![](public/groupby/plots/G1_1e8_1e2_0_0.basic.png)  
 
-#### Set of advanced questions
+---
+
+#### <u>**Set of advanced questions**</u>
 
 ![](public/groupby/plots/G1_1e8_1e2_0_0.advanced.png)  
 
-#### Details table
+---
+
+#### <u>**Details table**</u>
 
 Plots of all cases can be found at `r dt_task[in_rows=="1e8", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
 
-```{r o_groupby1e8_table}
-by_data(dt_task, "1e8", "groupby")
+```{r o_task_1e8_table}
+by_data(dt_task, "1e8", report_name)
 ```
+
+---
 
 ### 50 GB {.active}
 
-#### Set of basic questions
+#### <u>**Set of basic questions**</u>
 
 ![](public/groupby/plots/G1_1e9_1e2_0_0.basic.png)  
 
-#### Set of advanced questions
+---
+
+#### <u>**Set of advanced questions**</u>
 
 ![](public/groupby/plots/G1_1e9_1e2_0_0.advanced.png)  
 
-#### Details table
+---
+
+#### <u>**Details table**</u>
 
 Plots of all cases can be found at `r dt_task[in_rows=="1e9", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name=report_name), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`. Below first run timings.
 
-```{r o_groupby1e9_table}
-by_data(dt_task, "1e9", "groupby")
+```{r o_task_1e9_table}
+by_data(dt_task, "1e9", report_name)
 ```
+
+---
 
 ## Notes
 
