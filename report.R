@@ -44,6 +44,7 @@ clean_time = function(d) {
     stop("timings data contains NA or '' as version field, that should not happen")
   d[!nzchar(git), git := NA_character_
       ][task=="groupby" & solution%in%c("pandas","dask","spark") & batch<1558106628, "out_cols" := NA_integer_
+        ][task=="join" & solution=="spark", "out_cols" := NA_integer_ # has to change 'select *' into listing columns, or maybe 'JOIN USING (cols)' will elimate duplicated columns
         ][task=="groupby" & solution=="dask" & batch<1558106628 & question%in%c("max v1 - min v2 by id2 id4","regression v1 v2 by id2 id4"), c("out_rows","out_cols","chk") := .(NA_integer_, NA_integer_, NA_character_)
           ][task=="groupby" & solution=="pandas" & batch<=1558106628 & question=="largest two v3 by id2 id4", "out_cols" := NA_integer_
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
