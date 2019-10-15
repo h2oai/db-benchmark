@@ -253,13 +253,17 @@ join.query.exceptions = {list(
   "cudf" =        list(),
   "clickhouse" =  list()
 )}
-join.data.exceptions = {list(                                                             # exceptions as of run ?
+join.data.exceptions = {list(                                                             # exceptions as of run 1571144886
   "data.table" = {list()},
   "dplyr" = {list()},
-  "pandas" = {list()},
+  "pandas" = {list(
+    "timeout" = c("J1_1e8_NA_0_0")
+  )},
   "pydatatable" = {list()},
   "spark" = {list()},
-  "dask" = {list()},
+  "dask" = {list(
+    "timeout" = c("J1_1e8_NA_0_0")
+  )},
   "juliadf" = {list()},
   "cudf" = {list()},
   "clickhouse" = {list()}
