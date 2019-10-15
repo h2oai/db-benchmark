@@ -31,7 +31,7 @@ report_name = "index"
 
 Plot below presents just single input data and _basic_ set of questions. Complete results of _groupby_ task benchmark can be found in [h2oai.github.io/db-benchmark/groupby.html](./groupby.html) report.  
 
-```{r filter_task_groupby}
+```{r filter_task}
 dt_task = lld[task=="groupby" & question_group=="basic"]
 ```
 
@@ -41,7 +41,7 @@ dt_task = lld[task=="groupby" & question_group=="basic"]
 fn = "1e7_1e2_0_0"
 fnam = paste0("groupby.",fn,".png")
 unlink(file.path("public",report_name,"plots", fnam))
-benchplot(1e7, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+benchplot(1e7, task="groupby", data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 ```
 ![](public/index/plots/groupby.1e7_1e2_0_0.png)  
 
@@ -51,7 +51,7 @@ benchplot(1e7, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, except
 fn = "1e8_1e2_0_0"
 fnam = paste0("groupby.",fn,".png")
 unlink(file.path("public",report_name,"plots", fnam))
-benchplot(1e8, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+benchplot(1e8, task="groupby", data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 ```
 ![](public/index/plots/groupby.1e8_1e2_0_0.png)  
 
@@ -61,7 +61,7 @@ benchplot(1e8, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, except
 fn = "1e9_1e2_0_0"
 fnam = paste0("groupby.",fn,".png")
 unlink(file.path("public",report_name,"plots", fnam))
-benchplot(1e9, data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
+benchplot(1e9, task="groupby", data=paste0("G1_",fn), timings=dt_task, code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, fnam=fnam, path=file.path("public",report_name,"plots"))
 ```
 ![](public/index/plots/groupby.1e9_1e2_0_0.png)  
 
