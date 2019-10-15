@@ -33,7 +33,7 @@ groupby,G2_1e9_2e0_0_0,TRUE
 groupby,G2_1e9_1e2_0_1,TRUE
 join,J1_1e6_NA_0_0,FALSE
 join,J1_1e7_NA_0_0,TRUE
-join,J1_1e8_NA_0_0,FALSE
+join,J1_1e8_NA_0_0,TRUE
 join,J1_1e9_NA_0_0,FALSE
 sort,X1e6_2c,FALSE
 sort,X1e7_2c,FALSE
