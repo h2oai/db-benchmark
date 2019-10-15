@@ -121,14 +121,15 @@ merge_time_logsquestions = function(d, lq) {
 ft = function(x) {
   factor(x, levels=unique(x))
 }
-ftdata = function(x, task="groupby") {
+ftdata = function(x, task) {
   labsorted = function(x) {
     ans = rep("unsorted", length(x))
     ans[as.logical(as.integer(x))] = "sorted"
     ans
   }
-  if (task=="groupby") {
+  if (all(task %in% c("groupby","join"))) {
     y = strsplit(as.character(x), "_", fixed = TRUE)
+    y = lapply(y, function(yy) {yy[yy=="NA"] = NA_character_; yy})
     in_rows=ft(sapply(y, `[`, 2L))
     k=ft(sapply(y, `[`, 3L))
     na=ft(sapply(y, `[`, 4L))
@@ -136,7 +137,7 @@ ftdata = function(x, task="groupby") {
     nasorted=ft(sprintf("%s%% NAs, %s", as.character(na), as.character(sorted)))
     list(in_rows=in_rows, k=k, na=na, sorted=sorted, nasorted=nasorted)
   } else {
-    stop("no other task defined for decompose_dataname")
+    stop("no task defined for ftdata other than groupby and join")
   }
 }
 transform = function(ld) {
@@ -172,7 +173,7 @@ transform = function(ld) {
   
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
               question=question, question_group=question_group, fun=fun, version=version, git=git, task=task, data=data, engine=engine),
-         ftdata(data), .SD),
+         ftdata(data, task=as.character(task)), .SD),
      .SDcols=c(paste(rep(c("timestamp","time_sec","mem_gb","chk_time_sec"), each=2), 1:2, sep="_"),
                paste("script", c("finish","start","stderr","recent"), sep="_"),
                "na_time_sec","out_rows","out_cols","chk")
