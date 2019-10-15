@@ -74,13 +74,13 @@ question = "medium outer on int"; # q3
 GC.gc();
 t = @elapsed (ANS = join(x, medium, kind = :left, on = :id2, makeunique=true); println(size(ANS)); flush(stdout));
 m = memory_usage();
-chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2)];
+chkt = @elapsed chk = [sum(ANS.v1), sum(skipmissing(ANS.v2))];
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
 ANS = 0;
 GC.gc();
 t = @elapsed (ANS = join(x, medium, kind = :left, on = :id2, makeunique=true); println(size(ANS)); flush(stdout));
 m = memory_usage();
-chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2)];
+chkt = @elapsed chk = [sum(ANS.v1), sum(skipmissing(ANS.v2))];
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
 println(first(ANS, 3));
 println(last(ANS, 3));
