@@ -24,7 +24,7 @@ d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique
 # detect lack of chk match in query output between median chk from all solutions with tolerance=0.005
 chk_check = function(chk, tolerance=sqrt(.Machine$double.eps)) {
   len = unique(sapply(chk, length))
-  if (length(len)!=1L) stop("some solutions returns chk for less variables than others") # note that join task as of 1566379460 was producing incorrect chk for some solutions
+  if (length(len)!=1L) stop("some solutions returns chk for less variables than others")
   med = sapply(seq.int(len), function(i) median(sapply(chk, `[[`, i)))
   eq_txt = sapply(chk, all.equal, med, tolerance=tolerance, simplify=FALSE)
   #if (any(!sapply(eq_txt, isTRUE))) browser()

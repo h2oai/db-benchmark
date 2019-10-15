@@ -48,8 +48,7 @@ clean_time = function(d) {
           ][task=="groupby" & solution=="pandas" & batch<=1558106628 & question=="largest two v3 by id2 id4", "out_cols" := NA_integer_
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
-                ][task=="join" & batch<=1566379460, "chk":=NA_character_ # solution_chk fails in answers-validation.R script, update batch id when join scripts amended to produce chk of same length (number of ';')
-                  ][]
+                ][]
 }
 clean_logs = function(l) {
   if (nrow(l[!nzchar(version) | is.na(version)]))
