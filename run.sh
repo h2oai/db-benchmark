@@ -61,7 +61,7 @@ rm -rf ./public
 rm -f ./report-done
 $DO_REPORT && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("groupby.Rmd", output_dir="public")' > ./out/rmarkdown_groupby.out 2>&1 && echo "# Benchmark groupby report produced"
-$DO_REPORT && Rscript -e 'rmarkdown::render("join.Rmd", output_dir="public")' > ./out/rmarkdown_groupby.out 2>&1 && echo "# Benchmark join report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("join.Rmd", output_dir="public")' > ./out/rmarkdown_join.out 2>&1 && echo "# Benchmark join report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
 
