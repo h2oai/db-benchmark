@@ -191,7 +191,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, small, by='id1')",
     "juliadf" = "",
     "pandas" = "x.merge(small, on='id1')",
-    "pydatatable" = "x[:, :, join(small, on='id1')]",
+    "pydatatable" = "y = small.copy(); y.key = 'id1'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join small on x.id1 = small.id1').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
@@ -202,7 +202,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, medium, by='id2')",
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id2')",
-    "pydatatable" = "x[:, :, join(medium, on='id2')]",
+    "pydatatable" = "y = medium.copy(); y.key = 'id2'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
@@ -213,7 +213,7 @@ join.code = list(
     "dplyr" = "left_join(DF, medium, by='id2')",
     "juliadf" = "",
     "pandas" = "x.merge(medium, how='left', on='id2')",
-    "pydatatable" = "x[:, :, join(medium, on='id2', how='outer')]",
+    "pydatatable" = "",
     "spark" = "spark.sql('select * from x left join medium on x.id2 = medium.id2').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
@@ -224,7 +224,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, medium, by='id5')",
     "juliadf" = "",
     "pandas" = "x.merge(medium, on='id5')",
-    "pydatatable" = "x[:, :, join(medium, on='id5')]",
+    "pydatatable" = "y = medium.copy(); y.key = 'id5'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join medium on x.id5 = medium.id5').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
@@ -235,7 +235,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, big, by='id3')",
     "juliadf" = "",
     "pandas" = "x.merge(big, on='id3')",
-    "pydatatable" = "x[:, :, join(big, on='id3')]",
+    "pydatatable" = "y = big.copy(); y.key = 'id3'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join big on x.id3 = big.id3').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse"="",
     "cudf"=""
@@ -246,7 +246,7 @@ join.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
-  "pydatatable" = list(),
+  "pydatatable" = list("not yet implemented: datatable#1080" = "medium outer on int"),
   "spark" =       list(),
   "dask" =        list(),
   "juliadf" =     list(),
