@@ -155,23 +155,23 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q3
   )},
   "pandas" = {list(
-    "MemoryError" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),  # q10
+    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10
     "timeout" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1"),      # q10
-    "MemoryError on read CSV" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
   )},
   "pydatatable" = {list(
   )},
   "spark" = {list(
   )},
   "dask" = {list(
-    "Segmentation fault" = "G1_1e9_1e1_0_0",                                                 # read_csv
-    "MemoryError on read CSV" = c("G1_1e9_1e2_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1")        # read_csv    #99
+    "segfault" = "G1_1e9_1e1_0_0",                                                 # read_csv
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1")        # read_csv    #99
   )},
   "juliadf" = {list(
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
   )},
   "cudf" = {list(
-    "print ans fatal error" = "G1_1e7_2e0_0_0",                                               # q2         #102
+    "print error" = "G1_1e7_2e0_0_0",                                                        # q2         #102
     "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1", # read_csv    #94
                         "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv    #97
   )},

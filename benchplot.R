@@ -239,6 +239,15 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
                 font=2, xpd=NA, add=TRUE)]
   
   # for each question remaining plotting
+  get_exception = function(e, s, key) {
+    if (!s %in% names(e)) stop(sprintf("missing exception for %s", s))
+    if (!length(e[[s]])) return(character())
+    ex = sapply(e[[s]], function(vec, key) sum(key%in%vec), key)
+    sum_ex = sum(ex)
+    if (sum_ex>1L) stop(sprintf("exception for %s defined %d times for solution %s, must be defined at most once", key, sum_ex, s))
+    else if (sum_ex==1L) names(ex[ex==1L])
+    else character()
+  }
   for (iq in 1L:nquestions) {
     
     # determine order of solutions according to max time_sec for this question
@@ -279,22 +288,12 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
         if (val > x_at[length(x_at)]) val = x_at[length(x_at)] # do not plot bar outside plot region to not overlap on timing values on margin
         rect(0, at-w, val, at+w, col=colors[s, collight, on="solution"], xpd=NA)
       } else {
-        get_exception = function(e, s, key) {
-          if (!s %in% names(e)) stop(sprintf("missing exception for %s", s))
-          if (!length(e[[s]])) return(character())
-          ex = sapply(e[[s]], function(vec, key) sum(key%in%vec), key)
-          sum_ex = sum(ex)
-          if (sum_ex>1L) stop(sprintf("exception for %s defined %d times for solution %s, must be defined at most once", key, sum_ex, s))
-          else if (sum_ex==1L) names(ex[ex==1L])
-          else character()
-        }
         exception = get_exception(exceptions$query, s, questions[iq])
         if (!length(exception)) exception = get_exception(exceptions$data, s, data)
         if (!length(exception)) exception = "undefined exception"
         textBG(0, tt[(is+1)*2+(iq-1)*space], txt=exception, w=w, col=colors[s, colmain, on="solution"], font=2)
       }
     }
-    
   }
   
   # plot timing values next to each bar
@@ -330,38 +329,52 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
          legend=c("First time", "Second time"), pt.cex=c(3.5, 2.5), cex=1.5, pt.bg=colors[solution=="data.table", c(colmain, collight)])
   
   # solutions legend
+  get_exception2 = function(ex, s, d, q) {
+    heading = function(x) trimws(sapply(strsplit(x, ":", fixed=TRUE), `[[`, 1L))
+    which = c("data","query")
+    if ("data" %in% which) {
+      e = ex$data[[as.character(s)]]
+      if (length(e)) {
+        this = which(sapply(e, function(ee) any(as.character(d) %in% ee)))[1L]
+        if (!is.na(this)) return(heading(names(e[this])))
+      }
+    }
+    if ("query" %in% which) {
+      e = ex$query[[as.character(s)]]
+      if (length(e)) {
+        this = which(sapply(e, function(ee) any(as.character(q) %in% ee)))[1L]
+        if (!is.na(this)) return(heading(names(e[this])))
+      }
+    }
+    return("")
+  }
   ans[, .(total_time_sec = sum(c(time_sec_1, time_sec_2)), # total time of run 1 and run 2 for all questions
           batch=min(batch), version=version[1], git=git[1], colmain=colmain[1]), # batch=min(batch) in case different data tested in different benchmark runs, earliest is taken, as for all runs there should same version so we need a date of earliest run of that version
       keyby="solution"
-      ][order(total_time_sec, na.last=TRUE)
-        ][, .(leg=sprintf(
-        "%s %s  -  %s  -  Total: $%.02f for %s %s",
-        solution_name(as.character(solution), "legend"), # decode names
-        version,
-        format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))), # solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
-        cph*total_time_sec/3600, # cost in dollars
-        round(total_time_sec/timescale, 0),
-        tolower(names(timescale)) # minutes/seconds
-      ), colmain=colmain,
-      lg1 = solution_name(as.character(solution), "legend"),
-      lg2 = as.character(version),
-      lg3 = format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))),
-      lg4 = if (is.na(total_time_sec)) "" else sprintf("$%.2f", cph*total_time_sec/3600),
-      lg5 = if (is.na(total_time_sec)) "" else sprintf("%.0fs", total_time_sec)),
-      by="solution"
-      ] -> lg
+      ][, "na_total_time" := is.na(total_time_sec)
+        ][order(total_time_sec, na.last=TRUE)
+          ][, .(
+            colmain, na_total_time,
+            ## legend columns
+            lg1 = solution_name(as.character(solution), "legend"),
+            lg2 = as.character(version),
+            lg3 = format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))),
+            lg4 = if (na_total_time) "" else sprintf("$%.2f", cph*total_time_sec/3600),
+            lg5 = if (na_total_time) get_exception2(exceptions, solution, .data, questions) else sprintf("%.0fs", total_time_sec)
+          ), by="solution"] -> lg
+  # extra list of solutions that are not part of the benchmark yet, there are here because users asked for them
   unsupported = c("Modin")
   lg2 = data.table(solution="unsupported",
-                   leg=paste(paste(unsupported, collapse=", "), "  -  pending, see README.md", sep=""),
                    colmain="black",
+                   na_total_time = TRUE,
                    lg1 = unsupported,
-                   lg2 = "pending",
+                   lg2 = "",
                    lg3 = "see README",
                    lg4 = "",
-                   lg5 = "")
+                   lg5 = "not yet implemented")
   lg = rbindlist(list(lg, lg2))
-  #lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
-  #            text.font=1, xpd=NA, legend=lg)] -> nul
+  
+  # right aligned legend text entries
   legendr = function(x, y=NULL, legend, cex, xpd, ...) {
     temp <- legend(x, y=y,
                    legend = rep("", length(legend)),
@@ -372,11 +385,10 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
     text(temp$rect$left + temp$rect$w, temp$text$y,
          legend, pos=2, cex=cex, xpd=xpd)
   }
+  # legend formed into aligned column, magic, dont touch
   le = -offset_x
   re = head(tail(x_at, 2L), 1L) - offset_x
-  anoff = seq(0, re-le, by=(re-le)/100) # another offset
-  #-offset_x + anoff[c(1, 28, 52, 80, 96)]
-  #-offset_x + c(0, 0.7, 1.3, 2.0, 2.4)
+  anoff = seq(0, re-le, by=(re-le)/100) # offset to an offset
   lg[, legend(le + anoff[1L], legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
               text.font=1, xpd=NA, legend=lg1)] -> nul  ## solution
   lg[, legend(le + anoff[25L], legend_y, bty="n", cex=1.5,
@@ -386,7 +398,9 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   lg[, legendr(le + anoff[72L], legend_y, bty="n", cex=1.5,
                text.font=1, xpd=NA, legend=lg4)] -> nul  ## cost
   lg[, legendr(le + anoff[92L], legend_y, bty="n", cex=1.5,
-               text.font=1, xpd=NA, legend=lg5)] -> nul  ## time
+               text.font=1, xpd=NA, legend=fifelse(na_total_time, "", lg5))] -> nul  ## time
+  lg[, legendr(le + anoff[82L], legend_y, bty="n", cex=1.5,
+               text.font=1, xpd=NA, legend=fifelse(na_total_time, lg5, ""))] -> nul  ## exceptions
   
   # footer link to report
   text(0-1.5*offset_x, par()$usr[3]+0.15, "https://h2oai.github.io/db-benchmark", pos=4, xpd=NA)
