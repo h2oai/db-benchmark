@@ -48,7 +48,7 @@ by_data = function(dt, .in_rows, .task) {
 }
 ```
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values).
+Below timings are presented for datasets having random order, no NAs (missing values).
 
 ```{r o_task_plot, message=FALSE}
 path = file.path("public", report_name, "plots")
