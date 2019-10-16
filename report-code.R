@@ -193,8 +193,8 @@ join.code = list(
     "pandas" = "x.merge(small, on='id1')",
     "pydatatable" = "y = small.copy(); y.key = 'id1'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join small using (id1)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "",
+    "cudf" = "x.merge(small, on='id1')"
   )}, # q1
   "medium inner on int" = {c(
     "dask" = "x.merge(medium, on='id2').compute()",
@@ -204,8 +204,8 @@ join.code = list(
     "pandas" = "x.merge(medium, on='id2')",
     "pydatatable" = "y = medium.copy(); y.key = 'id2'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "",
+    "cudf" = "x.merge(medium, on='id2')"
   )}, # q2
   "medium outer on int" = {c(
     "dask" = "x.merge(medium, how='left', on='id2').compute()",
@@ -215,8 +215,8 @@ join.code = list(
     "pandas" = "x.merge(medium, how='left', on='id2')",
     "pydatatable" = "",
     "spark" = "spark.sql('select * from x left join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "",
+    "cudf" = "x.merge(medium, how='left', on='id2')"
   )}, # q3
   "medium inner on factor" = {c(
     "dask" = "x.merge(medium, on='id5').compute()",
@@ -226,8 +226,8 @@ join.code = list(
     "pandas" = "x.merge(medium, on='id5')",
     "pydatatable" = "y = medium.copy(); y.key = 'id5'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join medium using (id5)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "",
+    "cudf" = "x.merge(medium, on='id5')"
   )}, # q4
   "big inner on int" = {c(
     "dask" = "x.merge(big, on='id3').compute()",
@@ -237,8 +237,8 @@ join.code = list(
     "pandas" = "x.merge(big, on='id3')",
     "pydatatable" = "y = big.copy(); y.key = 'id3'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x join big using (id3)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
-    "clickhouse"="",
-    "cudf"=""
+    "clickhouse" = "",
+    "cudf" = "x.merge(big, on='id3')"
   )} # q5
 )
 
@@ -267,7 +267,9 @@ join.data.exceptions = {list(                                                   
   "juliadf" = {list(
     "timeout" = c("J1_1e8_NA_0_0")
   )},
-  "cudf" = {list()},
+  "cudf" = {list(
+    "out of memory" = c("J1_1e8_NA_0_0")
+  )},
   "clickhouse" = {list()}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
