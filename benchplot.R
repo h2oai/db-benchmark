@@ -372,15 +372,20 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
     text(temp$rect$left + temp$rect$w, temp$text$y,
          legend, pos=2, cex=cex, xpd=xpd)
   }
-  lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
+  le = -offset_x
+  re = head(tail(x_at, 2L), 1L) - offset_x
+  anoff = seq(0, re-le, by=(re-le)/100) # another offset
+  #-offset_x + anoff[c(1, 28, 52, 80, 96)]
+  #-offset_x + c(0, 0.7, 1.3, 2.0, 2.4)
+  lg[, legend(le + anoff[1L], legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
               text.font=1, xpd=NA, legend=lg1)] -> nul  ## solution
-  lg[, legend(-offset_x+0.7, legend_y, bty="n", cex=1.5,
+  lg[, legend(le + anoff[25L], legend_y, bty="n", cex=1.5,
               text.font=1, xpd=NA, legend=lg2)] -> nul  ## version
-  lg[, legend(-offset_x+1.3, legend_y, bty="n", cex=1.5,
+  lg[, legend(le + anoff[46L], legend_y, bty="n", cex=1.5,
               text.font=1, xpd=NA, legend=lg3)] -> nul  ## date
-  lg[, legendr(-offset_x+2.0, legend_y, bty="n", cex=1.5,
+  lg[, legendr(le + anoff[72L], legend_y, bty="n", cex=1.5,
                text.font=1, xpd=NA, legend=lg4)] -> nul  ## cost
-  lg[, legendr(-offset_x+2.4, legend_y, bty="n", cex=1.5,
+  lg[, legendr(le + anoff[92L], legend_y, bty="n", cex=1.5,
                text.font=1, xpd=NA, legend=lg5)] -> nul  ## time
   
   # footer link to report
@@ -401,5 +406,7 @@ if (dev<-FALSE) {
   dt = ld[task=="groupby" & script_recent==TRUE & question_group==q_group]
   timings=dt; code=groupby.code; exceptions=groupby.exceptions; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; path=NULL
   .nrow=1e7; data="G1_1e7_1e2_0_0";
+  .nrow=1e8; data="G1_1e8_1e2_0_0";
+  .nrow=1e9; data="G1_1e9_1e2_0_0";
   benchplot(.nrow=.nrow, task="groupby", data=data, timings=timings, code=code, exceptions=exceptions, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
 }
