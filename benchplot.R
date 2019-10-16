@@ -18,6 +18,9 @@ solution.colors = rbindlist(list(
   list(solution="clickhouse", "hotpink4", "hotpink1"),
   list(solution="cudf", "peachpuff3", "peachpuff1")
 ), use.names=FALSE)
+## used to create github labels in db-benchmark project repo
+#hexcol = function(x) sapply(x, function(x) paste0("#", paste(as.raw(col2rgb(x)), collapse="")))
+#hexcol(setNames(solution.colors$collight, solution.colors$solution))
 
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
 
