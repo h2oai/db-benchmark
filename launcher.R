@@ -49,7 +49,7 @@ solution = rbindlist(list(
   pydatatable = list(task=c("groupby")), # join after https://github.com/h2oai/datatable/issues/1080
   spark = list(task=c("groupby","join")),
   clickhouse = list(task=c("groupby")),
-  cudf = list(task=c("groupby"))
+  cudf = list(task=c("groupby","join"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
 stopifnot(nrow(solution) > 0L) # when added new solution and forget to add here this will catch
