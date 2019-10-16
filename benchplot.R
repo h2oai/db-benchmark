@@ -336,22 +336,52 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
       ][order(total_time_sec, na.last=TRUE)
         ][, .(leg=sprintf(
         "%s %s  -  %s  -  Total: $%.02f for %s %s",
-        solution_name(solution, "legend"), # decode names
+        solution_name(as.character(solution), "legend"), # decode names
         version,
         format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))), # solution.date(solution, version, git, only.date=TRUE, use.cache=TRUE),
         cph*total_time_sec/3600, # cost in dollars
         round(total_time_sec/timescale, 0),
         tolower(names(timescale)) # minutes/seconds
-      ), colmain=colmain),
+      ), colmain=colmain,
+      lg1 = solution_name(as.character(solution), "legend"),
+      lg2 = as.character(version),
+      lg3 = format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))),
+      lg4 = if (is.na(total_time_sec)) "" else sprintf("$%.2f", cph*total_time_sec/3600),
+      lg5 = if (is.na(total_time_sec)) "" else sprintf("%.0fs", total_time_sec)),
       by="solution"
       ] -> lg
   unsupported = c("Modin")
   lg2 = data.table(solution="unsupported",
                    leg=paste(paste(unsupported, collapse=", "), "  -  pending, see README.md", sep=""),
-                   colmain="black")
+                   colmain="black",
+                   lg1 = unsupported,
+                   lg2 = "pending",
+                   lg3 = "see README",
+                   lg4 = "",
+                   lg5 = "")
   lg = rbindlist(list(lg, lg2))
+  #lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
+  #            text.font=1, xpd=NA, legend=lg)] -> nul
+  legendr = function(x, y=NULL, legend, cex, xpd, ...) {
+    temp <- legend(x, y=y,
+                   legend = rep("", length(legend)),
+                   text.width = max(strwidth(legend)),
+                   cex = cex,
+                   xpd = xpd,
+                   ...)
+    text(temp$rect$left + temp$rect$w, temp$text$y,
+         legend, pos=2, cex=cex, xpd=xpd)
+  }
   lg[, legend(-offset_x, legend_y, pch=22, pt.bg=colmain, bty="n", cex=1.5, pt.cex=3.5,
-                 text.font=1, xpd=NA, legend=leg)] -> nul
+              text.font=1, xpd=NA, legend=lg1)] -> nul  ## solution
+  lg[, legend(-offset_x+0.7, legend_y, bty="n", cex=1.5,
+              text.font=1, xpd=NA, legend=lg2)] -> nul  ## version
+  lg[, legend(-offset_x+1.3, legend_y, bty="n", cex=1.5,
+              text.font=1, xpd=NA, legend=lg3)] -> nul  ## date
+  lg[, legendr(-offset_x+2.0, legend_y, bty="n", cex=1.5,
+               text.font=1, xpd=NA, legend=lg4)] -> nul  ## cost
+  lg[, legendr(-offset_x+2.4, legend_y, bty="n", cex=1.5,
+               text.font=1, xpd=NA, legend=lg5)] -> nul  ## time
   
   # footer link to report
   text(0-1.5*offset_x, par()$usr[3]+0.15, "https://h2oai.github.io/db-benchmark", pos=4, xpd=NA)
@@ -367,9 +397,9 @@ if (dev<-FALSE) {
   source("report.R")
   source("report-code.R")
   ld = time_logs()
-  q_group = "advanced"
+  q_group = "basic"
   dt = ld[task=="groupby" & script_recent==TRUE & question_group==q_group]
   timings=dt; code=groupby.code; exceptions=groupby.exceptions; task="groupby"; .interactive=TRUE; colors=solution.colors; by.nsolutions=FALSE; cutoff="spark"; cutoff.after=0.2; path=NULL
-  .nrow=1e9; data="G1_1e9_2e0_0_0"; 
-  benchplot(.nrow=.nrow, data=data, timings=timings, code=code, exceptions=exceptions, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
+  .nrow=1e7; data="G1_1e7_1e2_0_0";
+  benchplot(.nrow=.nrow, task="groupby", data=data, timings=timings, code=code, exceptions=exceptions, colors=colors, cutoff=cutoff, .interactive=.interactive, by.nsolutions=by.nsolutions, fnam=paste("dev", data, "png", sep="."))
 }
