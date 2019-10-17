@@ -367,11 +367,11 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   lg2 = data.table(solution="unsupported",
                    colmain="black",
                    na_total_time = TRUE,
-                   lg1 = unsupported,
+                   lg1 = paste(unsupported, collapse=", "),
                    lg2 = "",
                    lg3 = "see README",
                    lg4 = "",
-                   lg5 = "not yet implemented")
+                   lg5 = "pending")
   lg = rbindlist(list(lg, lg2))
   
   # right aligned legend text entries
