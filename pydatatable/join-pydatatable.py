@@ -36,13 +36,19 @@ print(small.nrows, flush=True)
 print(medium.nrows, flush=True)
 print(big.nrows, flush=True)
 
+print("test joining...", flush=True)
 y = small.copy()
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)] # , on='id1'
+print(ans.head(3).to_pandas(), flush=True)
+print(ans.tail(3).to_pandas(), flush=True)
 y = medium.copy()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2'
+print(ans.head(3).to_pandas(), flush=True)
+print(ans.tail(3).to_pandas(), flush=True)
+exit(0)
 
 print("joining...", flush=True)
 
