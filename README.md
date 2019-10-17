@@ -42,7 +42,7 @@ Contribution and feedback are very welcome!
 - if solution uses python activate `virtualenv` of a solution
 - enter interactive console and run lines of script interactively
 
-## Exceptions
+## Extra care needed
 
 - `cuDF`
   - use `conda` instead of `virtualenv`
@@ -57,4 +57,5 @@ Contribution and feedback are very welcome!
 
 # Acknowledgment
 
-- Timings for some solutions might be missing for particular datasizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.  
+Timings for some solutions might be missing for particular data sizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.
+Please check [issues labelled as _exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) in our repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
