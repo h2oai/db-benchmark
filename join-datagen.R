@@ -6,8 +6,8 @@
 # init ----
 
 args = commandArgs(TRUE)
-N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-#N=1e6L; K=NA_integer_; nas=0L; sort=0L
+#N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
+N=1e7L; K=NA_integer_; nas=0L; sort=0L
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 if (nas>0L) stop("'NA' not yet implemented")
 if (sort==1L) stop("'sort' not yet implemented")
@@ -48,19 +48,31 @@ DT = data.table(
 )
 y_N = setNames(as.integer(c(N/1e6L, N/1e3L, N)), c("small","medium","big"))
 DT_except = DT[sample(.N), mapply(`+`, .SD, y_N, SIMPLIFY=FALSE)]
+stopifnot(uniqueN(DT, by="id1")==N/1e6,
+          uniqueN(DT, by="id2")==N/1e3,
+          uniqueN(DT, by="id3")==N,
+          uniqueN(DT_except, by="id1")==N/1e6,
+          uniqueN(DT_except, by="id2")==N/1e3,
+          uniqueN(DT_except, by="id3")==N)
 
 all_levels = sprintf("id%011.0f", 1:(2L*N)) # char size fixed up to 1e11-1
 DT[, `:=`(
-  id4 = all_levels[sample(id1)],
-  id5 = all_levels[sample(id2)],
-  id6 = all_levels[sample(id3)]
+  id4 = all_levels[id1],
+  id5 = all_levels[id2],
+  id6 = all_levels[id3]
 )]
 DT_except[, `:=`(
-  id4 = all_levels[sample(id1)],
-  id5 = all_levels[sample(id2)],
-  id6 = all_levels[sample(id3)]
+  id4 = all_levels[id1],
+  id5 = all_levels[id2],
+  id6 = all_levels[id3]
 )]
 rm(all_levels)
+stopifnot(uniqueN(DT, by="id4")==N/1e6,
+          uniqueN(DT, by="id5")==N/1e3,
+          uniqueN(DT, by="id6")==N,
+          uniqueN(DT_except, by="id4")==N/1e6,
+          uniqueN(DT_except, by="id5")==N/1e3,
+          uniqueN(DT_except, by="id6")==N)
 
 data_name = sprintf("J1_%s_%s_%s_%s", pretty_sci(N), "NA", nas, sort)
 
@@ -78,6 +90,9 @@ y_DT = list(
   medium = y_gen(DT, DT_except, size=y_N[["medium"]], on="id2", cols=c("id1","id2","id4","id5")),
   big = y_gen(DT, DT_except, size=y_N[["big"]], on="id3", cols=c("id1","id2","id3","id4","id5","id6"))
 )
+stopifnot(uniqueN(y_DT$small, by="id1")==N/1e6, uniqueN(y_DT$small, by="id4")==N/1e6,
+          uniqueN(y_DT$medium, by="id2")==N/1e3, uniqueN(y_DT$medium, by="id5")==N/1e3,
+          uniqueN(y_DT$big, by="id3")==N, uniqueN(y_DT$big, by="id6")==N)
 DT[, "v1" := round(runif(.N, max=100), 6)]
 
 areInts = function(dt) all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
