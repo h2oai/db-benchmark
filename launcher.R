@@ -46,7 +46,7 @@ solution = rbindlist(list(
   juliadf = list(task=c("groupby","join")),
   modin = list(task=c()),
   pandas = list(task=c("groupby","join")),
-  pydatatable = list(task=c("groupby")), # join after https://github.com/h2oai/datatable/issues/1080
+  pydatatable = list(task=c("groupby","join")),
   spark = list(task=c("groupby","join")),
   clickhouse = list(task=c("groupby")),
   cudf = list(task=c("groupby","join"))

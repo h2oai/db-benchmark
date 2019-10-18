@@ -36,21 +36,6 @@ print(small.nrows, flush=True)
 print(medium.nrows, flush=True)
 print(big.nrows, flush=True)
 
-print("test joining...", flush=True)
-y = small.copy()
-y.key = 'id1'
-ans = x[:, :, join(y)] # , on='id1'
-print(ans.shape, flush=True)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
-y = medium.copy()
-y.key = 'id2'
-ans = x[:, :, join(y)] # , on='id2'
-print(ans.shape, flush=True)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
-exit(0)
-
 print("joining...", flush=True)
 
 question = "small inner on int" # q1
