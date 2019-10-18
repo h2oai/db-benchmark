@@ -23,7 +23,7 @@ Contribution and feedback are very welcome!
   - [x] [cuDF](https://github.com/rapidsai/cudf)
   - [x] [ClickHouse](https://github.com/yandex/ClickHouse)
 
-More solutions has been proposed. Some of them are not yet mature enough to address benchmark questions well enough. Others haven't been yet evaluated or implemented. Status of all can be tracked in dedicated [issues labelled as _new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) in project repository.
+More solutions has been proposed. Some of them are not yet mature enough to address benchmark questions well enough (e.g. [modin](https://github.com/h2oai/db-benchmark/issues/38)). Others haven't been yet evaluated or implemented. Status of all can be tracked in dedicated [issues labelled as _new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) in project repository.
 
 # Reproduce
 
