@@ -6,8 +6,8 @@
 # init ----
 
 args = commandArgs(TRUE)
-#N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-N=1e7L; K=NA_integer_; nas=0L; sort=0L
+N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
+#N=1e7L; K=NA_integer_; nas=0L; sort=0L
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 if (nas>0L) stop("'NA' not yet implemented")
 if (sort==1L) stop("'sort' not yet implemented")
