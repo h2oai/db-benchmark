@@ -310,9 +310,6 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   
   # legends
   
-  # cost per hour
-  cph = 0.5 # minimum on graph histories; what people will see if they check
-  
   # legend location
   topoffset = (nsolutions+1)*5 # +1 for unsupported solutions in legend entry
   legend_y = par()$usr[4]+topoffset*w-4*w # usr: c(x1, x2, y1, y2)
@@ -359,8 +356,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
             lg1 = solution_name(as.character(solution), "legend"),
             lg2 = as.character(version),
             lg3 = format(as.Date(as.POSIXct(as.numeric(batch), origin="1970-01-01"))),
-            lg4 = if (na_total_time) "" else sprintf("$%.2f", cph*total_time_sec/3600),
-            lg5 = if (na_total_time) get_exception2(exceptions, solution, .data, questions) else sprintf("%.0fs", total_time_sec)
+            lg4 = if (na_total_time) get_exception2(exceptions, solution, .data, questions) else sprintf("%.0fs", total_time_sec)
           ), by="solution"] -> lg
   # extra list of solutions that are not part of the benchmark yet, there are here because users asked for them
   unsupported = c("Modin")
@@ -370,8 +366,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
                    lg1 = paste(unsupported, collapse=", "),
                    lg2 = "",
                    lg3 = "see README",
-                   lg4 = "",
-                   lg5 = "pending")
+                   lg4 = "pending")
   lg = rbindlist(list(lg, lg2))
   
   # right aligned legend text entries
@@ -383,7 +378,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
                    xpd = xpd,
                    ...)
     text(temp$rect$left + temp$rect$w, temp$text$y,
-         legend, pos=2, cex=cex, xpd=xpd)
+         legend, pos=2, cex=cex, xpd=xpd, adj=1)
   }
   # legend formed into aligned column, magic, dont touch
   le = -offset_x
@@ -393,14 +388,10 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
               text.font=1, xpd=NA, legend=lg1)] -> nul  ## solution
   lg[, legend(le + anoff[25L], legend_y, bty="n", cex=1.5,
               text.font=1, xpd=NA, legend=lg2)] -> nul  ## version
-  lg[, legend(le + anoff[46L], legend_y, bty="n", cex=1.5,
+  lg[, legend(le + anoff[45L], legend_y, bty="n", cex=1.5,
               text.font=1, xpd=NA, legend=lg3)] -> nul  ## date
-  lg[, legendr(le + anoff[72L], legend_y, bty="n", cex=1.5,
-               text.font=1, xpd=NA, legend=lg4)] -> nul  ## cost
-  lg[, legendr(le + anoff[92L], legend_y, bty="n", cex=1.5,
-               text.font=1, xpd=NA, legend=fifelse(na_total_time, "", lg5))] -> nul  ## time
-  lg[, legendr(le + anoff[82L], legend_y, bty="n", cex=1.5,
-               text.font=1, xpd=NA, legend=fifelse(na_total_time, lg5, ""))] -> nul  ## exceptions
+  lg[, legendr(le + anoff[85L], legend_y, bty="n", cex=1.5,
+               text.font=1, xpd=NA, legend=lg4)] -> nul ## time
   
   # footer link to report
   text(0-1.5*offset_x, par()$usr[3]+0.15, "https://h2oai.github.io/db-benchmark", pos=4, xpd=NA)
