@@ -5,6 +5,7 @@ print("# join-pydatatable.py", flush=True)
 import os
 import gc
 import timeit
+import copy
 import datatable as dt
 from datatable import f, sum, join
 
@@ -40,7 +41,7 @@ print("joining...", flush=True)
 
 question = "small inner on int" # q1
 gc.collect()
-y = small.copy() # https://github.com/h2oai/datatable/issues/1080
+y = copy.deepcopy(small)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)] # , on='id1'
@@ -53,7 +54,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
-y = small.copy()
+y = copy.deepcopy(small)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)] # , on='id1'
@@ -70,7 +71,7 @@ del ans
 
 question = "medium inner on int" # q2
 gc.collect()
-y = medium.copy()
+y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2'
@@ -83,7 +84,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
-y = medium.copy()
+y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2'
@@ -100,7 +101,7 @@ del ans
 
 #question = "medium outer on int" # q3
 #gc.collect()
-#y = medium.copy()
+#y = copy.deepcopy(medium)
 #t_start = timeit.default_timer()
 #y.key = 'id2'
 #ans = x[:, :, join(y, how='left')] # , on='id2'
@@ -113,7 +114,7 @@ del ans
 #write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 #del ans
 #gc.collect()
-#y = medium.copy()
+#y = copy.deepcopy(medium)
 #t_start = timeit.default_timer()
 #y.key = 'id2'
 #ans = x[:, :, join(y, how='left')] # , on='id2'
@@ -130,7 +131,7 @@ del ans
 
 question = "medium inner on factor" # q4
 gc.collect()
-y = medium.copy()
+y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)] # , on='id5'
@@ -144,7 +145,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
-y = medium.copy()
+y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)] # , on='id5'
@@ -161,7 +162,7 @@ del ans
 
 question = "big inner on int" # q5
 gc.collect()
-y = big.copy()
+y = copy.deepcopy(big)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)] # , on='id3'
@@ -174,7 +175,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans
 gc.collect()
-y = big.copy()
+y = copy.deepcopy(big)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)] # , on='id3'
