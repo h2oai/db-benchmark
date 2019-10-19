@@ -257,15 +257,15 @@ join.data.exceptions = {list(                                                   
   "data.table" = {list()},
   "dplyr" = {list()},
   "pandas" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")
+    "timeout" = c("J1_1e8_NA_0_0")                                                        # q5
   )},
   "pydatatable" = {list()},
   "spark" = {list()},
   "dask" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")
+    "timeout" = c("J1_1e8_NA_0_0")                                                        # q4
   )},
   "juliadf" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")
+    "timeout" = c("J1_1e8_NA_0_0")                                                        # q3
   )},
   "cudf" = {list(
     "out of memory" = c("J1_1e8_NA_0_0")
