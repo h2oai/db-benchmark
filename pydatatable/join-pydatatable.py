@@ -136,7 +136,6 @@ y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
-t_start = timeit.default_timer()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
