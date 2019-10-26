@@ -191,7 +191,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, small, by='id1')",
     "juliadf" = "join(x, small, on = :id1, makeunique=true)",
     "pandas" = "x.merge(small, on='id1')",
-    "pydatatable" = "y.key = 'id1'; x[:, :, join(y)]",
+    "pydatatable" = "y.key = 'id1'; x[:, :, join(y)][isna(f.v2)==False, :]",
     "spark" = "spark.sql('select * from x join small using (id1)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse" = "",
     "cudf" = "x.merge(small, on='id1')"
@@ -202,7 +202,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, medium, by='id2')",
     "juliadf" = "join(x, medium, on = :id2, makeunique=true)",
     "pandas" = "x.merge(medium, on='id2')",
-    "pydatatable" = "y.key = 'id2'; x[:, :, join(y)]",
+    "pydatatable" = "y.key = 'id2'; x[:, :, join(y)][isna(f.v2)==False, :]",
     "spark" = "spark.sql('select * from x join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, on='id2')"
@@ -213,7 +213,7 @@ join.code = list(
     "dplyr" = "left_join(DF, medium, by='id2')",
     "juliadf" = "join(x, medium, kind = :left, on = :id2, makeunique=true)",
     "pandas" = "x.merge(medium, how='left', on='id2')",
-    "pydatatable" = "",
+    "pydatatable" = "y.key = 'id2'; x[:, :, join(y)]",
     "spark" = "spark.sql('select * from x left join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, how='left', on='id2')"
@@ -224,7 +224,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, medium, by='id5')",
     "juliadf" = "join(x, medium, on = :id5, makeunique=true)",
     "pandas" = "x.merge(medium, on='id5')",
-    "pydatatable" = "y.key = 'id5'; x[:, :, join(y)]",
+    "pydatatable" = "y.key = 'id5'; x[:, :, join(y)][isna(f.v2)==False, :]",
     "spark" = "spark.sql('select * from x join medium using (id5)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, on='id5')"
@@ -235,7 +235,7 @@ join.code = list(
     "dplyr" = "inner_join(DF, big, by='id3')",
     "juliadf" = "join(x, big, on = :id3, makeunique=true)",
     "pandas" = "x.merge(big, on='id3')",
-    "pydatatable" = "y.key = 'id3'; x[:, :, join(y)]",
+    "pydatatable" = "y.key = 'id3'; x[:, :, join(y)][isna(f.v2)==False, :]",
     "spark" = "spark.sql('select * from x join big using (id3)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
     "clickhouse" = "",
     "cudf" = "x.merge(big, on='id3')"
@@ -246,7 +246,7 @@ join.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
-  "pydatatable" = list("not yet implemented: datatable#1080" = "medium outer on int"),
+  "pydatatable" = list(),
   "spark" =       list(),
   "dask" =        list(),
   "juliadf" =     list(),
