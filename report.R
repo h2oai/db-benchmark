@@ -75,7 +75,12 @@ model_time = function(d) {
   if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unqn_out_rows>1L]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_cols), .(unqn_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unqn_out_cols>1L]))
-    stop("Value of 'out_cols' varies for different runs for single solution+question") #d[,.SD][!is.na(out_cols), `:=`(unq_out_cols=uniqueN(out_cols), paste_unq_out_cols=paste(unique(out_cols), collapse=",")), .(task, solution, data, question)][unq_out_cols>1, paste_unq_out_cols, .(task, solution, data, question, batch)]
+    stop("Value of 'out_cols' varies for different runs for single solution+question")
+  if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, data, question)][unqn_out_rows>1L]))
+    stop("Value of 'out_rows' varies for different runs for single question")
+  #d[,.SD][!is.na(out_rows), `:=`(unq_out_rows=uniqueN(out_rows), paste_unq_out_rows=paste(unique(out_rows), collapse=",")), .(task, data, question)][unq_out_rows>1, .(paste_unq_out_rows), .(task, solution, data, question)]
+  if (nrow(d[!is.na(out_cols), .(unqn_out_cols=uniqueN(out_cols)), .(task, data, question)][unqn_out_cols>1L]))
+    stop("Value of 'out_cols' varies for different runs for single question")
   d = dcast(d, nodename+batch+in_rows+question+solution+fun+cache+version+git+task+data ~ run, value.var=c("timestamp","time_sec","mem_gb","chk_time_sec","chk","out_rows","out_cols"))
   d[, c("chk_2","out_rows_2","out_cols_2") := NULL]
   setnames(d, c("chk_1","out_rows_1","out_cols_1"), c("chk","out_rows","out_cols"))
