@@ -8,6 +8,7 @@ import timeit
 import copy
 import datatable as dt
 from datatable import f, sum, join, isna
+from datatable.math import isfinite
 
 exec(open("./helpers.py").read())
 
@@ -44,7 +45,7 @@ gc.collect()
 y = copy.deepcopy(small)
 t_start = timeit.default_timer()
 y.key = 'id1'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id1'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -57,7 +58,7 @@ gc.collect()
 y = copy.deepcopy(small)
 t_start = timeit.default_timer()
 y.key = 'id1'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id1'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -74,7 +75,7 @@ gc.collect()
 y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id2'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id2'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -87,7 +88,7 @@ gc.collect()
 y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id2'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id2'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -134,7 +135,7 @@ gc.collect()
 y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id5'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id5'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
 t_start = timeit.default_timer()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -148,7 +149,7 @@ gc.collect()
 y = copy.deepcopy(medium)
 t_start = timeit.default_timer()
 y.key = 'id5'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id5'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -165,7 +166,7 @@ gc.collect()
 y = copy.deepcopy(big)
 t_start = timeit.default_timer()
 y.key = 'id3'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id3'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -178,7 +179,7 @@ gc.collect()
 y = copy.deepcopy(big)
 t_start = timeit.default_timer()
 y.key = 'id3'
-ans = x[:, :, join(y)][isna(f.v2)==False, :] # , on='id3'
+ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
