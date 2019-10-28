@@ -7,14 +7,12 @@ output:
     includes:
       in_header: ga.html
 ---
+```{r render, include=FALSE}
+# Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+```
 
 ```{r opts, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
-```
-
-```{r render}
-report_name = "tech"
-# Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
 ```
 
 ```{r init}
@@ -82,5 +80,10 @@ p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, fun
 sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
 ```
 
-```{r status, child="rmarkdown_child/status.Rmd"}
+------
+
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.  
+
+```{r status_set_success}
+cat("tech\n", file=get_report_status_file(), append=TRUE)
 ```
