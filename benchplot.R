@@ -26,7 +26,7 @@ data_spec = function(data) {
   if (fe) {
     gb = file.info(f)$size/1024^3
     gb = if (gb<1) round(gb, 1) else round(gb)
-    ncol = ncol(fread(f, nrows = 0L, showProgress=FALSE))
+    ncol = length(strsplit(system(sprintf("head -1 %s", f), intern=TRUE), ",", fixed=TRUE)[[1L]])
   } else {
     gb = "NA"
     ncol = "NA"

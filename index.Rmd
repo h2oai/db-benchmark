@@ -20,7 +20,6 @@ knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 
 ```{r helpers}
 loop_benchplot = function(dt_task, report_name, code, exceptions, colors, data_namev, q_groupv) {
-  message("starting loop_benchplot for task ", report_name)
   path = file.path("public", report_name, "plots")
   for (data_name in data_namev) {
     in_rows = strsplit(data_name, "_", fixed=TRUE)[[1L]][2L]
