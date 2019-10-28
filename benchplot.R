@@ -21,6 +21,18 @@ solution.colors = rbindlist(list(
 #hexcol(setNames(solution.colors$collight, solution.colors$solution))
 
 format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
+data_spec = function(data) {
+  fe = file.exists(f<-file.path("data", paste(data,"csv",sep=".")))
+  if (fe) {
+    gb = file.info(f)$size/1024^3
+    gb = if (gb<1) round(gb, 1) else round(gb)
+    ncol = ncol(fread(f, nrows = 0L, showProgress=FALSE))
+  } else {
+    gb = "NA"
+    ncol = "NA"
+  }
+  list(gb=gb, ncol=ncol)
+}
 
 get_xlab_values = function(x) {
   at = pretty(x, 8, 4)
@@ -165,7 +177,7 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
 
   if (!all(code_q_ok<-as.character(questions) %in% names(code)))
     stop(sprintf("Some question(s) does not have corresponding entry in argument 'code': %s", paste(questions[!code_q_ok], collapse=", ")))
-  data = unique(timings$data)
+  data = as.character(unique(timings$data))
   ndata = length(data)
   if (ndata!=1L) stop("only single 'data' field supported, run benchplot for each 'data'")
 
@@ -177,9 +189,6 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   nsolutions = length(solutions)
 
   if (length(cutoff) && !cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
-
-  # get data size in GB from current directory by filename match
-  gb = (if (file.exists(f<-file.path("data", paste(data,"csv",sep=".")))) file.info(f)$size else NA_real_)/1024^3
 
   # keep only required columns
   timings = timings[, .SD, .SDcols=c("time_sec_1","time_sec_2","question","iquestion","solution","in_rows","out_rows","out_cols","version","git","batch")]
@@ -356,11 +365,15 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   legend_y_table = legend_y_header - 2*w
 
   # legend header
+  ds = data_spec(data)
+  legend_header = sprintf(
+    "Input table: %s rows x %s columns ( %s GB )",
+    format_comma(.nrow),
+    ds[["ncol"]],
+    ds[["gb"]]
+  )
   text(-offset_x, legend_y_header,
-       sprintf("Input table: %s rows x %s columns ( %s GB )",
-               format_comma(.nrow),
-               c("groupby"=9L, "join"=7L)[[timings.task]], # hardcoded number of columns!
-               if (!is.na(gb)) { if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5) } else "Unknown"),
+       labels = legend_header,
        adj=c(0, 1), #pos=4,
        cex=1.5, font=2, xpd=NA)
 
