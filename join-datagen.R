@@ -35,7 +35,15 @@ sample_all = function(unq_n, size) {
   unq_sub = seq_len(unq_n)
   sample(c(unq_sub, sample(unq_sub, size=max(size-unq_n, 0), replace=TRUE)))
 }
-areInts = function(dt) all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
+# data validation
+areInts = function(dt) {
+  all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
+}
+# mem efficient to replace DT[sample(.N)], till data.table#4012
+setroworder = function(x, neworder) {
+    .Call(data.table:::Creorder, x, as.integer(neworder), PACKAGE="data.table")
+    invisible(x)
+}
 
 # data ----
 
@@ -98,10 +106,12 @@ cat(sprintf("Producing join tables of %s rows\n", paste(collapse=", ", sapply(y_
 y_gen = function(dt, except, size, on, cols) {
   unq_on_join = sample(unique(dt[[on]]), size=max(as.integer(size*0.9), 1), FALSE)
   unq_on_except = sample(unique(except[[on]]), size=size-length(unq_on_join), FALSE)
-  rbindlist(list(
+  y_dt = rbindlist(list(
     dt[.(unq_on_join), on=on, mult="first", cols, with=FALSE],
     except[.(unq_on_except), on=on, mult="first", cols, with=FALSE]
-  ))[sample(.N)][, "v2" := round(runif(.N, max=100), 6)]
+  ))
+  setroworder(y_dt, neworder=sample(nrow(y_dt)))
+  y_dt[, "v2" := round(runif(.N, max=100), 6)]
 }
 y_DT = list(
   small = y_gen(DT, DT_except, size=y_N[["small"]], on="id1", cols=c("id1","id4")),
