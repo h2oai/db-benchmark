@@ -6,11 +6,13 @@
 # init ----
 
 args = commandArgs(TRUE)
-N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-#N=1e7L; K=NA_integer_; nas=0L; sort=0L
+N=as.numeric(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
+#N=1e6; K=NA_integer_; nas=0L; sort=0L
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 if (nas>0L) stop("'NA' not yet implemented")
 if (sort==1L) stop("'sort' not yet implemented")
+if (N > .Machine$integer.max) stop("no support for long vector in join-datagen yet")
+N = as.integer(N)
 
 datadir = "data"
 if (!dir.exists(datadir)) stop(sprintf("directory '%s' does not exists", datadir))
@@ -23,17 +25,17 @@ pretty_sci = function(x) {
   tmp = strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
   if (length(tmp)==1L) {
     paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
-  } else if(length(tmp)==2L) {
+  } else if (length(tmp)==2L) {
     paste0(tmp[1L], as.character(as.integer(tmp[2L])))
   }
 }
-# sample integer unsure unique according to provided ratio
-sample_unq = function(N, ratio, size) {
-  stopifnot(N > 0L, ratio <= 1, ratio > 0)
-  unq_n = max(as.integer(N*ratio), 1L)
-  unq_sub = sample(N, size=unq_n)
-  sample(c(unq_sub, sample(unq_sub, size=max(size-unq_n, 0L), replace=TRUE)))
+# ensure all values have been sampled
+sample_all = function(unq_n, size) {
+  stopifnot(unq_n <= size)
+  unq_sub = seq_len(unq_n)
+  sample(c(unq_sub, sample(unq_sub, size=max(size-unq_n, 0), replace=TRUE)))
 }
+areInts = function(dt) all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
 
 # data ----
 
@@ -42,12 +44,28 @@ set.seed(108)
 cat(sprintf("Producing data of %s rows\n", pretty_sci(N)))
 
 DT = data.table(
-  id1 = sample_unq(N/1e6, 1, N),
-  id2 = sample_unq(N/1e3, 1, N),
-  id3 = sample_unq(N, 1, N)
+  id1 = sample_all(N/1e6, N),
+  id2 = sample_all(N/1e3, N),
+  id3 = sample_all(N, N)
 )
-y_N = setNames(as.integer(c(N/1e6L, N/1e3L, N)), c("small","medium","big"))
-DT_except = DT[sample(.N), mapply(`+`, .SD, y_N, SIMPLIFY=FALSE)]
+stopifnot(areInts(DT))
+y_N = setNames(N/c(1e6, 1e3, 1e0), c("small","medium","big"))
+safe_add = function(x, y) {
+  stopifnot(length(y)==1L)
+  if (y > .Machine$integer.max) {
+    if (!inherits(x, "integer64") || !inherits(y, "intege64")) {
+      stop("for long vector support column and a value to add must be integer64 class")
+    } else {
+      stop("long vector support not yet implemented")
+    }
+  } else if (inherits(x, "integer")) {
+    x + as.integer(y)
+  } else {
+    stop("column must be integer class, long vector is not yet supported")
+  }
+}
+DT_except = DT[sample(.N), mapply(safe_add, .SD, y_N, SIMPLIFY=FALSE)]
+stopifnot(areInts(DT_except))
 stopifnot(uniqueN(DT, by="id1")==N/1e6,
           uniqueN(DT, by="id2")==N/1e3,
           uniqueN(DT, by="id3")==N,
@@ -55,7 +73,7 @@ stopifnot(uniqueN(DT, by="id1")==N/1e6,
           uniqueN(DT_except, by="id2")==N/1e3,
           uniqueN(DT_except, by="id3")==N)
 
-all_levels = sprintf("id%011.0f", 1:(2L*N)) # char size fixed up to 1e11-1
+all_levels = sprintf("id%.0f", 1:(2*N))
 DT[, `:=`(
   id4 = all_levels[id1],
   id5 = all_levels[id2],
@@ -78,8 +96,8 @@ data_name = sprintf("J1_%s_%s_%s_%s", pretty_sci(N), "NA", nas, sort)
 
 cat(sprintf("Producing join tables of %s rows\n", paste(collapse=", ", sapply(y_N, pretty_sci))))
 y_gen = function(dt, except, size, on, cols) {
-  unq_on_join = sample(unique(dt[[on]]), max(as.integer(size*0.9), 1L), FALSE)
-  unq_on_except = sample(unique(except[[on]]), size-length(unq_on_join), FALSE)
+  unq_on_join = sample(unique(dt[[on]]), size=max(as.integer(size*0.9), 1), FALSE)
+  unq_on_except = sample(unique(except[[on]]), size=size-length(unq_on_join), FALSE)
   rbindlist(list(
     dt[.(unq_on_join), on=on, mult="first", cols, with=FALSE],
     except[.(unq_on_except), on=on, mult="first", cols, with=FALSE]
@@ -88,20 +106,18 @@ y_gen = function(dt, except, size, on, cols) {
 y_DT = list(
   small = y_gen(DT, DT_except, size=y_N[["small"]], on="id1", cols=c("id1","id4")),
   medium = y_gen(DT, DT_except, size=y_N[["medium"]], on="id2", cols=c("id1","id2","id4","id5")),
-  big = y_gen(DT, DT_except, size=y_N[["big"]], on="id3", cols=c("id1","id2","id3","id4","id5","id6"))
+  big = z<-y_gen(DT, DT_except, size=y_N[["big"]], on="id3", cols=c("id1","id2","id3","id4","id5","id6"))
 )
+stopifnot(sapply(y_DT, areInts))
 stopifnot(uniqueN(y_DT$small, by="id1")==N/1e6, uniqueN(y_DT$small, by="id4")==N/1e6,
           uniqueN(y_DT$medium, by="id2")==N/1e3, uniqueN(y_DT$medium, by="id5")==N/1e3,
           uniqueN(y_DT$big, by="id3")==N, uniqueN(y_DT$big, by="id6")==N)
 DT[, "v1" := round(runif(.N, max=100), 6)]
 
-areInts = function(dt) all(sapply(intersect(paste0("id", 1:3), names(dt)), function(col) is.integer(dt[[col]])))
-stopifnot(areInts(DT), sapply(y_DT, areInts))
-
 # data_name of table to join
 join_to_tbls = function(data_name) {
   x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
-  y_n = setNames(c(x_n/1e6, x_n/1e3, x_n), c("small","medium","big"))
+  y_n = setNames(x_n/c(1e6, 1e3, 1e0), c("small","medium","big"))
   sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
 }
 y_data_name = join_to_tbls(data_name)
