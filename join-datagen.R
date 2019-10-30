@@ -156,7 +156,7 @@ set(DT, NULL, "id4", sprintf("id%.0f", DT$id1))
 set(DT, NULL, "id5", sprintf("id%.0f", DT$id2))
 set(DT, NULL, "id6", sprintf("id%.0f", DT$id3))
 set(DT, NULL, "v1", round(runif(nrow(DT), max=100), 6))
-# write RHS data to file
+# write LHS data to file
 file = file.path(datadir, paste0(data_name, ".csv"))
 cat(sprintf("Writing LHS data to %s\n", file))
 fwrite(DT, file, showProgress=FALSE)
