@@ -7,7 +7,7 @@ output:
       in_header: ga.html
 ---
 ```{r render, include=FALSE}
-# Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+# Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' && xdg-open public/index.html
 ```
 
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users.
@@ -78,73 +78,75 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ### groupby {.tabset .tabset-fade .tabset-pills}
 
-Below timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases click on the links below. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
+#### 0.5 GB
 
-#### 0.5 GB {.tabset .tabset-fade .tabset-pills}
-
-All data cases can be found at `r dt_groupby[in_rows=="1e7", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`.
-
-##### basic {.active}
+##### **basic questions**
 
 ![](public/groupby/plots/G1_1e7_1e2_0_0.basic.png)
 
-##### advanced
+##### **advanced questions**
 
 ![](public/groupby/plots/G1_1e7_1e2_0_0.advanced.png)
 
-#### 5 GB {.tabset .tabset-fade .tabset-pills}
+#### 5 GB
 
-All data cases can be found at `r dt_groupby[in_rows=="1e8", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`.
-
-##### basic {.active}
+##### **basic questions**
 
 ![](public/groupby/plots/G1_1e8_1e2_0_0.basic.png)
 
-##### advanced
+##### **advanced questions**
 
 ![](public/groupby/plots/G1_1e8_1e2_0_0.advanced.png)
 
-#### 50 GB {.active .tabset .tabset-fade .tabset-pills}
+#### 50 GB {.active}
 
-All data cases can be found at `r dt_groupby[in_rows=="1e9", .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=question_group][, paste(q_grp_links, collapse=", ")]`.
 
-##### basic {.active}
+##### **basic questions**
 
 ![](public/groupby/plots/G1_1e9_1e2_0_0.basic.png)
 
-##### advanced
+##### **advanced questions**
 
 ![](public/groupby/plots/G1_1e9_1e2_0_0.advanced.png)
 
 ### join {.tabset .tabset-fade .tabset-pills}
 
-Below timings are presented for datasets having random order, no NAs (missing values). Data size on tabs corresponds to the LHS dataset of join, while RHS datasets are of the following sizes: _small_ (LHS/1e6), _medium_ (LHS/1e3), _big_ (LHS).
+#### 0.6 GB
 
-#### 0.6 GB {.tabset .tabset-fade .tabset-pills}
-
-##### basic {.active}
+##### **basic questions**
 
 ![](public/join/plots/J1_1e7_NA_0_0.basic.png)
 
 <!--
-##### advanced
+##### **advanced questions**
 
 ![](public/join/plots/J1_1e7_NA_0_0.advanced.png)
 -->
 
-#### 6 GB {.active .tabset .tabset-fade .tabset-pills}
+#### 6 GB {.active}
 
-##### basic {.active}
+##### **basic questions**
 
 ![](public/join/plots/J1_1e8_NA_0_0.basic.png)
 
 <!--
-##### advanced
+##### **advanced questions**
 
 ![](public/join/plots/J1_1e8_NA_0_0.advanced.png)
 -->
 
 ---
+
+## Task details
+
+### groupby
+
+Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases click on the links below. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
+`r dt_groupby[, .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=.(in_rows, question_group)][, paste(q_grp_links, collapse=", ")]`
+
+### join
+
+Timings are presented for datasets having random order, no NAs (missing values). Data size on tabs corresponds to the LHS dataset of join, while RHS datasets are of the following sizes: _small_ (LHS/1e6), _medium_ (LHS/1e3), _big_ (LHS).
 
 ## Notes
 

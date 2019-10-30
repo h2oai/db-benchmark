@@ -25,7 +25,7 @@ data_spec = function(data) {
   fe = file.exists(f<-file.path("data", paste(data,"csv",sep=".")))
   if (fe) {
     gb = file.info(f)$size/1024^3
-    gb = if (gb<1) round(gb, 1) else round(gb)
+    gb = if (gb<1) round(gb, 1) else 5*round(ceiling(gb)/5)
     ncol = length(strsplit(system(sprintf("head -1 %s", f), intern=TRUE), ",", fixed=TRUE)[[1L]])
   } else {
     gb = "NA"
