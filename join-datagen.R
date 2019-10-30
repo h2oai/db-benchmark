@@ -66,7 +66,7 @@ join_to_tbls = function(data_name) {
 
 # generate RHS tables, re-reading from disk to reduce memory usage
 y_gen = function(size, cols, y_data_name, dataf, exceptf, datadir) {
-  cat(sprintf("Producing RHS table of %s rows\n", pretty_sci(size)))
+  cat(sprintf("Producing RHS data of %s rows\n", pretty_sci(size)))
   on = tail(cols, 1L)
   rhsf = tempfile(fileext="csv")
   # match data
@@ -112,7 +112,7 @@ set.seed(108)
 y_N = setNames(N/c(1e6, 1e3, 1e0), c("small","medium","big"))
 data_name = sprintf("J1_%s_%s_%s_%s", pretty_sci(N), "NA", nas, sort)
 # match data
-cat(sprintf("Producing data of %s rows\n", pretty_sci(N)))
+cat(sprintf("Producing match data of %s rows\n", pretty_sci(N)))
 DT = data.table(
   id1 = sample_all(N/1e6, N),
   id2 = sample_all(N/1e3, N),
@@ -148,6 +148,7 @@ mapply(y_gen, size = y_N,
        MoreArgs = list(dataf=dataf, exceptf=exceptf, datadir=datadir)) -> nul
 unlink(exceptf)
 # LHS data finish
+cat(sprintf("Producing LHS data of %s rows\n", pretty_sci(N)))
 DT = setDT(readRDS(dataf))
 unlink(dataf)
 # add factor and measure variables
@@ -160,5 +161,5 @@ file = file.path(datadir, paste0(data_name, ".csv"))
 cat(sprintf("Writing LHS data to %s\n", file))
 fwrite(DT, file, showProgress=FALSE)
 rm(DT)
-cat(sprintf("Join data gen script finished in %ss\n", trunc(proc.time()[["elapsed"]]-init)))
+cat(sprintf("Join datagen of %s rows finished in %ss\n", pretty_sci(N), trunc(proc.time()[["elapsed"]]-init)))
 if (!interactive()) quit("no", status=0)
