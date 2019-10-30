@@ -111,7 +111,7 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ### join {.tabset .tabset-fade .tabset-pills}
 
-#### 0.6 GB
+#### 0.5 GB
 
 ##### **basic questions**
 
@@ -123,7 +123,7 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 ![](public/join/plots/J1_1e7_NA_0_0.advanced.png)
 -->
 
-#### 6 GB {.active}
+#### 5 GB {.active}
 
 ##### **basic questions**
 
