@@ -137,9 +137,9 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ---
 
-## Task details
+## Details {.tabset .tabset-fade .tabset-pills}
 
-### groupby
+### groupby {.active}
 
 Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases click on the links below. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
 `r dt_groupby[, .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=.(in_rows, question_group)][, paste(q_grp_links, collapse=", ")]`
