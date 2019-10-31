@@ -253,22 +253,33 @@ join.query.exceptions = {list(
   "cudf" =        list(),
   "clickhouse" =  list()
 )}
-join.data.exceptions = {list(                                                             # exceptions as of run 1571144886
-  "data.table" = {list()},
-  "dplyr" = {list()},
-  "pandas" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")                                                        # q5
+join.data.exceptions = {list(                                                             # exceptions as of run 1572448371
+  "data.table" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
   )},
-  "pydatatable" = {list()},
-  "spark" = {list()},
+  "dplyr" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+  )},
+  "pandas" = {list(
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q5
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+  )},
+  "pydatatable" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+  )},
+  "spark" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+  )},
   "dask" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")                                                        # q4
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q4
+    "timeout" = c("J1_1e9_NA_0_0")                                                        # read_csv
   )},
   "juliadf" = {list(
-    "timeout" = c("J1_1e8_NA_0_0")                                                        # q3
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q3
+    "timeout" = c("J1_1e9_NA_0_0")                                                        # CSV.File
   )},
   "cudf" = {list(
-    "out of memory" = c("J1_1e8_NA_0_0")
+    "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                  # read_csv
   )},
   "clickhouse" = {list()}
 )}

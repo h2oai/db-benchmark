@@ -134,6 +134,18 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ![](public/join/plots/J1_1e8_NA_0_0.advanced.png)
 -->
+<!--
+#### 50 GB {.active}
+
+##### **basic questions**
+
+![](public/join/plots/J1_1e9_NA_0_0.basic.png)
+-->
+<!--
+##### **advanced questions**
+
+![](public/join/plots/J1_1e9_NA_0_0.advanced.png)
+-->
 
 ---
 

@@ -7,7 +7,7 @@ Contribution and feedback are very welcome!
 # Tasks
 
   - [x] groupby
-  - [ ] join
+  - [x] join
   - [ ] sort
   - [ ] read
 
