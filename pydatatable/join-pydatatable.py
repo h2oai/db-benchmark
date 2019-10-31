@@ -19,8 +19,8 @@ solution = "pydatatable"
 fun = "join"
 cache = "TRUE"
 
-on_disk = data_name.split("_")[1] == "1e9" ## for 1e9 join use on-disk data table
 data_name = os.environ['SRC_JN_LOCAL']
+on_disk = data_name.split("_")[1] == "1e9" ## for 1e9 join use on-disk data table
 fext = "jay" if on_disk else "csv"
 src_jn_x = os.path.join("data", data_name+"."+fext)
 y_data_name = join_to_tbls(data_name)
