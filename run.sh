@@ -31,6 +31,7 @@ source ./run.conf
 source ./path.env
 
 # upgrade tools and VERSION, REVISION metadata files
+$DO_UPGRADE && echo "# Upgrading solutions"
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/init-dask.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "dask" ]]; then ./dask/ver-dask.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "data.table" ]]; then ./datatable/init-datatable.sh; fi;
@@ -53,13 +54,15 @@ if [[ "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/ver-cudf.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/ver-clickhouse.sh; fi;
 
 # run
+if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
+echo "# Running benchmark scripts launcher"
 Rscript ./launcher.R
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
 
 # publish report for all tasks
 rm -rf ./public
 rm -f ./report-done
-$DO_REPORT && echo "# Rendering reports"
+$DO_REPORT && echo "# Rendering report"
 $DO_REPORT && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
@@ -70,6 +73,7 @@ $DO_REPORT && $DO_PUBLISH \
   && [ -f ./report-done ] \
   && [ $(wc -l report-done | awk '{print $1}') -eq 3 ] \
   && [ -f ./token ] \
+  && echo "# Publishing report"
   && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # remove run lock file
