@@ -26,7 +26,7 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
 }
 run_tasks = getenv("RUN_TASKS") #run_tasks = "groupby"
 if (!length(run_tasks)) q("no")
-if (length(run_task)>1L) stop("multiple tasks at once not yet supported in launcher, run sequentially")
+if (length(run_tasks)>1L) stop("multiple tasks at once not yet supported in launcher, run sequentially")
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
