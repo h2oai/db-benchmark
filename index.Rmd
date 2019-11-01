@@ -45,7 +45,7 @@ hours_took = function(lld) {
 ```{r init}
 source("report.R", chdir=TRUE)
 source("helpers.R", chdir=TRUE)
-source("report-code.R", chdir=TRUE)
+source("benchplot-dict.R", chdir=TRUE)
 source("benchplot.R", chdir=TRUE)
 ld = time_logs()
 lld = ld[script_recent==TRUE]
