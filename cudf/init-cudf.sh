@@ -11,6 +11,6 @@ echo 'NOT upgrading cudf...' # fixed to 0.9.0 as of now, probably better to remo
 conda env remove --name cudf
 conda create --name cudf
 conda activate cudf
-conda install --name cudf -c rapidsai -c nvidia -c numba -c conda-forge -c anaconda cudf=0.9 python=3.6 anaconda::cudatoolkit=9.2
+conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.10 python=3.6 cudatoolkit=9.2
 conda install --name cudf psutil
 conda deactivate
