@@ -175,8 +175,9 @@ groupby.data.exceptions = {list(                                                
                         "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv    #97
   )},
   "clickhouse" = {list(
-    "memory limit" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_1e2_0_1"),                  # q10         #96
-    "CH server crash" = "G1_1e9_2e0_0_0"                                                     # q3
+    "memory limit" = c("G1_1e9_1e1_0_0","G1_1e9_1e2_0_1"),                         # q10         #96
+    "CH server crash" = c("G1_1e9_1e2_0_0",                                        # q10
+                          "G1_1e9_2e0_0_0")                                        # q3          #112
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
