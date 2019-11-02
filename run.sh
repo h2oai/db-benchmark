@@ -73,7 +73,7 @@ $DO_REPORT && $DO_PUBLISH \
   && [ -f ./report-done ] \
   && [ $(wc -l report-done | awk '{print $1}') -eq 3 ] \
   && [ -f ./token ] \
-  && echo "# Publishing report"
+  && echo "# Publishing report" \
   && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # remove run lock file
