@@ -16,6 +16,37 @@ We also include the syntax being timed alongside the timing. This way you can im
 
 ```{r opts, echo=FALSE}
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
+stopifnot(sapply(c("data.table","rmarkdown","bit64","rpivotTable"), requireNamespace, quietly=TRUE))
+```
+
+```{r init}
+make_sorters <- function(data) { ## till not on cran https://github.com/smartinsightsfromdata/rpivotTable/pull/106
+  if( !length(data) ) return(NULL)
+  f <- sapply(data, is.factor)
+  if( !sum(f) ) return(NULL)
+  fcols <- names(data)[f]
+  flvls <- sapply(fcols, function(fcol, data) levels(data[[fcol]]), data=data, simplify=FALSE)
+  jslvls <- sapply(flvls, function(lvls) paste(paste0("\"",lvls,"\""), collapse=", "))
+  sorter <- sprintf("if (attr == \"%s\") { return sortAs([%s]); }", fcols, jslvls)
+  sprintf("function(attr) {\nvar sortAs = $.pivotUtilities.sortAs;\n%s\n}", paste(sorter, collapse="\n"))
+}
+
+source("report.R", chdir=TRUE)
+source("helpers.R", chdir=TRUE)
+source("benchplot-dict.R", chdir=TRUE)
+source("benchplot.R", chdir=TRUE)
+ld = time_logs()
+lld = ld[script_recent==TRUE]
+lld_nodename = as.character(unique(lld$nodename))
+if (length(lld_nodename)>1L)
+  stop(sprintf("There are multiple different 'nodename' to be presented on single report '%s'", report_name))
+lld_unfinished = lld[is.na(script_time_sec)]
+if (nrow(lld_unfinished)) {
+  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or launcher script killed): %s", paste(unique(lld_unfinished$task), collapse=","), paste(unique(lld_unfinished$solution), collapse=", ")))
+}
+
+dt_groupby = lld[task=="groupby"][substr(data,1,2)=="G1"]
+dt_join = lld[task=="join"]
 ```
 
 ```{r helpers}
@@ -42,27 +73,10 @@ hours_took = function(lld) {
 }
 ```
 
-```{r init}
-source("report.R", chdir=TRUE)
-source("helpers.R", chdir=TRUE)
-source("benchplot-dict.R", chdir=TRUE)
-source("benchplot.R", chdir=TRUE)
-ld = time_logs()
-lld = ld[script_recent==TRUE]
-lld_nodename = as.character(unique(lld$nodename))
-if (length(lld_nodename)>1L)
-  stop(sprintf("There are multiple different 'nodename' to be presented on single report '%s'", report_name))
-lld_unfinished = lld[is.na(script_time_sec)]
-if (nrow(lld_unfinished)) {
-  warning(sprintf("Missing solution finish timestamp in logs.csv for '%s' (still running or launcher script killed): %s", paste(unique(lld_unfinished$task), collapse=","), paste(unique(lld_unfinished$solution), collapse=", ")))
-}
-```
-
 ```{r report_groupby, message=FALSE}
 in_rows = c("1e7","1e8","1e9")
 k_na_sort = c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1")
 data_name = paste("G1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-dt_groupby = lld[task=="groupby"][substr(data,1,2)=="G1"]
 loop_benchplot(dt_groupby, report_name="groupby", code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, data_namev=data_name, q_groupv=c("basic","advanced"))
 ```
 
@@ -70,7 +84,6 @@ loop_benchplot(dt_groupby, report_name="groupby", code=groupby.code, exceptions=
 in_rows = c("1e7","1e8")
 k_na_sort = c("NA_0_0")
 data_name = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-dt_join = lld[task=="join"]
 loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exceptions, colors=solution.colors, data_namev=data_name, q_groupv=c("basic"))
 ```
 
@@ -156,9 +169,43 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases click on the links below. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
 `r dt_groupby[, .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=.(in_rows, question_group)][, paste(q_grp_links, collapse=", ")]`
 
+### groupby timings
+
+```{r pivot_groupby}
+sdcols = c("solution","question_group","question","data","in_rows","k","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+data = dt_groupby[, .SD, .SDcols=sdcols]
+rpivotTable::rpivotTable(
+  data,
+  rows = c("in_rows","k","sorted","question"),
+  cols = "solution",
+  aggregatorName = "Average",
+  vals = "time_sec_1",
+  height = "100%",
+  sorters = make_sorters(data),
+  unusedAttrsVertical = TRUE
+)
+```
+
 ### join
 
 Timings are presented for datasets having random order, no NAs (missing values). Data size on tabs corresponds to the LHS dataset of join, while RHS datasets are of the following sizes: _small_ (LHS/1e6), _medium_ (LHS/1e3), _big_ (LHS).
+
+### join timings
+
+```{r pivot_join}
+sdcols = c("solution","question_group","question","data","in_rows","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+data = dt_join[, .SD, .SDcols=sdcols]
+rpivotTable::rpivotTable(
+  data,
+  rows = c("in_rows","question"),
+  cols = "solution",
+  aggregatorName = "Average",
+  vals = "time_sec_1",
+  height = "100%",
+  sorters = make_sorters(data),
+  unusedAttrsVertical = TRUE
+)
+```
 
 ## Notes
 
