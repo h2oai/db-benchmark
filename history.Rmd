@@ -33,7 +33,7 @@ ld = ld[nodename==recent_nodename]
 
 ```{r hist_groupby_plot, fig.width=8, fig.height=48}
 p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
-  lattice::xyplot(time_sec_1 ~ ibatch | k+in_rows, ld[nasorted=="0% NAs, unsorted"],
+  lattice::xyplot(time_sec_1 ~ ibatch | k+in_rows, ld[nasorted=="0% NAs, unsorted data"],
                 type="l", grid=TRUE, groups=question,
                 subset=solution==s, main=s,
                 xlab = "benchmark run",
