@@ -128,7 +128,7 @@ ft = function(x) {
 ftdata = function(x, task) {
   labsorted = function(x) {
     ans = rep("unsorted data", length(x))
-    ans[as.logical(as.integer(x))] = "presorted data"
+    ans[as.logical(as.integer(x))] = "pre-sorted data"
     ans
   }
   if (all(task %in% c("groupby","join"))) {
