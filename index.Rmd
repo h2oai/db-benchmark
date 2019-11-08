@@ -63,7 +63,7 @@ loop_benchplot = function(dt_task, report_name, code, exceptions, colors, data_n
 link = function(data_name, q_group, report_name) {
   fnam = sprintf("%s.%s.png", data_name, q_group)
   path = file.path(report_name, "plots")
-  sprintf("[%s](%s)", fnam, file.path(path, fnam))
+  paste(sprintf("[%s](%s)", q_group, file.path(path, fnam)), collapse=", ")
 }
 hours_took = function(lld) {
   lld_script_time = lld[, .(n_script_time_sec=uniqueN(script_time_sec), script_time_sec=unique(script_time_sec)), .(solution, task, data)]
@@ -166,8 +166,7 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ### groupby {.active}
 
-Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases click on the links below. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
-`r dt_groupby[, .(q_grp_links=paste(link(unique(data), q_group=question_group, report_name="groupby"), collapse=", ")), by=.(in_rows, question_group)][, paste(q_grp_links, collapse=", ")]`
+Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases go to the very bottom of this page. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
 
 ### groupby timings
 
@@ -234,6 +233,17 @@ We limit the scope to what can be achieved on a single machine. Laptop size memo
 ## Why db-benchmark?
 
 Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.
+
+------
+
+## Explore more data cases
+
+```{r link_all_benchplot}
+lld[, .(task, in_rows, data, knasorted, question_group)
+    ][, unique(.SD)
+      ][, .(benchplot=link(data, question_group, task)), .(task, `in rows`=in_rows, `data description`=knasorted)
+        ][, kk(.SD)]
+```
 
 ------
 

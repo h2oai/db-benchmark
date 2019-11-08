@@ -127,8 +127,8 @@ ft = function(x) {
 }
 ftdata = function(x, task) {
   labsorted = function(x) {
-    ans = rep("unsorted", length(x))
-    ans[as.logical(as.integer(x))] = "sorted"
+    ans = rep("unsorted data", length(x))
+    ans[as.logical(as.integer(x))] = "presorted data"
     ans
   }
   if (all(task %in% c("groupby","join"))) {
@@ -139,7 +139,10 @@ ftdata = function(x, task) {
     na=ft(sapply(y, `[`, 4L))
     sorted=ft(labsorted(sapply(y, `[`, 5L)))
     nasorted=ft(sprintf("%s%% NAs, %s", as.character(na), as.character(sorted)))
-    list(in_rows=in_rows, k=k, na=na, sorted=sorted, nasorted=nasorted)
+    labk = character(length(k))
+    labk[!is.na(k)] = sprintf("%s cardinality factor, ", as.character(k[!is.na(k)]))
+    knasorted=ft(sprintf("%s%s", labk, as.character(nasorted)))
+    list(in_rows=in_rows, k=k, na=na, sorted=sorted, nasorted=nasorted, knasorted=knasorted)
   } else {
     stop("no task defined for ftdata other than groupby and join")
   }
