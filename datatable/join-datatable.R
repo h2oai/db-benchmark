@@ -6,6 +6,7 @@ source("./helpers.R")
 source("./datatable/helpers-datatable.R")
 
 suppressPackageStartupMessages(library(data.table))
+setDTthreads(0L)
 ver = packageVersion("data.table")
 git = datatable.git()
 task = "join"
