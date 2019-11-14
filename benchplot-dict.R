@@ -145,14 +145,14 @@ groupby.query.exceptions = {list(
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1566398304
   "data.table" = {list(
-    "timeout" = c("G1_1e9_2e0_0_0")                                                          # q3
+    "timeout" = c("G1_1e9_2e0_0_0")                                                          # q3 #110
   )},
   "dplyr" = {list(
     "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10
                   "G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1",       # q10
                   "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1",                                         # q10
                   "G1_1e9_1e1_0_0",                                                          # q6
-                  "G1_1e9_2e0_0_0")                                                          # q3
+                  "G1_1e9_2e0_0_0")                                                          # q3 #110
   )},
   "pandas" = {list(
     "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10
