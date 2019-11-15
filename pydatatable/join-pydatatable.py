@@ -6,7 +6,7 @@ import os
 import gc
 import timeit
 import datatable as dt
-from datatable import f, sum, join, isna
+from datatable import f, sum, join
 from datatable.math import isfinite
 
 exec(open("./helpers.py").read())
