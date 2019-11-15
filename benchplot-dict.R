@@ -265,7 +265,6 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
   )},
   "pydatatable" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # q5
   )},
   "spark" = {list(
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
