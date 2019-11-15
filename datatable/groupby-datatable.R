@@ -25,6 +25,7 @@ DT = fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE)
 #setDT(DT)
 print(nrow(DT))
 
+task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")
 
 question = "sum v1 by id1" # q1
@@ -97,13 +98,13 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-question = "median v3 sd v3 by id2 id4" # q6
-t = system.time(print(dim(ans<-DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id2, id4)])))[["elapsed"]]
+question = "median v3 sd v3 by id4 id5" # q6
+t = system.time(print(dim(ans<-DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id4, id5)])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(median_v3), sum(sd_v3))])[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
-t = system.time(print(dim(ans<-DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id2, id4)])))[["elapsed"]]
+t = system.time(print(dim(ans<-DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id4, id5)])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(median_v3), sum(sd_v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
@@ -111,13 +112,13 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-question = "max v1 - min v2 by id2 id4" # q7
-t = system.time(print(dim(ans<-DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)])))[["elapsed"]]
+question = "max v1 - min v2 by id3" # q7
+t = system.time(print(dim(ans<-DT[, .(range_v1_v2=max(v1)-min(v2)), by=id3])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(range_v1_v2)))])[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
-t = system.time(print(dim(ans<-DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)])))[["elapsed"]]
+t = system.time(print(dim(ans<-DT[, .(range_v1_v2=max(v1)-min(v2)), by=id3])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(bit64::as.integer64(range_v1_v2)))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
@@ -125,13 +126,13 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-question = "largest two v3 by id2 id4" # q8
-t = system.time(print(dim(ans<-DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=.(id2, id4)])))[["elapsed"]]
+question = "largest two v3 by id6" # q8
+t = system.time(print(dim(ans<-DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(largest2_v3))])[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
 rm(ans)
-t = system.time(print(dim(ans<-DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=.(id2, id4)])))[["elapsed"]]
+t = system.time(print(dim(ans<-DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(largest2_v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
@@ -166,5 +167,7 @@ write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
+
+cat(sprintf("grouping finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
 if( !interactive() ) q("no", status=0)
