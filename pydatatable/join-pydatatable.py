@@ -5,7 +5,6 @@ print("# join-pydatatable.py", flush=True)
 import os
 import gc
 import timeit
-import copy
 import datatable as dt
 from datatable import f, sum, join, isna
 from datatable.math import isfinite
@@ -45,7 +44,7 @@ print("joining...", flush=True)
 
 question = "small inner on int" # q1
 gc.collect()
-y = copy.deepcopy(small)
+y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
@@ -58,7 +57,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans, y
 gc.collect()
-y = copy.deepcopy(small)
+y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
@@ -75,7 +74,7 @@ del ans, y
 
 question = "medium inner on int" # q2
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
@@ -88,7 +87,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans, y
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
@@ -105,7 +104,7 @@ del ans, y
 
 question = "medium outer on int" # q3
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
@@ -118,7 +117,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans, y
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
@@ -135,7 +134,7 @@ del ans, y
 
 question = "medium inner on factor" # q4
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
@@ -148,7 +147,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans, y
 gc.collect()
-y = copy.deepcopy(medium)
+y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
@@ -165,7 +164,7 @@ del ans, y
 
 question = "big inner on int" # q5
 gc.collect()
-y = copy.deepcopy(big)
+y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
@@ -178,7 +177,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
 del ans, y
 gc.collect()
-y = copy.deepcopy(big)
+y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
