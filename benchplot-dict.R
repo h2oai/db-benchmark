@@ -192,7 +192,7 @@ join.code = list(
     "juliadf" = "join(x, small, on = :id1, makeunique=true)",
     "pandas" = "x.merge(small, on='id1')",
     "pydatatable" = "y.key = 'id1'; x[:, :, join(y)][isfinite(f.v2), :]",
-    "spark" = "spark.sql('select * from x join small using (id1)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "spark" = "spark.sql('select * from x join small using (id1)')",
     "clickhouse" = "",
     "cudf" = "x.merge(small, on='id1')"
   )}, # q1
@@ -203,7 +203,7 @@ join.code = list(
     "juliadf" = "join(x, medium, on = :id2, makeunique=true)",
     "pandas" = "x.merge(medium, on='id2')",
     "pydatatable" = "y.key = 'id2'; x[:, :, join(y)][isfinite(f.v2), :]",
-    "spark" = "spark.sql('select * from x join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "spark" = "spark.sql('select * from x join medium using (id2)')",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, on='id2')"
   )}, # q2
@@ -214,7 +214,7 @@ join.code = list(
     "juliadf" = "join(x, medium, kind = :left, on = :id2, makeunique=true)",
     "pandas" = "x.merge(medium, how='left', on='id2')",
     "pydatatable" = "y.key = 'id2'; x[:, :, join(y)]",
-    "spark" = "spark.sql('select * from x left join medium using (id2)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "spark" = "spark.sql('select * from x left join medium using (id2)')",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, how='left', on='id2')"
   )}, # q3
@@ -225,7 +225,7 @@ join.code = list(
     "juliadf" = "join(x, medium, on = :id5, makeunique=true)",
     "pandas" = "x.merge(medium, on='id5')",
     "pydatatable" = "y.key = 'id5'; x[:, :, join(y)][isfinite(f.v2), :]",
-    "spark" = "spark.sql('select * from x join medium using (id5)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "spark" = "spark.sql('select * from x join medium using (id5)')",
     "clickhouse" = "",
     "cudf" = "x.merge(medium, on='id5')"
   )}, # q4
@@ -236,7 +236,7 @@ join.code = list(
     "juliadf" = "join(x, big, on = :id3, makeunique=true)",
     "pandas" = "x.merge(big, on='id3')",
     "pydatatable" = "y.key = 'id3'; x[:, :, join(y)][isfinite(f.v2), :]",
-    "spark" = "spark.sql('select * from x join big using (id3)').persist(pyspark.StorageLevel.MEMORY_ONLY)",
+    "spark" = "spark.sql('select * from x join big using (id3)')",
     "clickhouse" = "",
     "cudf" = "x.merge(big, on='id3')"
   )} # q5
