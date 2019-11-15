@@ -221,7 +221,8 @@ rpivotTable::rpivotTable(
 - Julia 1.0.2  
 
 ```{r environment_hardware}
-as.data.table(na.omit(fread("nodenames.csv")[lld_nodename, on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=rn, Value=V1)][, kk(.SD)]
+pretty_component = function(x) gsub("_", " ", gsub("cpu", "CPU", gsub("gpu", "GPU", gsub("gb", "GB", x, fixed=TRUE), fixed=TRUE), fixed=TRUE), fixed=TRUE)
+as.data.table(na.omit(fread("nodenames.csv")[lld_nodename, on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=pretty_component(rn), Value=V1)][, kk(.SD)]
 ```
 
 ------
