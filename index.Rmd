@@ -247,8 +247,10 @@ Because we have been asked many times to do so, the first task and initial motiv
 ```{r link_all_benchplot}
 lld[, .(task, in_rows, data, knasorted, question_group)
     ][, unique(.SD)
-      ][, .(benchplot=link(data, question_group, task)), .(task, `in rows`=in_rows, `data description`=knasorted)
-        ][, kk(.SD)]
+      ][, .(benchplot=link(data, question_group, task)), .(task, in_rows, knasorted)
+        ][task=="join" & in_rows=="1e9", "benchplot" := "soon"
+          ][, .(task, `in rows`=in_rows, `data description`=knasorted, benchplot)
+            ][, kk(.SD)]
 ```
 
 ------
