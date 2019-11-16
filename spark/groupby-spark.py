@@ -41,6 +41,7 @@ print(x.count(), flush=True)
 
 x.createOrReplaceTempView("x")
 
+task_init = timeit.default_timer()
 print("grouping...", flush=True)
 
 question = "sum v1 by id1" # q1
@@ -203,10 +204,10 @@ ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
 
-#question = "median v3 sd v3 by id2 id4" # q6 # median not yet implemented https://issues.apache.org/jira/browse/SPARK-26589
+#question = "median v3 sd v3 by id4 id5" # q6 # median not yet implemented https://issues.apache.org/jira/browse/SPARK-26589
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = spark.sql("select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+#ans = spark.sql("select id4, id5, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id4, id5").persist(pyspark.StorageLevel.MEMORY_ONLY)
 #print((ans.count(), len(ans.columns)), flush=True) # shape
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -220,7 +221,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = spark.sql("select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+#ans = spark.sql("select id4, id5, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id4, id5").persist(pyspark.StorageLevel.MEMORY_ONLY)
 #print((ans.count(), len(ans.columns)), flush=True) # shape
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -235,10 +236,10 @@ del ans
 #spark.catalog.uncacheTable("ans")
 #del ans
 
-question = "max v1 - min v2 by id2 id4" # q7
+question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id3, max(v1)-min(v2) as range_v1_v2 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -252,7 +253,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id3, max(v1)-min(v2) as range_v1_v2 from x group by id3").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -267,10 +268,10 @@ ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
 
-question = "largest two v3 by id2 id4" # q8
+question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -284,7 +285,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -364,5 +365,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 
 spark.stop()
+
+print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
 exit(0)
