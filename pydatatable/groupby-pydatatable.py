@@ -24,6 +24,7 @@ print("loading dataset %s" % data_name, flush=True)
 x = dt.fread(src_grp)
 print(x.nrows, flush=True)
 
+task_init = timeit.default_timer()
 print("grouping...", flush=True)
 
 question = "sum v1 by id1" # q1
@@ -156,10 +157,10 @@ print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
 
-#question = "median v3 sd v3 by id2 id4" # q6 # median not yet implemented https://github.com/h2oai/datatable/issues/1530
+#question = "median v3 sd v3 by id4 id5" # q6 # median not yet implemented https://github.com/h2oai/datatable/issues/1530
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
+#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id4, f.id5)]
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -170,7 +171,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id2, f.id4)]
+#ans = x[:, {"median_v3": median(f.v3), "sd_v3": sd(f.v3)}, by(f.id4, f.id5)]
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -182,10 +183,10 @@ del ans
 #print(ans.tail(3).to_pandas(), flush=True)
 #del ans
 
-question = "max v1 - min v2 by id2 id4" # q7
+question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]
+ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -196,7 +197,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]
+ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -208,10 +209,10 @@ print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
 
-question = "largest two v3 by id2 id4" # q8
+question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:2, {"largest2_v3": f.v3}, by(f.id2, f.id4), sort(-f.v3)]
+ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -222,7 +223,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:2, {"largest2_v3": f.v3}, by(f.id2, f.id4), sort(-f.v3)]
+ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -285,5 +286,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans
+
+print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
 exit(0)
