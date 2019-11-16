@@ -40,6 +40,7 @@ x = dd.read_csv(src_grp, na_filter=False, dtype=dtype).persist()
 in_rows = len(x)
 print(in_rows, flush=True)
 
+task_init = timeit.default_timer()
 print("grouping...", flush=True)
 
 question = "sum v1 by id1" # q1
@@ -182,10 +183,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-#question = "median v3 sd v3 by id2 id4" # q6 # median function not yet implemented: https://github.com/dask/dask/issues/4362
+#question = "median v3 sd v3 by id4 id5" # q6 # median function not yet implemented: https://github.com/dask/dask/issues/4362
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
+#ans = x.groupby(['id4','id5']).agg({'v3': ['median','std']}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
@@ -197,7 +198,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
+#ans = x.groupby(['id4','id5']).agg({'v3': ['median','std']}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
@@ -210,10 +211,10 @@ del ans
 #print(ans.tail(3), flush=True)
 #del ans
 
-question = "max v1 - min v2 by id2 id4" # q7
+question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
+ans = x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -225,7 +226,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
+ans = x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -238,11 +239,11 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "largest two v3 by id2 id4" # q8
+question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()
-ans.reset_index(level=("id2","id4"), inplace=True)
+ans = x[['id6','v3']].groupby(['id6']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6': 'int64', 'v3': 'float64'})[['v3']].compute()
+ans.reset_index(level=("id6"), inplace=True)
 ans.reset_index(drop=True, inplace=True) # drop because nlargest creates some extra new index field
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -254,8 +255,8 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()
-ans.reset_index(level=("id2","id4"), inplace=True)
+ans = x[['id6','v3']].groupby(['id6']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6': 'int64', 'v3': 'float64'})[['v3']].compute()
+ans.reset_index(level=("id6"), inplace=True)
 ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -324,5 +325,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
+
+print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
 exit(0)
