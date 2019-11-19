@@ -70,37 +70,37 @@ groupby.code = list(
     "clickhouse"="SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM x GROUP BY id6",
     "cudf"="x.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})"
   )}, # q5
-  "median v3 sd v3 by id2 id4" = {c(
-    "dask" = "", # x.groupby(['id2','id4']).agg({'v3': ['median','std']}).compute()
-    "data.table" = "DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id2, id4)]",
-    "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
-    "juliadf" = "by(x, [:id2, :id4], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
-    "pandas" = "x.groupby(['id2','id4']).agg({'v3': ['median','std']})",
-    "pydatatable" = "", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id2, f.id4)]
-    "spark" = "", # spark.sql('select id2, id4, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id2, id4')
-    "clickhouse" = "SELECT id2, id4, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM x GROUP BY id2, id4",
+  "median v3 sd v3 by id4 id5" = {c(
+    "dask" = "", # x.groupby(['id4','id5']).agg({'v3': ['median','std']}).compute()
+    "data.table" = "DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id4, id5)]",
+    "dplyr" = "DF %>% group_by(id4, id5, .drop=TRUE) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
+    "juliadf" = "by(x, [:id4, :id5], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
+    "pandas" = "x.groupby(['id4','id5']).agg({'v3': ['median','std']})",
+    "pydatatable" = "", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id4, f.id5)]
+    "spark" = "", # spark.sql('select id4, id5, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id4, id5')
+    "clickhouse" = "SELECT id4, id5, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM x GROUP BY id4, id5",
     "cudf" = ""
   )}, # q6
-  "max v1 - min v2 by id2 id4" = {c(
-    "dask" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()",
-    "data.table" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=.(id2, id4)]",
-    "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(range_v1_v2=max(v1)-min(v2))",
-    "juliadf" = "by(x, [:id2, :id4], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
-    "pandas" = "x.groupby(['id2','id4']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
-    "pydatatable" = "x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id2, f.id4)]",
-    "spark" = "spark.sql('select id2, id4, max(v1)-min(v2) as range_v1_v2 from x group by id2, id4')",
-    "clickhouse" ="SELECT id2, id4, max(v1) - min(v2) AS range_v1_v2 FROM x GROUP BY id2, id4",
+  "max v1 - min v2 by id3" = {c(
+    "dask" = "x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()",
+    "data.table" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=id3]",
+    "dplyr" = "DF %>% group_by(id3, .drop=TRUE) %>% summarise(range_v1_v2=max(v1)-min(v2))",
+    "juliadf" = "by(x, [:id3], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
+    "pandas" = "x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
+    "pydatatable" = "x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id3)]",
+    "spark" = "spark.sql('select id3, max(v1)-min(v2) as range_v1_v2 from x group by id3')",
+    "clickhouse" ="SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM x GROUP BY id3",
     "cudf" = ""
   )}, # q7
-  "largest two v3 by id2 id4" = {c(
-    "dask" = "x[['id2','id4','v3']].groupby(['id2','id4']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id2': 'category', 'id4': 'int64', 'v3': 'float64'})[['v3']].compute()",
-    "data.table" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=.(id2, id4)]",
-    "dplyr" = "DF %>% select(id2, id4, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id2, id4, .drop=TRUE) %>% filter(row_number() <= 2L)",
-    "juliadf" = "by(x, [:id2, :id4], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
-    "pandas" = "x[['id2','id4','v3']].sort_values('v3', ascending=False).groupby(['id2','id4']).head(2)",
-    "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id2, f.id4), sort(-f.v3)]",
-    "spark" = "spark.sql('select id2, id4, largest2_v3 from (select id2, id4, v3 as largest2_v3, row_number() over (partition by id2, id4 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
-    "clickhouse" = "SELECT id2, id4, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id2, id4",
+  "largest two v3 by id6" = {c(
+    "dask" = "x[['id6','v3']].groupby(['id6']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6': 'int64', 'v3': 'float64'})[['v3']].compute()",
+    "data.table" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6]",
+    "dplyr" = "DF %>% select(id6, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id6, .drop=TRUE) %>% filter(row_number() <= 2L)",
+    "juliadf" = "by(x, [:id6], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
+    "pandas" = "x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)",
+    "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3)]",
+    "spark" = "spark.sql('select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
+    "clickhouse" = "SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id6",
     "cudf" = ""
   )}, # q8
   "regression v1 v2 by id2 id4" = {c(
@@ -131,28 +131,29 @@ groupby.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
-  "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id2 id4",
+  "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id4 id5",
                        "not yet implemented: datatable#1543" = "regression v1 v2 by id2 id4"),
-  "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id2 id4"),
-  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id2 id4",
+  "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
+  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
                        "not yet implemented: dask#4828" = "regression v1 v2 by id2 id4"),
   "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#1085" = "median v3 sd v3 by id2 id4",
-                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id2 id4",
-                       "not yet implemented: cudf#2592" = "largest two v3 by id2 id4",
+  "cudf" =        list("not yet implemented: cudf#1085" = "median v3 sd v3 by id4 id5",
+                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
+                       "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list()
 )}
-groupby.data.exceptions = {list(                                                             # exceptions as of run 1566398304
+groupby.data.exceptions = {list(                                                             # exceptions as of run 1573882448
   "data.table" = {list(
-    "timeout" = c("G1_1e9_2e0_0_0")                                                          # q3 #110
+    "segfault" = c("G1_1e9_2e0_0_0"),                                                        # fread # before it was q3 #110
+    "timeout" = c("G1_1e9_1e1_0_0")                                                          # q8 probably #110
   )},
   "dplyr" = {list(
     "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10
                   "G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1",       # q10
                   "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1",                                         # q10
-                  "G1_1e9_1e1_0_0",                                                          # q6
-                  "G1_1e9_2e0_0_0")                                                          # q3 #110
+                  "G1_1e9_1e1_0_0"),                                                         # q6
+    "segfault" = c("G1_1e9_2e0_0_0")                                                         # fread # before it was q3 #110
   )},
   "pandas" = {list(
     "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10
@@ -164,20 +165,28 @@ groupby.data.exceptions = {list(                                                
   "spark" = {list(
   )},
   "dask" = {list(
-    "segfault" = "G1_1e9_1e1_0_0",                                                 # read_csv
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1")        # read_csv    #99
+    "timeout" = c("G1_1e7_2e0_0",                                                  # q8
+                  "G1_1e8_1e2_0_0",                                                # q8
+                  "G1_1e8_1e1_0_0",                                                # q8
+                  "G1_1e8_2e0_0_0",                                                # q8
+                  "G1_1e8_1e2_0_1"),                                               # q8
+    "segfault" = c("G1_1e9_1e2_0_1"),                                              # read_csv
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0")        # read_csv  #99
   )},
   "juliadf" = {list(
+    "improper syntax" = c("G1_1e7_1e1_0_0","G1_1e7_2e0_0_0",
+                          "G1_1e8_1e1_0_0","G1_1e8_2e0_0_0"),                      # q8 #117#issuecomment-555314119
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
   )},
   "cudf" = {list(
-    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1", # read_csv    #94
-                        "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv    #97
+    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1", # read_csv #94
+                        "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #97
   )},
   "clickhouse" = {list(
-    "memory limit" = c("G1_1e9_1e1_0_0","G1_1e9_1e2_0_1"),                         # q10         #96
-    "CH server crash" = c("G1_1e9_1e2_0_0",                                        # q10
-                          "G1_1e9_2e0_0_0")                                        # q3          #112
+    "CH server crash" = c("G1_1e9_1e2_0_0",                                        # q10 #112 before it was #96
+                          "G1_1e9_1e1_0_0",                                        # q7 #112
+                          "G1_1e9_2e0_0_0",                                        # q3 #112
+                          "G1_1e9_1e2_0_1")                                        # q10 #112 before it was #96
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)

@@ -4,9 +4,9 @@ groupby,sum v1 by id1:id2,basic
 groupby,sum v1 mean v3 by id3,basic
 groupby,mean v1:v3 by id4,basic
 groupby,sum v1:v3 by id6,basic
-groupby,median v3 sd v3 by id2 id4,advanced
-groupby,max v1 - min v2 by id2 id4,advanced
-groupby,largest two v3 by id2 id4,advanced
+groupby,median v3 sd v3 by id4 id5,advanced
+groupby,max v1 - min v2 by id3,advanced
+groupby,largest two v3 by id6,advanced
 groupby,regression v1 v2 by id2 id4,advanced
 groupby,sum v3 count by id1:id6,advanced
 join,small inner on int,basic
