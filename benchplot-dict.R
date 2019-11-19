@@ -96,7 +96,7 @@ groupby.code = list(
     "dask" = "x[['id6','v3']].groupby(['id6']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6': 'int64', 'v3': 'float64'})[['v3']].compute()",
     "data.table" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6]",
     "dplyr" = "DF %>% select(id6, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id6, .drop=TRUE) %>% filter(row_number() <= 2L)",
-    "juliadf" = "by(x, [:id6], largest2_v3 = :v3 => x -> partialsort(x, 1:2, rev=true))",
+    "juliadf" = "by(x, [:id6], largest2_v3 = :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true))",
     "pandas" = "x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)",
     "pydatatable" = "x[:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3)]",
     "spark" = "spark.sql('select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
@@ -174,8 +174,6 @@ groupby.data.exceptions = {list(                                                
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0")        # read_csv  #99
   )},
   "juliadf" = {list(
-    "improper syntax" = c("G1_1e7_1e1_0_0","G1_1e7_2e0_0_0",
-                          "G1_1e8_1e1_0_0","G1_1e8_2e0_0_0"),                      # q8 #117#issuecomment-555314119
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
   )},
   "cudf" = {list(
