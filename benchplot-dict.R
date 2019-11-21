@@ -76,7 +76,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id4, id5, .drop=TRUE) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
     "juliadf" = "by(x, [:id4, :id5], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
     "pandas" = "x.groupby(['id4','id5']).agg({'v3': ['median','std']})",
-    "pydatatable" = "", # x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id4, f.id5)]
+    "pydatatable" = "DT[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id4, f.id5)]",
     "spark" = "", # spark.sql('select id4, id5, median(v3) as median_v3, stddev(v3) as sd_v3 from x group by id4, id5')
     "clickhouse" = "SELECT id4, id5, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM x GROUP BY id4, id5",
     "cudf" = ""
@@ -109,7 +109,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
-    "pydatatable" = "", # x[:, {'r2': cor(v1, v2)^2}, by(f.id2, f.id4)],
+    "pydatatable" = "DT[:, {'r2': corr(f.v1, f.v2)^2}, by(f.id2, f.id4)]",
     "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')",
     "clickhouse" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4",
     "cudf" = ""
@@ -131,8 +131,7 @@ groupby.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
   "pandas" =      list(),
-  "pydatatable" = list("not yet implemented: datatable#1530" = "median v3 sd v3 by id4 id5",
-                       "not yet implemented: datatable#1543" = "regression v1 v2 by id2 id4"),
+  "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
                        "not yet implemented: dask#4828" = "regression v1 v2 by id2 id4"),
