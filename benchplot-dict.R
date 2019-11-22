@@ -109,7 +109,7 @@ groupby.code = list(
     "dplyr" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2)^2)",
     "juliadf" = "by(x, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
     "pandas" = "x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
-    "pydatatable" = "DT[:, {'r2': corr(f.v1, f.v2)^2}, by(f.id2, f.id4)]",
+    "pydatatable" = "DT[:, {'r2': corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]",
     "spark" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')",
     "clickhouse" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4",
     "cudf" = ""
@@ -134,9 +134,9 @@ groupby.query.exceptions = {list(
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
-                       "not yet implemented: dask#4828" = "regression v1 v2 by id2 id4"),
+                       "not yet documented: dask#5622" = "regression v1 v2 by id2 id4"), #122
   "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#1085" = "median v3 sd v3 by id4 id5",
+  "cudf" =        list("not yet released: cudf#1085" = "median v3 sd v3 by id4 id5", #121
                        "not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),

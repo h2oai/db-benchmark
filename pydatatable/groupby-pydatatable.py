@@ -238,7 +238,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9 # not yet implemeneted https://github.com/h2oai/datatable/issues/1543
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"r2": corr(f.v1, f.v2)^2}, by(f.id2, f.id4)]
+ans = x[:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -249,7 +249,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"r2": corr(f.v1, f.v2)^2}, by(f.id2, f.id4)]
+ans = x[:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
