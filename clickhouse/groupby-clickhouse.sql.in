@@ -113,7 +113,7 @@ SET log_queries = 1;
 SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM DATA_NAME GROUP BY id3;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
-SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, read_rows AS in_rows, 'max v1 - min v2 by id2 id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 0 AS cache, NULL AS chk, NULL AS chk_time_sec
+SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, read_rows AS in_rows, 'max v1 - min v2 by id3' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 0 AS cache, NULL AS chk, NULL AS chk_time_sec
 FROM system.query_log WHERE type=2 AND query='SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM DATA_NAME GROUP BY id3' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q7_r2.csv' FORMAT CSVWithNames;
 
 /* q8: question='largest two v3 by id6' */
