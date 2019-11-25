@@ -331,7 +331,7 @@ benchplot2 = function(
   x[, "max_time" := max(c(time1, time2)), by=c("solution","question")]
   # get bars Y coordinates, positions only, plot later in bar1
   all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, max(x$max_time)), axes=FALSE, xpd=FALSE)
-  box("plot", col="black")
+  box("plot", col="black") ## temporary for development
   box("figure", col="blue")
   box("inner", col="orange")
   box("outer", col="red")

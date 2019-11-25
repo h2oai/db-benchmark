@@ -55,13 +55,22 @@ if (old) {
 # system("feh -w b1.png b2.png", wait=FALSE)
 
 ## TODO
+# - [x] vectorized code, avoid loops, keep more information inside the data
+# - [x] footer alignement in corner
+# - [x] avoid to many ticks on X axis
+# - [x] headers more adjustable from functions (support various tasks)
+# - [x] syntax dict stacked by solution, not question
+# - [x] white background of text should not overlap another text
+# - [x] solution colors and short/long names moved to dictionary
+# - [x] isolate parts of the plot into own functions for readability and maintenance
 # - [ ] pending entry in legend
 # - [x] legend left maring
 # - [ ] first/second run legend little bit lower
 # - [x] solution names on lhs margin and legend
-# - [ ] X axis cutoff early??
+# - [ ] X axis cutoff to early
 # - [ ] question headers
 # - [ ] syntax_text query exceptions only for NA timing
+# - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
 # - [ ] scale for solutions (2-10)
 # - [ ] scale for questions (2-10)
 # - [ ] scale for s*q (2*2, 2*10, 10*2, 10*10)
