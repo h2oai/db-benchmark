@@ -1,38 +1,28 @@
-library(data.table)
-source("report.R")
-q_group = "basic"
-t = "groupby"
-d = "G1_1e7_1e2_0_0"
-ld = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
+# filter nsolutions nquestions ----
 
-# nsolutions nquestions ----
+filter = function(ld, nsolutions = 9L, nquestions = 5L) {
+  stopifnot(nsolutions >= 2L, nquestions >= 1L)
+  ## solutions filter
+  ld = ld[solution %in% head(levels(ld$solution), n=nsolutions)]
+  ## questions filter
+  ld = ld[question %in% head(levels(ld$question), n=nquestions)]
+  ld
+}
 
-nsolutions = 3L
-nquestions = 5L
-stopifnot(nsolutions >= 2L, nquestions >= 1L)
+# benchplot calls ----
 
-## solutions filter
-s = head(c("data.table","dplyr","pandas","pydatatable","spark","dask","juliadf","clickhouse","cudf"), n=nsolutions)
-ld = ld[solution %in% s]
-cutoff = if ("spark"%in%s) "spark" else if ("pandas"%in%s) "pandas" else s[2L]
-## questions filter
-ld = ld[question %in% head(levels(ld$question), n=nquestions)]
-
-# benchplot ----
-
-old = T
-stopifnot(!old || nquestions==5L)
-if (old) {
+old = function(file) local({
   source("benchplot-dict.R")
   source("benchplot.R")
   benchplot(
     .nrow = substr(d, 4L, 6L),
     task=t, data=d,
     timings = copy(ld),
-    cutoff = cutoff,
-    code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, .interactive=FALSE, fnam="b1.png", path="."
+    cutoff = if ("spark"%in%as.character(unique(ld$solution))) "spark" else character(),
+    code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, .interactive=FALSE, fnam=file, path="."
   )
-} else {
+})
+new = function(file) local({
   source("benchplot-dict2.R")
   source("benchplot2.R")
   x = ld[data==d]
@@ -40,30 +30,65 @@ if (old) {
   x[, names(x)[f] := lapply(.SD, factor), .SDcols=f]
   setnames(x, c("time_sec_1","time_sec_2"), c("time1","time2"))
   benchplot2(
-    x, filename = "b2.png",
+    x, filename = file,
     solution.dict = groupby.solution.dict,
     syntax.dict = groupby.syntax.dict,
     exceptions = groupby.exceptions,
     question.txt.fun = groupby_q_title_fun,  
     title.txt.fun = header_title_fun,
-    cutoff = cutoff,
+    cutoff = "spark",
+    pending = "Modin",
     url.footer = "https://h2oai.github.io/db-benchmark",
     interactive = FALSE
   )
-}
+})
 
-# system("feh -w b1.png b2.png", wait=FALSE)
+# run ----
 
-## TODO
+library(data.table)
+source("report.R")
+q_group = "basic"
+t = "groupby"
+d = "G1_1e7_1e2_0_0"
+ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
+
+system("pkill feh", wait=TRUE)
+
+ld = filter(ldd, nsolutions=9L)
+system("rm -f b1_9.png b2_9.png")
+old(file="b1_9.png")
+new(file="b2_9.png")
+system("feh -w b1_9.png b2_9.png", wait=FALSE)
+
+ld = filter(ldd, nsolutions=3L)
+system("rm -f b1_3.png b2_3.png")
+old(file="b1_3.png")
+new(file="b2_3.png")
+system("feh -w b1_3.png b2_3.png", wait=FALSE)
+
+# scale for solutions
+system("pkill feh", wait=TRUE)
+system("rm -f b2_3.png b2_6.png b2_9.png")
+ld = filter(ldd, nsolutions=9L)
+new(file="b2_9.png")
+ld = filter(ldd, nsolutions=6L)
+new(file="b2_6.png")
+ld = filter(ldd, nsolutions=3L)
+new(file="b2_3.png")
+system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
+
+# todo ----
+
 # - [x] vectorized code, avoid loops, keep more information inside the data
 # - [x] footer alignement in corner
-# - [x] avoid to many ticks on X axis
+# - [ ] avoid to many ticks on X axis
 # - [x] headers more adjustable from functions (support various tasks)
 # - [x] syntax dict stacked by solution, not question
 # - [x] white background of text should not overlap another text
 # - [x] solution colors and short/long names moved to dictionary
 # - [x] isolate parts of the plot into own functions for readability and maintenance
-# - [ ] pending entry in legend
+# - [x] handling of non present cutoff solution
+# - [x] pending entry in legend
 # - [x] legend left maring
 # - [ ] first/second run legend little bit lower
 # - [x] solution names on lhs margin and legend
@@ -71,6 +96,6 @@ if (old) {
 # - [ ] question headers
 # - [ ] syntax_text query exceptions only for NA timing
 # - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
-# - [ ] scale for solutions (2-10)
+# - [x] scale for solutions (2-10)
 # - [ ] scale for questions (2-10)
 # - [ ] scale for s*q (2*2, 2*10, 10*2, 10*10)

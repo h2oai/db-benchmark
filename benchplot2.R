@@ -59,8 +59,10 @@ bar2 = function(x, w) {
   invisible(NULL)
 }
 
-margins = function(nsolutions) {
+margins = function(nsolutions, pending) {
   mar.bottom = sum(c(
+    some_alignment = 1-min((nsolutions-3)*0.4, 2),
+    footer = 1
   ))
   mar.left = sum(c(
     solution_margin = 6
@@ -68,7 +70,8 @@ margins = function(nsolutions) {
   mar.top = sum(c(
     title = 1,
     solution_legend = nsolutions,
-    spacing = 2.5
+    pending_solution_entry = as.logical(length(pending)),
+    spacing = 3
   ))
   mar.right = sum(c(
     cutoff_timing_margin = 6
@@ -204,7 +207,7 @@ format_s_total_real_time = function(data, solution, s_questions, s_total_real_ti
   }
   ans
 }
-header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.fun) {
+header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.fun, pending=character()) {
   xy = xy_fig(offset = c(x1=0, x2=0, y1=0, y2=1))
   x_at = x[, xlab_labels(c(time1, time2))]
   x_range = c(mean(c(xy[["x1"]], 0)), mean(c(xy[["x2"]], tail(x_at, 1L))))
@@ -220,23 +223,31 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
              s_questions=list(question)), ## retain all questions so can lookup for exceptions later on
          by="solution"]
   setorderv(dt, "s_total_real_time", na.last=TRUE)
+  if (length(pending)) dt = rbindlist(list(
+    dt,
+    data.table(solution=NA_integer_, data=NA_integer_, version=NA_integer_, batch=NA_integer_, s_total_real_time=NA_real_, col_strong="black", name_short=NA_character_, name_long=paste(pending, collapse=", "), s_questions=list())
+  ))
+  dt[!is.na(solution), `:=`(
+    format_version=format_version(version), format_batch=format_batch(batch),
+    format_s_total_real_time = format_s_total_real_time(data, solution, s_questions, s_total_real_time, exceptions)
+  )]
+  dt[is.na(solution), `:=`(format_version="", format_batch="see README", format_s_total_real_time="pending")]
   dt[, legend(x_off[2L], xy[["y2"]], bty="n", cex=1.5,
               pch=22, pt.bg=col_strong, pt.cex=3.5,    ## color square
               text.font=1, xpd=NA,
               legend=name_long)] -> nul                ## solution long name
   dt[, legend(x_off[20L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
-              legend=format_version(version))] -> nul  ## version
+              legend=format_version)] -> nul           ## version
   dt[, legend(x_off[40L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
-              legend=format_batch(batch))] -> nul      ## date
+              legend=format_batch)] -> nul             ## date
   # right aligned total time seconds
   dt[, {
-    txt = format_s_total_real_time(data, solution, s_questions, s_total_real_time, exceptions)
     temp = legend(x_off[70L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
-                  legend=rep("", length(txt)),
-                  text.width = max(strwidth(txt)))
+                  legend=rep("", length(format_s_total_real_time)),
+                  text.width = max(strwidth(format_s_total_real_time[!is.na(solution)])))
     text(temp$rect$left + temp$rect$w,
-         temp$text$y - 0.3333*(1/log(length(levels(solution)))), # 0.3333 from dd->dev->yCharOffset, 1/log(nsolutions) for better scaling
-         txt, pos=2, 
+         temp$text$y - 0.3333*(1/log(length(levels(solution))+as.logical(length(pending)))), # 0.3333 from dd->dev->yCharOffset, 1/log(nsolutions) for better scaling
+         format_s_total_real_time, pos=2,
          cex=1.5, xpd=NA)
   }] -> nul                                            ## solution total time
   
@@ -265,8 +276,9 @@ benchplot2 = function(
   solution.dict=list(), syntax.dict=list(),
   exceptions=list(),
   cutoff=NULL, cutoff.after=0.2,
-  question.txt.fun=default.question.txt.fun,
-  title.txt.fun=default.title.txt.fun,
+  pending=NULL,
+  question.txt.fun = default.question.txt.fun,
+  title.txt.fun = default.title.txt.fun,
   url.footer = NA_character_,
   interactive = interactive()
 ) {
@@ -276,7 +288,7 @@ benchplot2 = function(
   }
   stopifnot(is.data.table(x))
   if (!is.null(filename)) stopifnot(is.character(filename), !is.na(filename), length(filename)==1L)
-  if (!is.null(cutoff)) stopifnot(is.character(cutoff), !is.na(cutoff), length(cutoff)==1L, is.numeric(cutoff.after), !is.na(cutoff.after))
+  if (!is.null(cutoff)) stopifnot(is.character(cutoff), !is.na(cutoff), length(cutoff)<=1L, is.numeric(cutoff.after), !is.na(cutoff.after))
   stopifnot(is.list(exceptions), is.list(solution.dict), is.list(syntax.dict))
   stopifnot(is.function(question.txt.fun))
   stopifnot(is.character(url.footer), length(url.footer)==1L)
@@ -287,7 +299,7 @@ benchplot2 = function(
   nsolutions = length(solutions)
   questions = levels(x$question)
   nquestions = length(questions)
-  if (length(cutoff) && !cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
+  if (length(cutoff) && !cutoff%in%solutions) cutoff = NULL # disable cutoff if cutoff solution is not present
   if (!all(solutions %in% names(solution.dict))) stop("'solution.dict' argument does not define all solutions used")
   if (!all(solutions %in% names(syntax.dict))) stop("'syntax.dict' argument does not define all solutions used")
 
@@ -319,7 +331,7 @@ benchplot2 = function(
     ))
     png(filename=filename, width=800, height=height)
   }
-  margins(nsolutions)
+  margins(nsolutions, pending=pending)
   x[, c("cutoff1","cutoff2") := .(FALSE, FALSE)]
   if (length(cutoff)) {
     if (!cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
@@ -331,17 +343,17 @@ benchplot2 = function(
   x[, "max_time" := max(c(time1, time2)), by=c("solution","question")]
   # get bars Y coordinates, positions only, plot later in bar1
   all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, max(x$max_time)), axes=FALSE, xpd=FALSE)
-  box("plot", col="black") ## temporary for development
-  box("figure", col="blue")
-  box("inner", col="orange")
-  box("outer", col="red")
+  box("plot", col="red")
+  box("figure", col="forestgreen")
+  box("outer", col="blue")
+  box("inner", col="pink")
   bar_step = all_y_bars[2L]-all_y_bars[1L]
   x[, "bar_y" := all_y_bars[!is.na(pad)]]
   x[, "syntax_y" := all_y_bars[which(!is.na(pad))+1L]]
   x[, "bar_text" := paste(format_num(c(real_time1, real_time2)), collapse="; "), by=c("solution","question")]
   x[cutoff==TRUE, "bar_text" := paste("...", bar_text)]
 
-  header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun)
+  header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun, pending=pending)
   axis_grid(x, nsolutions, nquestions, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
   plot_annotations(x, question.txt.fun=question.txt.fun)
   bar1(x, pad)
