@@ -25,8 +25,17 @@ header_title_fun = function(x) {
 # groupby ----
 
 groupby_q_title_fun = function(x) {
-  stopifnot(c("iquestion","out_rows","out_cols","in_rows") %in% names(x))
-  x[, sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iquestion, format_comma(out_rows), format_comma(as.numeric(as.character(in_rows))/as.numeric(out_rows)), format_comma(out_rows), out_cols)]
+  stopifnot(c("question","iquestion","out_rows","out_cols","in_rows") %in% names(x),
+            uniqueN(x, by="iquestion")==nrow(x))
+  x = copy(x)[, "top2":=FALSE][, iquestion:=seq_along(iquestion)]
+  x[question=="largest two v3 by id6", "top2":=TRUE] #118
+  x[, sprintf("Question %s: \"%s\": %s%s ad hoc groups of ~%s rows;  result %s x %s",
+              iquestion, as.character(question),
+              if (top2) "~" else "",
+              format_comma(if (top2) out_rows/2 else out_rows),
+              if (top2) "2" else format_comma(as.numeric(as.character(in_rows))/as.numeric(out_rows)),
+              format_comma(out_rows), out_cols),
+    by = "iquestion"]$V1
 }
 
 groupby.solution.dict = list(

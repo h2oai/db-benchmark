@@ -48,7 +48,7 @@ new = function(file) local({
 library(data.table)
 source("report.R")
 t = "groupby"
-d = "G1_1e7_1e2_0_0"
+d = "G1_1e9_1e1_0_0"
 q_group = "advanced"
 ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
 
@@ -96,7 +96,7 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] solution names on lhs margin and legend
 # - [x] overlapping grid, axes to textBG
 # - [x] exceptions
-# - [ ] question headers
+# - [x] question headers
 # - [x] proper cutoff at the edge
 # - [x] syntax_text query exceptions only for NA timing
 # - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)

@@ -2,7 +2,7 @@
 ## https://github.com/h2oai/db-benchmark/commit/fce1b8c9177afb49471fcf483a438f619f1a992b
 ## Original grouping benchmark can be found in: https://github.com/Rdatatable/data.table/wiki/Benchmarks-:-Grouping
 
-format_comma = function(x) format(as.integer(signif(x,4)), big.mark=",")
+format_comma = function(x) format(as.integer(x), big.mark=",")
 format_num = function(x, digits=3L) { # at least 3+1 chars on output, there is surely some setting to achieve that better with base R but it is not obvious to find that among all features there
   cx = sprintf("%0.2f", x)
   int = sapply(strsplit(cx, ".", fixed=TRUE), `[`, 1L)
@@ -41,9 +41,9 @@ xlab_timescale = function(x) {
 }
 
 text_bg = function(x, y, txt, xpd=NA, col="black", col.bg="white", ..., which=NA) {
-  pad = strwidth("w", ...)/2
-  w = strwidth(txt, ...) + pad
-  h = strheight(txt, ...) + pad
+  wpad = strwidth("w", ...)/2
+  w = strwidth(txt, ...) + wpad
+  h = strheight(txt, ...) * 1.25
   x = x + w/2 # center
   if (is.na(which)||which=="rect") rect(x-w/2, y-h/2, x+w/2, y+h/2, col=col.bg, border=NA, xpd=xpd)
   if (is.na(which)||which=="text") text(x, y, txt, xpd=xpd, col=col, ...)
@@ -169,24 +169,34 @@ default.title.txt.fun = function(x) {
     as.numeric(ds[["gb"]])[1L]
   )
 }
+get_exception = function(ex, s, dq, short) {
+  heading = function(x, short) trimws(if (short) sapply(strsplit(x, ":", fixed=TRUE), `[[`, 1L) else x)
+  e = ex[[as.character(s)]]
+  if (length(e)) {
+    this = which(sapply(e, function(ee) any(as.character(dq) %in% ee)))[1L]
+    if (!is.na(this)) return(heading(names(e[this]), short=short))
+  }
+  NULL
+}
 format_exception = function(ex, s, d, q, which=c("data","query"), short=TRUE) {
   if (is.na(d)) return("")
-  heading = function(x, short) trimws(if (short) sapply(strsplit(x, ":", fixed=TRUE), `[[`, 1L) else x)
-  if ("data" %in% which) {
-    e = ex$data[[as.character(s)]]
-    if (length(e)) {
-      this = which(sapply(e, function(ee) any(as.character(d) %in% ee)))[1L]
-      if (!is.na(this)) return(heading(names(e[this]), short=short))
-    }
+  ans = NULL
+  if (is.null(ans) && "data"%in%which && "data"==which[1L]) {
+    ans = get_exception(ex$data, s, d, short=short)
   }
-  if ("query" %in% which) {
-    e = ex$query[[as.character(s)]]
-    if (length(e)) {
-      this = which(sapply(e, function(ee) any(as.character(q) %in% ee)))[1L]
-      if (!is.na(this)) return(heading(names(e[this]), short=short))
-    }
+  if (is.null(ans) && "query"%in%which && "query"==which[1L]) {
+    ans = get_exception(ex$query, s, q, short=short)
   }
-  return("undefined exception")
+  if (is.null(ans) && "data"%in%which && "data"==which[2L]) {
+    ans = get_exception(ex$data, s, d, short=short)
+  }
+  if (is.null(ans) && "query"%in%which && "query"==which[2L]) {
+    ans = get_exception(ex$query, s, q, short=short)
+  }
+  if (is.null(ans)) {
+    ans = "undefined exception"
+  }
+  ans
 }
 format_version = function(x) fifelse(is.na(x), "NA", as.character(x))
 format_batch = function(x) fifelse(is.na(x), "NA", format(as.Date(as.POSIXct(as.numeric(x), origin="1970-01-01"))))
@@ -312,7 +322,7 @@ benchplot2 = function(
   x[, c("name_short","name_long") := as.list(solution.dict[[as.character(solution)]][["name"]]), by="solution"]
   x[, "syntax_text" := as.list(syntax.dict[[as.character(solution)]])[[as.character(question)]], by=c("solution","question")]
   x[, "exception_text" := NA_character_]
-  if (sum(x$na_time_sec)) x[na_time_sec==TRUE, "exception_text" := mapply(format_exception, s=solution, q=list(question), MoreArgs=list(ex=exceptions, d=data, short=FALSE), SIMPLIFY=TRUE), by=c("data","solution","question")]
+  if (sum(x$na_time_sec)) x[na_time_sec==TRUE, "exception_text" := mapply(format_exception, s=solution, q=list(question), MoreArgs=list(ex=exceptions, d=data, which=c("query","data"), short=FALSE), SIMPLIFY=TRUE), by=c("data","solution","question")]
 
   # bars on Y axis padding
   pad = as.vector(sapply(
@@ -358,12 +368,12 @@ benchplot2 = function(
   x[, "bar_text" := paste(format_num(c(real_time1, real_time2)), collapse="; "), by=c("solution","question")]
   x[cutoff==TRUE, "bar_text" := paste("...", bar_text)]
 
-  header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun, pending=pending)
   x_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
   q_title(x, txt.fun=question.txt.fun, which="rect")
   syntax(x, which="rect")
   values(x, which="rect")
   exception(x, which="rect")
+  header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun, pending=pending)
   y_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
   q_title(x, txt.fun=question.txt.fun, which="text")
   syntax(x, which="text")
