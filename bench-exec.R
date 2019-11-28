@@ -5,7 +5,7 @@ filter = function(ld, nsolutions = 9L, nquestions = 5L) {
   ## solutions filter
   ld = ld[solution %in% head(levels(ld$solution), n=nsolutions)]
   ## questions filter
-  ld = ld[question %in% head(levels(ld$question), n=nquestions)]
+  ld = ld[question %in% head(as.character(unique(ld$question)), n=nquestions)]
   ld
 }
 
@@ -95,9 +95,10 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] first/second run legend y location more stable
 # - [x] solution names on lhs margin and legend
 # - [x] overlapping grid, axes to textBG
-# - [ ] exceptions
+# - [x] exceptions
 # - [ ] question headers
-# - [ ] syntax_text query exceptions only for NA timing
+# - [x] proper cutoff at the edge
+# - [x] syntax_text query exceptions only for NA timing
 # - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
 # - [x] scale for solutions (3-9)
 # - [ ] minutes-seconds translation error

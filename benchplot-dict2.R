@@ -9,14 +9,6 @@ task.exceptions = function(query, data) {
   ex
 }
 
-groupby_q_title_fun = function(x) {
-  stopifnot(c("iquestion","out_rows","out_cols","in_rows") %in% names(x))
-  x[, sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iquestion, format_comma(out_rows), format_comma(as.numeric(as.character(in_rows))/as.numeric(out_rows)), format_comma(out_rows), out_cols)]
-}
-join_q_title_fun = function(x) {
-  stopifnot(c("iquestion","out_rows","out_cols") %in% names(x))
-  x[, sprintf("Question %s: result %s x %s", iquestion, format_comma(out_rows), out_cols)]
-}
 header_title_fun = function(x) {
   stopifnot(is.data.table(x), "data" %in% names(x))
   data_name = unique1(x[["data"]])
@@ -28,6 +20,13 @@ header_title_fun = function(x) {
     as.numeric(ds[["ncol"]])[1L],
     as.numeric(ds[["gb"]])[1L]
   )
+}
+
+# groupby ----
+
+groupby_q_title_fun = function(x) {
+  stopifnot(c("iquestion","out_rows","out_cols","in_rows") %in% names(x))
+  x[, sprintf("Question %s: %s ad hoc groups of %s rows;  result %s x %s", iquestion, format_comma(out_rows), format_comma(as.numeric(as.character(in_rows))/as.numeric(out_rows)), format_comma(out_rows), out_cols)]
 }
 
 groupby.solution.dict = list(
@@ -215,3 +214,13 @@ groupby.data.exceptions = {list(                                                
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
+
+# join ----
+
+join_q_title_fun = function(x) {
+  stopifnot(c("iquestion","out_rows","out_cols") %in% names(x))
+  x[, sprintf("Question %s: result %s x %s", iquestion, format_comma(out_rows), out_cols)]
+}
+
+#s = "cudf"
+#sapply(sapply(names(join.code), function(q) paste(paste0("\"",q,"\""), paste0("\"",join.code[[q]][[s]],"\""), sep=" = ")), cat, ",\n", sep="") -> nul

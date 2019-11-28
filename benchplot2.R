@@ -131,6 +131,7 @@ q_title = function(x, txt.fun=default.question.txt.fun, which=NA) {
 }
 syntax = function(x, which=NA) x[, text_bg(0, syntax_y, txt=syntax_text, col=col_strong, font=2, which=which)]
 values = function(x, which=NA) x[, text_bg(max_time, bar_y, txt=bar_text, cex=1.25, which=which)]
+exception = function(x, which=NA) x[, text_bg(0, bar_y, txt=exception_text, col=col_strong, font=2, which=which)]
 
 s_margin = function(x) {
   x[, text(0, bar_y+(syntax_y-bar_y)/2, name_short, col=col_strong, font=2, xpd=NA, pos=2)]
@@ -168,24 +169,24 @@ default.title.txt.fun = function(x) {
     as.numeric(ds[["gb"]])[1L]
   )
 }
-format_exception = function(ex, s, d, q, which=c("data","query")) {
+format_exception = function(ex, s, d, q, which=c("data","query"), short=TRUE) {
   if (is.na(d)) return("")
-  heading = function(x) trimws(sapply(strsplit(x, ":", fixed=TRUE), `[[`, 1L))
+  heading = function(x, short) trimws(if (short) sapply(strsplit(x, ":", fixed=TRUE), `[[`, 1L) else x)
   if ("data" %in% which) {
     e = ex$data[[as.character(s)]]
     if (length(e)) {
       this = which(sapply(e, function(ee) any(as.character(d) %in% ee)))[1L]
-      if (!is.na(this)) return(heading(names(e[this])))
+      if (!is.na(this)) return(heading(names(e[this]), short=short))
     }
   }
   if ("query" %in% which) {
     e = ex$query[[as.character(s)]]
     if (length(e)) {
       this = which(sapply(e, function(ee) any(as.character(q) %in% ee)))[1L]
-      if (!is.na(this)) return(heading(names(e[this])))
+      if (!is.na(this)) return(heading(names(e[this]), short=short))
     }
   }
-  return("")
+  return("undefined exception")
 }
 format_version = function(x) fifelse(is.na(x), "NA", as.character(x))
 format_batch = function(x) fifelse(is.na(x), "NA", format(as.Date(as.POSIXct(as.numeric(x), origin="1970-01-01"))))
@@ -237,7 +238,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
               legend=format_batch)] -> nul             ## date
   # right aligned total time seconds
   dt[, {
-    temp = legend(x_off[62L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
+    temp = legend(x_off[60L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
                   legend=rep("", length(format_s_total_real_time)),
                   text.width = max(strwidth(format_s_total_real_time))) # this string include exceptions
     text(temp$rect$left + temp$rect$w,
@@ -310,7 +311,8 @@ benchplot2 = function(
   x[, "leg_col" := solution==names(solution.dict[1L])] # first entry from solution.dict is used for color of first-second run legend
   x[, c("name_short","name_long") := as.list(solution.dict[[as.character(solution)]][["name"]]), by="solution"]
   x[, "syntax_text" := as.list(syntax.dict[[as.character(solution)]])[[as.character(question)]], by=c("solution","question")]
-  # TODO syntax_text query exceptions only for NA timing
+  x[, "exception_text" := NA_character_]
+  if (sum(x$na_time_sec)) x[na_time_sec==TRUE, "exception_text" := mapply(format_exception, s=solution, q=list(question), MoreArgs=list(ex=exceptions, d=data, short=FALSE), SIMPLIFY=TRUE), by=c("data","solution","question")]
 
   # bars on Y axis padding
   pad = as.vector(sapply(
@@ -332,8 +334,8 @@ benchplot2 = function(
   x[, c("cutoff1","cutoff2") := .(FALSE, FALSE)]
   if (length(cutoff)) {
     if (!cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
-    cutoff_const = x[solution==cutoff, max(max_real_time)*(1+cutoff.after)]
-    if (is.na(cutoff_const)) cutoff_const = +Inf
+    cutoff_const = x[solution==cutoff, max(c(0,max_real_time), na.rm=TRUE)*(1+cutoff.after)]
+    cutoff_const = if (cutoff_const==0) +Inf else tail(xlab_labels(cutoff_const), n=1L)
     x[time1>cutoff_const, `:=`(cutoff=TRUE, time1=cutoff_const)]
     x[time2>cutoff_const, `:=`(cutoff=TRUE, time2=cutoff_const)]
   }
@@ -361,10 +363,12 @@ benchplot2 = function(
   q_title(x, txt.fun=question.txt.fun, which="rect")
   syntax(x, which="rect")
   values(x, which="rect")
+  exception(x, which="rect")
   y_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
   q_title(x, txt.fun=question.txt.fun, which="text")
   syntax(x, which="text")
   values(x, which="text")
+  exception(x, which="text")
   bar1(x, pad)
   bar2(x, bar_step/4)
   s_margin(x)
