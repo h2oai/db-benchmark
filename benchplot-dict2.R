@@ -22,12 +22,24 @@ header_title_fun = function(x) {
   )
 }
 
+solution.dict = {list(
+  "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
+  "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
+  "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
+  "pydatatable" = list(name=c(short="pydatatable", long="(py)datatable"), color=c(strong="darkorange", light="orange")),
+  "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
+  "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
+  "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
+  "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
+  "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1"))
+)}
+
 # groupby ----
 
 groupby_q_title_fun = function(x) {
   stopifnot(c("question","iquestion","out_rows","out_cols","in_rows") %in% names(x),
             uniqueN(x, by="iquestion")==nrow(x))
-  x = copy(x)[, "top2":=FALSE][, iquestion:=seq_along(iquestion)]
+  x = copy(x)[, "top2":=FALSE][, "iquestion":=rev(seq_along(iquestion))]
   x[question=="largest two v3 by id6", "top2":=TRUE] #118
   x[, sprintf("Question %s: \"%s\": %s%s ad hoc groups of ~%s rows;  result %s x %s",
               iquestion, as.character(question),
@@ -38,21 +50,7 @@ groupby_q_title_fun = function(x) {
     by = "iquestion"]$V1
 }
 
-groupby.solution.dict = list(
-  "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
-  "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
-  "pandas" = list(name=c(short="pandas", long="pandas"), color=c(strong="green4", light="#77FF77")),
-  "pydatatable" = list(name=c(short="pydatatable", long="(py)datatable"), color=c(strong="darkorange", light="orange")),
-  "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
-  "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
-  "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
-  "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
-  "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1"))
-)
-
-#s = "cudf"
-#sapply(sapply(names(groupby.code), function(q) paste(paste0("\"",q,"\""), paste0("\"",groupby.code[[q]][[s]],"\""), sep=" = ")), cat, ",\n", sep="") -> nul
-groupby.syntax.dict = list(
+groupby.syntax.dict = {list(
   "data.table" = {c(
     "sum v1 by id1" = "DT[, .(v1=sum(v1)), by=id1]",
     "sum v1 by id1:id2" = "DT[, .(v1=sum(v1)), by=.(id1, id2)]",
@@ -161,7 +159,7 @@ groupby.syntax.dict = list(
     "regression v1 v2 by id2 id4" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4",
     "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6"
   )}
-)
+)}
 
 groupby.query.exceptions = {list(
   "data.table" =  list(),
@@ -227,9 +225,124 @@ groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exce
 # join ----
 
 join_q_title_fun = function(x) {
-  stopifnot(c("iquestion","out_rows","out_cols") %in% names(x))
-  x[, sprintf("Question %s: result %s x %s", iquestion, format_comma(out_rows), out_cols)]
+  stopifnot(c("question","iquestion","out_rows","out_cols","in_rows") %in% names(x),
+            uniqueN(x, by="iquestion")==nrow(x))
+  x = copy(x)[, "iquestion":=rev(seq_along(iquestion))]
+  x[, sprintf("Question %s: \"%s\": result %s x %s", iquestion, as.character(question), format_comma(out_rows), out_cols), by="iquestion"]$V1
 }
 
-#s = "cudf"
-#sapply(sapply(names(join.code), function(q) paste(paste0("\"",q,"\""), paste0("\"",join.code[[q]][[s]],"\""), sep=" = ")), cat, ",\n", sep="") -> nul
+#lapply(names(join.code[[1L]]), function(s) {
+#  c(paste0("\"",s,"\" = {c("),
+#    paste(sapply(names(join.code), function(q) {
+#      paste(paste0("\"",q,"\""), paste0("\"",join.code[[q]][[s]],"\""), sep=" = ")
+#    }), collapse=",\n"),
+#    paste0(")},")) -> ss
+#    sapply(ss, cat, "\n", sep="")
+#}) -> nul
+join.syntax.dict = {list(
+  "dask" = {c(
+    "small inner on int" = "DF.merge(small, on='id1').compute()",
+    "medium inner on int" = "DF.merge(medium, on='id2').compute()",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2').compute()",
+    "medium inner on factor" = "DF.merge(medium, on='id5').compute()",
+    "big inner on int" = "DF.merge(big, on='id3').compute()"
+  )},
+  "data.table" = {c(
+    "small inner on int" = "DT[small, on='id1', nomatch=NULL]",
+    "medium inner on int" = "DT[medium, on='id2', nomatch=NULL]",
+    "medium outer on int" = "medium[DT, on='id2']",
+    "medium inner on factor" = "DT[medium, on='id5', nomatch=NULL]",
+    "big inner on int" = "DT[big, on='id3', nomatch=NULL]"
+  )},
+  "dplyr" = {c(
+    "small inner on int" = "inner_join(DF, small, by='id1')",
+    "medium inner on int" = "inner_join(DF, medium, by='id2')",
+    "medium outer on int" = "left_join(DF, medium, by='id2')",
+    "medium inner on factor" = "inner_join(DF, medium, by='id5')",
+    "big inner on int" = "inner_join(DF, big, by='id3')"
+  )},
+  "juliadf" = {c(
+    "small inner on int" = "join(DF, small, on = :id1, makeunique=true)",
+    "medium inner on int" = "join(DF, medium, on = :id2, makeunique=true)",
+    "medium outer on int" = "join(DF, medium, kind = :left, on = :id2, makeunique=true)",
+    "medium inner on factor" = "join(DF, medium, on = :id5, makeunique=true)",
+    "big inner on int" = "join(DF, big, on = :id3, makeunique=true)"
+  )},
+  "pandas" = {c(
+    "small inner on int" = "DF.merge(small, on='id1')",
+    "medium inner on int" = "DF.merge(medium, on='id2')",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
+    "medium inner on factor" = "DF.merge(medium, on='id5')",
+    "big inner on int" = "DF.merge(big, on='id3')"
+  )},
+  "pydatatable" = {c(
+    "small inner on int" = "y.key = 'id1'; DT[:, :, join(y)][isfinite(f.v2), :]",
+    "medium inner on int" = "y.key = 'id2'; DT[:, :, join(y)][isfinite(f.v2), :]",
+    "medium outer on int" = "y.key = 'id2'; DT[:, :, join(y)]",
+    "medium inner on factor" = "y.key = 'id5'; DT[:, :, join(y)][isfinite(f.v2), :]",
+    "big inner on int" = "y.key = 'id3'; DT[:, :, join(y)][isfinite(f.v2), :]"
+  )},
+  "spark" = {c(
+    "small inner on int" = "spark.sql('select * from x join small using (id1)')",
+    "medium inner on int" = "spark.sql('select * from x join medium using (id2)')",
+    "medium outer on int" = "spark.sql('select * from x left join medium using (id2)')",
+    "medium inner on factor" = "spark.sql('select * from x join medium using (id5)')",
+    "big inner on int" = "spark.sql('select * from x join big using (id3)')"
+  )},
+  "clickhouse" = {c(
+    "small inner on int" = "",
+    "medium inner on int" = "",
+    "medium outer on int" = "",
+    "medium inner on factor" = "",
+    "big inner on int" = ""
+  )},
+  "cudf" = {c(
+    "small inner on int" = "DF.merge(small, on='id1')",
+    "medium inner on int" = "DF.merge(medium, on='id2')",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
+    "medium inner on factor" = "DF.merge(medium, on='id5')",
+    "big inner on int" = "DF.merge(big, on='id3')"
+  )}
+)}
+
+join.query.exceptions = {list(
+  "data.table" =  list(),
+  "dplyr" =       list(),
+  "pandas" =      list(),
+  "pydatatable" = list(),
+  "spark" =       list(),
+  "dask" =        list(),
+  "juliadf" =     list(),
+  "cudf" =        list(),
+  "clickhouse" =  list()
+)}
+join.data.exceptions = {list(                                                             # exceptions as of run 1572448371
+  "data.table" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+  )},
+  "dplyr" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+  )},
+  "pandas" = {list(
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q5
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+  )},
+  "pydatatable" = {list(
+  )},
+  "spark" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+  )},
+  "dask" = {list(
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q4
+    "timeout" = c("J1_1e9_NA_0_0")                                                        # read_csv
+  )},
+  "juliadf" = {list(
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q3
+    "timeout" = c("J1_1e9_NA_0_0")                                                        # CSV.File
+  )},
+  "cudf" = {list(
+    "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                  # read_csv
+  )},
+  "clickhouse" = {list()}
+)}
+join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)

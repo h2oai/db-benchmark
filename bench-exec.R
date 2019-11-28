@@ -31,7 +31,7 @@ new = function(file) local({
   setnames(x, c("time_sec_1","time_sec_2"), c("time1","time2"))
   benchplot2(
     x, filename = file,
-    solution.dict = groupby.solution.dict,
+    solution.dict = solution.dict,
     syntax.dict = groupby.syntax.dict,
     exceptions = groupby.exceptions,
     question.txt.fun = groupby_q_title_fun,  
@@ -48,7 +48,7 @@ new = function(file) local({
 library(data.table)
 source("report.R")
 t = "groupby"
-d = "G1_1e9_1e1_0_0"
+d = "G1_1e9_2e0_0_0"
 q_group = "advanced"
 ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
 
@@ -99,9 +99,64 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] question headers
 # - [x] proper cutoff at the edge
 # - [x] syntax_text query exceptions only for NA timing
-# - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
+# - [x] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
 # - [x] scale for solutions (3-9)
-# - [ ] minutes-seconds translation error
-# - [ ] scale for questions (3-9)
-# - [ ] scale for s*q (3*3, 3*10, 9*3, 9*10)
-# - [ ] order of exception solutions on legend
+# - [ ] minutes-seconds translation error**
+# - [-] scale for questions (3-9)
+# - [-] scale for s*q (3*3, 3*10, 9*3, 9*10)
+# - [x] order of exception solutions on legend
+# - [x] join test
+# - [x] plot bar only if both runs successful
+
+# visible changes
+# - question headers (question, more precise stats)
+# - consistent x/DF/DT naming
+# - handling of single solution
+
+# join
+
+library(data.table)
+source("report.R")
+t = "join"
+d = "J1_1e9_NA_0_0"
+q_group = "basic"
+ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
+
+oldj = function(file) local({
+  source("benchplot-dict.R")
+  source("benchplot.R")
+  benchplot(
+    .nrow = substr(d, 4L, 6L),
+    task=t, data=d,
+    timings = copy(ld),
+    cutoff = if ("spark"%in%as.character(unique(ld$solution))) "spark" else character(),
+    code=join.code, exceptions=join.exceptions, colors=solution.colors, .interactive=FALSE, fnam=file, path="."
+  )
+})
+newj = function(file) local({
+  source("benchplot-dict2.R")
+  source("benchplot2.R")
+  x = ld[data==d]
+  f = sapply(x, is.factor)
+  x[, names(x)[f] := lapply(.SD, factor), .SDcols=f]
+  setnames(x, c("time_sec_1","time_sec_2"), c("time1","time2"))
+  benchplot2(
+    x, filename = file,
+    solution.dict = solution.dict,
+    syntax.dict = join.syntax.dict,
+    exceptions = join.exceptions,
+    question.txt.fun = join_q_title_fun,
+    title.txt.fun = header_title_fun,
+    cutoff = "spark",
+    pending = c("Modin","ClickHouse"),
+    url.footer = "https://h2oai.github.io/db-benchmark",
+    interactive = FALSE
+  )
+})
+
+system("pkill feh", wait=TRUE)
+ld = filter(ldd, nsolutions=9L)
+system("rm -f b1_8.png b2_8.png")
+oldj(file="b1_8.png")
+newj(file="b2_8.png")
+system("feh -w b1_8.png b2_8.png", wait=FALSE)

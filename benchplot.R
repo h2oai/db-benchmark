@@ -259,10 +259,6 @@ benchplot = function(.nrow=Inf, task, data, timings, code, exceptions, colors, c
   ))
   # get bars coordinates, plot positions only
   tt = barplot(rep(NA_real_, nrow(ans))[pad], horiz=TRUE, xlim=c(0,x_at_last), axes=FALSE)
-  box("plot", col="black") ## temporary for development
-  box("figure", col="blue")
-  box("inner", col="orange")
-  box("outer", col="red")
 
   # we reverse `tt` as horiz=TRUE does first bar from the bottom
   tt = rev(tt)

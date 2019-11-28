@@ -30,6 +30,7 @@ xlab_timescale = function(x) {
   if (x > 2*60*60) {
     timescale = 3600
     xlab = "Hours"
+    stop("hours not supported as of now! use timeout configuration")
   } else if (x > 120) {
     timescale = 60
     xlab = "Minutes"
@@ -51,11 +52,11 @@ text_bg = function(x, y, txt, xpd=NA, col="black", col.bg="white", ..., which=NA
 }
 
 bar1 = function(x, pad) {
-  invisible(x[pad, barplot(time1, horiz=TRUE, axes=FALSE, col=col_strong, xpd=NA, add=TRUE)])
+  invisible(x[pad, barplot(fifelse(na_time_sec, NA_real_, time1), horiz=TRUE, axes=FALSE, col=col_strong, xpd=NA, add=TRUE)])
   invisible(NULL)
 }
 bar2 = function(x, w) {
-  x[, rect(0, bar_y-w, time2, bar_y+w, col=col_light, xpd=NA)]
+  x[, rect(0, bar_y-w, fifelse(na_time_sec, NA_real_, time2), bar_y+w, col=col_light, xpd=NA)]
   invisible(NULL)
 }
 
@@ -95,19 +96,19 @@ xy_fig = function(offset=c(x1=0, x2=0, y1=0, y2=0)) {
 }
 
 x_lines = function(x, h1, h2) {
-  x_at = x[, xlab_labels(c(time1, time2))]
+  x_at = x[na_time_sec==FALSE, xlab_labels(c(time1, time2))]
   # dotted vertical lines to form grid
   for (at_x in x_at) lines(x=c(at_x, at_x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
   invisible(NULL)
 }
 y_lines = function(x, h1, h2) {
-  x_at = x[, xlab_labels(c(time1, time2))]
   # grey horizontal lines separating questions
   q_line_y = x[, tail(.SD, 1L), question][, syntax_y+(syntax_y-bar_y)*2]
   abline(h=q_line_y, col="grey", lwd=2)
   # upper X axis
   abline(h=h1)
   # upper X ticks
+  x_at = x[na_time_sec==FALSE, xlab_labels(c(time1, time2))]
   ff = if (length(x_at)<=8L) TRUE else -1  # ff = first first X axis label overlap, so conditionally exclude
   text(x=x_at[ff], y=h1, labels=format(x_at[ff]), adj=c(0.5, -0.5), cex=1.5, font=2, xpd=NA)
   # upper X axis lab (seconds/minutes)
@@ -179,23 +180,16 @@ get_exception = function(ex, s, dq, short) {
   NULL
 }
 format_exception = function(ex, s, d, q, which=c("data","query"), short=TRUE) {
+  stopifnot(length(which)>=1L, is.character(which))
   if (is.na(d)) return("")
-  ans = NULL
-  if (is.null(ans) && "data"%in%which && "data"==which[1L]) {
-    ans = get_exception(ex$data, s, d, short=short)
+  ans = NULL # 'which' order matters, legend prefers short data exception while barplot prefer full query exceptions
+  if (is.null(ans) && "data" %in%which && "data" ==which[1L]) ans = get_exception(ex$data,  s, d, short=short)
+  if (is.null(ans) && "query"%in%which && "query"==which[1L]) ans = get_exception(ex$query, s, q, short=short)
+  if (length(which)==2L) {
+    if (is.null(ans) && "data" %in%which && "data" ==which[2L]) ans = get_exception(ex$data,  s, d, short=short)
+    if (is.null(ans) && "query"%in%which && "query"==which[2L]) ans = get_exception(ex$query, s, q, short=short)
   }
-  if (is.null(ans) && "query"%in%which && "query"==which[1L]) {
-    ans = get_exception(ex$query, s, q, short=short)
-  }
-  if (is.null(ans) && "data"%in%which && "data"==which[2L]) {
-    ans = get_exception(ex$data, s, d, short=short)
-  }
-  if (is.null(ans) && "query"%in%which && "query"==which[2L]) {
-    ans = get_exception(ex$query, s, q, short=short)
-  }
-  if (is.null(ans)) {
-    ans = "undefined exception"
-  }
+  if (is.null(ans)) ans = "undefined exception"
   ans
 }
 format_version = function(x) fifelse(is.na(x), "NA", as.character(x))
@@ -215,7 +209,7 @@ format_s_total_real_time = function(data, solution, s_questions, s_total_real_ti
 }
 header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.fun, pending=character()) {
   xy = xy_fig(offset = c(x1=0, x2=0, y1=0, y2=1))
-  x_at = x[, xlab_labels(c(time1, time2))]
+  x_at = x[na_time_sec==FALSE, xlab_labels(c(time1, time2))]
   x_range = c(mean(c(xy[["x1"]], 0)), mean(c(xy[["x2"]], tail(x_at, 1L))))
   x_w = x_range[2L]-x_range[1L]
   x_off = x_range[1L] + seq(0, x_w, by=x_w/99)
@@ -227,7 +221,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
              s_total_real_time=unique1(s_total_real_time), col_strong=unique1(col_strong),
              name_short=unique1(name_short), name_long=unique1(name_long),
              s_questions=list(question)), ## retain all questions so can lookup for exceptions later on
-         by="solution"]
+         keyby="solution"]
   setorderv(dt, "s_total_real_time", na.last=TRUE)
   if (length(pending)) dt = rbindlist(list(
     dt,
@@ -238,6 +232,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
     format_s_total_real_time = format_s_total_real_time(data, solution, s_questions, s_total_real_time, exceptions)
   )]
   dt[is.na(solution), `:=`(format_version="", format_batch="see README", format_s_total_real_time="pending")]
+  dt[, "s_questions" := NULL]
   dt[, legend(x_off[2L], xy[["y2"]], bty="n", cex=1.5,
               pch=22, pt.bg=col_strong, pt.cex=3.5,    ## color square
               text.font=1, xpd=NA,
@@ -246,9 +241,11 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
               legend=format_version)] -> nul           ## version
   dt[, legend(x_off[35L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
               legend=format_batch)] -> nul             ## date
+  text(x_off[35L], xy[["y2"]], "debug off[35],xy[[2]]")
+
   # right aligned total time seconds
   dt[, {
-    temp = legend(x_off[60L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
+    temp = legend(x_off[57L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
                   legend=rep("", length(format_s_total_real_time)),
                   text.width = max(strwidth(format_s_total_real_time))) # this string include exceptions
     text(temp$rect$left + temp$rect$w,
@@ -261,7 +258,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
   topmost_syntax_y = x[.N, syntax_y]
   step_y = topmost_syntax_y - x[.N-1L, syntax_y]
   yy = min(topmost_syntax_y + 2*step_y, mean(c(xy[["y2"]], topmost_syntax_y)))
-  legend(x_off[82L], yy, pch=22, xpd=NA, bty="n", yjust=0,
+  legend(x_off[80L], yy, pch=22, xpd=NA, bty="n", yjust=0,
          pt.lwd=1, cex=1.5, pt.cex=c(3.5, 2.5),
          pt.bg=x[leg_col==TRUE, c(col_strong, col_light)],
          legend=c("First time","Second time"))
@@ -300,6 +297,7 @@ benchplot2 = function(
   stopifnot(is.list(exceptions), is.list(solution.dict), is.list(syntax.dict))
   stopifnot(is.function(question.txt.fun))
   stopifnot(is.character(url.footer), length(url.footer)==1L)
+  stopifnot(!is.na(x$na_time_sec))
 
   x = copy(x)[, i := .I]
 
@@ -310,10 +308,14 @@ benchplot2 = function(
   if (length(cutoff) && !cutoff%in%solutions) cutoff = NULL # disable cutoff if cutoff solution is not present
   if (!all(solutions %in% names(solution.dict))) stop("'solution.dict' argument does not define all solutions used")
   if (!all(solutions %in% names(syntax.dict))) stop("'syntax.dict' argument does not define all solutions used")
+  if (sum(x$na_time_sec)==nrow(x)) {
+    message("not a single solution sucessfully finished both runs of any of the questions")
+    return(invisible(NULL))
+  }
 
-  x[, c("real_time1","real_time2") := .(time1, time2)]  
-  x[, "max_real_time" := max(c(real_time1, real_time2)), by=c("solution", "question")]
-  x[, "sum_real_time" := sum(real_time1, real_time2), by=c("solution", "question")]
+  x[, c("real_time1","real_time2") := .(time1, time2)]
+  x[na_time_sec==FALSE, "max_real_time" := max(c(real_time1, real_time2)), by=c("solution", "question")]
+  x[na_time_sec==FALSE, "sum_real_time" := sum(real_time1, real_time2), by=c("solution", "question")]
   x[, "s_total_real_time" := sum(sum_real_time), by=c("solution")]
   # order for bar horiz=TRUE does first bar from the bottom!
   setorderv(x, c("question","max_real_time","solution"), order=-1L, na.last=FALSE)
@@ -344,24 +346,16 @@ benchplot2 = function(
   x[, c("cutoff1","cutoff2") := .(FALSE, FALSE)]
   if (length(cutoff)) {
     if (!cutoff%in%solutions) stop(sprintf("'cutoff' argument used but provided value '%s' is not a solution existing in timing data", cutoff))
-    cutoff_const = x[solution==cutoff, max(c(0,max_real_time), na.rm=TRUE)*(1+cutoff.after)]
+    cutoff_const = x[solution==cutoff & na_time_sec==FALSE, max(c(0,max_real_time), na.rm=TRUE)*(1+cutoff.after)]
     cutoff_const = if (cutoff_const==0) +Inf else tail(xlab_labels(cutoff_const), n=1L)
     x[time1>cutoff_const, `:=`(cutoff=TRUE, time1=cutoff_const)]
     x[time2>cutoff_const, `:=`(cutoff=TRUE, time2=cutoff_const)]
   }
-  x[, "max_time" := max(c(time1, time2)), by=c("solution","question")]
+  x[na_time_sec==FALSE, "max_time" := max(c(time1, time2)), by=c("solution","question")]
   lim_x = tail(xlab_labels(max(c(0, x$max_time), na.rm=TRUE)), n=1L)
-  if (lim_x == 0) {
-    message("no a single solution sucessfully finished both runs of any of the questions")
-    if (!is.null(filename)) dev.off()
-    return(invisible(NULL))
-  }
+  if (lim_x == 0) stop("this case should be already escaped at the beginning with 'sum(x$na_time_sec)==nrow(x)'")
   # get bars Y coordinates, positions only, plot later in bar1
   all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, lim_x), axes=FALSE, xpd=FALSE)
-  box("plot", col="red")
-  box("figure", col="forestgreen")
-  box("outer", col="blue")
-  box("inner", col="pink")
   bar_step = all_y_bars[2L]-all_y_bars[1L]
   x[, "bar_y" := all_y_bars[!is.na(pad)]]
   x[, "syntax_y" := all_y_bars[which(!is.na(pad))+1L]]
