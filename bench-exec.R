@@ -82,6 +82,7 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] vectorized code, avoid loops, keep more information inside the data
 # - [x] footer alignement in corner
 # - [ ] avoid to many ticks on X axis
+# - [ ] X axis cutoff to early
 # - [x] headers more adjustable from functions (support various tasks)
 # - [x] syntax dict stacked by solution, not question
 # - [x] white background of text should not overlap another text
@@ -90,9 +91,8 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] handling of non present cutoff solution
 # - [x] pending entry in legend
 # - [x] legend left maring
-# - [ ] first/second run legend little bit lower
+# - [x] first/second run legend y location more stable
 # - [x] solution names on lhs margin and legend
-# - [ ] X axis cutoff to early
 # - [ ] question headers
 # - [ ] syntax_text query exceptions only for NA timing
 # - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)

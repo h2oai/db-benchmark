@@ -252,7 +252,9 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
   }] -> nul                                            ## solution total time
   
   # RHS first second run legend
-  yy = mean(c(xy[["y2"]], x[.N, syntax_y]))
+  topmost_syntax_y = x[.N, syntax_y]
+  step_y = topmost_syntax_y - x[.N-1L, syntax_y]
+  yy = min(topmost_syntax_y + 2*step_y, mean(c(xy[["y2"]], topmost_syntax_y)))
   legend(x_off[85L], yy, pch=22, xpd=NA, bty="n", yjust=0,
          pt.lwd=1, cex=1.5, pt.cex=c(3.5, 2.5),
          pt.bg=x[leg_col==TRUE, c(col_strong, col_light)],
