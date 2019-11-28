@@ -47,19 +47,19 @@ new = function(file) local({
 
 library(data.table)
 source("report.R")
-q_group = "basic"
 t = "groupby"
 d = "G1_1e7_1e2_0_0"
+q_group = "advanced"
 ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
 
 system("pkill feh", wait=TRUE)
-
 ld = filter(ldd, nsolutions=9L)
 system("rm -f b1_9.png b2_9.png")
 old(file="b1_9.png")
 new(file="b2_9.png")
 system("feh -w b1_9.png b2_9.png", wait=FALSE)
 
+system("pkill feh", wait=TRUE)
 ld = filter(ldd, nsolutions=3L)
 system("rm -f b1_3.png b2_3.png")
 old(file="b1_3.png")
@@ -81,8 +81,9 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 
 # - [x] vectorized code, avoid loops, keep more information inside the data
 # - [x] footer alignement in corner
-# - [ ] avoid to many ticks on X axis
-# - [ ] X axis cutoff to early
+# - [x] avoid to many ticks on X axis
+# - [x] X axis cutoff to early
+# - [x] timings in legend overlaps RHS run legend
 # - [x] headers more adjustable from functions (support various tasks)
 # - [x] syntax dict stacked by solution, not question
 # - [x] white background of text should not overlap another text
@@ -93,9 +94,13 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] legend left maring
 # - [x] first/second run legend y location more stable
 # - [x] solution names on lhs margin and legend
+# - [x] overlapping grid, axes to textBG
+# - [ ] exceptions
 # - [ ] question headers
 # - [ ] syntax_text query exceptions only for NA timing
 # - [ ] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
-# - [x] scale for solutions (2-10)
-# - [ ] scale for questions (2-10)
-# - [ ] scale for s*q (2*2, 2*10, 10*2, 10*10)
+# - [x] scale for solutions (3-9)
+# - [ ] minutes-seconds translation error
+# - [ ] scale for questions (3-9)
+# - [ ] scale for s*q (3*3, 3*10, 9*3, 9*10)
+# - [ ] order of exception solutions on legend

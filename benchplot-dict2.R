@@ -42,70 +42,116 @@ groupby.solution.dict = list(
   "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1"))
 )
 
-#sapply(sapply(groupby.code, `[[`, 1L), cat, "\n") -> nul
+#s = "cudf"
+#sapply(sapply(names(groupby.code), function(q) paste(paste0("\"",q,"\""), paste0("\"",groupby.code[[q]][[s]],"\""), sep=" = ")), cat, ",\n", sep="") -> nul
 groupby.syntax.dict = list(
   "data.table" = {c(
     "sum v1 by id1" = "DT[, .(v1=sum(v1)), by=id1]",
     "sum v1 by id1:id2" = "DT[, .(v1=sum(v1)), by=.(id1, id2)]",
     "sum v1 mean v3 by id3" = "DT[, .(v1=sum(v1), v3=mean(v3)), by=id3]",
     "mean v1:v3 by id4" = "DT[, lapply(.SD, mean), by=id4, .SDcols=v1:v3]",
-    "sum v1:v3 by id6" = "DT[, lapply(.SD, sum), by=id6, .SDcols=v1:v3]"
+    "sum v1:v3 by id6" = "DT[, lapply(.SD, sum), by=id6, .SDcols=v1:v3]",
+    "median v3 sd v3 by id4 id5" = "DT[, .(median_v3=median(v3), sd_v3=sd(v3)), by=.(id4, id5)]",
+    "max v1 - min v2 by id3" = "DT[, .(range_v1_v2=max(v1)-min(v2)), by=id3]",
+    "largest two v3 by id6" = "DT[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6]",
+    "regression v1 v2 by id2 id4" = "DT[, .(r2=cor(v1, v2)^2), by=.(id2, id4)]",
+    "sum v3 count by id1:id6" = "DT[, .(v3=sum(v3), count=.N), by=id1:id6]"
   )},
   "dplyr" = {c(
     "sum v1 by id1" = "DF %>% group_by(id1, .drop=TRUE) %>% summarise(sum(v1))",
     "sum v1 by id1:id2" = "DF %>% group_by(id1, id2, .drop=TRUE) %>% summarise(sum(v1))",
     "sum v1 mean v3 by id3" = "DF %>% group_by(id3, .drop=TRUE) %>% summarise(sum(v1), mean(v3))",
     "mean v1:v3 by id4" = "DF %>% group_by(id4, .drop=TRUE) %>% summarise_each(funs(mean), vars=7:9)",
-    "sum v1:v3 by id6" = "DF %>% group_by(id6, .drop=TRUE) %>% summarise_each(funs(sum), vars=7:9)"
+    "sum v1:v3 by id6" = "DF %>% group_by(id6, .drop=TRUE) %>% summarise_each(funs(sum), vars=7:9)",
+    "median v3 sd v3 by id4 id5" = "DF %>% group_by(id4, id5, .drop=TRUE) %>% summarise(median_v3=median(v3), sd_v3=sd(v3))",
+    "max v1 - min v2 by id3" = "DF %>% group_by(id3, .drop=TRUE) %>% summarise(range_v1_v2=max(v1)-min(v2))",
+    "largest two v3 by id6" = "DF %>% select(id6, largest2_v3=v3) %>% arrange(desc(largest2_v3)) %>% group_by(id6, .drop=TRUE) %>% filter(row_number() <= 2L)",
+    "regression v1 v2 by id2 id4" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2)^2)",
+    "sum v3 count by id1:id6" = "DF %>% group_by(id1, id2, id3, id4, id5, id6, .drop=TRUE) %>% summarise(v3=sum(v3), count=n())"
   )},
   "pandas" = {c(
     "sum v1 by id1" = "DF.groupby(['id1']).agg({'v1':'sum'})",
     "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg({'v1':'sum'})",
     "sum v1 mean v3 by id3" = "DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
     "mean v1:v3 by id4" = "DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
-    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})"
+    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5']).agg({'v3': ['median','std']})",
+    "max v1 - min v2 by id3" = "DF.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
+    "largest two v3 by id6" = "DF[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)",
+    "regression v1 v2 by id2 id4" = "DF[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})"
   )},
   "pydatatable" = {c(
     "sum v1 by id1" = "DT[:, {'v1': sum(f.v1)}, by(f.id1)]",
     "sum v1 by id1:id2" = "DT[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]",
     "sum v1 mean v3 by id3" = "DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]",
     "mean v1:v3 by id4" = "DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]",
-    "sum v1:v3 by id6" = "DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]"
+    "sum v1:v3 by id6" = "DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]",
+    "median v3 sd v3 by id4 id5" = "DT[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id4, f.id5)]",
+    "max v1 - min v2 by id3" = "DT[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id3)]",
+    "largest two v3 by id6" = "DT[:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3)]",
+    "regression v1 v2 by id2 id4" = "DT[:, {'r2': corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]",
+    "sum v3 count by id1:id6" = "DT[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]"
   )},
   "dask" = {c(
     "sum v1 by id1" = "DF.groupby(['id1']).agg({'v1':'sum'}).compute()",
     "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg({'v1':'sum'}).compute()",
     "sum v1 mean v3 by id3" = "DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'}).compute()",
     "mean v1:v3 by id4" = "DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
-    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()"
+    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
+    "median v3 sd v3 by id4 id5" = "",
+    "max v1 - min v2 by id3" = "DF.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']].compute()",
+    "largest two v3 by id6" = "DF[['id6','v3']].groupby(['id6']).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6': 'int64', 'v3': 'float64'})[['v3']].compute()",
+    "regression v1 v2 by id2 id4" = "",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'}).compute()"
   )},
   "spark" = {c(
     "sum v1 by id1" = "spark.sql('select id1, sum(v1) as v1 from x group by id1')",
     "sum v1 by id1:id2" = "spark.sql('select id1, id2, sum(v1) as v1 from x group by id1, id2')",
     "sum v1 mean v3 by id3" = "spark.sql('select id3, sum(v1) as v1, mean(v3) as v3 from x group by id3')",
     "mean v1:v3 by id4" = "spark.sql('select id4, mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')",
-    "sum v1:v3 by id6" = "spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')"
+    "sum v1:v3 by id6" = "spark.sql('select id6, sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from x group by id6')",
+    "median v3 sd v3 by id4 id5" = "",
+    "max v1 - min v2 by id3" = "spark.sql('select id3, max(v1)-min(v2) as range_v1_v2 from x group by id3')",
+    "largest two v3 by id6" = "spark.sql('select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2')",
+    "regression v1 v2 by id2 id4" = "spark.sql('select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4')",
+    "sum v3 count by id1:id6" = "spark.sql('select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6')"
   )},
   "juliadf" = {c(
-    "sum v1 by id1" = "by(DF, :id1, v1 = :v1 => sum) ",
-    "sum v1 by id1:id2" = "by(DF, [:id1, :id2], v1 = :v1 => sum) ",
-    "sum v1 mean v3 by id3" = "by(DF, :id3, v1 = :v1 => sum, v3 = :v3 => mean) ",
-    "mean v1:v3 by id4" = "by(DF, :id4, v1 = :v1 => mean, v2 = :v2 => mean, v3 = :v3 => mean) ",
-    "sum v1:v3 by id6" = "by(DF, :id6, v1 = :v1 => sum, v2 = :v2 => sum, v3 = :v3 => sum) "
+    "sum v1 by id1" = "by(DF, :id1, v1 = :v1 => sum)",
+    "sum v1 by id1:id2" = "by(DF, [:id1, :id2], v1 = :v1 => sum)",
+    "sum v1 mean v3 by id3" = "by(DF, :id3, v1 = :v1 => sum, v3 = :v3 => mean)",
+    "mean v1:v3 by id4" = "by(DF, :id4, v1 = :v1 => mean, v2 = :v2 => mean, v3 = :v3 => mean)",
+    "sum v1:v3 by id6" = "by(DF, :id6, v1 = :v1 => sum, v2 = :v2 => sum, v3 = :v3 => sum)",
+    "median v3 sd v3 by id4 id5" = "by(DF, [:id4, :id5], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
+    "max v1 - min v2 by id3" = "by(DF, [:id3], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
+    "largest two v3 by id6" = "by(DF, [:id6], largest2_v3 = :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true))",
+    "regression v1 v2 by id2 id4" = "by(DF, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
+    "sum v3 count by id1:id6" = "by(DF, [:id1, :id2, :id3, :id4, :id5, :id6], v3 = :v3 => sum, count = :v3 => length)"
   )},
   "cudf" = {c(
     "sum v1 by id1" = "DF.groupby(['id1'],as_index=False).agg({'v1':'sum'})",
     "sum v1 by id1:id2" = "DF.groupby(['id1','id2'],as_index=False).agg({'v1':'sum'})",
     "sum v1 mean v3 by id3" = "DF.groupby(['id3'],as_index=False).agg({'v1':'sum', 'v3':'mean'})",
     "mean v1:v3 by id4" = "DF.groupby(['id4'],as_index=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
-    "sum v1:v3 by id6" = "DF.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})"
+    "sum v1:v3 by id6" = "DF.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
+    "median v3 sd v3 by id4 id5" = "",
+    "max v1 - min v2 by id3" = "",
+    "largest two v3 by id6" = "",
+    "regression v1 v2 by id2 id4" = "",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False).agg({'v3':'sum', 'v1':'count'})"
   )},
   "clickhouse" = {c(
     "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM x GROUP BY id1",
     "sum v1 by id1:id2" = "SELECT id1, id2, sum(v1) AS v1 FROM x GROUP BY id1, id2",
     "sum v1 mean v3 by id3" = "SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM x GROUP BY id3",
     "mean v1:v3 by id4" = "SELECT id4, avg(v1) AS v1, avg(v2) AS v2, avg(v3) AS v3 FROM x GROUP BY id4",
-    "sum v1:v3 by id6" = "SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM x GROUP BY id6"
+    "sum v1:v3 by id6" = "SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM x GROUP BY id6",
+    "median v3 sd v3 by id4 id5" = "SELECT id4, id5, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM x GROUP BY id4, id5",
+    "max v1 - min v2 by id3" = "SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM x GROUP BY id3",
+    "largest two v3 by id6" = "SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM x GROUP BY id6",
+    "regression v1 v2 by id2 id4" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM x GROUP BY id2, id4",
+    "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6"
   )}
 )
 

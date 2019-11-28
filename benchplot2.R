@@ -24,7 +24,7 @@ qbar_pad = function(i, nsolutions) {
 
 xlab_labels = function(x) {
   at = pretty(c(0, x), 5, 5)
-  at[at > 0 & at < par("usr")[2L]]
+  at[at > 0] # & at < par("usr")[2L]]
 }
 xlab_timescale = function(x) {
   if (x > 2*60*60) {
@@ -94,10 +94,14 @@ xy_fig = function(offset=c(x1=0, x2=0, y1=0, y2=0)) {
   )
 }
 
-axis_grid = function(x, nsolutions, nquestions, h1, h2) {
+x_lines = function(x, h1, h2) {
   x_at = x[, xlab_labels(c(time1, time2))]
   # dotted vertical lines to form grid
   for (at_x in x_at) lines(x=c(at_x, at_x), y=c(h1, h2), col="lightgrey", lwd=2, lty="dotted")
+  invisible(NULL)
+}
+y_lines = function(x, h1, h2) {
+  x_at = x[, xlab_labels(c(time1, time2))]
   # grey horizontal lines separating questions
   q_line_y = x[, tail(.SD, 1L), question][, syntax_y+(syntax_y-bar_y)*2]
   abline(h=q_line_y, col="grey", lwd=2)
@@ -127,15 +131,6 @@ q_title = function(x, txt.fun=default.question.txt.fun, which=NA) {
 }
 syntax = function(x, which=NA) x[, text_bg(0, syntax_y, txt=syntax_text, col=col_strong, font=2, which=which)]
 values = function(x, which=NA) x[, text_bg(max_time, bar_y, txt=bar_text, cex=1.25, which=which)]
-plot_annotations = function(x, question.txt.fun) { # white rect not overlapping text
-  q_title(x, txt.fun=question.txt.fun, which="rect")
-  syntax(x, which="rect")
-  values(x, which="rect")
-  q_title(x, txt.fun=question.txt.fun, which="text")
-  syntax(x, which="text")
-  values(x, which="text")
-  invisible(NULL)
-}
 
 s_margin = function(x) {
   x[, text(0, bar_y+(syntax_y-bar_y)/2, name_short, col=col_strong, font=2, xpd=NA, pos=2)]
@@ -203,7 +198,7 @@ format_s_total_real_time = function(data, solution, s_questions, s_total_real_ti
   ans[!na] = sprintf("%.0fs", s_total_real_time[!na])
   if (sum(na)) {
     ans[na] = mapply(format_exception, s=solution[na], q=s_questions[na],
-                     MoreArgs=list(exceptions=exceptions, data=data))
+                     MoreArgs=list(ex=exceptions, d=data))
   }
   ans
 }
@@ -238,13 +233,13 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
               legend=name_long)] -> nul                ## solution long name
   dt[, legend(x_off[20L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
               legend=format_version)] -> nul           ## version
-  dt[, legend(x_off[40L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
+  dt[, legend(x_off[35L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
               legend=format_batch)] -> nul             ## date
   # right aligned total time seconds
   dt[, {
-    temp = legend(x_off[70L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
+    temp = legend(x_off[62L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
                   legend=rep("", length(format_s_total_real_time)),
-                  text.width = max(strwidth(format_s_total_real_time[!is.na(solution)])))
+                  text.width = max(strwidth(format_s_total_real_time))) # this string include exceptions
     text(temp$rect$left + temp$rect$w,
          temp$text$y - 0.3333*(1/log(length(levels(solution))+as.logical(length(pending)))), # 0.3333 from dd->dev->yCharOffset, 1/log(nsolutions) for better scaling
          format_s_total_real_time, pos=2,
@@ -255,7 +250,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
   topmost_syntax_y = x[.N, syntax_y]
   step_y = topmost_syntax_y - x[.N-1L, syntax_y]
   yy = min(topmost_syntax_y + 2*step_y, mean(c(xy[["y2"]], topmost_syntax_y)))
-  legend(x_off[85L], yy, pch=22, xpd=NA, bty="n", yjust=0,
+  legend(x_off[82L], yy, pch=22, xpd=NA, bty="n", yjust=0,
          pt.lwd=1, cex=1.5, pt.cex=c(3.5, 2.5),
          pt.bg=x[leg_col==TRUE, c(col_strong, col_light)],
          legend=c("First time","Second time"))
@@ -343,8 +338,14 @@ benchplot2 = function(
     x[time2>cutoff_const, `:=`(cutoff=TRUE, time2=cutoff_const)]
   }
   x[, "max_time" := max(c(time1, time2)), by=c("solution","question")]
+  lim_x = tail(xlab_labels(max(c(0, x$max_time), na.rm=TRUE)), n=1L)
+  if (lim_x == 0) {
+    message("no a single solution sucessfully finished both runs of any of the questions")
+    if (!is.null(filename)) dev.off()
+    return(invisible(NULL))
+  }
   # get bars Y coordinates, positions only, plot later in bar1
-  all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, max(x$max_time)), axes=FALSE, xpd=FALSE)
+  all_y_bars = barplot(rep(NA_real_, length(pad)), horiz=TRUE, xlim=c(0, lim_x), axes=FALSE, xpd=FALSE)
   box("plot", col="red")
   box("figure", col="forestgreen")
   box("outer", col="blue")
@@ -356,8 +357,14 @@ benchplot2 = function(
   x[cutoff==TRUE, "bar_text" := paste("...", bar_text)]
 
   header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun, pending=pending)
-  axis_grid(x, nsolutions, nquestions, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
-  plot_annotations(x, question.txt.fun=question.txt.fun)
+  x_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
+  q_title(x, txt.fun=question.txt.fun, which="rect")
+  syntax(x, which="rect")
+  values(x, which="rect")
+  y_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
+  q_title(x, txt.fun=question.txt.fun, which="text")
+  syntax(x, which="text")
+  values(x, which="text")
   bar1(x, pad)
   bar2(x, bar_step/4)
   s_margin(x)
