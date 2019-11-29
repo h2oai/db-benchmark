@@ -26,8 +26,6 @@ new = function(file) local({
   source("benchplot-dict2.R")
   source("benchplot2.R")
   x = ld[data==d]
-  f = sapply(x, is.factor)
-  x[, names(x)[f] := lapply(.SD, factor), .SDcols=f]
   benchplot2(
     x, filename = file,
     solution.dict = solution.dict,
@@ -115,6 +113,8 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - handling of single solution
 # - number of ticks on X axis capped to more pretty
 # - better scaling for various number of solutions
+# - timing values might had sometimes `...` prefix even when they fit the X lim plot, it is now fixed
+# - even if timings of cutoff solution (spark) doesn't exists plot will procedure without cutoff
 
 # join
 

@@ -33,8 +33,8 @@ make_sorters <- function(data) { ## till not on cran https://github.com/smartins
 
 source("report.R", chdir=TRUE)
 source("helpers.R", chdir=TRUE)
-source("benchplot-dict.R", chdir=TRUE)
 source("benchplot.R", chdir=TRUE)
+source("benchplot-dict.R", chdir=TRUE)
 ld = time_logs()
 lld = ld[script_recent==TRUE]
 lld_nodename = as.character(unique(lld$nodename))
@@ -50,13 +50,23 @@ dt_join = lld[task=="join"]
 ```
 
 ```{r helpers}
-loop_benchplot = function(dt_task, report_name, code, exceptions, colors, data_namev, q_groupv) {
-  path = file.path("public", report_name, "plots")
+loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solution.dict, question.txt.fun = NULL, title.txt.fun = NULL, data_namev, q_groupv, cutoff=NULL, pending=NULL) {
   for (data_name in data_namev) {
-    in_rows = strsplit(data_name, "_", fixed=TRUE)[[1L]][2L]
     for (q_group in q_groupv) {
-      message("loop_benchplot ", report_name, " for ", data_name, " ", q_group)
-      benchplot(as.numeric(in_rows), task=report_name, data=data_name, timings=dt_task[question_group==q_group], code=code, exceptions=exceptions, colors=colors, fnam=paste(data_name, q_group, "png", sep="."), path=path, .interactive=FALSE)
+      message(sprintf("benchplot %s %s %s", report_name, data_name, q_group))
+      benchplot(
+        x = dt_task[data==data_name & question_group==q_group],
+        filename = file.path("public", report_name, "plots", paste(data_name, q_group, "png", sep=".")), 
+        solution.dict = solution.dict,
+        syntax.dict = syntax.dict,
+        exceptions = exceptions,
+        question.txt.fun = question.txt.fun,
+        title.txt.fun = title.txt.fun,
+        cutoff = cutoff,
+        pending = pending,
+        url.footer = "https://h2oai.github.io/db-benchmark",
+        interactive = FALSE
+      )
     }
   }
 }
@@ -77,14 +87,14 @@ hours_took = function(lld) {
 in_rows = c("1e7","1e8","1e9")
 k_na_sort = c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1")
 data_name = paste("G1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-loop_benchplot(dt_groupby, report_name="groupby", code=groupby.code, exceptions=groupby.exceptions, colors=solution.colors, data_namev=data_name, q_groupv=c("basic","advanced"))
+loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
 ```{r report_join, message=FALSE}
-in_rows = c("1e7","1e8")
+in_rows = c("1e7","1e8","1e9")
 k_na_sort = c("NA_0_0")
 data_name = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exceptions, colors=solution.colors, data_namev=data_name, q_groupv=c("basic"))
+loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
 ## Task {.tabset .tabset-fade .tabset-pills}
@@ -112,7 +122,6 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 ![](public/groupby/plots/G1_1e8_1e2_0_0.advanced.png)
 
 #### 50 GB {.active}
-
 
 ##### **basic questions**
 
@@ -147,13 +156,13 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ![](public/join/plots/J1_1e8_NA_0_0.advanced.png)
 -->
-<!--
-#### 50 GB {.active}
+
+#### 50 GB
 
 ##### **basic questions**
 
 ![](public/join/plots/J1_1e9_NA_0_0.basic.png)
--->
+
 <!--
 ##### **advanced questions**
 
@@ -166,7 +175,7 @@ loop_benchplot(dt_join, report_name="join", code=join.code, exceptions=join.exce
 
 ### groupby {.active}
 
-Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases go to the very bottom of this page. If a solution is missing on particular data size timings table refer to benchplot for reasons and check its speed on smaller data size tab.  
+Timings are presented for a single dataset case having random order, no NAs (missing values) and particular cardinality factor (group size question 1 `k=100`). To see timings for other cases go to the very bottom of this page.
 
 ### groupby timings
 
@@ -245,12 +254,11 @@ Because we have been asked many times to do so, the first task and initial motiv
 ## Explore more data cases
 
 ```{r link_all_benchplot}
-lld[, .(task, in_rows, data, knasorted, question_group)
+lld[order(task), .(task, in_rows, data, knasorted, question_group)
     ][, unique(.SD)
       ][, .(benchplot=link(data, question_group, task)), .(task, in_rows, knasorted)
-        ][task=="join" & in_rows=="1e9", "benchplot" := "soon"
-          ][, .(task, `in rows`=in_rows, `data description`=knasorted, benchplot)
-            ][, kk(.SD)]
+        ][, .(task, `in rows`=in_rows, `data description`=knasorted, benchplot)
+          ][, kk(.SD)]
 ```
 
 ------
