@@ -30,7 +30,7 @@ if (!length(run_tasks)) q("no")
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
-data = fread("data.csv")
+data = fread("data.csv", logical01=TRUE)
 data = data[active==TRUE, # filter on active datasets
             ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
               ][, c("active") := NULL # remove unused
