@@ -104,7 +104,8 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] order of exception solutions on legend
 # - [x] join test
 # - [x] plot bar only if both runs successful
-# - [ ] test whole report and every single benchplot vs prod
+# - [x] test whole report and every single benchplot vs prod
+# - [ ] speed test
 # - [ ] update scripts for DT/DF/x
 
 # visible changes:

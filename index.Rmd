@@ -84,13 +84,13 @@ hours_took = function(lld) {
 ```
 
 ```{r report_groupby, message=FALSE}
-in_rows = c("1e7","1e8","1e9")
-k_na_sort = c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1")
+in_rows = c("1e7","1e9") # "1e8",
+k_na_sort = c("1e2_0_0")#,"1e1_0_0","2e0_0_0","1e2_0_1")
 data_name = paste("G1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
 loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
-```{r report_join, message=FALSE}
+```{r report_join, message=FALSE, eval=FALSE}
 in_rows = c("1e7","1e8","1e9")
 k_na_sort = c("NA_0_0")
 data_name = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")

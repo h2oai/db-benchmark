@@ -209,13 +209,16 @@ format_s_total_real_time_sec = function(data, solution, s_questions, s_total_rea
   ans
 }
 header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.fun, pending=character()) {
+  t = time()
   xy = xy_fig(offset = c(x1=0, x2=0, y1=0, y2=1))
   x_at = x[na_time_sec==FALSE, xlab_labels(c(time1, time2))]
   x_range = c(mean(c(xy[["x1"]], 0)), mean(c(xy[["x2"]], tail(x_at, 1L))))
   x_w = x_range[2L]-x_range[1L]
   x_off = x_range[1L] + seq(0, x_w, by=x_w/99)
+  t = time("header_legend: x steps range width offset", t)
   # header title
   h_title = title.txt.fun(x)
+  t = time("title.txt.fun", t)
   text(x_off[1L], xy[["y2"]], labels=h_title, pos=4, cex=1.5, font=2, xpd=NA)
   # main solution legend
   dt = x[, .(data=unique1(data), version=unique1(version), batch=unique1(batch),
@@ -224,6 +227,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
              s_questions=list(question)), ## retain all questions so can lookup for exceptions later on
          keyby="solution"]
   setorderv(dt, "s_total_real_time_sec", na.last=TRUE)
+  t = time("header_legend: main solution legend dt", t)
   if (length(pending)) dt = rbindlist(list(
     dt,
     data.table(solution=NA_integer_, data=NA_integer_, version=NA_integer_, batch=NA_integer_, s_total_real_time_sec=NA_real_, col_strong="black", name_short=NA_character_, name_long=paste(pending, collapse=", "), s_questions=list())
@@ -233,6 +237,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
     format_s_total_real_time_sec = format_s_total_real_time_sec(data, solution, s_questions, s_total_real_time_sec, exceptions)
   )]
   dt[is.na(solution), `:=`(format_version="", format_batch="see README", format_s_total_real_time_sec="pending")]
+  t = time("header_legend: pending to dt", t)
   dt[, "s_questions" := NULL]
   dt[, legend(x_off[2L], xy[["y2"]], bty="n", cex=1.5,
               pch=22, pt.bg=col_strong, pt.cex=3.5,    ## color square
@@ -263,6 +268,7 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
          pt.lwd=1, cex=1.5, pt.cex=c(3.5, 2.5),
          pt.bg=x[leg_col==TRUE, c(col_strong, col_light)],
          legend=c("First time","Second time"))
+  time("header_legend: legend calls", t)
   invisible(NULL)
 }
 
@@ -277,6 +283,18 @@ footer = function(url.footer) {
   invisible(NULL)
 }
 
+time = function(label, old_t=NULL) {
+  init = proc.time()[[3L]]
+  if (missing(label)) return(init)
+  stopifnot(length(label)==1L)
+  if (!is.null(old_t)) {
+    stopifnot(is.numeric(old_t))
+    t = init - old_t
+    message(sprintf("%s took %.4fs", label, t))
+  }
+  proc.time()[[3L]]
+}
+
 benchplot = function(
   x, filename=NULL,
   solution.dict=list(), syntax.dict=list(),
@@ -288,6 +306,7 @@ benchplot = function(
   url.footer = NA_character_,
   interactive = interactive()
 ) {
+  t = time()
   if (!capabilities()[["X11"]] && capabilities()[["cairo"]]) {
     op = options(bitmapType="cairo")
     on.exit(options(op))
@@ -303,6 +322,7 @@ benchplot = function(
   x = copy(x)[, i := .I]
   f = sapply(x, is.factor)
   x[, names(x)[f] := lapply(.SD, factor), .SDcols=f]
+  t = time("input copy, drop levels", t)
 
   solutions = levels(x$solution)
   nsolutions = length(solutions)
@@ -334,6 +354,7 @@ benchplot = function(
   x[na_time_sec==FALSE, "max_real_time" := max(c(real_time1, real_time2)), by=c("solution", "question")]
   x[na_time_sec==FALSE, "sum_real_time" := sum(real_time1, real_time2), by=c("solution", "question")]
   x[, "s_total_real_time_sec" := sum(c(time_sec_1, time_sec_2)), by=c("solution")] ## in seconds always
+  t = time("cutoff_const, timescale, max times", t)
   # order for bar horiz=TRUE does first bar from the bottom!
   setorderv(x, c("question","max_real_time","solution"), order=-1L, na.last=FALSE)
   x[, c("col_strong","col_light") := as.list(solution.dict[[as.character(solution)]][["color"]]), by="solution"]
@@ -342,7 +363,8 @@ benchplot = function(
   x[, "syntax_text" := as.list(syntax.dict[[as.character(solution)]])[[as.character(question)]], by=c("solution","question")]
   x[, "exception_text" := NA_character_]
   if (sum(x$na_time_sec)) x[na_time_sec==TRUE, "exception_text" := mapply(format_exception, s=solution, q=list(question), MoreArgs=list(ex=exceptions, d=data, which=c("query","data"), short=FALSE), SIMPLIFY=TRUE), by=c("data","solution","question")]
-
+  t = time("lookup col, names, syntax, exceptions", t)
+  
   # bars on Y axis padding
   pad = as.vector(sapply(
     seq.int(nquestions)-1L, # time, solution syntax, and top X axis and its labels
@@ -361,6 +383,7 @@ benchplot = function(
     png(filename=filename, width=800, height=height)
   }
   margins(nsolutions, pending=pending)
+  t = time("pad, png, margins", t)
   x[na_time_sec==FALSE, "max_time" := max(c(time1, time2)), by=c("solution","question")]
   lim_x = tail(xlab_labels(max(c(0, x$max_time), na.rm=TRUE)), n=1L)
   if (lim_x == 0) stop("internal error: lim x is c(0,0), this should be already escaped at the beginning with 'sum(x$na_time_sec)==nrow(x)'")
@@ -371,22 +394,27 @@ benchplot = function(
   x[, "syntax_y" := all_y_bars[which(!is.na(pad))+1L]]
   x[, "bar_text" := paste(format_num(c(real_time1, real_time2)), collapse="; "), by=c("solution","question")]
   x[cutoff==TRUE, "bar_text" := paste("...", bar_text)]
+  t = time("barplot, etc", t)
 
   x_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step)
   q_title(x, txt.fun=question.txt.fun, which="rect")
   syntax(x, which="rect")
   values(x, which="rect")
   exception(x, which="rect")
+  t = time("x_lines q_title rect", t)
   header_legend(x, exceptions=exceptions, title.txt.fun=title.txt.fun, pending=pending)
+  t = time("header_legend", t)
   y_lines(x, h1=all_y_bars[length(all_y_bars)], h2=all_y_bars[1L]-bar_step, timescale=timescale)
   q_title(x, txt.fun=question.txt.fun, which="text")
   syntax(x, which="text")
   values(x, which="text")
   exception(x, which="text")
+  t = time("y_lines q_title text", t)
   bar1(x, pad)
   bar2(x, bar_step/4)
   s_margin(x)
   footer(url.footer)
+  t = time("bars s_margin footer", t)
   if (!is.null(filename)) {
     dev.off()
     if (interactive) system(paste("/usr/bin/xdg-open", filename), wait=FALSE)
