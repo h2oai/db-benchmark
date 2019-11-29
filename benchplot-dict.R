@@ -12,7 +12,7 @@ header_title_fun = function(x) {
   stopifnot(is.data.table(x), "data" %in% names(x))
   data_name = unique1(x[["data"]])
   file = file.path("data", paste(data_name, "csv",sep="."))
-  ds = data_spec(file)
+  ds = data_spec(file, nrow=as.numeric(substr(data_name, 4L, 6L)))
   sprintf(
     "Input table: %s rows x %s columns ( %s GB )",
     format_comma(as.numeric(ds[["nrow"]])[1L]),
