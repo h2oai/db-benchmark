@@ -5,7 +5,7 @@ output:
     self_contained: no
     toc: true
     includes:
-      in_header: ga.html
+      in_header: _report/ga.html
 ---
 ```{r render, include=FALSE}
 # Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 
 ```{r init}
 library(lattice)
-source("report.R")
+source("./_report/report.R")
 ld = time_logs()
 recent_nodename = ld[script_recent==TRUE, unique(nodename)]
 stopifnot(length(recent_nodename)==1L)

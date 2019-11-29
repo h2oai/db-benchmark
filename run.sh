@@ -11,7 +11,7 @@ export BATCH=$(date +%s)
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
 # confirm clickhouse is not running
-source ./ch.sh
+source ./clickhouse/ch.sh
 ch_installed && ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
 
 # confirm swap disabled
@@ -75,7 +75,7 @@ $DO_REPORT && $DO_PUBLISH \
   && [ $(wc -l report-done | awk '{print $1}') -eq 3 ] \
   && [ -f ./token ] \
   && echo "# Publishing report" \
-  && ((./publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
+  && ((./_report/publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")
 
 # remove run lock file
 rm -f ./run.lock

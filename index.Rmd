@@ -4,7 +4,7 @@ output:
   html_document:
     self_contained: no
     includes:
-      in_header: ga.html
+      in_header: _report/ga.html
 ---
 ```{r render, include=FALSE}
 # Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' && xdg-open public/index.html
@@ -31,10 +31,10 @@ make_sorters <- function(data) { ## till not on cran https://github.com/smartins
   sprintf("function(attr) {\nvar sortAs = $.pivotUtilities.sortAs;\n%s\n}", paste(sorter, collapse="\n"))
 }
 
-source("report.R", chdir=TRUE)
-source("helpers.R", chdir=TRUE)
-source("benchplot.R", chdir=TRUE)
-source("benchplot-dict.R", chdir=TRUE)
+source("./_report/report.R", chdir=TRUE)
+source("./helpers.R", chdir=TRUE)
+source("./_benchplot/benchplot.R", chdir=TRUE)
+source("./_benchplot/benchplot-dict.R", chdir=TRUE)
 ld = time_logs()
 lld = ld[script_recent==TRUE]
 lld_nodename = as.character(unique(lld$nodename))
@@ -94,7 +94,7 @@ loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dic
 in_rows = c("1e7","1e8","1e9")
 k_na_sort = c("NA_0_0")
 data_name = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
+loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = c("ClickHouse","Modin"))
 ```
 
 ## Task {.tabset .tabset-fade .tabset-pills}
@@ -218,9 +218,9 @@ rpivotTable::rpivotTable(
 ## Notes
 
 - You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in [repository](https://github.com/h2oai/db-benchmark).  
-- Data used to generate plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [report.R](https://github.com/h2oai/db-benchmark/blob/master/report.R) for quick introduction how to work with those.  
+- Data used to generate plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
 - We ensure that calculations are not deferred by solution.  
-- We also tested that answers produced from different solutions match each others, for details see [answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/answers-validation.R).  
+- We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
 - ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.  
 
 ## Environment configuration

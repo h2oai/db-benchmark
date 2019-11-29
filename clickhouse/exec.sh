@@ -2,11 +2,11 @@
 set -e
 
 if [ "$#" -ne 2 ]; then
-    echo "usage: ./clickhouse-exec.sh groupby G1_1e7_1e2_0_0";
+    echo "usage: ./clickhouse/exec.sh groupby G1_1e7_1e2_0_0";
     exit 1
 fi;
 
-source ch.sh
+source ./clickhouse/ch.sh
 
 # start server
 ch_start
