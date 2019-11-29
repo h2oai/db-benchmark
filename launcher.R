@@ -11,6 +11,7 @@ forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
 if (packageVersion("data.table") <= "1.12.0") stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0. If you need to benchmark older data.table tweak script to use custom library where older version is installed.")
 
 log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
+  stopifnot(is.character(task), length(task)==1L, !is.na(task))
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
   lg = as.data.table(c(
@@ -26,19 +27,18 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
 }
 run_tasks = getenv("RUN_TASKS") #run_tasks = "groupby"
 if (!length(run_tasks)) q("no")
-if (length(run_tasks)>1L) stop("multiple tasks at once not yet supported in launcher, run sequentially")
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
 data = fread("data.csv")
 data = data[active==TRUE, # filter on active datasets
             ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
-              ][, c("active") := NULL # remove unused, id+seq to be used for join
+              ][, c("active") := NULL # remove unused
                 ][]
 
 timeout = fread("timeout.csv")
 timeout = timeout[run_tasks, on="task", nomatch=NULL] # filter for env var RUN_TASKS
-stopifnot(nrow(timeout)==1L)
+if (nrow(timeout)!=length(run_tasks)) stop("missing entries in timeout.csv for some tasks")
 
 solution = rbindlist(list(
   dask = list(task=c("groupby","join")),
@@ -53,12 +53,12 @@ solution = rbindlist(list(
   cudf = list(task=c("groupby","join"))
 ), idcol="solution")
 solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
-stopifnot(nrow(solution) > 0L) # when added new solution and forget to add here this will catch
+if (nrow(solution) == 0L) stop("added new solution and forget to add in launcher.R script?")
 
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]
 
-# "G2" grouping data only relevant for clickhouse
+# "G2" grouping data only relevant for clickhouse, so filter out "G2" for other solutions
 dt = dt[!(substr(data, 1L, 2L)=="G2" & solution!="clickhouse")]
 # clickhouse memory table engine "G1", disabled as per #91
 dt = dt[!(substr(data, 1L, 2L)=="G1" & solution=="clickhouse")]
@@ -78,7 +78,8 @@ if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timi
          ][, "N" := NULL
            ][!nzchar(git), "git" := NA_character_
              ][] -> logs
-  past = timings[logs, .(nodename, batch, solution, task, data, timing_version=x.version, timing_git=x.git, logs_version=i.version, logs_git=i.git), on=c("nodename","batch","solution","task","data")] # there might be no timings for solutions that crashed, thus join to logs
+  # there might be no timings for solutions that crashed, thus join to logs to still have those NA timings
+  past = timings[logs, .(nodename, batch, solution, task, data, timing_version=x.version, timing_git=x.git, logs_version=i.version, logs_git=i.git), on=c("nodename","batch","solution","task","data")]
   # NA timing_version/git is when solution crashed
   # NA logs_version/git is when VERSION/REVISION files where not created but it is already part of run.sh
   # rules for running/skipping:
@@ -143,7 +144,7 @@ for (s in solutions) { #s = solutions[1]
         else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
       } else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      timeout_s = 60*timeout[["minutes"]] # see timeout.csv
+      timeout_s = 60*timeout[t, on="task"][["minutes"]] # see timeout.csv
       if (!mockup) {
         tryCatch(
           system(shcmd, timeout=timeout_s), # here script actually runs
@@ -156,11 +157,8 @@ for (s in solutions) { #s = solutions[1]
           }
         )
       }
-      if (t=="groupby") {
-        Sys.unsetenv("SRC_GRP_LOCAL")
-      } else if (t=="join") {
-        Sys.unsetenv("SRC_JN_LOCAL")
-      }
+      data_name_env = if (t=="groupby") "SRC_GRP_LOCAL" else if (t=="join") "SRC_JN_LOCAL" else stop("new task has to be added in launcher.R script too")
+      Sys.unsetenv(data_name_env)
       log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
     }
   }
