@@ -8,7 +8,6 @@ task.exceptions = function(query, data) {
   if (!all(sapply(ex$data, unq_in_list))) stop("task.exceptions detected invalid entries in 'data' exceptions")
   ex
 }
-
 header_title_fun = function(x) {
   stopifnot(is.data.table(x), "data" %in% names(x))
   data_name = unique1(x[["data"]])
@@ -21,7 +20,6 @@ header_title_fun = function(x) {
     as.numeric(ds[["gb"]])[1L]
   )
 }
-
 solution.dict = {list(
   "data.table" = list(name=c(short="data.table", long="data.table"), color=c(strong="blue", light="#7777FF")),
   "dplyr" = list(name=c(short="dplyr", long="dplyr"), color=c(strong="red", light="#FF7777")),
@@ -49,7 +47,6 @@ groupby_q_title_fun = function(x) {
               format_comma(out_rows), out_cols),
     by = "iquestion"]$V1
 }
-
 groupby.syntax.dict = {list(
   "data.table" = {c(
     "sum v1 by id1" = "DT[, .(v1=sum(v1)), by=id1]",
@@ -160,7 +157,6 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6"
   )}
 )}
-
 groupby.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
@@ -176,17 +172,17 @@ groupby.query.exceptions = {list(
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list()
 )}
-groupby.data.exceptions = {list(                                                             # exceptions as of run 1573882448
+groupby.data.exceptions = {list(                                                             # exceptions as of run 1574567933
   "data.table" = {list(
-    "segfault" = c("G1_1e9_2e0_0_0"),                                                        # fread # before it was q3 #110
-    "timeout" = c("G1_1e9_1e1_0_0")                                                          # q8 probably #110
+    "timeout" = c("G1_1e9_1e1_0_0",                                                          # q8 probably #110
+                  "G1_1e9_2e0_0_0")                                                          # q3 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "dplyr" = {list(
     "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10
                   "G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1",       # q10
                   "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1",                                         # q10
-                  "G1_1e9_1e1_0_0"),                                                         # q6
-    "segfault" = c("G1_1e9_2e0_0_0")                                                         # fread # before it was q3 #110
+                  "G1_1e9_1e1_0_0",                                                          # q6
+                  "G1_1e9_2e0_0_0")                                                          # q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
     "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10
@@ -230,15 +226,6 @@ join_q_title_fun = function(x) {
   x = copy(x)[, "iquestion":=rev(seq_along(iquestion))]
   x[, sprintf("Question %s: \"%s\": result %s x %s", iquestion, as.character(question), format_comma(out_rows), out_cols), by="iquestion"]$V1
 }
-
-#lapply(names(join.code[[1L]]), function(s) {
-#  c(paste0("\"",s,"\" = {c("),
-#    paste(sapply(names(join.code), function(q) {
-#      paste(paste0("\"",q,"\""), paste0("\"",join.code[[q]][[s]],"\""), sep=" = ")
-#    }), collapse=",\n"),
-#    paste0(")},")) -> ss
-#    sapply(ss, cat, "\n", sep="")
-#}) -> nul
 join.syntax.dict = {list(
   "dask" = {c(
     "small inner on int" = "DF.merge(small, on='id1').compute()",
@@ -304,7 +291,6 @@ join.syntax.dict = {list(
     "big inner on int" = "DF.merge(big, on='id3')"
   )}
 )}
-
 join.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),

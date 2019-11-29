@@ -28,7 +28,6 @@ new = function(file) local({
   x = ld[data==d]
   f = sapply(x, is.factor)
   x[, names(x)[f] := lapply(.SD, factor), .SDcols=f]
-  setnames(x, c("time_sec_1","time_sec_2"), c("time1","time2"))
   benchplot2(
     x, filename = file,
     solution.dict = solution.dict,
@@ -48,8 +47,8 @@ new = function(file) local({
 library(data.table)
 source("report.R")
 t = "groupby"
-d = "G1_1e9_2e0_0_0"
-q_group = "advanced"
+d = "G1_1e7_1e2_0_0"
+q_group = "basic"
 ldd = time_logs()[task==t & script_recent==TRUE & question_group==q_group]
 
 system("pkill feh", wait=TRUE)
@@ -101,17 +100,21 @@ system("feh -w b2_3.png b2_6.png b2_9.png", wait=FALSE)
 # - [x] syntax_text query exceptions only for NA timing
 # - [x] support for a all non fully sucessful solutions timings (none of solutions finished all questions)
 # - [x] scale for solutions (3-9)
-# - [ ] minutes-seconds translation error**
+# - [x] minutes-seconds translation error
 # - [-] scale for questions (3-9)
 # - [-] scale for s*q (3*3, 3*10, 9*3, 9*10)
 # - [x] order of exception solutions on legend
 # - [x] join test
 # - [x] plot bar only if both runs successful
+# - [ ] test whole report and every single benchplot vs prod
+# - [ ] update scripts for DT/DF/x
 
-# visible changes
+# visible changes:
 # - question headers (question, more precise stats)
 # - consistent x/DF/DT naming
 # - handling of single solution
+# - number of ticks on X axis capped to more pretty
+# - better scaling for various number of solutions
 
 # join
 
