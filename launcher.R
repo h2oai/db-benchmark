@@ -107,6 +107,7 @@ for (s in solutions) { #s = solutions[1]
   ### task
   tasks = dt[.(s), unique(task), on="solution"]
   for (t in tasks) { #t = tasks[1]
+    data_name_env = if (t=="groupby") "SRC_GRP_LOCAL" else if (t=="join") "SRC_JN_LOCAL" else stop("new task has to be added in launcher.R script too")
     #### data
     data = dt[.(s, t), data, on=c("solution","task")]
     for (d in data) { #d=data[1]
@@ -124,11 +125,8 @@ for (s in solutions) { #s = solutions[1]
         next
       }
       log_run(s, t, d, action="start", batch=batch, nodename=nodename, mockup=mockup)
-      if (t=="groupby") {
-        Sys.setenv("SRC_GRP_LOCAL"=d)
-      } else if (t=="join") {
-        Sys.setenv("SRC_JN_LOCAL"=d)
-      } else stop("unknown task in launcher.R script")
+      #workaround for dynamic LHS in: Sys.setenv(as.name(data_name_env)=d)
+      eval(as.call(c(list(quote(Sys.setenv)), setNames(list(d), data_name_env))))
       if (!mockup) {
         if (file.exists(out_file)) file.remove(out_file)
         if (file.exists(err_file)) file.remove(err_file)
@@ -157,7 +155,6 @@ for (s in solutions) { #s = solutions[1]
           }
         )
       }
-      data_name_env = if (t=="groupby") "SRC_GRP_LOCAL" else if (t=="join") "SRC_JN_LOCAL" else stop("new task has to be added in launcher.R script too")
       Sys.unsetenv(data_name_env)
       log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
     }
