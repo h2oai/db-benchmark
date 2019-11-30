@@ -2,7 +2,7 @@
 
 cat("# clickhouse-parse-log.R: starting to parse timings from clickhouse/log/.\n")
 
-source("helpers.R")
+source("./_helpers/helpers.R")
 args = commandArgs(TRUE) # args = c("groupby","G1_1e6_1e2_0_0")
 stopifnot(length(args)==2L)
 task = args[1L]

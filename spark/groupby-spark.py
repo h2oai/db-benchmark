@@ -8,7 +8,7 @@ import timeit
 import pyspark
 from pyspark.sql import SparkSession
 
-exec(open("./helpers.py").read())
+exec(open("./_helpers/helpers.py").read())
 
 ver = pyspark.__version__
 git = "" # won't fix: https://issues.apache.org/jira/browse/SPARK-16864

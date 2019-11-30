@@ -7,7 +7,7 @@ import gc
 import timeit
 import pandas as pd
 
-exec(open("./helpers.py").read())
+exec(open("./_helpers/helpers.py").read())
 
 ver = pd.__version__
 git = pd.__git_version__

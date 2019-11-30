@@ -12,4 +12,4 @@ source path.env
 
 # install julia dataframes and csv packages
 julia -q -e 'using Pkg; Pkg.add(["DataFrames","CSV","Statistics"]); exit();'
-julia -q -e 'using Pkg; include("$(pwd())/helpers.jl"); pkgmeta = getpkgmeta("DataFrames"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("CSV"); println(string(pkgmeta["version"])); exit();'
+julia -q -e 'using Pkg; include("$(pwd())/_helpers/helpers.jl"); pkgmeta = getpkgmeta("DataFrames"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("CSV"); println(string(pkgmeta["version"])); exit();'

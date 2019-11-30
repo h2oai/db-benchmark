@@ -2,7 +2,7 @@
 
 cat("# join-dplyr.R\n")
 
-source("./helpers.R")
+source("./_helpers/helpers.R")
 source("./dplyr/helpers-dplyr.R")
 
 suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))

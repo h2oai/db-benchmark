@@ -2,7 +2,7 @@
 
 cat("# groupby-datatable.R\n")
 
-source("./helpers.R")
+source("./_helpers/helpers.R")
 source("./datatable/helpers-datatable.R")
 
 stopifnot(requireNamespace(c("bit64"), quietly=TRUE)) # used in chk to sum numeric columns

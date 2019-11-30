@@ -7,7 +7,7 @@ import gc
 import timeit
 import cudf as cu
 
-exec(open("./helpers.py").read())
+exec(open("./_helpers/helpers.py").read())
 
 ver = cu.__version__.split("+", 1)[0]
 git = ""

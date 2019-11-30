@@ -6,7 +6,7 @@ using DataFrames;
 using CSV;
 using Printf;
 
-include("$(pwd())/helpers.jl");
+include("$(pwd())/_helpers/helpers.jl");
 
 pkgmeta = getpkgmeta("DataFrames");
 ver = pkgmeta["version"];

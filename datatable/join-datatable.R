@@ -2,7 +2,7 @@
 
 cat("# join-datatable.R\n")
 
-source("./helpers.R")
+source("./_helpers/helpers.R")
 source("./datatable/helpers-datatable.R")
 
 suppressPackageStartupMessages(library(data.table))

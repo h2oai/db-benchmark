@@ -1,5 +1,5 @@
 library(data.table)
-source("helpers.R")
+source("./_helpers/helpers.R")
 
 is.sigint()
 

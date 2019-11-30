@@ -9,7 +9,7 @@ import pandas as pd
 import dask as dk
 import dask.dataframe as dd
 
-exec(open("./helpers.py").read())
+exec(open("./_helpers/helpers.py").read())
 
 ver = dk.__version__
 git = dk.__git_revision__
