@@ -29,6 +29,7 @@ small = JN$small
 medium = JN$medium
 big = JN$big
 
+task_init = proc.time()[["elapsed"]]
 cat("joining...\n")
 
 question = "small inner on int" # q1
@@ -101,63 +102,63 @@ print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
 
-if (!interactive()) q("no", status=0)
+## advanced questions
 
-question = "medium inner on int int" # q6
-t = system.time(print(dim(ans<-DT[medium, on=.(id1,id2), nomatch=NULL])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
+#question = "medium inner on int int" # q6
+#t = system.time(print(dim(ans<-DT[medium, on=.(id1,id2), nomatch=NULL])))[["elapsed"]]
+#m = memory_usage()
+#chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
+##write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#rm(ans)
+#t = system.time(print(dim(ans<-DT[medium, on=.(id1,id2), nomatch=NULL])))[["elapsed"]]
+#m = memory_usage()
+#chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
+##write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#print(head(ans, 3))
+#print(tail(ans, 3))
+#rm(ans)
+
+#question = "medium update on int" # q7
+#t = system.time(print(dim(ans<-DT[medium, v2:=i.v2, on="id2"])))[["elapsed"]]
+#m = memory_usage()
+#chkt = system.time(chk<-ans[, .(sum(v1), sum(v2, na.rm=TRUE))])[["elapsed"]]
+##write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#rm(ans)
+#DT[, v2:=NULL]
+#t = system.time(print(dim(ans<-DT[medium, v2:=i.v2, on="id2"])))[["elapsed"]]
+#m = memory_usage()
+#chkt = system.time(chk<-ans[, .(sum(v1), sum(v2, na.rm=TRUE))])[["elapsed"]]
+##write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+#print(head(ans, 3))
+#print(tail(ans, 3))
+#rm(ans)
+#DT[, v2:=NULL]
+
+## DEV advanced questions
+
+#question = "medium aggregate on int" # q8
+#stop("dev q8: ", question)
+#t = system.time(print(dim(ans<-DT[medium, on="id2", .(count=.N, v2=sum(v2)), by=.EACHI, nomatch=NULL])))[["elapsed"]]
+#m = memory_usage()
+#chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
 #write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-rm(ans)
-t = system.time(print(dim(ans<-DT[medium, on=.(id1,id2), nomatch=NULL])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
-#write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-print(head(ans, 3))
-print(tail(ans, 3))
-rm(ans)
-
-question = "medium update on int" # q7
-t = system.time(print(dim(ans<-DT[medium, v2:=i.v2, on="id2"])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v1), sum(v2, na.rm=TRUE))])[["elapsed"]]
-#write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-rm(ans)
-DT[, v2:=NULL]
-t = system.time(print(dim(ans<-DT[medium, v2:=i.v2, on="id2"])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v1), sum(v2, na.rm=TRUE))])[["elapsed"]]
-#write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-print(head(ans, 3))
-print(tail(ans, 3))
-rm(ans)
-DT[, v2:=NULL]
-
-if (!interactive()) q("no", status=0)
-
-# DEV
-
-question = "medium aggregate on int" # q8
-stop("dev q8: ", question)
-t = system.time(print(dim(ans<-DT[medium, on="id2", .(count=.N, v2=sum(v2)), by=.EACHI, nomatch=NULL])))[["elapsed"]]
-m = memory_usage()
-chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
-#write.log(run=1L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-rm(ans)
+#rm(ans)
 #t = system.time(print(dim(ans<-DT[medium, on=.(id1,id2), nomatch=NULL])))[["elapsed"]]
 #m = memory_usage()
 #chkt = system.time(chk<-ans[, .(sum(v1), sum(v2))])[["elapsed"]]
 #write.log(run=2L, task=task, data=data_name, in_rows=nrow(DT), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
-print(head(ans, 3))
-print(tail(ans, 3))
-rm(ans)
+#print(head(ans, 3))
+#print(tail(ans, 3))
+#rm(ans)
 
-question = "medium rolling on int" # q9
-stop("dev q9: ", question)
+#question = "medium rolling on int" # q9
+#stop("dev q9: ", question)
 #t = system.time(print(dim(ans<-DT[medium, on="id2", .(count=.N, v2=sum(v2)),])))[["elapsed"]]
 
-question = "big non-equi aggregate on int int int" # q10
-stop("dev q10: ", question)
-t = system.time(print(dim(ans<-DT[big, on=.(id1, id2, id3>=id3), .N, by=.EACHI, nomatch=NULL])))[["elapsed"]]
+#question = "big non-equi aggregate on int int int" # q10
+#stop("dev q10: ", question)
+#t = system.time(print(dim(ans<-DT[big, on=.(id1, id2, id3>=id3), .N, by=.EACHI, nomatch=NULL])))[["elapsed"]]
+
+cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
 if (!interactive()) q("no", status=0)

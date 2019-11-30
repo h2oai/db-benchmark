@@ -4,6 +4,7 @@ print("# join-juliadf.jl\n"); flush(stdout);
 
 using DataFrames;
 using CSV;
+using Printf;
 
 include("$(pwd())/helpers.jl");
 
@@ -36,6 +37,7 @@ println(size(small, 1)); flush(stdout);
 println(size(medium, 1)); flush(stdout);
 println(size(big, 1)); flush(stdout);
 
+task_init = time();
 print("joining...\n"); flush(stdout);
 
 question = "small inner on int"; # q1
@@ -118,5 +120,7 @@ write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), sol
 println(first(ANS, 3));
 println(last(ANS, 3));
 ANS = 0;
+
+print(@sprintf "joining finished, took %.0fs\n" (time()-task_init)); flush(stdout);
 
 exit();

@@ -52,6 +52,7 @@ print(len(small.index), flush=True)
 print(len(medium.index), flush=True)
 print(len(big.index), flush=True)
 
+task_init = timeit.default_timer()
 print("joining...", flush=True)
 
 question = "small inner on int" # q1
@@ -183,5 +184,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
+
+print("joining finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
 exit(0)

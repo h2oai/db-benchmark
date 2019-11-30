@@ -55,6 +55,7 @@ small.createOrReplaceTempView("small")
 medium.createOrReplaceTempView("medium")
 big.createOrReplaceTempView("big")
 
+task_init = timeit.default_timer()
 print("joining...", flush=True)
 
 question = "small inner on int" # q1
@@ -218,5 +219,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 
 spark.stop()
+
+print("joining finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
 exit(0)

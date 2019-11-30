@@ -27,6 +27,7 @@ small = JN$small
 medium = JN$medium
 big = JN$big
 
+task_init = proc.time()[["elapsed"]]
 cat("joining...\n")
 
 question = "small inner on int" # q1
@@ -103,5 +104,7 @@ write.log(run=2L, task=task, data=data_name, in_rows=nrow(DF), question=question
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
+
+cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
 if( !interactive() ) q("no", status=0)
