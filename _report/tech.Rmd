@@ -5,13 +5,14 @@ output:
     self_contained: no
     toc: true
     includes:
-      in_header: _report/ga.html
+      in_header: ga.html
 ---
 ```{r render, include=FALSE}
-# Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' # has to be output_dir='public' as there is hardcode in benchplot for that path
+# Rscript -e 'rmarkdown::render("./_report/tech.Rmd", output_dir="public")'
 ```
 
 ```{r opts, echo=FALSE}
+knitr::opts_knit$set(root.dir="..")
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 ```
 

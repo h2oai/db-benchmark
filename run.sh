@@ -63,9 +63,9 @@ if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after
 rm -rf ./public
 rm -f ./report-done
 $DO_REPORT && echo "# Rendering report"
-$DO_REPORT && Rscript -e 'rmarkdown::render("index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
-$DO_REPORT && Rscript -e 'rmarkdown::render("history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
-$DO_REPORT && Rscript -e 'rmarkdown::render("tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("./_report/index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("./_report/history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
+$DO_REPORT && Rscript -e 'rmarkdown::render("./_report/tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
 
 # publish benchmark, only if all reports successfully generated (logged in ./report-done file), and token file exists
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
