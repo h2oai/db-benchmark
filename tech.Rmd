@@ -48,7 +48,7 @@ kk(ll[task=="groupby"
 
 Things to consider when looking at below plots.  
 
-- Red dotted line refers to script timeout which initially was not set up. Later it was set to 60 minutes, more recently, after adding new set of questions, it was increased to 120 minutes. Up to date timeout value can be looked up in `timeout.csv` file.  
+- Red dotted line refers to script timeout which initially was not set up. Later it was set to 60 minutes, more recently, after adding new set of questions, it was increased to 120 minutes. Up to date timeout value can be looked up in `_control/timeout.csv` file.
 - It might happen that script was terminated by _out of memory killer_ an OS feature. In result script timing will be smaller than in reality it should be.  
 
 Refer to table above to see which script has been fully completed.  
@@ -56,7 +56,7 @@ Refer to table above to see which script has been fully completed.
 ### groupby
 
 ```{r logs_plot, fig.width=8, fig.height=48}
-timeout = fread("timeout.csv")
+timeout = fread("./_control/timeout.csv")
 timeout = timeout["groupby", on="task", nomatch=NULL] # filter for env var RUN_TASKS
 stopifnot(nrow(timeout)==1L)
 timeout_m = timeout[["minutes"]]

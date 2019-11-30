@@ -30,15 +30,15 @@ if (!length(run_tasks)) q("no")
 run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
-data = fread("data.csv", logical01=TRUE)
+data = fread("./_control/data.csv", logical01=TRUE)
 data = data[active==TRUE, # filter on active datasets
             ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
               ][, c("active") := NULL # remove unused
                 ][]
 
-timeout = fread("timeout.csv")
+timeout = fread("./_control/timeout.csv")
 timeout = timeout[run_tasks, on="task", nomatch=NULL] # filter for env var RUN_TASKS
-if (nrow(timeout)!=length(run_tasks)) stop("missing entries in timeout.csv for some tasks")
+if (nrow(timeout)!=length(run_tasks)) stop("missing entries in ./_control/timeout.csv for some tasks")
 
 solution = rbindlist(list(
   dask = list(task=c("groupby","join")),

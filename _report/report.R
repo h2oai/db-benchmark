@@ -34,7 +34,7 @@ load_logs = function(path=getwd()) {
     ][order(timestamp)]
 }
 load_questions = function(path=getwd()) {
-  fread(file.path(path, "questions.csv"))
+  fread(file.path(path, "_control/questions.csv"))
 }
 
 # clean ----

@@ -236,7 +236,7 @@ pretty_component = function(x) gsub("_", " ", fixed=TRUE,
                                               gsub("gpu", "GPU", fixed=TRUE,
                                                    gsub("gb", "GB", fixed=TRUE,
                                                         x)))))
-as.data.table(na.omit(fread("nodenames.csv")[lld_nodename, on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=pretty_component(rn), Value=V1)][, kk(.SD)]
+as.data.table(na.omit(fread("./_control/nodenames.csv")[lld_nodename, on="nodename", t(.SD)]), keep.rownames=TRUE)[rn!="nodename", .(Component=pretty_component(rn), Value=V1)][, kk(.SD)]
 ```
 
 ------

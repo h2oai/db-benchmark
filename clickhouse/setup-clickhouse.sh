@@ -16,9 +16,9 @@ sudo service clickhouse-server start
 # create table for groupby
 ## in memory engine
 #clickhouse-client --query="CREATE TABLE IF NOT EXISTS G1_1e6_1e2_0_0 (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = Memory()"
-Rscript -e 'all_data=data.table::fread("data.csv")[task=="groupby"][substr(data, 1L, 2L)=="G1", data]; setNames(sapply(FUN=system, sprintf("clickhouse-client --query=\"CREATE TABLE IF NOT EXISTS %s (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = Memory()\"", all_data)), all_data)'
+Rscript -e 'all_data=data.table::fread("./_control/data.csv")[task=="groupby"][substr(data, 1L, 2L)=="G1", data]; setNames(sapply(FUN=system, sprintf("clickhouse-client --query=\"CREATE TABLE IF NOT EXISTS %s (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = Memory()\"", all_data)), all_data)'
 ## mergeetree engine
-Rscript -e 'all_data=data.table::fread("data.csv")[task=="groupby"][substr(data, 1L, 2L)=="G2", data]; setNames(sapply(FUN=system, sprintf("clickhouse-client --query=\"CREATE TABLE IF NOT EXISTS %s (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)\"", all_data)), all_data)'
+Rscript -e 'all_data=data.table::fread("./_control/data.csv")[task=="groupby"][substr(data, 1L, 2L)=="G2", data]; setNames(sapply(FUN=system, sprintf("clickhouse-client --query=\"CREATE TABLE IF NOT EXISTS %s (id0 Int32, id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY (id0)\"", all_data)), all_data)'
 
 # prepare primary key for mergetree table engine
 awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G1_1e6_1e2_0_0.csv > data/G2_1e6_1e2_0_0.csv

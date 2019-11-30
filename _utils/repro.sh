@@ -55,16 +55,16 @@ Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/d
 cd db-benchmark
 
 # generate data for groupby
-Rscript groupby-datagen.R 1e7 1e2 0 0
-Rscript groupby-datagen.R 1e8 1e2 0 0
-Rscript groupby-datagen.R 1e9 1e2 0 0
+Rscript _data/groupby-datagen.R 1e7 1e2 0 0
+Rscript _data/groupby-datagen.R 1e8 1e2 0 0
+Rscript _data/groupby-datagen.R 1e9 1e2 0 0
 
 # set only groupby task
 vim run.conf
 
 # set data sizes
-[ ! -f ./orgdata.csv ] && cp data.csv orgdata.csv
-vim data.csv
+[ ! -f ./_control/orgdata.csv ] && cp ./_control/data.csv ./_control/orgdata.csv
+vim ./_control/data.csv
 
 # running db-benchmark
 ./run.sh

@@ -34,7 +34,7 @@ More solutions has been proposed. Some of them are not yet mature enough to addr
 - install every solution (if needed activate each `virtualenv`)
 - edit `run.conf` to define solutions and tasks to benchmark
 - generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary data where needed, create `data` directory and keep all data files there
-- edit `data.csv` to define data sizes to benchmark using `active` flag
+- edit `_control/data.csv` to define data sizes to benchmark using `active` flag
 - start benchmark with `./run.sh`
 
 ## Single solution benchmark interactively
