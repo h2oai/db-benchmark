@@ -25,27 +25,19 @@ if len(src_jn_y) != 3:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
-x = cu.read_csv(src_jn_x, skiprows=1,
-                names=['id1','id2','id3','id4','id5','id6','v1'],
-                dtype=['int32','int32','int32','str','str','str','float64'])
-#x['id4'] = x['id4'].astype('category') # not yet implemented rapidsai/cudf#2644
-#x['id5'] = x['id5'].astype('category')
-#x['id6'] = x['id6'].astype('category')
-small = cu.read_csv(src_jn_y[0], skiprows=1,
-                    names=['id1','id4','v2'],
-                    dtype=['int32','str','float64'])
-#small['id4'] = small['id4'].astype('category')
-medium = cu.read_csv(src_jn_y[1], skiprows=1,
-                     names=['id1','id2','id4','id5','v2'],
-                     dtype=['int32','int32','str','str','float64'])
-#medium['id4'] = medium['id4'].astype('category')
-#medium['id5'] = medium['id5'].astype('category')
-big = cu.read_csv(src_jn_y[2], skiprows=1,
-                  names=['id1','id2','id3','id4','id5','id6','v2'],
-                  dtype=['int32','int32','int32','str','str','str','float64'])
-#big['id4'] = big['id4'].astype('category')
-#big['id5'] = big['id5'].astype('category')
-#big['id6'] = big['id6'].astype('category')
+x = cu.read_csv(src_jn_x, header=0, dtype=['int32','int32','int32','str','str','str','float64'])
+x['id4'] = x['id4'].astype('category')
+x['id5'] = x['id5'].astype('category')
+x['id6'] = x['id6'].astype('category')
+small = cu.read_csv(src_jn_y[0], header=0, dtype=['int32','str','float64'])
+small['id4'] = small['id4'].astype('category')
+medium = cu.read_csv(src_jn_y[1], header=0, dtype=['int32','int32','str','str','float64'])
+medium['id4'] = medium['id4'].astype('category')
+medium['id5'] = medium['id5'].astype('category')
+big = cu.read_csv(src_jn_y[2], header=0, dtype=['int32','int32','int32','str','str','str','float64'])
+big['id4'] = big['id4'].astype('category')
+big['id5'] = big['id5'].astype('category')
+big['id6'] = big['id6'].astype('category')
 
 print(len(x.index), flush=True)
 print(len(small.index), flush=True)
