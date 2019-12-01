@@ -57,7 +57,7 @@ awk -F',' -v OFS=',' 'NR == 1 {print "id0", $0; next} {print (NR-1), $0}' data/G
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
 
-# reproduce interactive environment, hardcoded clickhouse-exec.sh for G2_1e7_1e2_0_0
+# reproduce interactive environment, hardcoded clickhouse/exec.sh for G2_1e7_1e2_0_0
 ch_start
 CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
 clickhouse-client --query="TRUNCATE TABLE G2_1e7_1e2_0_0"
