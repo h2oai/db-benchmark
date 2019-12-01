@@ -18,13 +18,12 @@ fun = ".sql"
 cache = "TRUE"
 
 data_name = os.environ['SRC_JN_LOCAL']
+on_disk = data_name.split("_")[1] == "1e9" ## for 1e9 join use on-disk data storage
 src_jn_x = os.path.join("data", data_name+".csv")
 y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_data_name[1]+".csv"), os.path.join("data", y_data_name[2]+".csv")]
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
-
-print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
@@ -40,10 +39,24 @@ spark = SparkSession.builder \
      .getOrCreate()
 #print(spark.sparkContext._conf.getAll(), flush=True)
 
-x = spark.read.csv(src_jn_x, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-small = spark.read.csv(src_jn_y[0], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-medium = spark.read.csv(src_jn_y[1], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
-big = spark.read.csv(src_jn_y[2], header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
+print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
+
+print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
+x = spark.read.csv(src_jn_x, header=True, inferSchema='true')
+small = spark.read.csv(src_jn_y[0], header=True, inferSchema='true')
+medium = spark.read.csv(src_jn_y[1], header=True, inferSchema='true')
+big = spark.read.csv(src_jn_y[2], header=True, inferSchema='true')
+
+if on_disk:
+    x.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    small.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    medium.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    big.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+else:
+    x.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    small.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    medium.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    big.persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count(), flush=True)
 print(small.count(), flush=True)
