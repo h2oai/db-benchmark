@@ -59,7 +59,7 @@ compare.time = function(solutions, task, drop=TRUE) {
   ans
 }
 
-if (!identical(Sys.info()[["user"]], "jan")) { # one wants to grab recently timings, but "jan" might have used scp to get unpublished timings
+if (!identical(Sys.info()[["user"]], "jan")) { # one wants to grab recent timings, but "jan" might have used scp to get unpublished timings
   download.time()
 }
 tail.time("data.table", "groupby", i=c(1L, 6L, 11L)) # every fifth run
