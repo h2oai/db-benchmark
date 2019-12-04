@@ -28,7 +28,7 @@ if len(src_jn_y) != 3:
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
      .master("local[*]") \
-     .appName("groupby-spark") \
+     .appName("join-spark") \
      .config("spark.executor.memory", "100g") \
      .config("spark.driver.memory", "100g") \
      .config("spark.python.worker.memory", "100g") \
@@ -48,15 +48,15 @@ medium = spark.read.csv(src_jn_y[1], header=True, inferSchema='true')
 big = spark.read.csv(src_jn_y[2], header=True, inferSchema='true')
 
 if on_disk:
-    x.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
-    small.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
-    medium.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
-    big.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    x = x.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    small = small.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    medium = medium.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
+    big = big.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
 else:
-    x.persist(pyspark.StorageLevel.MEMORY_ONLY)
-    small.persist(pyspark.StorageLevel.MEMORY_ONLY)
-    medium.persist(pyspark.StorageLevel.MEMORY_ONLY)
-    big.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    x = x.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    small = small.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    medium = medium.persist(pyspark.StorageLevel.MEMORY_ONLY)
+    big = big.persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count(), flush=True)
 print(small.count(), flush=True)
