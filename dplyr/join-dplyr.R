@@ -5,6 +5,7 @@ cat("# join-dplyr.R\n")
 source("./_helpers/helpers.R")
 
 stopifnot(requireNamespace(c("data.table"), quietly=TRUE)) # used for data loading
+.libPaths("./dplyr/r-dplyr") # tidyverse/dplyr#4641
 suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
 git = "" # uses stable version now #124
