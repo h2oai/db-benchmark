@@ -25,38 +25,32 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
   if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
 }
-run_tasks = getenv("RUN_TASKS") #run_tasks = "groupby"
+run_tasks = getenv("RUN_TASKS") #run_tasks = c("groupby","join")
 if (!length(run_tasks)) q("no")
-run_solutions = getenv("RUN_SOLUTIONS") #run_solutions=c("data.table","dplyr","pydatatable","spark","pandas")
+run_solutions = getenv("RUN_SOLUTIONS") #run_solutions = c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
 data = fread("./_control/data.csv", logical01=TRUE)
-data = data[active==TRUE, # filter on active datasets
-            ][run_tasks, on="task", nomatch=NULL # filter for env var RUN_TASKS
-              ][, c("active") := NULL # remove unused
-                ][]
+data[active==TRUE, # filter on active datasets
+     ][run_tasks, on="task", nomatch=NA # filter for env var RUN_TASKS
+       ][, c("active") := NULL # remove unused
+         ][] -> data
+if (any(is.na(data$data))) stop("missing entries in ./_control/data.csv for some tasks")
 
-timeout = fread("./_control/timeout.csv")
-timeout = timeout[run_tasks, on="task", nomatch=NULL] # filter for env var RUN_TASKS
-if (nrow(timeout)!=length(run_tasks)) stop("missing entries in ./_control/timeout.csv for some tasks")
+timeout = fread("./_control/timeout.csv", colClasses=c("character","character","numeric"))
+timeout[run_tasks, on="task", nomatch=NA #  # filter for env var RUN_TASKS
+        ] -> timeout
+if (any(is.na(timeout$minutes))) stop("missing entries in ./_control/timeout.csv for some tasks")
 
-solution = rbindlist(list(
-  dask = list(task=c("groupby","join")),
-  data.table = list(task=c("groupby","join")),
-  dplyr = list(task=c("groupby","join")),
-  juliadf = list(task=c("groupby","join")),
-  modin = list(task=c()),
-  pandas = list(task=c("groupby","join")),
-  pydatatable = list(task=c("groupby","join")),
-  spark = list(task=c("groupby","join")),
-  clickhouse = list(task=c("groupby")),
-  cudf = list(task=c("groupby","join"))
-), idcol="solution")
-solution = solution[run_solutions, on="solution", nomatch=NULL] # filter for env var RUN_SOLUTIONS
-if (nrow(solution) == 0L) stop("added new solution and forget to add in launcher.R script?")
+solution = fread("./_control/solutions.csv")
+solution[run_solutions, on="solution", nomatch=NA # filter for env var RUN_SOLUTIONS
+         ] -> solution
+if (any(is.na(solution$task))) stop("missing entries in ./_control/solutions.csv for some solutions")
 
 # what to run
 dt = solution[data, on="task", allow.cartesian=TRUE]
+dt[, "in_rows" := substr(data, 4L, 6L)]
+dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
 
 # "G2" grouping data only relevant for clickhouse, so filter out "G2" for other solutions
 dt = dt[!(substr(data, 1L, 2L)=="G2" & solution!="clickhouse")]
@@ -142,10 +136,9 @@ for (s in solutions) { #s = solutions[1]
         else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
       } else ""
       shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
-      timeout_s = 60*timeout[t, on="task"][["minutes"]] # see timeout.csv
       if (!mockup) {
         tryCatch(
-          system(shcmd, timeout=timeout_s), # here script actually runs
+          system(shcmd, timeout=this_run$timeout_s), # here script actually runs
           warning = function(w) {
             # this is to catch and log timeout but we want every warning to be written to stderr
             if (grepl("timed out", w[["message"]], fixed=TRUE)) {
