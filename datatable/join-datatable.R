@@ -3,12 +3,11 @@
 cat("# join-datatable.R\n")
 
 source("./_helpers/helpers.R")
-source("./datatable/helpers-datatable.R")
 
-suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable"))
 setDTthreads(0L)
 ver = packageVersion("data.table")
-git = datatable.git()
+git = data.table:::.git(quiet=TRUE)
 task = "join"
 solution = "data.table"
 fun = "[.data.table"

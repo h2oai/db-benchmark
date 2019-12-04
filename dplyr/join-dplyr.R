@@ -3,11 +3,11 @@
 cat("# join-dplyr.R\n")
 
 source("./_helpers/helpers.R")
-source("./dplyr/helpers-dplyr.R")
 
-suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
+stopifnot(requireNamespace(c("data.table"), quietly=TRUE)) # used for data loading
+suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
-git = dplyr.git()
+git = "" # uses stable version now #124
 task = "join"
 solution = "dplyr"
 cache = TRUE

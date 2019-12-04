@@ -5,8 +5,6 @@ set -e
 
 # setup ~/.R/Makevars if not already set by setup data.table
 
-# install devtools, a dependency to install devel dplyr
-Rscript -e 'install.packages("remotes", repos="https://cloud.r-project.org", method="curl")'
-
-# install devel dplyr
-Rscript -e 'remotes::install_github("tidyverse/dplyr", method="curl")'
+# install stable dplyr
+mkdir -p ./dplyr/r-dplyr
+Rscript -e 'install.packages("dplyr", lib="./dplyr/r-dplyr")'

@@ -3,12 +3,11 @@
 cat("# groupby-dplyr.R\n")
 
 source("./_helpers/helpers.R")
-source("./dplyr/helpers-dplyr.R")
 
 stopifnot(requireNamespace(c("bit64","data.table"), quietly=TRUE)) # used in chk to sum numeric columns and data loading
-suppressPackageStartupMessages(library(dplyr, warn.conflicts=FALSE))
+suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
-git = dplyr.git()
+git = "" # uses stable version now #124
 task = "groupby"
 solution = "dplyr"
 fun = "group_by"

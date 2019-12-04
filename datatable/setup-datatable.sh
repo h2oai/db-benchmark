@@ -4,8 +4,8 @@ set -e
 # dirs for datasets and output of benchmark, not related to datatable setup
 mkdir -p data
 mkdir -p out
-# packages used in report, data loading, sum over int col
-Rscript -e 'install.packages(c("bit64","fst","rmarkdown"))'
+# packages used in report, sum over int col
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table"))'
 
 # install R
 
@@ -14,5 +14,6 @@ mkdir -p ~/.R
 echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
-# install latest dev
-Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/data.table", method="curl")'
+# install devel data.table
+mkdir -p ./datatable/r-datatable
+Rscript -e 'install.packages("data.table", repos="https://Rdatatable.gitlab.io/data.table", method="curl", lib="./datatable/r-datatable")'

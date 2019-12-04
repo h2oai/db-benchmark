@@ -3,4 +3,4 @@ set -e
 
 # upgrade to latest devel
 echo 'upgrading data.table...'
-Rscript -e 'data.table::update.dev.pkg(quiet=TRUE, method="curl")'
+Rscript -e 'data.table::update.dev.pkg(quiet=TRUE, method="curl", lib="./datatable/r-datatable")'
