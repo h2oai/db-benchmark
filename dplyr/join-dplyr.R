@@ -12,6 +12,7 @@ git = "" # uses stable version now #124
 task = "join"
 solution = "dplyr"
 cache = TRUE
+on_disk = FALSE
 
 data_name = Sys.getenv("SRC_JN_LOCAL")
 src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
@@ -36,12 +37,12 @@ fun = "inner_join"
 t = system.time(print(dim(ans<-inner_join(x, small, by="id1"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-inner_join(x, small, by="id1"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -51,12 +52,12 @@ fun = "inner_join"
 t = system.time(print(dim(ans<-inner_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-inner_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -66,12 +67,12 @@ fun = "left_join"
 t = system.time(print(dim(ans<-left_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2, na.rm=TRUE)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-left_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2, na.rm=TRUE)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -81,12 +82,12 @@ fun = "inner_join"
 t = system.time(print(dim(ans<-inner_join(x, medium, by="id5"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-inner_join(x, medium, by="id5"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)
@@ -96,12 +97,12 @@ fun = "inner_join"
 t = system.time(print(dim(ans<-inner_join(x, big, by="id3"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-inner_join(x, big, by="id3"))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2)))[["elapsed"]]
-write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt)
+write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
 rm(ans)

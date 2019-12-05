@@ -5,7 +5,7 @@ import psutil
 import os
 import platform
 
-def write_log(task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec):
+def write_log(task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, on_disk):
    batch = os.getenv('BATCH', "") 
    timestamp = time.time()
    csv_file = os.getenv('CSV_TIME_FILE', "time.csv")
@@ -18,8 +18,8 @@ def write_log(task, data, in_rows, question, out_rows, out_cols, solution, versi
       time_sec = ""
    if math.isnan(mem_gb):
       mem_gb = ""
-   log_row = [nodename, batch, timestamp, task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment]
-   log_header = ["nodename","batch","timestamp","task","data","in_rows","question","out_rows","out_cols","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment"]
+   log_row = [nodename, batch, timestamp, task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment, on_disk]
+   log_header = ["nodename","batch","timestamp","task","data","in_rows","question","out_rows","out_cols","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment","on_disk"]
    append = os.path.isfile(csv_file)
    csv_verbose = os.getenv('CSV_VERBOSE', "true")
    if csv_verbose.lower()=="true":

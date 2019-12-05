@@ -1,33 +1,17 @@
-library(data.table)
-source("./_helpers/helpers.R")
+library("data.table")
+if (packageVersion("data.table") <= "1.12.0") stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0. If you need to benchmark older data.table tweak script to use custom library where older version is installed.")
+source("./_helpers/lib-launcher.R")
 
 is.sigint()
 
 batch = Sys.getenv("BATCH", NA)
-nodename = Sys.info()[["nodename"]]
+.nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
 forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
 
-if (packageVersion("data.table") <= "1.12.0") stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0. If you need to benchmark older data.table tweak script to use custom library where older version is installed.")
-
-log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
-  stopifnot(is.character(task), length(task)==1L, !is.na(task))
-  action = match.arg(action)
-  timestamp=as.numeric(Sys.time())
-  lg = as.data.table(c(
-    list(nodename=nodename, batch=batch, solution=solution),
-    upgraded.solution(solution), # list(version, git) based on VERSION and REVISION files, and extra validation so VERSION has to be always present
-    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)
-  ))
-  file = "logs.csv"
-  if (!mockup) fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
-  labels = c("start"="starting","finish"="finished","skip"="skip run")
-  if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
-  if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
-}
-run_tasks = getenv("RUN_TASKS") #run_tasks = c("groupby","join")
+run_tasks = getenv("RUN_TASKS") # run_tasks = c("groupby","join")
 if (!length(run_tasks)) q("no")
-run_solutions = getenv("RUN_SOLUTIONS") #run_solutions = c("data.table","dplyr","pydatatable","spark","pandas")
+run_solutions = getenv("RUN_SOLUTIONS") # run_solutions = c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
 data = fread("./_control/data.csv", logical01=TRUE)
@@ -47,21 +31,20 @@ solution[run_solutions, on="solution", nomatch=NA # filter for env var RUN_SOLUT
          ] -> solution
 if (any(is.na(solution$task))) stop("missing entries in ./_control/solutions.csv for some solutions")
 
-# what to run
+# what to run, log machine name, lookup timeout
 dt = solution[data, on="task", allow.cartesian=TRUE]
+dt[, "nodename" := .nodename]
 dt[, "in_rows" := substr(data, 4L, 6L)]
 dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
+if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv for some tasks, detected after joining to solutions and data to run")
 
+# TODO better translation, remove G2 from data.csv
 # "G2" grouping data only relevant for clickhouse, so filter out "G2" for other solutions
 dt = dt[!(substr(data, 1L, 2L)=="G2" & solution!="clickhouse")]
 # clickhouse memory table engine "G1", disabled as per #91
 dt = dt[!(substr(data, 1L, 2L)=="G1" & solution=="clickhouse")]
 
-# log current machine name
-dt[, "nodename" := nodename]
-
-# filter runs to only what is new
-.nodename = nodename
+# filter runs to only what is new (TODO put to helper function)
 if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")[nodename==.nodename]) && nrow(logs<-fread("logs.csv")[nodename==.nodename])) {
   timings[, .N,, c("nodename","batch","solution","task","data","version","git")
           ][, "N" := NULL
@@ -93,11 +76,20 @@ if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timi
   dt[, c("compare","run_batch") := list(NA_character_, NA_integer_)]
 }
 
-# run
+# run (TODO put to helper function)
+out_dir = "out"
 
 ## solution
 solutions = dt[, unique(solution)]
 for (s in solutions) { #s = solutions[1]
+  ns = gsub(".", "", s, fixed=TRUE) # no dots in paths
+  ext = file.ext(s)
+  if (!length(ext)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", s))
+  venv = if (ext=="py") {
+    # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
+    if (ns%in%c("cudf")) sprintf("source ~/anaconda3/etc/profile.d/conda.sh && conda activate %s && ", ns)
+    else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
+  } else ""
   ### task
   tasks = dt[.(s), unique(task), on="solution"]
   for (t in tasks) { #t = tasks[1]
@@ -107,35 +99,27 @@ for (s in solutions) { #s = solutions[1]
     for (d in data) { #d=data[1]
       is.sigint() # interrupt using 'stop' file #74
       this_run = dt[.(s, t, d), on=c("solution","task","data")]
-      if (nrow(this_run) != 1L)
-        stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
-      ns = gsub(".", "", s, fixed=TRUE)
-      out_dir = "out"
+      if (nrow(this_run) != 1L) stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
       out_file = sprintf("%s/run_%s_%s_%s.out", out_dir, ns, t, d)
       err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
       if (!is.na(this_run$run_batch)) {
-        comment = sprintf(": %s run on %s", substr(this_run$compare, 1, 7), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
-        log_run(s, t, d, action="skip", batch=batch, nodename=nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # skip also logs number of lines stderr from previos run
+        comment = sprintf(": %s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
+        log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run
         next
       }
-      log_run(s, t, d, action="start", batch=batch, nodename=nodename, mockup=mockup)
-      #workaround for dynamic LHS in: Sys.setenv(as.name(data_name_env)=d)
-      eval(as.call(c(list(quote(Sys.setenv)), setNames(list(d), data_name_env))))
+      log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
+      eval(as.call( # workaround for dynamic LHS in: Sys.setenv(as.name(data_name_env)=d)
+        c(list(quote(Sys.setenv)), setNames(list(d), data_name_env))
+      ))
       if (!mockup) {
         if (file.exists(out_file)) file.remove(out_file)
         if (file.exists(err_file)) file.remove(err_file)
       }
-      ext = file.ext(s)
-      if (!length(ext)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", ns))
-      cmd = if (ext=="sql") { # only clickhouse for now
-        sprintf("./%s/exec.sh %s %s > %s 2> %s", ns, t, d, out_file, err_file)
-      } else sprintf("./%s/%s-%s.%s > %s 2> %s", ns, t, ns, ext, out_file, err_file)
-      venv = if (ext=="py") {
-        # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
-        if (ns%in%c("cudf")) sprintf("source ~/anaconda3/etc/profile.d/conda.sh && conda activate %s && ", ns)
-        else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
-      } else ""
-      shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd)
+      localcmd = if (ext=="sql") { # only clickhouse for now
+        sprintf("exec.sh %s %s", t, d)
+      } else sprintf("%s-%s.%s", t, ns, ext)
+      cmd = sprintf("./%s/%s > %s 2> %s", ns, localcmd, out_file, err_file)
+      shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source venv
       if (!mockup) {
         tryCatch(
           system(shcmd, timeout=this_run$timeout_s), # here script actually runs
@@ -149,7 +133,7 @@ for (s in solutions) { #s = solutions[1]
         )
       }
       Sys.unsetenv(data_name_env)
-      log_run(s, t, d, action="finish", batch=batch, nodename=nodename, stderr=wcl(err_file), mockup=mockup)
+      log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, stderr=wcl(err_file), mockup=mockup)
     }
   }
 }

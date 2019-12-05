@@ -19,7 +19,7 @@ fun = "join"
 cache = "TRUE"
 
 data_name = os.environ['SRC_JN_LOCAL']
-on_disk = data_name.split("_")[1] == "1e9" ## for 1e9 join use on-disk data table
+on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
 fext = "jay" if on_disk else "csv"
 src_jn_x = os.path.join("data", data_name+"."+fext)
 y_data_name = join_to_tbls(data_name)
@@ -55,7 +55,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 del ans, y
 gc.collect()
 y = small.copy(deep=True)
@@ -68,7 +68,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans, y
@@ -85,7 +85,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 del ans, y
 gc.collect()
 y = medium.copy(deep=True)
@@ -98,7 +98,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans, y
@@ -115,7 +115,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 del ans, y
 gc.collect()
 y = medium.copy(deep=True)
@@ -128,7 +128,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans, y
@@ -145,7 +145,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 del ans, y
 gc.collect()
 y = medium.copy(deep=True)
@@ -158,7 +158,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans, y
@@ -175,7 +175,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 del ans, y
 gc.collect()
 y = big.copy(deep=True)
@@ -188,7 +188,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt)
+write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3).to_pandas(), flush=True)
 print(ans.tail(3).to_pandas(), flush=True)
 del ans, y
