@@ -38,11 +38,8 @@ dt[, "in_rows" := substr(data, 4L, 6L)]
 dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
 if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv for some tasks, detected after joining to solutions and data to run")
 
-# TODO better translation, remove G2 from data.csv
-# "G2" grouping data only relevant for clickhouse, so filter out "G2" for other solutions
-dt = dt[!(substr(data, 1L, 2L)=="G2" & solution!="clickhouse")]
-# clickhouse memory table engine "G1", disabled as per #91
-dt = dt[!(substr(data, 1L, 2L)=="G1" & solution=="clickhouse")]
+# clickhouse uses mergetree table engine #91 thus it requires PK: G2 is like G1 but added sequence column
+dt[solution=="clickhouse" & task=="groupby", "data" := sub("G1", "G2", data, fixed=TRUE)]
 
 # filter runs to only what is new (TODO put to helper function)
 if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")[nodename==.nodename]) && nrow(logs<-fread("logs.csv")[nodename==.nodename])) {
