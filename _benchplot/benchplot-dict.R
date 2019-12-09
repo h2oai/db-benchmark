@@ -172,14 +172,15 @@ groupby.query.exceptions = {list(
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list()
 )}
-groupby.data.exceptions = {list(                                                             # exceptions as of run 1574567933
+groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
-    "timeout" = c("G1_1e9_1e1_0_0",                                                          # q8 probably #110
-                  "G1_1e9_2e0_0_0")                                                          # q3 #110 also sometimes segfaults during fread but not easily reproducible
+    "timeout" = c("G1_1e9_1e1_0_0",                                                          # not always happened, q8 probably #110
+                  "G1_1e9_2e0_0_0")                                                          # q4 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "dplyr" = {list(
-    "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10
-                  "G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1",       # q10
+    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e2_0_1"),                                  # q10
+    "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10 # after going back to 0.8.3 all successfully finish
+                  "G1_1e8_1e1_0_0","G1_1e8_2e0_0_0",                                         # q10
                   "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1",                                         # q10
                   "G1_1e9_1e1_0_0",                                                          # q6
                   "G1_1e9_2e0_0_0")                                                          # q2 #110 also sometimes segfaults during fread but not easily reproducible
@@ -194,13 +195,16 @@ groupby.data.exceptions = {list(                                                
   "spark" = {list(
   )},
   "dask" = {list(
-    "timeout" = c("G1_1e7_2e0_0_0",                                                # q8
+    "timeout" = c("G1_1e7_1e1_0_0",                                                # q8
+                  "G1_1e7_2e0_0_0",                                                # q8
                   "G1_1e8_1e2_0_0",                                                # q8
                   "G1_1e8_1e1_0_0",                                                # q8
                   "G1_1e8_2e0_0_0",                                                # q8
-                  "G1_1e8_1e2_0_1"),                                               # q8
-    "segfault" = c("G1_1e9_1e2_0_1"),                                              # read_csv
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0")        # read_csv  #99
+                  "G1_1e8_1e2_0_1",                                                # q8
+                  "G1_1e9_1e2_0_0",                                                # q3 #126
+                  "G1_1e9_1e2_0_1",                                                # q3 #126
+                  "G1_1e9_1e1_0_0",                                                # q3 #126
+                  "G1_1e9_2e0_0_0")                                                # q3 #126
   )},
   "juliadf" = {list(
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
@@ -211,7 +215,7 @@ groupby.data.exceptions = {list(                                                
   )},
   "clickhouse" = {list(
     "CH server crash" = c("G1_1e9_1e2_0_0",                                        # q10 #112 before it was #96
-                          "G1_1e9_1e1_0_0",                                        # q7 #112
+                          "G1_1e9_1e1_0_0",                                        # q10 #112
                           "G1_1e9_2e0_0_0",                                        # q3 #112
                           "G1_1e9_1e2_0_1")                                        # q10 #112 before it was #96
   )}
@@ -302,7 +306,7 @@ join.query.exceptions = {list(
   "cudf" =        list(),
   "clickhouse" =  list()
 )}
-join.data.exceptions = {list(                                                             # exceptions as of run 1572448371
+join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
   )},
@@ -310,25 +314,26 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
   )},
   "pandas" = {list(
-    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q5
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q5 # now with extended timeout to 4h it finishes
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
   )},
   "pydatatable" = {list(
   )},
   "spark" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+    "timeout" = c("J1_1e9_NA_0_0")                                                        # q5 using new 8h timeout #126
   )},
   "dask" = {list(
-    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q4
-    "timeout" = c("J1_1e9_NA_0_0")                                                        # read_csv
+    "out of memory" = c("J1_1e8_NA_0_0"),                                                 # q5 using in-memory, after 93m (120m timeout)
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 even when using on-disk, after 47m (480m timeout)
   )},
   "juliadf" = {list(
-    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q3
-    "timeout" = c("J1_1e9_NA_0_0")                                                        # CSV.File
+    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q3 not longer a problem after extending timeout, finishes in 93m (120m timeout)
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # CSV.File
   )},
   "cudf" = {list(
-    "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                  # read_csv
+    "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                  # read_csv #94 #97
   )},
-  "clickhouse" = {list()}
+  "clickhouse" = {list(
+  )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
