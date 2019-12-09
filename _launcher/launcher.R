@@ -93,7 +93,9 @@ upgraded.solution = function(x, validate=TRUE) {
 }
 
 # detect if script has been already run before for currently installed version/revision
-lookup_run_batch = function(dt, .nodename) {
+lookup_run_batch = function(dt) {
+  .nodename = unique(dt$nodename)
+  stopifnot(length(.nodename)==1L)
   forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
   if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")[nodename==.nodename]) && nrow(logs<-fread("logs.csv")[nodename==.nodename])) {
     timings[, .N,, c("nodename","batch","solution","task","data","version","git")
@@ -150,6 +152,7 @@ launch = function(dt, mockup, out_dir="out") {
     is.data.table(dt), dir.exists(out_dir),
     c("compare","run_batch")%in%names(dt), # ensure lookup_run_batch was called on dt
     uniqueN(dt$nodename)==1L # this should be single value of current nodename
+    !anyNA(dt$solution), !anyNA(dt$task), !anyNA(dt$data)
   )
   batch = Sys.getenv("BATCH", NA)
   .nodename = unique(dt$nodename)

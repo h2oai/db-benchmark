@@ -30,9 +30,9 @@ solution[run_solutions, on="solution", nomatch=NA # filter for env var RUN_SOLUT
 if (any(is.na(solution$task))) stop("missing entries in ./_control/solutions.csv for some solutions")
 
 # what to run, log machine name, lookup timeout
-dt = solution[data, on="task", allow.cartesian=TRUE]
+dt = solution[data, on="task", allow.cartesian=TRUE, nomatch=NULL]
 dt[, "nodename" := .nodename]
-dt[, "in_rows" := substr(data, 4L, 6L)]
+dt[, "in_rows" := sapply(strsplit(data, split="_", fixed=TRUE), `[[`, 2L)]
 dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
 if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv for some tasks, detected after joining to solutions and data to run")
 
@@ -40,7 +40,10 @@ if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv fo
 dt[solution=="clickhouse" & task=="groupby", "data" := sub("G1", "G2", data, fixed=TRUE)]
 
 # detect if script has been already run before for currently installed version/revision
-lookup_run_batch(dt, .nodename)
+lookup_run_batch(dt)
 
 # launch script, if not mockup, if not already run, unless forcerun
 launch(dt, mockup=mockup)
+
+# terminates
+q("no")
