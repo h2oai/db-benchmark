@@ -151,7 +151,7 @@ launch = function(dt, mockup, out_dir="out") {
   stopifnot(
     is.data.table(dt), dir.exists(out_dir),
     c("compare","run_batch")%in%names(dt), # ensure lookup_run_batch was called on dt
-    uniqueN(dt$nodename)==1L # this should be single value of current nodename
+    uniqueN(dt$nodename)==1L, # this should be single value of current nodename
     !anyNA(dt$solution), !anyNA(dt$task), !anyNA(dt$data)
   )
   batch = Sys.getenv("BATCH", NA)
