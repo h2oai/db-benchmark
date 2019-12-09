@@ -16,11 +16,10 @@ d = rbindlist(lapply(fcsv, fread, na.strings="\\N")) # fill=TRUE for debugging t
 if (!nrow(d)) stop("timing log files empty")
 stopifnot(all(d$task==task), all(d$data_name==data_name))
 in_rows = strsplit(data_name, "_", fixed=TRUE)[[1L]][[2L]]
-comment = NA_character_
 d[,
   write.log(run=as.integer(run), timestamp=as.numeric(timestamp), task=as.character(task), data=as.character(data_name), in_rows=as.numeric(in_rows), question=as.character(question),
             out_rows=as.numeric(NA), out_cols=as.integer(NA), solution=as.character(solution), version=as.character(version), git=as.character(NA), fun=as.character(fun), 
-            time_sec=as.numeric(time_sec), mem_gb=as.numeric(NA), cache=as.logical(cache), chk=as.character(NA), chk_time_sec=as.numeric(NA), comment=as.character(comment), on_disk=as.logical(on_disk)),
+            time_sec=as.numeric(time_sec), mem_gb=as.numeric(NA), cache=as.logical(cache), chk=as.character(NA), chk_time_sec=as.numeric(NA), on_disk=as.logical(on_disk)),
   by = seq_len(nrow(d))] -> nul
 
 cat("# clickhouse-parse-log.R: parsing timings to time.csv finished\n")
