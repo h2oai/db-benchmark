@@ -5,7 +5,7 @@ set -e
 mkdir -p data
 mkdir -p out
 # packages used in report, sum over int col
-Rscript -e 'install.packages(c("bit64","rmarkdown","data.table"))'
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable"))'
 
 # install R
 
