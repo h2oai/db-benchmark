@@ -4,4 +4,4 @@ groupby,1e8,120
 groupby,1e9,180
 join,1e7,120
 join,1e8,240
-join,1e9,480
+join,1e9,360
