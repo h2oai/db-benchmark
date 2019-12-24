@@ -193,6 +193,7 @@ format_exception = function(ex, s, d, q, which=c("data","query"), short=TRUE) {
   }
   ans
 }
+format_name_long = function(x, on_disk) fifelse(sapply(on_disk, isTRUE), paste0(x,"*"), x) # star suffix for on-disk cases #126
 format_version = function(x) fifelse(is.na(x), "NA", as.character(x))
 format_batch = function(x) fifelse(is.na(x), "NA", format(as.Date(as.POSIXct(as.numeric(x), origin="1970-01-01"))))
 format_s_total_real_time_sec = function(data, solution, s_questions, s_total_real_time_sec, exceptions) {
@@ -221,23 +222,25 @@ header_legend = function(x, exceptions=list(), title.txt.fun=default.title.txt.f
   dt = x[, .(data=unique1(data), version=unique1(version), batch=unique1(batch),
              s_total_real_time_sec=unique1(s_total_real_time_sec), col_strong=unique1(col_strong),
              name_short=unique1(name_short), name_long=unique1(name_long),
+             on_disk=unique1(on_disk), #126
              s_questions=list(question)), ## retain all questions so can lookup for exceptions later on
          keyby="solution"]
   setorderv(dt, "s_total_real_time_sec", na.last=TRUE)
   if (length(pending)) dt = rbindlist(list(
     dt,
-    data.table(solution=NA_integer_, data=NA_integer_, version=NA_integer_, batch=NA_integer_, s_total_real_time_sec=NA_real_, col_strong="black", name_short=NA_character_, name_long=paste(pending, collapse=", "), s_questions=list())
+    data.table(solution=NA_integer_, data=NA_integer_, version=NA_integer_, batch=NA_integer_, s_total_real_time_sec=NA_real_, col_strong="black", name_short=NA_character_, name_long=paste(pending, collapse=", "), on_disk=FALSE, s_questions=list())
   ))
   dt[!is.na(solution), `:=`(
+    format_name_long=format_name_long(name_long, on_disk),
     format_version=format_version(version), format_batch=format_batch(batch),
     format_s_total_real_time_sec = format_s_total_real_time_sec(data, solution, s_questions, s_total_real_time_sec, exceptions)
   )]
-  dt[is.na(solution), `:=`(format_version="", format_batch="see README", format_s_total_real_time_sec="pending")]
+  dt[is.na(solution), `:=`(format_name_long=name_long, format_version="", format_batch="see README", format_s_total_real_time_sec="pending")]
   dt[, "s_questions" := NULL]
   dt[, legend(x_off[2L], xy[["y2"]], bty="n", cex=1.5,
               pch=22, pt.bg=col_strong, pt.cex=3.5,    ## color square
               text.font=1, xpd=NA,
-              legend=name_long)] -> nul                ## solution long name
+              legend=format_name_long)] -> nul         ## solution long name
   dt[, legend(x_off[20L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
               legend=format_version)] -> nul           ## version
   dt[, legend(x_off[35L], xy[["y2"]], bty="n", cex=1.5, text.font=1, xpd=NA,
