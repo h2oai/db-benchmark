@@ -166,7 +166,7 @@ groupby.query.exceptions = {list(
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
                        "not yet documented: dask#5622" = "regression v1 v2 by id2 id4"), #122
   "juliadf" =     list(),
-  "cudf" =        list("not yet released: cudf#1085" = "median v3 sd v3 by id4 id5", #121
+  "cudf" =        list("not yet implemented: cudf#3429" = "median v3 sd v3 by id4 id5", #121
                        "not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
