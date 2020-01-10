@@ -15,7 +15,6 @@ task = "join"
 solution = "cudf"
 fun = ".merge"
 cache = "TRUE"
-on_disk = "FALSE"
 
 data_name = os.environ['SRC_JN_LOCAL']
 src_jn_x = os.path.join("data", data_name+".csv")
@@ -23,6 +22,12 @@ y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_data_name[1]+".csv"), os.path.join("data", y_data_name[2]+".csv")]
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
+
+on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
+on_disk = not(on_vmem) # no really disk, just variable name used to log in script below
+print("using video and main memory data storage" if on_disk else "using only video memory data storage", flush=True)
+if on_disk:
+    cu.set_allocator("managed")
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
