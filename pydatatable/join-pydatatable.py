@@ -12,7 +12,7 @@ from datatable.math import isfinite
 exec(open("./_helpers/helpers.py").read())
 
 ver = dt.__version__
-git = dt.__git_revision__
+git = dt.build_info.git_revision
 task = "join"
 solution = "pydatatable"
 fun = "join"

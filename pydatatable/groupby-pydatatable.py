@@ -11,7 +11,7 @@ from datatable import f, sum, mean, count, sd, min, max, by, sort, median, corr
 exec(open("./_helpers/helpers.py").read())
 
 ver = dt.__version__
-git = dt.__git_revision__
+git = dt.build_info.git_revision
 task = "groupby"
 solution = "pydatatable"
 fun = "[.datatable"
