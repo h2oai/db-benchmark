@@ -10,7 +10,7 @@ from datatable import f, sum, mean, count, sd, min, max, by, sort, median, corr
 
 exec(open("./_helpers/helpers.py").read())
 
-ver = dt.__version__
+ver = dt.__version__.split("+", 1)[0]
 git = dt.build_info.git_revision
 task = "groupby"
 solution = "pydatatable"

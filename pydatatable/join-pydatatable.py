@@ -11,7 +11,7 @@ from datatable.math import isfinite
 
 exec(open("./_helpers/helpers.py").read())
 
-ver = dt.__version__
+ver = dt.__version__.split("+", 1)[0]
 git = dt.build_info.git_revision
 task = "join"
 solution = "pydatatable"
