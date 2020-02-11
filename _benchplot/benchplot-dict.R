@@ -216,7 +216,7 @@ groupby.data.exceptions = {list(                                                
   "clickhouse" = {list(
     "CH server crash" = c("G1_1e9_1e2_0_0",                                        # q10 #112 before it was #96
                           "G1_1e9_1e1_0_0",                                        # q10 #112
-                          "G1_1e9_2e0_0_0"),                                       # q3 #112
+                          "G1_1e9_2e0_0_0"),                                       # q8 #112
     "segfault" = c("G1_1e9_1e2_0_1")                                               # q10 #133, before it was #112 and #96
   )}
 )}
