@@ -17,7 +17,7 @@ ch_active || echo "clickhouse-server should be already running, investigate" >&2
 ch_active || exit 1
 
 # load data
-CH_MEM=128849018880 # 120GB; 107374182400 # 100GB
+CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 100GB due to #132
 clickhouse-client --query="TRUNCATE TABLE $2"
 clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
 # confirm all data loaded yandex/ClickHouse#4463
