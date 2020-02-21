@@ -16,17 +16,6 @@ file.ext = function(x) {
   ans
 }
 
-# data_name env var for each task
-task.env = function(x) {
-  ans = switch(
-    x,
-    "groupby"="SRC_GRP_LOCAL",
-    "join"="SRC_JN_LOCAL"
-  )
-  if (is.null(ans)) stop(sprintf("task %s does not have data name environment variable defined in task.env helper function", x))
-  ans
-}
-
 # no dots solution name used in paths
 solution.path = function(x) {
   gsub(".", "", x, fixed=TRUE)
@@ -44,10 +33,14 @@ solution.venv = function(x) {
 
 # sql scripts are using extra exec shell script, related only to clickhouse as of now
 solution.cmd = function(s, t, d) {
-  ext = file.ext(s)
-  if (ext=="sql") {
-    sprintf("exec.sh %s %s", t, d)
-  } else sprintf("%s-%s.%s", t, solution.path(s), ext)
+  dd = strsplit(d, "_", fixed=TRUE)[[1L]]
+  stopifnot(length(dd)==5L)
+  names(dd) = c("prefix","nrow","k","na","sort")
+  sprintf("./solution.R --solution=%s --task=%s --nrow=%s --k=%s --na=%s --sort=%s --out=time.csv", s, t, dd[["nrow"]], dd[["k"]], dd["na"], dd["sort"])
+  #ext = file.ext(s)
+  #if (ext=="sql") {
+  #  sprintf("exec.sh %s %s", t, d)
+  #} else sprintf("%s-%s.%s", t, solution.path(s), ext)
 }
 
 # space separater character vector from env var
@@ -59,14 +52,6 @@ getenv = function(x) {
     if (length(v)!=length(unique(v))) stop(sprintf("%s contains non-unique values", x))
   } else v = character(0)
   v
-}
-
-# dynamic LHS in: Sys.setenv(var = value)
-setenv = function(var, value, quiet=TRUE) {
-  stopifnot(is.character(var), !is.na(var), length(value)==1L, is.atomic(value))
-  qc = as.call(c(list(quote(Sys.setenv)), setNames(list(value), var)))
-  if (!quiet) print(qc)
-  eval(qc)
 }
 
 # interrupt flag raise by 'touch stop'
@@ -165,7 +150,6 @@ launch = function(dt, mockup, out_dir="out") {
     ### task
     tasks = dt[.(s), unique(task), on="solution"]
     for (t in tasks) { # t = tasks[1]
-      data_name_env = task.env(t)
       #### data
       data = dt[.(s, t), data, on=c("solution","task")]
       for (d in data) { # d = data[1]
@@ -180,7 +164,6 @@ launch = function(dt, mockup, out_dir="out") {
           next
         }
         log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
-        setenv(data_name_env, d)
         if (!mockup) {
           if (file.exists(out_file)) file.remove(out_file)
           if (file.exists(err_file)) file.remove(err_file)
@@ -200,7 +183,6 @@ launch = function(dt, mockup, out_dir="out") {
             }
           )
         }
-        Sys.unsetenv(data_name_env)
         log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, stderr=wcl(err_file), mockup=mockup)
       }
     }

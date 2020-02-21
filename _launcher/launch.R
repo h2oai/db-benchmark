@@ -12,7 +12,7 @@ if (!length(run_tasks)) q("no")
 run_solutions = getenv("RUN_SOLUTIONS") # run_solutions = c("data.table","dplyr","pydatatable","spark","pandas")
 if (!length(run_solutions)) q("no")
 
-data = fread("./_control/data.csv", logical01=TRUE)
+data = fread("./_control/data.csv", logical01=TRUE, colClasses=c("character","character","character","character","character","character","logical"))
 data[active==TRUE, # filter on active datasets
      ][run_tasks, on="task", nomatch=NA # filter for env var RUN_TASKS
        ][, c("active") := NULL # remove unused
@@ -33,6 +33,7 @@ if (any(is.na(solution$task))) stop("missing entries in ./_control/solutions.csv
 dt = solution[data, on="task", allow.cartesian=TRUE, nomatch=NULL]
 dt[, "nodename" := .nodename]
 dt[, "in_rows" := sapply(strsplit(data, split="_", fixed=TRUE), `[[`, 2L)]
+stopifnot(dt$in_rows == dt$nrow)
 dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
 if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv for some tasks, detected after joining to solutions and data to run")
 
