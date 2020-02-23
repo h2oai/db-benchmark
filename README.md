@@ -39,7 +39,7 @@ More solutions has been proposed. Some of them are not yet mature enough to addr
 ## Single solution benchmark
 
 - install solution software
-  - for python we recommend to use activate `virtualenv` (or conda environment) for better isolation
+  - for python we recommend to use `virtualenv` for better isolation
   - for R ensure that library is installed in a solution subdirectory, so that `library("dplyr", lib.loc="./dplyr/r-dplyr")` or `library("data.table", lib.loc="./datatable/r-datatable")` works
   - note that some solutions may require another to be installed to speed-up csv data load, for example, `dplyr` requires `data.table` and similarly `pandas` requires (py)`datatable`
 - generate data using `_data/*-datagen.R` scripts, for example, `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` creates `G1_1e7_1e2_0_0.csv`, put data files in `data` directory
