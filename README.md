@@ -8,8 +8,6 @@ Contribution and feedback are very welcome!
 
   - [x] groupby
   - [x] join
-  - [ ] sort
-  - [ ] read
 
 # Solutions
 
@@ -31,29 +29,34 @@ More solutions has been proposed. Some of them are not yet mature enough to addr
 
 - edit `path.env` and set `julia` and `java` paths
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
-- install every solution (if needed activate each `virtualenv`)
+- install every solution, follow `$solution/setup-$solution.sh` scripts
 - edit `run.conf` to define solutions and tasks to benchmark
-- generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary data where needed, create `data` directory and keep all data files there
+- generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary format where needed (see below), create `data` directory and keep all data files there
 - edit `_control/data.csv` to define data sizes to benchmark using `active` flag
+- ensure SWAP is disabled and ClickHouse server is not yet running
 - start benchmark with `./run.sh`
 
-## Single solution benchmark interactively
+## Single solution benchmark
 
-- generate data using `_data/*-datagen.R` scripts and put data files in `data` directory
+- generate data using `_data/*-datagen.R` scripts, for example `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` creates `G1_1e7_1e2_0_0.csv`, put data files in `data` directory
 - if solution uses python activate `virtualenv` or conda environment
 - if solution uses R ensure that library is installed in a solution subdirectory, so that `library("dplyr", lib.loc="./dplyr/r-dplyr")` or `library("data.table", lib.loc="./datatable/r-datatable")` works
 - run benchmark for a single solution using `./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7`
 - run other data cases by passing extra parameters `--k=1e2 --na=0 --sort=0`
-- use `--quiet=true` to suppress script's output and prints timings only, using `--print=question,run,time_sec` specify column to be printed to console, to print all use `--print=*`
-- use `--out=time.csv` to write timings to file rather than console
+- use `--quiet=true` to suppress script's output and print timings only, using `--print=question,run,time_sec` specify columns to be printed to console, to print all use `--print=*`
+- use `--out=time.csv` to write timings to a file rather than console
 
 ## Extra care needed
 
-- `cuDF`
+- `cudf`
   - use `conda` instead of `virtualenv`
-- `ClickHouse`
+- `clickhouse`
   - generate data having extra primary key column according to `clickhouse/setup-clickhouse.sh`
   - follow "reproduce interactive environment" section from `clickhouse/setup-clickhouse.sh`
+- `pydatatable`
+  - re-save csv join-1e9 data into `jay` format
+- `dask`
+  - re-save csv groupby-1e9 and join-1e9 data into `parquet` format
 
 # Example environment
 
