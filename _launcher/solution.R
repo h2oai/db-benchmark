@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 
-# ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --print=on_disk,question,run,time_sec --quiet=true
+# ./_launcher/solution.R data.table
+# ./_launcher/solution.R --solution=data.table --print=*
+# ./_launcher/solution.R --solution=data.table --quiet=true
+# ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --quiet=true
 
 # input ----
 
@@ -173,7 +176,7 @@ Sys.unsetenv("CSV_TIME_FILE")
 
 if (ret==0 & stdout && file.size(args[["out"]])) {
   time = read.csv(args[["out"]], sep=",", header=TRUE, stringsAsFactors=FALSE)
-  if (length(args[["print"]])) {
+  if (length(args[["print"]]) && args[["print"]]!="*") {
     cols = strsplit(args[["print"]], ",", fixed=TRUE)[[1L]]
     badcols = setdiff(cols, names(time))
     if (length(badcols)) {
