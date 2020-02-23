@@ -20,8 +20,10 @@ def write_log(task, data, in_rows, question, out_rows, out_cols, solution, versi
       mem_gb = ""
    log_row = [nodename, batch, timestamp, task, data, in_rows, question, out_rows, out_cols, solution, version, git, fun, run, time_sec, mem_gb, cache, chk, chk_time_sec, comment, on_disk]
    log_header = ["nodename","batch","timestamp","task","data","in_rows","question","out_rows","out_cols","solution","version","git","fun","run","time_sec","mem_gb","cache","chk","chk_time_sec","comment","on_disk"]
+   if os.path.isfile(csv_file) and not(os.path.getsize(csv_file)):
+      os.remove(csv_file)
    append = os.path.isfile(csv_file)
-   csv_verbose = os.getenv('CSV_VERBOSE', "true")
+   csv_verbose = os.getenv('CSV_VERBOSE', "false")
    if csv_verbose.lower()=="true":
       print('# ' + ','.join(str(x) for x in log_row))
    if append:
