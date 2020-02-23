@@ -4,6 +4,8 @@
 # ./_launcher/solution.R --solution=data.table --print=*
 # ./_launcher/solution.R --solution=data.table --quiet=true
 # ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --quiet=true
+# ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --k=1e2 --na=0 --sort=0 --quiet=true
+# ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --k=1e2 --na=0 --sort=0 --quiet=true --print=question,run,time_sec
 
 # input ----
 
