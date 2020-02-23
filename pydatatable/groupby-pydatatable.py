@@ -50,8 +50,8 @@ t_start = timeit.default_timer()
 chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "sum v1 by id1:id2" # q2
@@ -76,8 +76,8 @@ t_start = timeit.default_timer()
 chk = ans[:, sum(f.v1)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "sum v1 mean v3 by id3" # q3
@@ -102,8 +102,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "mean v1:v3 by id4" # q4
@@ -128,8 +128,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "sum v1:v3 by id6" # q5
@@ -154,8 +154,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2), sum(f.v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "median v3 sd v3 by id4 id5" # q6
@@ -180,8 +180,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.median_v3), sum(f.sd_v3)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "max v1 - min v2 by id3" # q7
@@ -206,8 +206,8 @@ t_start = timeit.default_timer()
 chk = ans[:, sum(f.range_v1_v2)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "largest two v3 by id6" # q8
@@ -232,8 +232,8 @@ t_start = timeit.default_timer()
 chk = ans[:, sum(f.largest2_v3)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "regression v1 v2 by id2 id4" # q9 # not yet implemeneted https://github.com/h2oai/datatable/issues/1543
@@ -258,8 +258,8 @@ t_start = timeit.default_timer()
 chk = ans[:, sum(f.r2)]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 question = "sum v3 count by id1:id6" # q10
@@ -284,8 +284,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v3), sum(f.count)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans
 
 print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)

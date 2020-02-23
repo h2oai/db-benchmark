@@ -69,8 +69,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans, y
 
 question = "medium inner on int" # q2
@@ -99,8 +99,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans, y
 
 question = "medium outer on int" # q3
@@ -129,8 +129,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans, y
 
 question = "medium inner on factor" # q4
@@ -159,8 +159,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans, y
 
 question = "big inner on int" # q5
@@ -189,8 +189,8 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3).to_pandas(), flush=True)
-print(ans.tail(3).to_pandas(), flush=True)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
 del ans, y
 
 print("joining finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
