@@ -54,7 +54,7 @@ More solutions has been proposed. Some of them are not yet mature enough to addr
   - generate data having extra primary key column according to `clickhouse/setup-clickhouse.sh`
   - follow "reproduce interactive environment" section from `clickhouse/setup-clickhouse.sh`
 - `pydatatable`
-  - re-save csv join-1e9 data into `jay` format
+  - re-save csv join-1e9 data into `jay` format (should not be needed after h2oai/datatable#1750)
 - `dask`
   - re-save csv groupby-1e9 and join-1e9 data into `parquet` format
 
