@@ -26,11 +26,20 @@ if len(src_jn_y) != 3:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
-x = pd.read_csv(src_jn_x, dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-small = pd.read_csv(src_jn_y[0], dtype={'id1':'category'})
-medium = pd.read_csv(src_jn_y[1], dtype={'id1':'category', 'id2':'category'})
-big = pd.read_csv(src_jn_y[2], dtype={'id1':'category', 'id2':'category', 'id3':'category'})
-
+from datatable import fread # for loading data only, see #47
+x = fread(src_jn_x).to_pandas()
+x['id1'] = x['id1'].astype('category') # remove after datatable#1691
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
+small = fread(src_jn_y[0]).to_pandas()
+x['id1'] = x['id1'].astype('category')
+medium = fread(src_jn_y[1]).to_pandas()
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+big = fread(src_jn_y[2]).to_pandas()
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
 print(len(x.index), flush=True)
 print(len(small.index), flush=True)
 print(len(medium.index), flush=True)

@@ -70,8 +70,13 @@ clean_questions = function(q) {
 model_time = function(d) {
   # chk tolerance for cudf disabled as of now: https://github.com/rapidsai/cudf/issues/2494
   #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
+  # as well for dask due to #136
+  #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
   if (nrow(
-    d[!is.na(chk) & solution!="cudf",
+    d[!is.na(chk) & (
+      solution!="cudf" &
+      solution!="dask"
+      ),
       .(unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
     ))
     stop("Value of 'chk' varies for different runs for single solution+question")
