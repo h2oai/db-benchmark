@@ -127,14 +127,14 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   ))
   logs.csv = Sys.getenv("CSV_LOGS_FILE","logs.csv")
   if (!mockup) fwrite(lg, file=logs.csv, append=file.exists(logs.csv), col.names=!file.exists(logs.csv))
-  labels = c("start" ="start ",
-             "finish"="finish",
-             "skip"  ="skip  ") # to align console output
+  labels = c("start" ="start: ",
+             "finish"="finish:",
+             "skip"  ="skip:  ") # to align console output
   status = ""
   if (!is.na(ret)) status = sprintf(": %s", ret)
   if (isTRUE(stderr>0L)) status = sprintf("%s: stderr %s", status, stderr)
-  if (nzchar(comment)) status = sprintf(" (%s)", status, comment)
-  if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, status))
+  if (nzchar(comment)) status = sprintf("%s: %s", status, comment)
+  if (verbose) cat(sprintf("%s %s %s %s%s\n", labels[[action]], solution, task, data, status))
 }
 
 # main launcher than loops over solutions, tasks, data and when need run it in new shell command
@@ -166,8 +166,8 @@ launch = function(dt, mockup, out_dir="out") {
         err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
         ret_file = sprintf("%s/run_%s_%s_%s.ret", out_dir, ns, t, d)
         if (!is.na(this_run$run_batch)) {
-          comment = sprintf(": %s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
-          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run
+          comment = sprintf("%s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
+          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run and previous exit code
           next
         }
         log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
