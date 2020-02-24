@@ -83,10 +83,10 @@ if (!"sort" %in% names(args)) {
 stdout = !"out" %in% names(args)
 if (stdout) {
   args[["out"]] = tempfile("dbb-time", fileext=".csv")
-  invisible(file.create(args[["out"]], showWarnings=FALSE))
+  invisible(file.create(args[["out"]]))
 } else {
-  dir.create(dirname(args[["out"]]), recursive=TRUE, showWarnings=FALSE)
-  invisible(file.create(args[["out"]], showWarnings=FALSE))
+  dir.create(dirname(args[["out"]]), recursive=TRUE)
+  if (!file.exists(args[["out"]])) invisible(file.create(args[["out"]]))
 }
 
 if ("print" %in% names(args)) {
