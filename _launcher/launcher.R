@@ -37,8 +37,9 @@ solution.cmd = function(s, t, d) {
   if (length(dd)!=5L)
     stop("data_name is expected to have exactly four underscore characters, like G1_1e7_1e2_0_0 or J1_1e7_NA_0_0")
   names(dd) = c("prefix","nrow","k","na","sort")
-  sprintf("./_launcher/solution.R --solution=%s --task=%s --nrow=%s --k=%s --na=%s --sort=%s --out=time.csv",
-          s, t, dd[["nrow"]], dd[["k"]], dd["na"], dd["sort"])
+  sprintf("./_launcher/solution.R --solution=%s --task=%s --nrow=%s --k=%s --na=%s --sort=%s --out=%s",
+          s, t, dd[["nrow"]], dd[["k"]], dd["na"], dd["sort"],
+          Sys.getenv("CSV_TIME_FILE","time.csv"))
 }
 
 # space separater character vector from env var
@@ -80,7 +81,9 @@ lookup_run_batch = function(dt) {
   .nodename = unique(dt$nodename)
   stopifnot(length(.nodename)==1L)
   forcerun = as.logical(Sys.getenv("FORCE_RUN", "false"))
-  if (!forcerun && file.exists("time.csv") && file.exists("logs.csv") && nrow(timings<-fread("time.csv")[nodename==.nodename]) && nrow(logs<-fread("logs.csv")[nodename==.nodename])) {
+  logs.csv = Sys.getenv("CSV_LOGS_FILE","logs.csv")
+  time.csv = Sys.getenv("CSV_TIME_FILE","time.csv")
+  if (!forcerun && file.exists(time.csv) && file.exists(logs.csv) && nrow(timings<-fread(time.csv)[nodename==.nodename]) && nrow(logs<-fread(logs.csv)[nodename==.nodename])) {
     timings[, .N,, c("nodename","batch","solution","task","data","version","git")
             ][, "N" := NULL
               ][!nzchar(git), "git" := NA_character_
@@ -122,8 +125,8 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
     upgraded.solution(solution), # list(version, git) based on VERSION and REVISION files, and extra validation so VERSION has to be always present
     list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)
   ))
-  file = "logs.csv"
-  if (!mockup) fwrite(lg, file=file, append=file.exists(file), col.names=!file.exists(file))
+  logs.csv = Sys.getenv("CSV_LOGS_FILE","logs.csv")
+  if (!mockup) fwrite(lg, file=logs.csv, append=file.exists(logs.csv), col.names=!file.exists(logs.csv))
   labels = c("start"="starting","finish"="finished","skip"="skip run")
   if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
   if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))

@@ -57,11 +57,15 @@ if (!"nrow" %in% names(args)) {
 } else if (!args[["nrow"]] %in% nrows) {
   stop("unsupported nrow: ", args[["nrow"]])
 }
-ks = levels(datadict$k)
-if (!"k" %in% names(args)) {
-  args[["k"]] = ks[1L]
-} else if (!args[["k"]] %in% ks) {
-  stop("unsupported k: ", args[["k"]])
+if (args[["task"]]=="groupby") {
+  ks = levels(datadict$k)
+  if (!"k" %in% names(args)) {
+    args[["k"]] = ks[1L]
+  } else if (!args[["k"]] %in% ks) {
+    stop("unsupported k: ", args[["k"]])
+  }
+} else {
+  args[["k"]] = NA_character_
 }
 nas = levels(datadict$na)
 if (!"na" %in% names(args)) {
@@ -170,7 +174,7 @@ localcmd = if (ext=="sql") { # sql scripts are using extra exec shell script, re
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
 
-cat("Running: ", cmd,"\n", sep="") ## temporary during devel
+cat(sprintf("Running '%s' into %s\n"), cmd, args[["out"]]) ## temporary during devel
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 
 Sys.unsetenv(data_name_env)
