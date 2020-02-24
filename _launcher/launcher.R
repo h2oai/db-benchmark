@@ -116,20 +116,25 @@ lookup_run_batch = function(dt) {
 }
 
 # log runs to logs.csv so we now there was attempt to compute a script even if solution crashes before logging any timing
-log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
-  stopifnot(is.character(task), length(task)==1L, !is.na(task))
+log_run = function(solution, task, data, action = c("start","finish","skip"), batch, nodename, ret=NA_character_, stderr=NA_integer_, comment="", mockup=FALSE, verbose=TRUE) {
+  stopifnot(is.character(task), length(task)==1L, !is.na(task), is.character(ret), length(ret)==1L)
   action = match.arg(action)
   timestamp=as.numeric(Sys.time())
   lg = as.data.table(c(
     list(nodename=nodename, batch=batch, solution=solution),
     upgraded.solution(solution), # list(version, git) based on VERSION and REVISION files, and extra validation so VERSION has to be always present
-    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr)
+    list(task=task, data=data, timestamp=timestamp, action=action, stderr=stderr, ret=ret)
   ))
   logs.csv = Sys.getenv("CSV_LOGS_FILE","logs.csv")
   if (!mockup) fwrite(lg, file=logs.csv, append=file.exists(logs.csv), col.names=!file.exists(logs.csv))
-  labels = c("start"="starting","finish"="finished","skip"="skip run")
-  if (isTRUE(stderr>0L)) comment = paste0(comment, sprintf(": stderr %s", stderr))
-  if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, comment))
+  labels = c("start" ="start ",
+             "finish"="finish",
+             "skip"  ="skip  ") # to align console output
+  status = ""
+  if (!is.na(ret)) status = sprintf(": %s", ret)
+  if (isTRUE(stderr>0L)) status = sprintf("%s: stderr %s", status, stderr)
+  if (nzchar(comment)) status = sprintf(" (%s)", status, comment)
+  if (verbose) cat(sprintf("%s: %s %s %s%s\n", labels[[action]], solution, task, data, status))
 }
 
 # main launcher than loops over solutions, tasks, data and when need run it in new shell command
@@ -159,6 +164,7 @@ launch = function(dt, mockup, out_dir="out") {
         if (nrow(this_run) != 1L) stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
         out_file = sprintf("%s/run_%s_%s_%s.out", out_dir, ns, t, d)
         err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
+        ret_file = sprintf("%s/run_%s_%s_%s.ret", out_dir, ns, t, d)
         if (!is.na(this_run$run_batch)) {
           comment = sprintf(": %s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
           log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run
@@ -168,6 +174,7 @@ launch = function(dt, mockup, out_dir="out") {
         if (!mockup) {
           if (file.exists(out_file)) file.remove(out_file)
           if (file.exists(err_file)) file.remove(err_file)
+          if (file.exists(ret_file)) file.remove(ret_file)
         }
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
@@ -178,8 +185,9 @@ launch = function(dt, mockup, out_dir="out") {
               cat(paste0(w[["message"]],"\n"), file=err_file, append=TRUE)
             }
           )
-        } else ret = NA_real_
-        log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, stderr=wcl(err_file), mockup=mockup)
+          cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
+        }
+        log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readLines(ret_file), stderr=wcl(err_file), mockup=mockup)
       }
     }
   }
