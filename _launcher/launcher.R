@@ -178,9 +178,7 @@ launch = function(dt, mockup, out_dir="out") {
               cat(paste0(w[["message"]],"\n"), file=err_file, append=TRUE)
             }
           )
-          if (ret != 0 && ret != 124) # 124 is timeout exit code, which is logged inside stderr file already
-            warning(sprintf("benchmark script launcher got %s exit code from command: '%s'", ret, shcmd))
-        }
+        } else ret = NA_real_
         log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, stderr=wcl(err_file), mockup=mockup)
       }
     }
