@@ -31,16 +31,14 @@ solution.venv = function(x) {
   } else ""
 }
 
-# sql scripts are using extra exec shell script, related only to clickhouse as of now
+# construct solution.R cmd call
 solution.cmd = function(s, t, d) {
   dd = strsplit(d, "_", fixed=TRUE)[[1L]]
-  stopifnot(length(dd)==5L)
+  if (length(dd)!=5L)
+    stop("data_name is expected to have exactly four underscore characters, like G1_1e7_1e2_0_0 or J1_1e7_NA_0_0")
   names(dd) = c("prefix","nrow","k","na","sort")
-  sprintf("./solution.R --solution=%s --task=%s --nrow=%s --k=%s --na=%s --sort=%s --out=time.csv", s, t, dd[["nrow"]], dd[["k"]], dd["na"], dd["sort"])
-  #ext = file.ext(s)
-  #if (ext=="sql") {
-  #  sprintf("exec.sh %s %s", t, d)
-  #} else sprintf("%s-%s.%s", t, solution.path(s), ext)
+  sprintf("./_launcher/solution.R --solution=%s --task=%s --nrow=%s --k=%s --na=%s --sort=%s --out=time.csv",
+          s, t, dd[["nrow"]], dd[["k"]], dd["na"], dd["sort"])
 }
 
 # space separater character vector from env var
@@ -168,20 +166,17 @@ launch = function(dt, mockup, out_dir="out") {
           if (file.exists(out_file)) file.remove(out_file)
           if (file.exists(err_file)) file.remove(err_file)
         }
-        localcmd = solution.cmd(s, t, d)
-        cmd = sprintf("./%s/%s > %s 2> %s", ns, localcmd, out_file, err_file)
-        shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source venv
+        cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
+        shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
         if (!mockup) {
           tryCatch(
-            system(shcmd, timeout=this_run$timeout_s), # here script actually runs
-            warning = function(w) {
-              # this is to catch and log timeout but we want every warning to be written to stderr
-              if (grepl("timed out", w[["message"]], fixed=TRUE)) {
-                # input NA timings? would require to push up 'question' factor here but would simplify(?) exception handling on benchplot
-              }
+            ret <- system(shcmd, timeout=this_run$timeout_s), # here script actually runs
+            warning = function(w) { # R's system warnings like 'timed out', they are not yet in stderr as all the inner ones
               cat(paste0(w[["message"]],"\n"), file=err_file, append=TRUE)
             }
           )
+          if (ret != 0 && ret != 124) # 124 is timeout exit code, which is logged inside stderr file already
+            warning(sprintf("benchmark script launcher got %s exit code from command: '%s'", ret, shcmd))
         }
         log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, stderr=wcl(err_file), mockup=mockup)
       }

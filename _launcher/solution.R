@@ -165,7 +165,7 @@ setenv(data_name_env, d)
 
 ns = solution.path(s)
 ext = file.ext(s)
-localcmd = if (ext=="sql") {
+localcmd = if (ext=="sql") { # sql scripts are using extra exec shell script, related only to clickhouse as of now
   sprintf("exec.sh %s %s", t, d)
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
