@@ -19,6 +19,9 @@ function write_log(run, task, data, in_rows, question, out_rows, out_cols, solut
   catch
     ""
   end;
+  if isfile(file) & filesize(file)==0
+    rm(file)
+  end;
   nodename=gethostname()
   comment="" # placeholder for updates to timing data
   time_sec=round(time_sec, digits=3)
@@ -27,7 +30,7 @@ function write_log(run, task, data, in_rows, question, out_rows, out_cols, solut
   timestamp=@sprintf("%0.6f", time())
   csv_verbose = false # hardcoded for now, TODO ENV["CSV_VERBOSE"] and print
   log = DataFrame(nodename=nodename, batch=batch, timestamp=timestamp, task=task, data=data, in_rows=in_rows, question=question, out_rows=out_rows, out_cols=out_cols, solution=solution, version=version, git=git, fun=fun, run=run, time_sec=time_sec, mem_gb=mem_gb, cache=uppercase(string(cache)), chk=chk, chk_time_sec=chk_time_sec, comment=comment, on_disk=uppercase(string(on_disk)))
-  CSV.write(file, log, append=true)
+  CSV.write(file, log, append=isfile(file))
 end;
 
 function make_chk(x)
