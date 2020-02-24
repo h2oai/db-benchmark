@@ -174,7 +174,6 @@ localcmd = if (ext=="sql") { # sql scripts are using extra exec shell script, re
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
 
-cat(sprintf("Running '%s' into %s\n", cmd, args[["out"]])) ## temporary during devel
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 
 Sys.unsetenv(data_name_env)
