@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo 'NOT upgrading cudf...' # fixed to 0.11.0 as of now, we manully remove conda env and install newer version in new clean environment
+echo 'NOT upgrading cudf...' # fixed version as of now, we manully remove conda env and install newer version in new clean environment
 
 # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
 #source ~/anaconda3/etc/profile.d/conda.sh && conda activate cudf
@@ -12,6 +12,7 @@ conda env remove --name cudf
 conda create --name cudf
 conda activate cudf
 conda install --name cudf psutil
-conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.11 python=3.6 cudatoolkit=10.0
+#conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.11 python=3.6 cudatoolkit=10.0
 #conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults dask-cudf=0.11 #116
+conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.12 python=3.6 cudatoolkit=10.0
 conda deactivate
