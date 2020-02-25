@@ -218,12 +218,12 @@ rpivotTable::rpivotTable(
 ## Notes
 
 - You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in [repository](https://github.com/h2oai/db-benchmark).
-- Data used to generate plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
+- Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
+- Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 125 GB machine), it will use on-disk data storage if possible. In such a case solution name is denoted by a `*` suffix on the legend.
+- For a cuDF solution _on-disk_ memory actually means main memory because this is where memory spils from a GPU memory. Note as of the current moment only single GPU is used (11 GB), see [#116](https://github.com/h2oai/db-benchmark/issues/116) for status.
+- ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
 - We ensure that calculations are not deferred by solution.
 - We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
-- ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
-- Other solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 125 GB machine), it will use on-disk data storage if possible (and if implemented, see [#126](https://github.com/h2oai/db-benchmark/issues/126) for status). Then solution name is denoted by a `*` suffix.
-- For a cuDF solution _on-disk_ memory actually means main memory because this is where memory spils from a GPU memory. Note as of the current moment only single GPU is used (11 GB), see [#116](https://github.com/h2oai/db-benchmark/issues/116) for status.
 
 ## Environment configuration
 
