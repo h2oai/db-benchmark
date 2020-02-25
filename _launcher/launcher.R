@@ -2,6 +2,13 @@
 wcl = function(x) {
   as.integer(if (!file.exists(x)) NA else system(sprintf("wc -l %s | awk '{print $1}'", x), intern=TRUE))
 }
+readret = function(x) {
+  if (file.exists(x) && file.size(x)) {
+    ret = readLines(x)
+    if (length(ret)!=1L) stop(sprintf("'%s' file containts more than a single line"))
+    ret
+  } else NA_character_
+}
 
 # solution to file ext mapping
 file.ext = function(x) {
@@ -167,7 +174,7 @@ launch = function(dt, mockup, out_dir="out") {
         ret_file = sprintf("%s/run_%s_%s_%s.ret", out_dir, ns, t, d)
         if (!is.na(this_run$run_batch)) {
           comment = sprintf("%s run on %s", substr(this_run$compare, 1L, 7L), format(as.Date(as.POSIXct(this_run$run_batch, origin="1970-01-01")), "%Y%m%d"))
-          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run and previous exit code
+          log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run and previous exit code
           next
         }
         log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
@@ -187,7 +194,7 @@ launch = function(dt, mockup, out_dir="out") {
           )
           cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
         }
-        log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readLines(ret_file), stderr=wcl(err_file), mockup=mockup)
+        log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
       }
     }
   }
