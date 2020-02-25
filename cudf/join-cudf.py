@@ -23,8 +23,9 @@ src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
-on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
-on_disk = not(on_vmem) # no really disk, just variable name used to log in script below
+## spilling to main mem only make sense with dask-cudf, see#129
+#on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
+on_disk = False #not(on_vmem) # no really disk, just variable name used to log in script below
 print("using video and main memory data storage" if on_disk else "using only video memory data storage", flush=True)
 if on_disk:
     cu.set_allocator("managed")
