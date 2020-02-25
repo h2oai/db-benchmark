@@ -13,7 +13,9 @@ function write_log(run, task, data, in_rows, question, out_rows, out_cols, solut
   catch
     "time.csv"
   end;
-  file="$(pwd())/$file";
+  if (occursin("/", file) && SubString(file, 1, 1)!="/") # otherwise we assume full path
+    file="$(pwd())/$file";
+  end;
   batch=try
     ENV["BATCH"]
   catch
