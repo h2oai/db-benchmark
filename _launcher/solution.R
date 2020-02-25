@@ -82,7 +82,7 @@ if (!"sort" %in% names(args)) {
 
 stdout = !"out" %in% names(args)
 if (stdout) {
-  args[["out"]] = tempfile("temp-dbb-time-", ".", ".csv")
+  args[["out"]] = tempfile("dbb-time", fileext=".csv")
   invisible(file.create(args[["out"]]))
 } else {
   if (!dir.exists(dirname(args[["out"]]))) dir.create(dirname(args[["out"]]), recursive=TRUE)
@@ -179,21 +179,18 @@ ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 Sys.unsetenv(data_name_env)
 Sys.unsetenv("CSV_TIME_FILE")
 
-if (stdout) {
-  if (file.size(args[["out"]])) {
-    time = read.csv(args[["out"]], sep=",", header=TRUE, stringsAsFactors=FALSE)
-    if (length(args[["print"]]) && args[["print"]]!="*") {
-      cols = strsplit(args[["print"]], ",", fixed=TRUE)[[1L]]
-      badcols = setdiff(cols, names(time))
-      if (length(badcols)) {
-        warning("'print' argument specifies not existing columns: ", paste(badcols, collapse=", "))
-        cols = intersect(cols, names(time))
-      }
-      time = time[, cols, drop=FALSE]
+if (stdout && file.size(args[["out"]])) {
+  time = read.csv(args[["out"]], sep=",", header=TRUE, stringsAsFactors=FALSE)
+  if (length(args[["print"]]) && args[["print"]]!="*") {
+    cols = strsplit(args[["print"]], ",", fixed=TRUE)[[1L]]
+    badcols = setdiff(cols, names(time))
+    if (length(badcols)) {
+      warning("'print' argument specifies not existing columns: ", paste(badcols, collapse=", "))
+      cols = intersect(cols, names(time))
     }
-    print(time)
+    time = time[, cols, drop=FALSE]
   }
-  file.remove(args[["out"]])
+  print(time)
 }
 
 # close ----
