@@ -19,7 +19,7 @@ function write_log(run, task, data, in_rows, question, out_rows, out_cols, solut
   catch
     ""
   end;
-  if isfile(file) & filesize(file)==0
+  if (isfile(file) && filesize(file)==0)
     rm(file)
   end;
   nodename=gethostname()
