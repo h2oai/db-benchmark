@@ -8,7 +8,7 @@ output:
       in_header: ga.html
 ---
 ```{r render, include=FALSE}
-# Rscript -e 'rmarkdown::render("./_report/history.Rmd", output_dir="public")'
+# Rscript -e 'rmarkdown::render("./_report/history.Rmd", output_dir="public")' && xdg-open public/history.html
 ```
 
 ```{r opts, echo=FALSE}
@@ -16,37 +16,291 @@ knitr::opts_knit$set(root.dir="..")
 knitr::opts_chunk$set(echo=FALSE, cache=FALSE)
 ```
 
-```{r init}
-library(lattice)
+```{r init, message=FALSE}
+library(data.table)
+library(formattable)
+library(rpivotTable)
 source("./_report/report.R")
-ld = time_logs()[task=="groupby" & substr(data,1,2)=="G1"] # substr for clickhouse on-disk reported as G2
-ld[, "question" := droplevels(question)]
-recent_nodename = ld[script_recent==TRUE, unique(nodename)]
-stopifnot(length(recent_nodename)==1L)
-ld = ld[nodename==recent_nodename]
 ```
 
-## Timings over time
+```{r lib_fmt_tbls}
+# format details table
+fmt = function(x, caption=NULL) {
+  sign_formatter = formatter("span", style = x ~ style(
+    color = ifelse(x > 0.05, "red", ifelse(x < -0.05, "green", "black")),
+    "font-weight" = ifelse(x > 0.25, "bold", ifelse(x < -0.25, "bold", "normal"))
+  ))
+  x = copy(x)[, LNd := NULL]
+  mett = c("LNt","LRt","LWt","LMt","LYt")
+  x[, (mett) := lapply(.SD, formattable, format="f", digits=1), .SDcols=mett]
+  metd = c("LRd","LWd","LMd","LYd")
+  x[, (metd) := lapply(.SD, percent, format="d"), .SDcols=metd]
+  x[, c(mett,metd) := lapply(.SD, prefix, prefix="", na.text=""), .SDcols=c(mett,metd)]
+  dims = c(iquestion="Q",in_rows="Size",k="K",na="NA fraction",sort="Sorted")
+  metrics = c(LNt="Now", LRt="LastRun", LRd="LR \u2206", LWt="LastWeek", LWd="LW \u2206", LMt="LastMonth", LMd="LM \u2206", LYt="LastYear", LTd="LY \u2206")
+  labels = c(dims[match(names(x), names(dims), 0L)], metrics)
+  if (length(labels)!=length(x))
+    stop(paste0("names(x): ", paste(names(x), collapse=","), "\n"), paste0("  labels: ", paste(labels, collapse=",")))
+  formattable(x, list(
+    #"q" = if (length(var)) I else color_tile("transparent", "lightpink"),
+    #"k" = color_tile("transparent", "lightpink"),
+    #"na" = color_tile("transparent", "lightpink"),
+    #"sort" = color_tile("transparent", "lightpink"),
+    LNt = formatter("span", style = x ~ style("font-weight" = "bold")),
+    LRd = sign_formatter, LWd=sign_formatter, LMd=sign_formatter, LYd=sign_formatter
+  ), col.names=labels, caption=caption)
+}
+```
 
-### groupby
-
-0% NAs, unsorted
-
-```{r hist_groupby_plot, fig.width=8, fig.height=48}
-p = sapply(setNames(nm=as.character(unique(ld$solution))), simplify = FALSE, function(s)
-  lattice::xyplot(time_sec_1 ~ ibatch | k+in_rows, ld[nasorted=="0% NAs, unsorted data"],
-                type="l", grid=TRUE, groups=question,
-                subset=solution==s, main=s,
-                xlab = "benchmark run",
-                ylab = "seconds",
-                scales=list(y=list(
-                  relation="free",
-                  limits=rep(ld[solution==s, .(ylim=max(c(0, time_sec_1), na.rm=TRUE)), in_rows][ylim>0, list(list(c(0, ylim))), in_rows]$V1, each=3)
-                )),
-                auto.key=list(points=FALSE, lines=TRUE))
+```{r exec_groupby_overview, eval=FALSE}
+## re-usable chunk for solution+task filtered data as 'dt' due to
+# https://stackoverflow.com/questions/42024921/why-does-kable-not-print-when-used-within-a-function-in-rmarkdown
+fmt(
+  caption="by Question (k=1e2, no NA, unsorted)",
+  dt[k=="1e2" & na=="0" & sort=="0", dcast(.SD, iquestion~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
 )
-sapply(seq_along(p), function(i) print(p[[i]], split=c(1, i, 1, length(p)), more=i!=length(p))) -> nul
+fmt(
+  caption="by Size (k=1e2, no NA, unsorted)",
+  dt[k=="1e2" & na=="0" & sort=="0", dcast(.SD, in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by K cardinality (no NA, unsorted)",
+  dt[na=="0" & sort=="0", dcast(.SD, k~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by NA fraction (k=1e2, unsorted)",
+  dt[k=="1e2" & sort=="0", dcast(.SD, na~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by Sortedness (k=1e2, no NA)",
+  dt[k=="1e2" & na=="0", dcast(.SD, sort~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
 ```
+
+```{r exec_join_overview, eval=FALSE}
+fmt(
+  caption="by Question (no NA, unsorted)",
+  dt[na=="0" & sort=="0", dcast(.SD, iquestion~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by Size (no NA, unsorted)",
+  dt[na=="0" & sort=="0", dcast(.SD, in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by NA fraction (unsorted)",
+  dt[sort=="0", dcast(.SD, na~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+fmt(
+  caption="by Sortedness (no NA)",
+  dt[na=="0", dcast(.SD, sort~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)]
+)
+```
+
+```{r lib_data}
+get_batches = function(x) {
+  x = unique(x)
+  #p = function(x) as.POSIXct(x, origin="1970-01-01")
+  secd = 24*60*60
+  last = function(x) tail(x, 1L)[1L]
+  # recent vs: previous, 1w ago, 1m ago, 1y ago
+  b = setNames(rep(NA_integer_, 5L), c("LN","LR","LW","LM","LY"))
+  b[["LN"]] = last(x)
+  stopifnot(!is.na(b[["LN"]]))
+  b[["LY"]] = last(x[x < (b[["LN"]]-365*secd)])
+  b[["LM"]] = last(x[between(x, b[["LY"]], b[["LN"]]-30*secd, incbounds=FALSE)])
+  b[["LW"]] = last(x[between(x, b[["LM"]], b[["LN"]]-7*secd, incbounds=FALSE)])
+  b[["LR"]] = last(x[between(x, b[["LW"]], b[["LN"]], incbounds=FALSE)])
+  b
+}
+do_metrics = function(s, d) {
+  d = d[solution==s, .(task, in_rows, k, na, sort, iquestion, time_sec_1, time_sec_2, batch, version, git)]
+  tt = as.character(unique(d$task))
+  ans = setNames(vector("list", length(tt)), tt)
+  for (t in tt) { # t=tt[1]
+    # recent vs: previous, 1w ago, 1m ago, 1y ago
+    b = get_batches(d[task==t, batch])
+    metrics = data.table(metric=factor(names(b), levels=names(b)), batch=b)
+    # deal with duplicates when solution does not run for a week, then last run is same as last week
+    #metrics = data.table(metric=names(b), batch=b)[, .(metric=tail(metric, 1L)), batch][.(names(b)), on="metric", .(metric=factor(metric, levels=names(b)), batch)]
+    non_na_metric = names(b)[1L]
+    stopifnot(metrics[metric==non_na_metric, !is.na(batch)])
+    dd = d[task==t][metrics[!is.na(batch)], on="batch"]
+    if (nrow(dd[is.na(task) | task!=t])) browser()
+    stopifnot(nrow(dd[, if (.N > 1L) .SD,, c("task","in_rows","k","na","sort","iquestion","metric")])==0L)
+    if (length(missing_metrics <- setdiff(as.character(metrics$metric), as.character(unique(dd$metric))))) { ## fill empty to match number of columns always
+      metric_fill = function(missing_metric, dd, non_na_metric) {
+        missing_dd = dd[metric==non_na_metric][, `:=`(metric=missing_metric, time_sec_1=NA_real_, time_sec_2=NA_real_, batch=NA_integer_, version=NA_integer_, git=NA_integer_)]
+        stopifnot(nrow(missing_dd[, if (.N > 1L) .SD,, c("task","in_rows","k","na","sort","iquestion","metric")])==0L)
+        if (nrow(missing_dd[is.na(task) | task!=t])) browser()
+        missing_dd
+      }
+      dd = rbindlist(c(list(dd), lapply(missing_metrics, metric_fill, dd, non_na_metric)))
+      setorderv(dd, "metric")
+    }
+    stopifnot(nrow(dd[, if (.N > 1L) .SD,, c("task","in_rows","k","na","sort","iquestion","metric")])==0L)
+    if (nrow(dd[is.na(task) | task!=t])) browser()
+    ans[[t]] = dd
+  }
+  rbindlist(ans)
+}
+do_delta = function(dd) {
+  dd = copy(dd)
+  setnames(dd, c("time_sec_1","time_sec_2"), c("run_1","run_2"))
+  now = dd[metric=="LN", .(solution, task, in_rows, k, na, sort, iquestion, run_1, run_2)]
+  stopifnot(nrow(now[, if (.N>1L) .SD,, c("solution","task","in_rows","k","na","sort","iquestion")])==0L,
+            nrow(dd[is.na(metric)])==0L)
+  delta = dd[now, on=c("solution","task","in_rows","k","na","sort","iquestion"),
+             .(solution, task, in_rows, k, na, sort, iquestion, run_1=(i.run_1-x.run_1)/x.run_1, run_2=(i.run_2-x.run_2)/x.run_2, batch, version, git, metric=x.metric)]
+  stopifnot(nrow(delta[is.na(metric)])==0L, is.factor(dd$metric), is.factor(delta$metric))
+  #return(list(dd=dd, delta=delta))
+  levels(delta$metric) = paste0(levels(dd$metric), "d")
+  levels(dd$metric) = paste0(levels(dd$metric), "t")
+  ddd = rbindlist(list(dd, delta))
+  if (nrow(ddd[is.na(metric)])) browser()
+  ddd[, "metric" := factor(metric, levels=c("LNt","LNd","LRt","LRd","LWt","LWd","LMt","LMd","LYt","LYd"))] # reorder levels
+  if (nrow(ddd[is.na(metric)])) browser()
+  ddd
+}
+```
+
+Work in progress: performance regression tracking
+
+Note:
+
+- missing `LastRun` is likely to occur when no runs happened for more than a week, so the values would be the same as `LastWeek`.
+- missing values are likely to occur due to the missing timing values, for example, due to the performance regression a question haven't finished, then we should not skip it during calculating `mean`.
+- first run timings are used in calculations.
+- timing metrics are not normalized when passing to `mean`, thus `mean` over data sizes (1e7, 1e8, 1e9)  will do something like `mean(c(0.1, 1, 10))`.
+
+```{r data}
+# load data
+ld = time_logs()[nodename==nodename[.N]]
+
+# for each solution find 5 runs: now, previous, 1w ago, 1m ago, 1 year ago
+dd = rbindlist(lapply(setNames(nm=levels(ld$solution)), do_metrics, ld), idcol="solution")
+
+# do 'delta' metrics
+ddd = do_delta(dd)
+```
+
+## Solution {.tabset}
+
+### data.table {.tabset .tabset-fade .tabset-pills}
+
+#### groupby {.tabset .tabset-dropdown}
+
+```{r datatable.groupby}
+dt = ddd[solution=="data.table" & task=="groupby"]
+```
+
+##### Overview
+
+```{r datatable.groupby.overview, ref.label="exec_groupby_overview"}
+```
+
+##### Question
+
+```{r datatable.groupby.q}
+fmt(dt[k=="1e2" & na=="0" & sort=="0", dcast(.SD, iquestion+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by Question Size (k=1e2, no NA, unsorted)")
+fmt(dt[na=="0" & sort=="0", dcast(.SD, iquestion+k~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by Question K cardinality (no NA, unsorted)")
+```
+
+##### K cardinality
+
+```{r datatable.groupby.k}
+fmt(dt[na=="0" & sort=="0", dcast(.SD, k+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by K cardinality Size (no NA, unsorted)")
+fmt(dt[na=="0" & sort=="0", dcast(.SD, k+iquestion~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by K cardinality Question (no NA, unsorted)")
+```
+
+##### NA fraction
+
+```{r datatable.groupby.na}
+fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by NA fraction Size (k=1e2, unsorted)")
+```
+
+##### sortedness
+
+```{r datatable.groupby.sort}
+fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by NA fraction Size (k=1e2, no NA)")
+```
+
+#### join {.tabset .tabset-dropdown}
+
+```{r datatable.join}
+dt = ddd[solution=="data.table" & task=="join"]
+```
+
+##### Overview
+
+```{r datatable.join.overview, ref.label="exec_join_overview"}
+```
+
+##### Question
+
+```{r datatable.join.q}
+fmt(dt[na=="0" & sort=="0", dcast(.SD, iquestion+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by Question Size (no NA, unsorted)")
+```
+
+##### NA fraction
+
+```{r datatable.join.na}
+fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by NA fraction Size (unsorted)")
+```
+
+##### sortedness
+
+```{r datatable.join.sort}
+fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
+    caption="by NA fraction Size (no NA)")
+```
+
+### dplyr
+
+### pandas
+
+### pydatatable
+
+### spark
+
+### cudf
+
+### dask
+
+### juliadf
+
+### clickhouse
+
+## Details {.tabset .tabset-fade .tabset-pills}
+
+### Environment
+
+Nodename: `r ld[1L][["nodename"]]`
+
+### Timings
+
+```{r pivot}
+sdcols = c("solution","task","question_group","question","iquestion","data","in_rows","k","na","sorted","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+data = ld[, .SD, .SDcols=sdcols]
+rpivotTable::rpivotTable(
+  data,
+  rows = c("task","in_rows","k","sorted","question"),
+  cols = "solution",
+  aggregatorName = "Average",
+  vals = "time_sec_1",
+  height = "100%",
+  unusedAttrsVertical = TRUE
+)
+```
+
+## {-}
 
 ------
 

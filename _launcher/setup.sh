@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-# dirs for datasets and output of benchmark, not related to datatable setup
+# dirs for datasets and output of benchmark
 mkdir -p data
 mkdir -p out
 # packages used in launcher and report
-Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable"))'
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable"))'
 
 # setup ~/.R/Makevars
 mkdir -p ~/.R

@@ -149,12 +149,13 @@ ftdata = function(x, task) {
     in_rows=ft(sapply(y, `[`, 2L))
     k=ft(sapply(y, `[`, 3L))
     na=ft(sapply(y, `[`, 4L))
-    sorted=ft(labsorted(sapply(y, `[`, 5L)))
+    sort=ft(sapply(y, `[`, 5L))
+    sorted=ft(labsorted(levels(sort)))
     nasorted=ft(sprintf("%s%% NAs, %s", as.character(na), as.character(sorted)))
     labk = character(length(k))
     labk[!is.na(k)] = sprintf("%s cardinality factor, ", as.character(k[!is.na(k)]))
     knasorted=ft(sprintf("%s%s", labk, as.character(nasorted)))
-    list(in_rows=in_rows, k=k, na=na, sorted=sorted, nasorted=nasorted, knasorted=knasorted)
+    list(in_rows=in_rows, k=k, na=na, sort=sort, sorted=sorted, nasorted=nasorted, knasorted=knasorted)
   } else {
     stop("no task defined for ftdata other than groupby and join")
   }
@@ -200,9 +201,10 @@ transform = function(ld) {
      .SDcols=c(paste(rep(c("timestamp","time_sec","mem_gb","chk_time_sec"), each=2), 1:2, sep="_"),
                paste("script", c("finish","start","stderr","recent"), sep="_"),
                "na_time_sec","out_rows","out_cols","chk")
-     ][, `:=`(iquestion=as.integer(question), script_time_sec=script_finish-script_start)
+     ][, `:=`(script_time_sec=script_finish-script_start)
        ][] -> lld
-  lld
+  lld[, "iquestion":=as.integer(droplevels(question)), by="task"]
+  lld[]
 }
 
 # all ----
