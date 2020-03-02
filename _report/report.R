@@ -204,6 +204,10 @@ transform = function(ld) {
      ][, `:=`(script_time_sec=script_finish-script_start)
        ][] -> lld
   lld[, "iquestion":=as.integer(droplevels(question)), by="task"]
+  # complete set of data flag
+  lld[, `:=`(task_dataN=uniqueN(data)),.(task)]
+  lld[, "complete" := uniqueN(data)==task_dataN, .(task, solution, batch)]
+  lld[, "task_dataN" := NULL]
   lld[]
 }
 
