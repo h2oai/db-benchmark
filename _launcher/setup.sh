@@ -16,3 +16,10 @@ echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 source clickhouse/ch.sh && ch_stop
 sudo service docker stop
 sudo swapoff -a
+
+# stop and disable
+sudo systemctl disable docker
+sudo systemctl stop docker
+sudo systemctl disable clickhouse-server
+sudo systemctl stop clickhouse-server
+
