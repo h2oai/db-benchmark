@@ -69,3 +69,8 @@ clickhouse-client --max_memory_usage=$CH_MEM --format=Pretty --output_format_pre
 # go interactive clickhouse-client and use clickhouse/groupby-clickhouse.sql
 clickhouse-client --query="TRUNCATE TABLE G2_1e7_1e2_0_0"
 ch_stop
+
+## original data loading
+
+## tuple()
+# https://github.com/ClickHouse/ClickHouse/issues/9521
