@@ -1,7 +1,7 @@
 
 # db-benchmark maintenance manual
 
-For initial setup of benchmark project see [README.md](README.md).
+For initial setup of benchmark project see [README.md](../README.md).
 
 ## initial steps after (re)boot
 
@@ -62,7 +62,7 @@ File defines timeout values in minutes for tasks and data sizes. When implementi
 
 ### single solution, task and data
 
-See ["Single solution benchmark" section in `README.md`](https://github.com/h2oai/db-benchmark/#single-solution-benchmark). Note that running single solution should only be used for debugging. It will not populate entries into `logs.csv` and `time.csv` files. Additionally it will not switch to required virtual environments, do upgrades of software, or check if current version was already tested.
+See ["Single solution benchmark" section in `README.md`](../README.md#single-solution-benchmark). Note that running single solution should only be used for debugging. It will not populate entries into `logs.csv` and `time.csv` files. Additionally it will not switch to required virtual environments, do upgrades of software, or check if current version was already tested.
 
 ### full benchmarks
 
@@ -82,7 +82,7 @@ Because of `run.lock` machanism benchmark script can be easily scheduled in cron
 0 */72 * * * cd git/db-benchmark && if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out"; else ./run.sh > ./run.out; fi;
 ```
 
-Note that the user that executes the job has to have privileges defined, extra care is needed to setup sudo-less access for starting and shutting down ClickHouse server, see [`clickhouse/setup-clickhouse.sh`](clickhouse/setup-clickhouse.sh) for details.
+Note that the user that executes the job has to have privileges defined, extra care is needed to setup sudo-less access for starting and shutting down ClickHouse server, see [`clickhouse/setup-clickhouse.sh`](../clickhouse/setup-clickhouse.sh) for details.
 
 ## reading console output logs
 
