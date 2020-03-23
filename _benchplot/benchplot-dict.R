@@ -186,8 +186,8 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
-    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10
-    "timeout" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1"),      # q10
+    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10 #142
+    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1"),# q10 #142
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
   )},
   "pydatatable" = {list(
