@@ -74,7 +74,7 @@ if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run
 
 The command looks complex because we want to escape running benchmark if one is already running. `run.lock` file is created at the start of the benchmark and removed at the end, so we first check if it exists, and then if it doesn't we start `run.sh` script.
 
-In case of unlikely event of an exception in main process (`CTRL+C` to interrupt, etc.) the `run.lock` file will not be removed, thus manual removal of that file is needed. Additionally if exception occured during Spark or ClickHouse scripts, those platforms may additionally require shutdown `spark.stop()` or `sudo /usr/sbin/service clickhouse-server stop`.
+#### schedule benchmark
 
 Because of `run.lock` machanism benchmark script can be easily scheduled in crontab. To schedule it every 72h following entry can be used.
 
@@ -83,6 +83,26 @@ Because of `run.lock` machanism benchmark script can be easily scheduled in cron
 ```
 
 Note that the user that executes the job has to have privileges defined, extra care is needed to setup sudo-less access for starting and shutting down ClickHouse server, see [`clickhouse/setup-clickhouse.sh`](../clickhouse/setup-clickhouse.sh) for details.
+
+#### exceptions
+
+In case of unlikely event of an exception of the main process (`CTRL+C` to interrupt, etc.) the `run.lock` file will not be removed, thus manual removal of that file is needed. Additionally if exception occured during Spark or ClickHouse scripts, those platforms may require to shutdown them manually `spark.stop()` or `sudo /usr/sbin/service clickhouse-server stop`.
+
+If you want to gracefully terminate benchmark, rather than `CTRL+C`, you can just create `stop` file in db-benchmark directory.
+
+```sh
+touch stop
+```
+
+In such case current benchmark script will continue to be executed, but before starting the next script, the check for `stop` file will recognize you want to terminate benchmark and it will exit, not executing all remaining scripts. `stop` file will be automatically removed when benchmark launcher will exit, so you don't have to manually remove it afterwards.
+
+If you want to just pause benchmark, then create `pause` file.
+
+```sh
+touch pause
+```
+
+Similarly as for `stop` file, the execution of current script will continue, but any further scripts will be waiting till the `pause` file be removed.
 
 ## reading console output logs
 

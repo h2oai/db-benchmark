@@ -2,7 +2,8 @@ library("data.table")
 if (packageVersion("data.table") <= "1.12.0") stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0. If you need to benchmark older data.table tweak script to use custom library where older version is installed.")
 source("./_launcher/launcher.R")
 
-is.sigint()
+is.stop()
+is.pause()
 
 .nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))

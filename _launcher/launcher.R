@@ -61,10 +61,19 @@ getenv = function(x) {
 }
 
 # interrupt flag raise by 'touch stop'
-is.sigint = function() {
+is.stop = function() {
   if (file.exists("stop")) {
-    cat(sprintf("'stop' file detected, interrupting benchmark\n"))
+    cat(sprintf("'stop' file detected: interrupting benchmark at %s\n", format(Sys.time(), usetz=TRUE)))
     q("no")
+  }
+  invisible()
+}
+# pause flag raises by 'touch pause'
+is.pause = function() {
+  if (file.exists("pause")) {
+    cat(sprintf("'pause' file detected: pausing  benchmark at %s\n", format(Sys.time(), usetz=TRUE)))
+    while(file.exists("pause")) Sys.sleep(60) # check every minute
+    cat(sprintf("'pause' file absent:   resuming benchmark at %s\n", format(Sys.time(), usetz=TRUE)))
   }
   invisible()
 }
@@ -166,7 +175,8 @@ launch = function(dt, mockup, out_dir="out") {
       #### data
       data = dt[.(s, t), data, on=c("solution","task")]
       for (d in data) { # d = data[1]
-        is.sigint() # interrupt using 'stop' file #74
+        is.stop() # interrupt using 'stop' file #74
+        is.pause() # pause using 'pause' file #143
         this_run = dt[.(s, t, d), on=c("solution","task","data")]
         if (nrow(this_run) != 1L) stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
         out_file = sprintf("%s/run_%s_%s_%s.out", out_dir, ns, t, d)
