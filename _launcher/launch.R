@@ -1,5 +1,5 @@
 library("data.table")
-if (all(
+if (!all(
   packageVersion("data.table") >= "1.12.0",
   packageVersion("data.table") <= "1.12.8" ## Rdatatable/data.table#4413
 )) stop("db-benchmark launcher script depends on recent data.table features, install at least 1.12.0.")
