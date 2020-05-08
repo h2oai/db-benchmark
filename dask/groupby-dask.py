@@ -5,6 +5,7 @@ import timeit
 import pandas as pd
 import dask as dk
 import dask.dataframe as dd
+import logging
 
 if __name__ == "__main__":
     # we put whole test code inside main guard to because processes started by distributed
@@ -20,16 +21,19 @@ if __name__ == "__main__":
     fun = ".groupby"
     cache = "TRUE"
 
-    from dask.distributed import Client
-    # we use process-pool instead of thread-pool due to heavy CPU bound tasks
-    client = Client(processes=True)
+    data_name = os.environ['SRC_GRP_LOCAL']
+    data_size, grp_size = data_name.split("_")[1:3]
+    data_size, grp_size = int(float(data_size)), int(float(grp_size))
+
+    from dask import distributed
+    # we use process-pool instead of thread-pool due to GIL cost
+    client = distributed.Client(processes=True, silence_logs=logging.ERROR)
 
     # since we are running on local cluster of processes, we would prefer to keep the communication
     # between workers to relative minimum, thus it's better to trade some tasks granularity for
     # better processing locality
     with dk.config.set({"optimization.fuse.ave-width": 20}):
-        data_name = os.environ['SRC_GRP_LOCAL']
-        on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
+        on_disk = data_size == 1e9 # on-disk data storage #126
         fext = "parquet" if on_disk else "csv"
         src_grp = os.path.join("data", data_name+"."+fext)
         print("loading dataset %s" % data_name, flush=True)
@@ -38,7 +42,13 @@ if __name__ == "__main__":
         if on_disk:
             x = dd.read_parquet(src_grp, engine="fastparquet")
         else:
-            x = dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"}).persist()
+            x = dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "str", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
+
+        # utilize index for small groups
+        x = x.set_index("id3")
+        x = x.persist()
+        # sync data reading, and rebalance data among workers:
+        client.rebalance(x)
 
         in_rows = len(x)
         print(in_rows, flush=True)
