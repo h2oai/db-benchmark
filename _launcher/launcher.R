@@ -196,12 +196,17 @@ launch = function(dt, mockup, out_dir="out") {
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
         if (!mockup) {
+          warn = NULL
+          p = proc.time()[[3L]]
           tryCatch(
             ret <- system(shcmd, timeout=this_run$timeout_s), # here script actually runs
             warning = function(w) { # R's system warnings like 'timed out', they are not yet in stderr as all the inner ones
               cat(paste0(w[["message"]],"\n"), file=err_file, append=TRUE)
+              warn <<- w[["message"]]
             }
           )
+          if (length(warn) && ret==0L)
+            cat(sprintf("command '%s' timed out(?) but still exited with 0 code, timeout %ds, took %ds, warning '%s'\n", shcmd, this_run$timeout_s, proc.time()[[3L]]-p, warn), file="timeout-exit-codes.out", append=TRUE)
           cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
         }
         log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
