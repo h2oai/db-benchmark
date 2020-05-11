@@ -146,7 +146,7 @@ ANS = 0;
 
 question = "largest two v3 by id6"; # q8
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true) => :largest2_v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => (x -> partialsort(x, 1:min(2, length(x)), rev=true)) => :largest2_v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.largest2_v3);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
