@@ -121,16 +121,16 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "spark.sql('select id1, id2, id3, id4, id5, id6, sum(v3) as v3, count(*) as count from x group by id1, id2, id3, id4, id5, id6')"
   )},
   "juliadf" = {c(
-    "sum v1 by id1" = "by(DF, :id1, v1 = :v1 => sum)",
-    "sum v1 by id1:id2" = "by(DF, [:id1, :id2], v1 = :v1 => sum)",
-    "sum v1 mean v3 by id3" = "by(DF, :id3, v1 = :v1 => sum, v3 = :v3 => mean)",
-    "mean v1:v3 by id4" = "by(DF, :id4, v1 = :v1 => mean, v2 = :v2 => mean, v3 = :v3 => mean)",
-    "sum v1:v3 by id6" = "by(DF, :id6, v1 = :v1 => sum, v2 = :v2 => sum, v3 = :v3 => sum)",
-    "median v3 sd v3 by id4 id5" = "by(DF, [:id4, :id5], median_v3 = :v3 => median, sd_v3 = :v3 => std)",
-    "max v1 - min v2 by id3" = "by(DF, [:id3], range_v1_v2 = [:v1, :v2] => x -> maximum(skipmissing(x.v1))-minimum(skipmissing(x.v2)))",
-    "largest two v3 by id6" = "by(DF, [:id6], largest2_v3 = :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true))",
-    "regression v1 v2 by id2 id4" = "by(DF, [:id2, :id4], r2 = [:v1, :v2] => x -> cor(x.v1, x.v2)^2)",
-    "sum v3 count by id1:id6" = "by(DF, [:id1, :id2, :id3, :id4, :id5, :id6], v3 = :v3 => sum, count = :v3 => length)"
+    "sum v1 by id1" = "combine(groupby(DF, :id1), :v1 => sum => :v1)",
+    "sum v1 by id1:id2" = "combine(groupby(DF, [:id1, :id2]), :v1 => sum => :v1)",
+    "sum v1 mean v3 by id3" = "combine(groupby(DF, :id3), :v1 => sum => :v1, :v3 => mean => :v3)",
+    "mean v1:v3 by id4" = "combine(groupby(DF, :id4), :v1 => mean => :v1, :v2 => mean => :v2, :v3 => mean => :v3)",
+    "sum v1:v3 by id6" = "combine(groupby(DF, :id6), :v1 => sum => :v1, :v2 => sum => :v2, :v3 => sum => :v3)",
+    "median v3 sd v3 by id4 id5" = "combine(groupby(DF, [:id4, :id5]), :v3 => median => :median_v3, :v3 => std => :sd_v3)",
+    "max v1 - min v2 by id3" = "combine(groupby(DF, :id3), [:v1, :v2] => ((v1, v2) -> maximum(v1)-minimum(v2)) => :range_v1_v2)",
+    "largest two v3 by id6" = "combine(groupby(DF, :id6), :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true) => :largest2_v3)",
+    "regression v1 v2 by id2 id4" = "combine(groupby(DF, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2)",
+    "sum v3 count by id1:id6" = "combine(groupby(DF, [:id1, :id2, :id3, :id4, :id5, :id6]), :v3 => sum => :v3, :v3 => length => :count)"
   )},
   "cudf" = {c(
     "sum v1 by id1" = "DF.groupby(['id1'],as_index=False).agg({'v1':'sum'})",
@@ -253,11 +253,11 @@ join.syntax.dict = {list(
     "big inner on int" = "inner_join(DF, big, by='id3')"
   )},
   "juliadf" = {c(
-    "small inner on int" = "join(DF, small, on = :id1, makeunique=true)",
-    "medium inner on int" = "join(DF, medium, on = :id2, makeunique=true)",
-    "medium outer on int" = "join(DF, medium, kind = :left, on = :id2, makeunique=true)",
-    "medium inner on factor" = "join(DF, medium, on = :id5, makeunique=true)",
-    "big inner on int" = "join(DF, big, on = :id3, makeunique=true)"
+    "small inner on int" = "innerjoin(DF, small, on = :id1, makeunique=true)",
+    "medium inner on int" = "innerjoin(DF, medium, on = :id2, makeunique=true)",
+    "medium outer on int" = "leftjoin(DF, medium, on = :id2, makeunique=true)",
+    "medium inner on factor" = "innerjoin(DF, medium, on = :id5, makeunique=true)",
+    "big inner on int" = "innerjoin(DF, big, on = :id3, makeunique=true)"
   )},
   "pandas" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
