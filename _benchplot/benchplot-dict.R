@@ -128,7 +128,7 @@ groupby.syntax.dict = {list(
     "sum v1:v3 by id6" = "combine(groupby(DF, :id6), :v1 => sum => :v1, :v2 => sum => :v2, :v3 => sum => :v3)",
     "median v3 sd v3 by id4 id5" = "combine(groupby(DF, [:id4, :id5]), :v3 => median => :median_v3, :v3 => std => :sd_v3)",
     "max v1 - min v2 by id3" = "combine(groupby(DF, :id3), [:v1, :v2] => ((v1, v2) -> maximum(v1)-minimum(v2)) => :range_v1_v2)",
-    "largest two v3 by id6" = "combine(groupby(DF, :id6), :v3 => x -> partialsort(x, 1:min(2, length(x)), rev=true) => :largest2_v3)",
+    "largest two v3 by id6" = "combine(groupby(DF, :id6), :v3 => (x -> partialsort(x, 1:min(2, length(x)), rev=true)) => :largest2_v3)",
     "regression v1 v2 by id2 id4" = "combine(groupby(DF, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2)",
     "sum v3 count by id1:id6" = "combine(groupby(DF, [:id1, :id2, :id3, :id4, :id5, :id6]), :v3 => sum => :v3, :v3 => length => :count)"
   )},
