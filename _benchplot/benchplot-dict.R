@@ -138,7 +138,7 @@ groupby.syntax.dict = {list(
     "sum v1 mean v3 by id3" = "DF.groupby(['id3'],as_index=False).agg({'v1':'sum', 'v3':'mean'})",
     "mean v1:v3 by id4" = "DF.groupby(['id4'],as_index=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
     "sum v1:v3 by id6" = "DF.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
-    "median v3 sd v3 by id4 id5" = "",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'],as_index=False).agg({'v3': ['median','std']})",
     "max v1 - min v2 by id3" = "",
     "largest two v3 by id6" = "",
     "regression v1 v2 by id2 id4" = "",
@@ -166,8 +166,7 @@ groupby.query.exceptions = {list(
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
                        "not yet documented: dask#5622" = "regression v1 v2 by id2 id4"), #122
   "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#3429" = "median v3 sd v3 by id4 id5", #121
-                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
+  "cudf" =        list("not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list()

@@ -8,11 +8,12 @@ echo 'NOT upgrading cudf...' # fixed version as of now, we manully remove conda 
 
 # install command for current stable release from https://rapids.ai/start.html
 
-conda env remove --name cudf
-conda create --name cudf
+conda env remove -y --name cudf
+conda create -y --name cudf
 conda activate cudf
-conda install --name cudf psutil
 #conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.11 python=3.6 cudatoolkit=10.0
 #conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults dask-cudf=0.11 #116
-conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.12 python=3.6 cudatoolkit=10.0
+#conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.12 python=3.6 cudatoolkit=10.0
+conda install -y --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.13 python=3.6 cudatoolkit=10.0
+conda install -y --name cudf psutil
 conda deactivate
