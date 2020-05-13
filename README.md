@@ -21,7 +21,7 @@ Contribution and feedback are very welcome!
   - [x] [cuDF](https://github.com/rapidsai/cudf)
   - [x] [ClickHouse](https://github.com/yandex/ClickHouse) (`join` not yet added)
 
-More solutions has been proposed. Some of them are not yet mature enough to address benchmark questions well enough (e.g. [modin](https://github.com/h2oai/db-benchmark/issues/38)). Others haven't been yet evaluated or implemented. Status of all can be tracked in dedicated [issues labelled as _new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) in project repository.
+More solutions has been proposed. Status of those can be tracked in issues tracker of our project repository by using [_new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) label.
 
 # Reproduce
 
@@ -68,4 +68,5 @@ More solutions has been proposed. Some of them are not yet mature enough to addr
 # Acknowledgment
 
 Timings for some solutions might be missing for particular data sizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.
-Please check [issues labelled as _exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) in our repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
+Please check [_exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) label in our repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
+There is also [_no documentation_](https://github.com/h2oai/db-benchmark/labels/no%20documentation) label that lists issues that are blocked by missing documentation in solutions we are benchmarking.
