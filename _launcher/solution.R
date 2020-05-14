@@ -109,7 +109,7 @@ if ("quiet" %in% names(args)) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "data.table"=, "dplyr"="R",
+    "data.table"=, "dplyr"=, "h2o"="R",
     "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
@@ -169,7 +169,7 @@ setenv(data_name_env, d)
 
 ns = solution.path(s)
 ext = file.ext(s)
-localcmd = if (ext=="sql") { # sql scripts are using extra exec shell script, related only to clickhouse as of now
+localcmd = if (s %in% c("clickhouse","h2o")) { # custom launcher bash script, for clickhouse and h2o
   sprintf("exec.sh %s %s", t, d)
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)

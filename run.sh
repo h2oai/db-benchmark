@@ -10,6 +10,9 @@ export BATCH=$(date +%s)
 # confirm stop flag disabled
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
+# confirm java is not running
+pidof java > /dev/null 2>&1 && echo "# Benchmark run $BATCH aborted. java is running, shut it down before calling 'run.sh'" && exit;
+
 # confirm clickhouse is not running
 source ./clickhouse/ch.sh
 ch_installed && ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
@@ -52,6 +55,8 @@ if [[ "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/ver-spark.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/ver-cudf.sh; fi;
 #if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/init-clickhouse.sh; fi; # manual as requires sudo: apt-get install --only-upgrade clickhouse-server clickhouse-client
 if [[ "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/ver-clickhouse.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "h2o" ]]; then ./h2o/init-h2o.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "h2o" ]]; then ./h2o/ver-h2o.sh; fi;
 
 # run
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
