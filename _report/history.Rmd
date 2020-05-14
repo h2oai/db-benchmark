@@ -238,7 +238,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r datatable.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -270,7 +270,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r datatable.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### dplyr {.tabset .tabset-fade .tabset-pills}
@@ -319,7 +319,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r dplyr.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -351,7 +351,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r dplyr.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### pandas {.tabset .tabset-fade .tabset-pills}
@@ -400,7 +400,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r pandas.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -432,7 +432,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r pandas.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### pydatatable {.tabset .tabset-fade .tabset-pills}
@@ -481,7 +481,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r pydatatable.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -513,7 +513,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r pydatatable.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### spark {.tabset .tabset-fade .tabset-pills}
@@ -562,7 +562,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r spark.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -594,7 +594,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r spark.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### cudf {.tabset .tabset-fade .tabset-pills}
@@ -643,7 +643,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r cudf.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -675,7 +675,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r cudf.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### dask {.tabset .tabset-fade .tabset-pills}
@@ -724,7 +724,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r dask.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -756,7 +756,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r dask.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### juliadf {.tabset .tabset-fade .tabset-pills}
@@ -805,7 +805,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r juliadf.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
@@ -837,7 +837,7 @@ fmt(dt[sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fun.aggregate
 
 ```{r juliadf.join.sort}
 fmt(dt[na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (no NA)")
+    caption="by Sortedness Size (no NA)")
 ```
 
 ### clickhouse {.tabset .tabset-fade .tabset-pills}
@@ -886,7 +886,7 @@ fmt(dt[k=="1e2" & sort=="0", dcast(.SD, na+in_rows~metric, value.var="run_1", fu
 
 ```{r clickhouse.groupby.sort}
 fmt(dt[k=="1e2" & na=="0", dcast(.SD, sort+in_rows~metric, value.var="run_1", fun.aggregate=mean, na.rm=FALSE)],
-    caption="by NA fraction Size (k=1e2, no NA)")
+    caption="by Sortedness Size (k=1e2, no NA)")
 ```
 
 #### join {.tabset .tabset-dropdown}
