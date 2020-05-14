@@ -70,16 +70,28 @@ clean_questions = function(q) {
 # model ----
 
 model_time = function(d) {
-  # chk tolerance for cudf disabled as of now: https://github.com/rapidsai/cudf/issues/2494
+  # chk tolerance for cudf: https://github.com/rapidsai/cudf/issues/2494
   #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
-  # as well for dask due to #136
+  # and dask #136
   #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
+  approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6, cudf needs 1e-3
+    l = lapply(as.list(rbindlist(lapply(strsplit(x, ";", fixed=TRUE), as.list))), type.convert)
+    int = sapply(l, is.integer)
+    dbl = sapply(l, is.double)
+    if (sum(int, dbl)!=length(l)) stop("chk has elements that were not converted to int or double")
+    ans = vector("logical", length(l))
+    ans[int] = vapply(l[int], function(y) {same=uniqueN(y)==1L; if (debug&&!same) browser() else same}, NA)
+    ans[dbl] = vapply(l[dbl], function(y, t) {
+      m = mean(y)
+      lb = m-m*t
+      ub = m+m*t
+      same = all(y >= lb) && all(y <= ub)
+      if (debug&&!same) browser() else same
+    }, t=tolerance, NA)
+    all(ans)
+  }
   if (nrow(
-    d[!is.na(chk) & (
-      solution!="cudf" &
-      solution!="dask"
-      ),
-      .(unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
+    d[!is.na(chk), .(unqn1_chk=approxUniqueN1(chk)), .(task, solution, data, question)][unqn1_chk==FALSE]
     ))
     stop("Value of 'chk' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unqn_out_rows>1L]))
