@@ -206,7 +206,8 @@ launch = function(dt, mockup, out_dir="out") {
             }
           )
           if (length(warn) && ret==0L)
-            cat(sprintf("command '%s' timed out(?) but still exited with 0 code, timeout %ds, took %ds, warning '%s'\n", shcmd, this_run$timeout_s, proc.time()[[3L]]-p, warn), file="timeout-exit-codes.out", append=TRUE)
+            cat(sprintf("command '%s' timed out(?) but still exited with 0 code, timeout %ss, took %ss, warning '%s'\n",
+                        shcmd, this_run$timeout_s, proc.time()[[3L]]-p, warn), file="timeout-exit-codes.out", append=TRUE)
           cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
         }
         log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
