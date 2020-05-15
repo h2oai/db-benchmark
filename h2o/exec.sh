@@ -8,8 +8,8 @@ fi;
 
 source ./h2o/h2o.sh
 
-h2o_active || echo "h2o instance should not be already running, investigate" >&2
-h2o_active || exit 1
+h2o_active && echo "h2o instance should not be already running, investigate" >&2
+h2o_active && exit 1
 
 # start h2o
 h2o_start "h2o_$1_$2"
