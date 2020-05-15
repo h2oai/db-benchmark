@@ -113,13 +113,13 @@ print(tail(ans, 3))
 h2o.rm(ans)
 
 question = "max v1 - min v2 by id3" # q7
-
+#https://0xdata.atlassian.net/browse/PUBDEV-7538
 
 question = "largest two v3 by id6" # q8
-
+#https://0xdata.atlassian.net/browse/PUBDEV-7539
 
 question = "regression v1 v2 by id2 id4" # q9
-
+#https://0xdata.atlassian.net/browse/PUBDEV-7540
 
 question = "sum v3 count by id1:id6" # q10
 t = system.time(print(dim(ans<-h2o.group_by(x, by=c("id1","id2","id3","id4","id5","id6"), sum("v3"), nrow("id1","id2","id3","id4","id5","id6")))))[["elapsed"]]
