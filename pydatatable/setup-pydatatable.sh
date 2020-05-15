@@ -12,7 +12,7 @@ python -m pip install --upgrade psutil
 
 # build
 deactivate
-./pydatatable/init-pydatatable.sh
+./pydatatable/upg-pydatatable.sh
 
 # check
 source pydatatable/py-pydatatable/bin/activate

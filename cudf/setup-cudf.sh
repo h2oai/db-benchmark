@@ -9,7 +9,7 @@ export PATH=/usr/local/cuda-9.2/bin:$PATH
 # confirm 9.2 used
 nvcc --version
 
-# setup conda env based on cudf/init-cudf.py
+# setup conda env based on cudf/upg-cudf.py
 
 # test
 conda activate cudf
