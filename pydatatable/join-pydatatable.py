@@ -179,7 +179,7 @@ y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -187,13 +187,13 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans, y, tmp
 gc.collect()
 y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -203,7 +203,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
-del ans, y
+del ans, y, tmp
 
 print("joining finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
