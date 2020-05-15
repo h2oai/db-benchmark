@@ -222,6 +222,7 @@ rpivotTable::rpivotTable(
 - For a cuDF solution _on-disk_ memory actually means main memory because this is where memory spils from a GPU memory. Note as of the current moment only single GPU is used (11 GB), see [#116](https://github.com/h2oai/db-benchmark/issues/116) for status.
 - ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
 - We ensure that calculations are not deferred by solution.
+- Because of the above, as of current moment, join timings of python datatable suffers from an extra deep copy, or in big-to-big join, writing answer to disk.
 - We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
 
 ## Environment configuration
