@@ -20,9 +20,9 @@ data_name = Sys.getenv("SRC_GRP_LOCAL")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-x = h2o.importFile(src_grp, col.types=c("string","string","string","int","int","int","int","int","real"))
-# using string due to ERROR caused by water.parser.ParseDataset$H2OParseException: Exceeded categorical limit on column #3 (using 1-based indexing).  Consider reparsing this column as a string.
-# https://0xdata.atlassian.net/browse/PUBDEV-7533
+x = h2o.importFile(src_grp)
+# Could not use factor columns due to ERROR caused by water.parser.ParseDataset$H2OParseException: Exceeded categorical limit on column #3 (using 1-based indexing).  Consider reparsing this column as a string. https://0xdata.atlassian.net/browse/PUBDEV-7533
+# Could not use string columns due to ERROR caused by java.lang.IllegalArgumentException: Operation not allowed on string vector. https://0xdata.atlassian.net/browse/PUBDEV-7536
 print(nrow(x))
 
 task_init = proc.time()[["elapsed"]]
