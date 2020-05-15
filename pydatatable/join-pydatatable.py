@@ -49,7 +49,7 @@ y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
-tmp = ans.copy(deep=True) ## ensure join results materialized #141
+ans.to_jay('/tmp/pydatatable-tmp.jay') ## ensure join results materialized #141
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -63,7 +63,7 @@ y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -81,7 +81,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -95,7 +95,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -113,7 +113,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -127,7 +127,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -145,7 +145,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -159,7 +159,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -177,7 +177,7 @@ y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -191,7 +191,7 @@ y = big.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id3'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id3'
-tmp = ans.copy(deep=True)
+ans.to_jay('/tmp/pydatatable-tmp.jay')
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
