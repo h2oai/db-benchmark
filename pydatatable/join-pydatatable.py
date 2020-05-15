@@ -49,7 +49,7 @@ y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
-ans.to_jay('/tmp/pydatatable-tmp.jay') ## ensure join results materialized #141
+tmp = ans.copy(deep=True) ## ensure join results materialized #141
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -57,13 +57,13 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans, y, tmp
 gc.collect()
 y = small.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id1'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id1'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -73,7 +73,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
-del ans, y
+del ans, y, tmp
 
 question = "medium inner on int" # q2
 gc.collect()
@@ -81,7 +81,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -89,13 +89,13 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans, y, tmp
 gc.collect()
 y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id2'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -105,7 +105,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
-del ans, y
+del ans, y, tmp
 
 question = "medium outer on int" # q3
 gc.collect()
@@ -113,7 +113,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -121,13 +121,13 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans, y, tmp
 gc.collect()
 y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id2'
 ans = x[:, :, join(y)] # , on='id2', how='left'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -137,7 +137,7 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
-del ans, y
+del ans, y, tmp
 
 question = "medium inner on factor" # q4
 gc.collect()
@@ -145,7 +145,7 @@ y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -153,13 +153,13 @@ t_start = timeit.default_timer()
 chk = ans[:, [sum(f.v1), sum(f.v2)]]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans, y
+del ans, y, tmp
 gc.collect()
 y = medium.copy(deep=True)
 t_start = timeit.default_timer()
 y.key = 'id5'
 ans = x[:, :, join(y)][isfinite(f.v2), :] # , on='id5'
-ans.to_jay('/tmp/pydatatable-tmp.jay')
+tmp = ans.copy(deep=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -169,7 +169,9 @@ chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
-del ans, y
+del ans, y, tmp
+
+## to address #141 we do tmp=ans.copy(deep=True) which for q5 produces OOM thus try to_jay only here
 
 question = "big inner on int" # q5
 gc.collect()
