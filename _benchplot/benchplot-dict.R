@@ -73,16 +73,16 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "DF %>% group_by(id1, id2, id3, id4, id5, id6, .drop=TRUE) %>% summarise(v3=sum(v3), count=n())"
   )},
   "pandas" = {c(
-    "sum v1 by id1" = "DF.groupby(['id1']).agg({'v1':'sum'})",
-    "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg({'v1':'sum'})",
-    "sum v1 mean v3 by id3" = "DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
-    "mean v1:v3 by id4" = "DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
-    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
-    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5']).agg({'v3': ['median','std']})",
-    "max v1 - min v2 by id3" = "DF.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
-    "largest two v3 by id6" = "DF[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)",
-    "regression v1 v2 by id2 id4" = "DF[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
-    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})"
+    "sum v1 by id1" = "DF.groupby(['id1'], observed=True).agg({'v1':'sum'})",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], observed=True).agg({'v1':'sum'})",
+    "sum v1 mean v3 by id3" = "DF.groupby(['id3'], observed=True).agg({'v1':'sum', 'v3':'mean'})",
+    "mean v1:v3 by id4" = "DF.groupby(['id4'], observed=True).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
+    "sum v1:v3 by id6" = "DF.groupby(['id6'], observed=True).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'], observed=True).agg({'v3': ['median','std']})",
+    "max v1 - min v2 by id3" = "DF.groupby(['id3'], observed=True).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]",
+    "largest two v3 by id6" = "DF[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'], observed=True).head(2)",
+    "regression v1 v2 by id2 id4" = "DF[['id2','id4','v1','v2']].groupby(['id2','id4'], observed=True).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], observed=True).agg({'v3':'sum', 'v1':'count'})"
   )},
   "pydatatable" = {c(
     "sum v1 by id1" = "DT[:, {'v1': sum(f.v1)}, by(f.id1)]",
