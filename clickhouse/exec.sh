@@ -17,7 +17,8 @@ ch_active || echo "clickhouse-server should be already running, investigate" >&2
 ch_active || exit 1
 
 # load data
-CH_MEM=103079215104 # 96 GB ## old value 107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
+CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
+CH_EXT_GRP_BY=53687091200 # twice less than CH_MEM #96
 clickhouse-client --query="TRUNCATE TABLE $2"
 clickhouse-client --max_memory_usage=$CH_MEM --query="INSERT INTO $2 FORMAT CSVWithNames" < "data/$2.csv"
 # confirm all data loaded yandex/ClickHouse#4463
@@ -32,7 +33,7 @@ rm -f clickhouse/log/$1_$2_q*.csv
 
 # execute sql script on clickhouse
 clickhouse-client --query="TRUNCATE TABLE system.query_log"
-cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --receive_timeout=10800 --format=Pretty --output_format_pretty_max_rows 1 || echo "# clickhouse/exec.sh: benchmark sql script for $2 terminated with error" >&2
+cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --max_bytes_before_external_group_by=$CH_EXT_GRP_BY --receive_timeout=10800 --format=Pretty --output_format_pretty_max_rows 1 || echo "# clickhouse/exec.sh: benchmark sql script for $2 terminated with error" >&2
 
 # need to wait in case if server crashed to release memory
 sleep 120
