@@ -34,7 +34,8 @@ rm -f clickhouse/log/$1_$2_q*.csv
 
 # execute sql script on clickhouse
 clickhouse-client --query="TRUNCATE TABLE system.query_log"
-cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --max_bytes_before_external_group_by=$CH_EXT_GRP_BY --max_bytes_before_external_sort=$CH_EXT_SORT--receive_timeout=10800 --format=Pretty --output_format_pretty_max_rows 1 || echo "# clickhouse/exec.sh: benchmark sql script for $2 terminated with error"
+echo "# clickhouse/exec.sh: data loaded, logs truncated, $1-$2 script prepared, sending benchmark sql script"
+cat "clickhouse/$1-clickhouse.sql" | clickhouse-client -mn --max_memory_usage=$CH_MEM --max_bytes_before_external_group_by=$CH_EXT_GRP_BY --max_bytes_before_external_sort=$CH_EXT_SORT --receive_timeout=10800 --format=Pretty --output_format_pretty_max_rows 1 && echo "# clickhouse/exec.sh: benchmark sql script finished" || echo "# clickhouse/exec.sh: benchmark sql script for $2 terminated with error"
 
 # need to wait in case if server crashed to release memory
 sleep 120
