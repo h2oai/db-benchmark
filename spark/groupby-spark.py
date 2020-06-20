@@ -72,7 +72,7 @@ chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -104,7 +104,7 @@ chk = [spark.sql("select sum(v1) as v1 from ans").collect()[0].asDict()['v1']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -136,7 +136,7 @@ chk = list(spark.sql("select sum(v1) as v1, sum(v3) as v3 from ans").collect()[0
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -168,7 +168,7 @@ chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from an
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -200,7 +200,7 @@ chk = list(spark.sql("select sum(v1) as v1, sum(v2) as v2, sum(v3) as v3 from an
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -232,7 +232,7 @@ del ans
 #chkt = timeit.default_timer() - t_start
 #write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 #print(ans.head(3), flush=True)
-## print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+#print(ans.tail(3), flush=True)
 #ans.unpersist()
 #spark.catalog.uncacheTable("ans")
 #del ans
@@ -264,7 +264,7 @@ chk = [spark.sql("select sum(range_v1_v2) as range_v1_v2 from ans").collect()[0]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -296,7 +296,7 @@ chk = [spark.sql("select sum(largest2_v3) as largest2_v3 from ans").collect()[0]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -328,7 +328,7 @@ chk = [spark.sql("select sum(r2) as r2 from ans").collect()[0].asDict()['r2']]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
@@ -360,7 +360,7 @@ chk = list(spark.sql("select sum(v3) as v3, sum(count) as count from ans").colle
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=x.count(), question=question, out_rows=ans.count(), out_cols=len(ans.columns), solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
-# print(ans.tail(3), flush=True) # as of 2.4.0 still not implemented https://issues.apache.org/jira/browse/SPARK-26433
+print(ans.tail(3), flush=True)
 ans.unpersist()
 spark.catalog.uncacheTable("ans")
 del ans
