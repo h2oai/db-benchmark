@@ -18,6 +18,7 @@ task = "groupby"
 solution = "dask"
 fun = ".groupby"
 cache = "TRUE"
+on_disk = False ## thanks to #144 dask can now read 1e9 csv data
 
 from dask import distributed
 # we use process-pool instead of thread-pool due to GIL cost
@@ -26,13 +27,14 @@ client = distributed.Client(processes=True, silence_logs=logging.ERROR)
 dk.config.set({"optimization.fuse.ave-width": 20})
 
 data_name = os.environ['SRC_GRP_LOCAL']
-on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
+#on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
 fext = "parquet" if on_disk else "csv"
 src_grp = os.path.join("data", data_name+"."+fext)
 print("loading dataset %s" % data_name, flush=True)
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
-x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
+#x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else ...
+x = dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
 
 x = x.persist()
 # sync data reading, and rebalance data among workers - no actual impact as of now, come back to this if rebalance used in future: https://github.com/h2oai/db-benchmark/pull/144/files#r430733102
