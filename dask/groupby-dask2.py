@@ -32,7 +32,7 @@ src_grp = os.path.join("data", data_name+"."+fext)
 print("loading dataset %s" % data_name, flush=True)
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
-x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "str", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
+x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
 
 x = x.persist()
 # sync data reading, and rebalance data among workers - no actual impact as of now, come back to this if rebalance used in future: https://github.com/h2oai/db-benchmark/pull/144/files#r430733102
