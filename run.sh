@@ -7,6 +7,9 @@ set -e
 # set batch
 export BATCH=$(date +%s)
 
+# low level log of every script run
+echo $BATCH >> ./batch.log
+
 # confirm stop flag disabled
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH aborted. 'stop' file exists, should be removed before calling 'run.sh'" && exit; fi;
 
