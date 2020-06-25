@@ -76,11 +76,13 @@ The command looks complex because we want to escape running benchmark if one is 
 
 #### schedule benchmark
 
-Because of `run.lock` machanism benchmark script can be easily scheduled in crontab. To schedule it every 72h following entry can be used.
+Because of `run.lock` machanism benchmark script can be easily scheduled in crontab. To schedule to run every 10 days the following entry can be used.
 
 ```cron
-0 */72 * * * cd git/db-benchmark && if [[ -f ./run.lock ]]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +%s).out"; else ./run.sh > ./run.out; fi;
+0 */240 * * * cd ~/git/db-benchmark && if [ -f ./run.lock ]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +\%s).out"; else ./run.sh > ./run.out 2>&1; fi;
 ```
+
+Command used in cron has to be posix shell, not bash, and percent signs has to be escaped with backslashes.
 
 Note that the user that executes the job has to have privileges defined, extra care is needed to setup sudo-less access for starting and shutting down ClickHouse server, see [`clickhouse/setup-clickhouse.sh`](../clickhouse/setup-clickhouse.sh) for details.
 
