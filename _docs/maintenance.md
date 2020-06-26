@@ -79,7 +79,7 @@ The command looks complex because we want to escape running benchmark if one is 
 Because of `run.lock` machanism benchmark script can be easily scheduled in crontab. To schedule to run weekly the following entry can be used.
 
 ```cron
-30 0 * * 6 cd ~/git/db-benchmark && if [ -f ./run.lock ]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +\%s).out"; else ./run.sh > ./run.out 2>&1; fi;
+30 0 * * 7 cd ~/git/db-benchmark && if [ -f ./run.lock ]; then echo "# Benchmark run discarded due to previous run $(cat run.lock) still running" > "./run_discarded_at_$(date +\%s).out"; else ./run.sh > ./run.out 2>&1; fi;
 ```
 
 Command used in cron has to be posix shell, not bash, and percent signs has to be escaped with backslashes.
