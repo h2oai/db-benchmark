@@ -1,11 +1,11 @@
 
 # install julia
-wget https://julialang-s3.julialang.org/bin/linux/x64/1.4/julia-1.4.1-linux-x86_64.tar.gz
-tar -xvf julia-1.4.1-linux-x86_64.tar.gz
-sudo mv julia-1.4.1 /opt
-rm julia-1.4.1-linux-x86_64.tar.gz
+wget https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.0-linux-x86_64.tar.gz
+tar -xvf julia-1.5.0-linux-x86_64.tar.gz
+sudo mv julia-1.5.0 /opt
+rm julia-1.5.0-linux-x86_64.tar.gz
 # put to paths
-echo 'export JULIA_HOME=/opt/julia-1.4.1' >> path.env
+echo 'export JULIA_HOME=/opt/julia-1.5.0' >> path.env
 echo 'export PATH=$PATH:$JULIA_HOME/bin' >> path.env
 
 source path.env
