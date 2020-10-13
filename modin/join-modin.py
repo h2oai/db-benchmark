@@ -32,17 +32,16 @@ if len(src_jn_y) != 3:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
-from datatable import fread # for loading data only, see #47
-x = pd.DataFrame(fread(src_jn_x).to_pandas()) # convert Pandas DataFrame into Modin DataFrame
-x['id4'] = x['id4'].astype('category') # remove after datatable#1691
+x = pd.read_csv(src_jn_x)
+x['id4'] = x['id4'].astype('category')
 x['id5'] = x['id5'].astype('category')
 x['id6'] = x['id6'].astype('category')
-small = pd.DataFrame(fread(src_jn_y[0]).to_pandas()) # convert Pandas DataFrame into Modin DataFrame
+small = pd.read_csv(src_jn_y[0])
 small['id4'] = small['id4'].astype('category')
-medium = pd.DataFrame(fread(src_jn_y[1]).to_pandas()) # convert Pandas DataFrame into Modin DataFrame
+medium = pd.read_csv(src_jn_y[1])
 medium['id4'] = medium['id4'].astype('category')
 medium['id5'] = medium['id5'].astype('category')
-big = pd.DataFrame(fread(src_jn_y[2]).to_pandas()) # convert Pandas DataFrame into Modin DataFrame
+big = pd.read_csv(src_jn_y[2])
 big['id4'] = big['id4'].astype('category')
 big['id5'] = big['id5'].astype('category')
 big['id6'] = big['id6'].astype('category')
