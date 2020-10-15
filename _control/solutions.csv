@@ -18,3 +18,4 @@ cudf,groupby
 cudf,join
 h2o,groupby
 h2o,join
+modin,join
