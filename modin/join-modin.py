@@ -19,7 +19,7 @@ ver = modin.__version__
 git = ""
 task = "join"
 solution = "modin"
-fun = "merge"
+fun = ".merge"
 cache = "TRUE"
 on_disk = "FALSE"
 
@@ -51,7 +51,7 @@ print(len(medium.index), flush=True)
 print(len(big.index), flush=True)
 
 task_init = timeit.default_timer()
-print("joining...")
+print("joining...", flush=True)
 
 question = "small inner on int" # q1
 gc.collect()
