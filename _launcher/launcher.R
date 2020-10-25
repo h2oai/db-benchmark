@@ -151,6 +151,7 @@ log_run = function(solution, task, data, action = c("start","finish","skip"), ba
   if (isTRUE(stderr>0L)) status = sprintf("%s: stderr %s", status, stderr)
   if (nzchar(comment)) status = sprintf("%s: %s", status, comment)
   if (verbose) cat(sprintf("%s %s %s %s%s\n", labels[[action]], solution, task, data, status))
+  invisible(timestamp)
 }
 
 # main launcher than loops over solutions, tasks, data and when need run it in new shell command
@@ -162,6 +163,7 @@ launch = function(dt, mockup, out_dir="out") {
     !anyNA(dt$solution), !anyNA(dt$task), !anyNA(dt$data)
   )
   batch = Sys.getenv("BATCH", NA)
+  last_run = -Inf
   .nodename = unique(dt$nodename)
   ## solution
   solutions = dt[, unique(solution)]
@@ -178,7 +180,8 @@ launch = function(dt, mockup, out_dir="out") {
         is.stop() # interrupt using 'stop' file #74
         is.pause() # pause using 'pause' file #143
         this_run = dt[.(s, t, d), on=c("solution","task","data")]
-        if (nrow(this_run) != 1L) stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
+        if (nrow(this_run) != 1L)
+          stop(sprintf("single run for %s-%s-%s has %s entries while it must have exactly one", s, t, d, nrow(this_run)))
         out_file = sprintf("%s/run_%s_%s_%s.out", out_dir, ns, t, d)
         err_file = sprintf("%s/run_%s_%s_%s.err", out_dir, ns, t, d)
         ret_file = sprintf("%s/run_%s_%s_%s.ret", out_dir, ns, t, d)
@@ -187,6 +190,9 @@ launch = function(dt, mockup, out_dir="out") {
           log_run(s, t, d, action="skip", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), comment=comment, mockup=mockup) # action 'skip' also logs number of stderr lines from previos run and previous exit code
           next
         }
+        # make at least 15s interval between running two scripts
+        if ((wait <- last_run + 15 - as.numeric(Sys.time())) > 0)
+          Sys.sleep(wait)
         log_run(s, t, d, action="start", batch=batch, nodename=.nodename, mockup=mockup)
         if (!mockup) {
           if (file.exists(out_file)) file.remove(out_file)
@@ -210,7 +216,7 @@ launch = function(dt, mockup, out_dir="out") {
                         shcmd, this_run$timeout_s, proc.time()[[3L]]-p, warn), file="timeout-exit-codes.out", append=TRUE)
           cat(paste0(ret,"\n"), file=ret_file, append=FALSE)
         }
-        log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
+        last_run = log_run(s, t, d, action="finish", batch=batch, nodename=.nodename, ret=readret(ret_file), stderr=wcl(err_file), mockup=mockup)
       }
     }
   }
