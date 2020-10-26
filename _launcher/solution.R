@@ -146,10 +146,7 @@ data.desc = function(task, nrow, k, na, sort) {
   sprintf("%s_%s_%s_%s_%s", prefix, nrow, k, na, sort)
 }
 data_name_exception = function(solution, task, d) {
-  if (solution=="clickhouse" & task=="groupby")
-    sub("G1", "G2", d, fixed=TRUE)
-  else
-    d
+  d
 }
 # no dots solution name used in paths
 solution.path = function(x) {

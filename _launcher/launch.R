@@ -39,9 +39,6 @@ stopifnot(dt$in_rows == dt$nrow)
 dt[timeout, "timeout_s" := i.minutes*60, on=c("task","in_rows")]
 if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv for some tasks, detected after joining to solutions and data to run")
 
-# clickhouse uses mergetree table engine #91 thus it requires PK: G2 is like G1 but added sequence column
-dt[solution=="clickhouse" & task=="groupby", "data" := sub("G1", "G2", data, fixed=TRUE)]
-
 # detect if script has been already run before for currently installed version/revision
 lookup_run_batch(dt)
 

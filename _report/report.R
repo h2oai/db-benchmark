@@ -178,33 +178,15 @@ transform = function(ld) {
   ld[, "na_time_sec":=FALSE][is.na(time_sec_1) | is.na(time_sec_2), "na_time_sec":=TRUE]
   ld[, "on_disk" := on_disk[1L], by=c("batch","solution","task","data")] # on_disk is a constant across whole script, fill trailing NA so advanced question group will not stay NA if basic had that info #126
 
-  { # clickhouse memory/mergetree table engine handling
+  { # clickhouse memory/mergetree table engine handling for historical timings only, all new uses mergetree and G1 prefix #137
     ld[, "engine":=NA_character_]
-    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1", engine:="memory"]
-    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2", engine:="mergetree"]
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch<=1603737536, engine:="memory"]
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch<=1603737536, engine:="mergetree"]
+    if (nrow(ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch>1603737536]))
+      stop("There should be no G2 prefix for clickhouse as we stopped using workaround for mandatory primary key and now using G1 for mergetree which was faster")
+    ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch>1603737536, engine:="mergetree"]
     ## according to #91 we now will present mergetree only
     ld = ld[!(task=="groupby" & solution=="clickhouse" & engine=="memory")]
-    ld[task=="groupby" & solution=="clickhouse" & engine=="mergetree", `:=`(
-      data = gsub("G2", "G1", data, fixed=TRUE),
-      on_disk = !on_disk ## swap to denote slower method with star suffix, so for clickhouse it is (currently unused) memory table engine, otherwise clickhouse would always be marked by star #126
-    )]
-    #if (nrow(ld[task=="groupby" & solution=="clickhouse" & engine=="memory" & na_time_sec==TRUE])) {
-    #  ld[task=="groupby" & solution=="clickhouse" & engine=="mergetree"
-    #     ][, `:=`(
-    #       disk_na_time_sec=na_time_sec, # original na_time_sec
-    #       disk_time_sec_1=time_sec_1, disk_time_sec_2=time_sec_2,
-    #       disk_timestamp_1=timestamp_1, disk_timestamp_2=timestamp_2,
-    #       disk_engine=engine,
-    #       disk_fun=fun,
-    #       disk_script_stderr=script_stderr,
-    #       data=gsub("G2", "G1", data, fixed=TRUE),  # only to join to G1 timings
-    #       na_time_sec=TRUE                          # only to join to na_time_sec=TRUE
-    #     )] -> ch_disk_time
-    #  ld[ch_disk_time, on=c("batch","task","solution","data","question","na_time_sec"),
-    #     `:=`(time_sec_1=i.disk_time_sec_1, time_sec_2=i.disk_time_sec_2,
-    #          timestamp_1=i.disk_timestamp_1, timestamp_2=i.disk_timestamp_2,
-    #          fun=i.disk_fun, na_time_sec=i.disk_na_time_sec, engine=i.disk_engine, script_stderr=i.disk_script_stderr)]
-    #}
   }
   
   ld[, c(list(nodename=nodename, batch=batch, ibatch=as.integer(ft(as.character(batch))), solution=solution,
