@@ -72,7 +72,7 @@ rm -rf ./public
 rm -f ./report-done
 $DO_REPORT && echo "# Rendering report"
 $DO_REPORT && Rscript -e 'rmarkdown::render("./_report/index.Rmd", output_dir="public")' > ./out/rmarkdown_index.out 2>&1 && echo "# Benchmark index report produced"
-$DO_REPORT && Rscript -e 'rmarkdown::render("./_report/history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
+#$DO_REPORT && Rscript -e 'rmarkdown::render("./_report/history.Rmd", output_dir="public")' > ./out/rmarkdown_history.out 2>&1 && echo "# Benchmark history report produced"
 $DO_REPORT && Rscript -e 'rmarkdown::render("./_report/tech.Rmd", output_dir="public")' > ./out/rmarkdown_tech.out 2>&1 && echo "# Benchmark tech report produced"
 
 # publish benchmark, only if all reports successfully generated (logged in ./report-done file), and token file exists
@@ -80,7 +80,7 @@ if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after
 rm -rf ./db-benchmark.gh-pages
 $DO_REPORT && $DO_PUBLISH \
   && [ -f ./report-done ] \
-  && [ $(wc -l report-done | awk '{print $1}') -eq 3 ] \
+  && [ $(wc -l report-done | awk '{print $1}') -eq 2 ] \
   && [ -f ./token ] \
   && echo "# Publishing report" \
   && ((./_report/publish.sh && echo "# Benchmark results has been published") || echo "# Benchmark publish script failed")

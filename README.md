@@ -53,7 +53,6 @@ More solutions has been proposed. Status of those can be tracked in issues track
 - `cudf`
   - use `conda` instead of `virtualenv`
 - `clickhouse`
-  - generate data having extra primary key column according to `clickhouse/setup-clickhouse.sh`
   - follow "reproduce interactive environment" section from `clickhouse/setup-clickhouse.sh`
 - `pydatatable`
   - re-save csv join-1e9 data into `jay` format (should not be needed after [h2oai/datatable#1750](https://github.com/h2oai/datatable/issues/1750))
