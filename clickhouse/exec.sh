@@ -20,14 +20,15 @@ ch_active || exit 1
 CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
 CH_EXT_GRP_BY=53687091200 # twice less than CH_MEM #96
 CH_EXT_SORT=53687091200
-clickhouse-client --query="DROP TABLE IF EXISTS ans"
-clickhouse-client --query="DROP TABLE IF EXISTS $2"
+clickhouse-client --query "DROP TABLE IF EXISTS ans"
+clickhouse-client --query "DROP TABLE IF EXISTS $2"
 if [ $1 == 'groupby' ]; then
   clickhouse-client --query "CREATE TABLE IF NOT EXISTS $2 (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.csv', 'CSV', 'id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.csv', 'CSVWithNames', 'id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64')"
   # confirm all data loaded yandex/ClickHouse#4463
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $2'\n$2" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 elif [ $1 == 'join' ]; then
+  # join #137
   echo "clickhouse task $1 not yet implemented" >&2 && exit 1
 else
   echo "clickhouse task $1 not implemented" >&2 && exit 1
