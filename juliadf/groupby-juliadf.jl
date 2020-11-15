@@ -129,14 +129,15 @@ println(last(ANS, 3));
 ANS = 0;
 
 question = "max v1 - min v2 by id3"; # q7
+range_fun(v1, v2) = maximum(v1)-minimum(v2))
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id3), [:v1, :v2] => ((v1, v2) -> maximum(v1)-minimum(v2)) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id3), [:v1, :v2] => range_fun => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id3), [:v1, :v2] => ((v1, v2) -> maximum(v1)-minimum(v2)) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id3), [:v1, :v2] => range_fun => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -145,14 +146,15 @@ println(last(ANS, 3));
 ANS = 0;
 
 question = "largest two v3 by id6"; # q8
+largest_fun(x) = partialsort(x, 1:min(2, length(x)), rev=true)
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => (x -> partialsort(x, 1:min(2, length(x)), rev=true)) => :largest2_v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => largest_fun => :largest2_v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.largest2_v3);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => (x -> partialsort(x, 1:min(2, length(x)), rev=true)) => :largest2_v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id6), :v3 => largest_fun => :largest2_v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.largest2_v3);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -161,14 +163,15 @@ println(last(ANS, 3));
 ANS = 0;
 
 question = "regression v1 v2 by id2 id4"; # q9
+cor_fun(v1, v2) = cor(v1, v2)^2
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => cor_fun => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.r2);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => cor_fun => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.r2);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
