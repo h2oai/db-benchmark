@@ -7,6 +7,9 @@ using CSV;
 using Statistics; # mean function
 using Printf;
 
+# Precompile methods for common patterns
+DataFrames.precompile(true)
+
 include("$(pwd())/_helpers/helpers.jl");
 
 pkgmeta = getpkgmeta("DataFrames");
