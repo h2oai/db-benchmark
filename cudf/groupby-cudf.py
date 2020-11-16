@@ -244,7 +244,7 @@ del ans
 #print(ans.tail(3), flush=True)
 #del ans
 
-#question = "regression v1 v2 by id2 id4" # q9 # not yet implemented: https://github.com/rapidsai/cudf/issues/1267 https://github.com/rapidsai/cudf/issues/3363
+#question = "regression v1 v2 by id2 id4" # q9 # not yet implemented: https://github.com/rapidsai/cudf/issues/1267
 #gc.collect()
 #t_start = timeit.default_timer()
 #x[['v1','v2']].corr()
