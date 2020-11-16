@@ -182,7 +182,7 @@ transform = function(ld) {
     ld[, "engine":=NA_character_]
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch<=1603737536, engine:="memory"]
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch<=1603737536, engine:="mergetree"]
-    ld[task=="join" & solution=="clickhouse", engine:="mergretree"]
+    ld[task=="join" & solution=="clickhouse", engine:="mergetree"]
     if (nrow(ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch>1603737536]))
       stop("There should be no G2 prefix for clickhouse as we stopped using workaround for mandatory primary key and now using G1 for mergetree which was faster")
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch>1603737536, engine:="mergetree"]
