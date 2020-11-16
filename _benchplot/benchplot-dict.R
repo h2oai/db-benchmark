@@ -280,11 +280,11 @@ join.syntax.dict = {list(
     "big inner on int" = "spark.sql('select * from x join big using (id3)')"
   )},
   "clickhouse" = {c(
-    "small inner on int" = "",
-    "medium inner on int" = "",
-    "medium outer on int" = "",
-    "medium inner on factor" = "",
-    "big inner on int" = ""
+    "small inner on int" = "SELECT id1, x.id2, x.id3, x.id4, y.id4, x.id5, x.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id1)",
+    "medium inner on int" = "SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id2)",
+    "medium outer on int" = "SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM x LEFT JOIN y USING (id2)",
+    "medium inner on factor" = "SELECT x.id1, y.id1, x.id2, y.id2, x.id3, x.id4, y.id4, id5, x.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id5)",
+    "big inner on int" = "SELECT x.id1, y.id1, x.id2, y.id2, id3, x.id4, y.id4, x.id5, y.id5, x.id6, y.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id3)"
   )},
   "cudf" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
@@ -335,6 +335,7 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                   # read_csv #94 #97
   )},
   "clickhouse" = {list(
+    "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 r2 #169
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)

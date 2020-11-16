@@ -14,6 +14,7 @@ pydatatable,join
 spark,groupby
 spark,join
 clickhouse,groupby
+clickhouse,join
 cudf,groupby
 cudf,join
 h2o,groupby

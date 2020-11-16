@@ -182,12 +182,13 @@ transform = function(ld) {
     ld[, "engine":=NA_character_]
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch<=1603737536, engine:="memory"]
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch<=1603737536, engine:="mergetree"]
+    ld[task=="join" & solution=="clickhouse", enginge:="mergretree"]
     if (nrow(ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G2" & batch>1603737536]))
       stop("There should be no G2 prefix for clickhouse as we stopped using workaround for mandatory primary key and now using G1 for mergetree which was faster")
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch>1603737536, engine:="mergetree"]
     ## according to #91 we now will present mergetree only
-    ld = ld[!(task=="groupby" & solution=="clickhouse" & engine=="memory")]
-    ld[task=="groupby" & solution=="clickhouse" & engine=="mergetree", `:=`(
+    ld = ld[!(solution=="clickhouse" & engine=="memory")]
+    ld[task==solution=="clickhouse" & engine=="mergetree", `:=`(
       on_disk = !on_disk ## swap to denote slower method with star suffix, so for clickhouse it is (currently unused) memory table engine, otherwise clickhouse would always be marked by star #126
     )]
   }
