@@ -188,7 +188,7 @@ transform = function(ld) {
     ld[task=="groupby" & solution=="clickhouse" & substr(data, 1L, 2L)=="G1" & batch>1603737536, engine:="mergetree"]
     ## according to #91 we now will present mergetree only
     ld = ld[!(solution=="clickhouse" & engine=="memory")]
-    ld[task==solution=="clickhouse" & engine=="mergetree", `:=`(
+    ld[solution=="clickhouse" & engine=="mergetree", `:=`(
       on_disk = !on_disk ## swap to denote slower method with star suffix, so for clickhouse it is (currently unused) memory table engine, otherwise clickhouse would always be marked by star #126
     )]
   }
