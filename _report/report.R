@@ -22,7 +22,8 @@ load_time = function(path=getwd()) {
     !is.na(batch) &
       in_rows %in% c(1e7, 1e8, 1e9) &
       solution %in% get_report_solutions() &
-      !batch %in% get_excluded_batch()
+      !batch %in% get_excluded_batch() &
+      !(task=="groupby" & substr(data, 1L, 2L)=="G2")
     ][order(timestamp)]
 }
 load_logs = function(path=getwd()) {
