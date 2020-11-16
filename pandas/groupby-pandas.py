@@ -18,14 +18,10 @@ cache = "TRUE"
 on_disk = "FALSE"
 
 data_name = os.environ['SRC_GRP_LOCAL']
-src_grp = os.path.join("data", data_name+".csv")
+src_grp = os.path.join("data", data_name+".fea")
 print("loading dataset %s" % data_name, flush=True)
 
-from datatable import fread # for loading data only, see #47
-x = fread(src_grp).to_pandas()
-x['id1'] = x['id1'].astype('category') # remove after datatable#1691
-x['id2'] = x['id2'].astype('category')
-x['id3'] = x['id3'].astype('category')
+x = pandas.read_feather(src_grp)
 print(len(x.index), flush=True)
 
 task_init = timeit.default_timer()
