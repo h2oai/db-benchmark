@@ -206,6 +206,7 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                # q3 #126
   )},
   "juliadf" = {list(
+    "timeout" = "G1_1e8_2e0_0_0",
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
   )},
   "cudf" = {list(
