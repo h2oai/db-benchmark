@@ -18,8 +18,8 @@ echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
 # packages used in launcher and report
-Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable"))'
-Rscript -e 'sapply(c("bit64","rmarkdown","data.table","rpivotTable","formattable"), requireNamespace)'
+Rscript -e 'install.packages(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"))'
+Rscript -e 'sapply(c("bit64","rmarkdown","data.table","rpivotTable","formattable","lattice"), requireNamespace)'
 
 # after each restart of server
 source clickhouse/ch.sh && ch_stop
