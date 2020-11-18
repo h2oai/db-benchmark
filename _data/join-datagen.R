@@ -51,17 +51,27 @@ split_xlr = function(n) {
 		r = key[seq.int(n+1, n*1.1)]
 	)
 }
-# finish RHS data by adding factor columns and measure and writing to file
-do_rhs = function(r, data_name, datadir) {
-	cols = names(r)
-	if ("id1" %in% cols) set(r, NULL, "id4", sprintf("id%.0f", r$id1))
-	if ("id2" %in% cols) set(r, NULL, "id5", sprintf("id%.0f", r$id2))
-	if ("id3" %in% cols) set(r, NULL, "id6", sprintf("id%.0f", r$id3))
-	set(r, NULL, "v2", round(runif(nrow(r), max=100), 6))
-	f = file.path(datadir, paste0(data_name, ".csv"))
-	cat(sprintf("Writing RHS data to %s\n", f))
-	fwrite(r, f, showProgress=FALSE)
-	invisible(TRUE)
+# we need to write in batches to reduce memory footprint
+write_batches = function(d, name, datadir, append) {
+  cols = names(d)
+  if ("id1" %in% cols) set(d, NULL, "id4", sprintf("id%.0f", d$id1))
+  if ("id2" %in% cols) set(d, NULL, "id5", sprintf("id%.0f", d$id2))
+  if ("id3" %in% cols) set(d, NULL, "id6", sprintf("id%.0f", d$id3))
+  setcolorder(d, neworder=setdiff(names(d), c("v1","v2")))
+  f = file.path(datadir, paste0(name, ".csv"))
+  fwrite(d, f, showProgress=FALSE, append=append)
+}
+handle_batches = function(d, data_name, datadir) {
+  N = nrow(d)
+  if (N > 1e8) {
+    stopifnot(N==1e9)
+    for (i in 1:10) {
+      cat(sprintf("Writing %s data batch %s\n", pretty_sci(N), i))
+      write_batches(d[((i-1)*1e8+1L):(i*1e8)], data_name, datadir, append=i>1L)
+    }
+  } else {
+    write_batches(d, data_name, datadir, append=FALSE)
+  }
 }
 
 # exec ----
@@ -69,72 +79,67 @@ do_rhs = function(r, data_name, datadir) {
 library(data.table)
 setDTthreads(0L)
 set.seed(108)
-y_N = setNames(N/c(1e6, 1e3, 1e0), c("small","medium","big"))
 data_name = sprintf("J1_%s_%s_%s_%s", pretty_sci(N), "NA", nas, sort)
+
 cat(sprintf("Generate join data of %s rows\n", pretty_sci(N)))
+
 cat("Producing keys for LHS and RHS data\n")
 key1 = split_xlr(N/1e6)
 key2 = split_xlr(N/1e3)
 key3 = split_xlr(N)
+
+cat(sprintf("Producing LHS %s data from keys\n", N))
 lhs = c("x","l")
 l = data.table(
 	id1 = sample_all(unlist(key1[lhs], use.names=FALSE), N),
 	id2 = sample_all(unlist(key2[lhs], use.names=FALSE), N),
 	id3 = sample_all(unlist(key3[lhs], use.names=FALSE), N)
 )
+set(l, NULL, "v1", round(runif(nrow(l), max=100), 6))
 stopifnot(
 	uniqueN(l, by="id1")==N/1e6,
 	uniqueN(l, by="id2")==N/1e3,
 	uniqueN(l, by="id3")==N
 )
+cat(sprintf("Writing LHS %s data %s\n", N, data_name))
+handle_batches(l, data_name, datadir)
+rm(l)
+
 rhs = c("x","r")
+r_data_name = join_to_tbls(data_name)
 n = N/1e6
+cat(sprintf("Producing RHS %s data from keys\n", n))
 r1 = data.table(
 	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n)
 )
-stopifnot(
-	uniqueN(r1, by="id1")==n,
-	l[r1, on="id1", round(.N/nrow(l), 2), nomatch=NULL]==0.9
-)
+set(r1, NULL, "v2", round(runif(nrow(r1), max=100), 6))
+stopifnot(uniqueN(r1, by="id1")==n)
+cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[1L]))
+handle_batches(r1, r_data_name[1L], datadir)
+rm(r1)
 n = N/1e3
+cat(sprintf("Producing RHS %s data from keys\n", n))
 r2 = data.table(
 	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
 	id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n)
 )
-stopifnot(
-	uniqueN(r2, by="id2")==n,
-	l[r2, on="id2", round(.N/nrow(l), 2), nomatch=NULL]==0.9
-)
+set(r2, NULL, "v2", round(runif(nrow(r2), max=100), 6))
+stopifnot(uniqueN(r2, by="id2")==n)
+cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[2L]))
+handle_batches(r2, r_data_name[2L], datadir)
+rm(r2)
 n = N
+cat(sprintf("Producing RHS %s data from keys\n", n))
 r3 = data.table(
 	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
 	id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n),
 	id3 = sample_all(unlist(key3[rhs], use.names=FALSE), n)
 )
-stopifnot(
-	uniqueN(r3, by="id3")==n,
-  l[r3, on="id3", round(.N/nrow(l), 2), nomatch=NULL]==0.9
-)
-## for advanced questions
-#l[r2, on=c("id1","id2"), nomatch=NULL]
-#l[r2, on=.(id1>id1,id2), nomatch=NULL]
-
-cat("Producing LHS data from keys\n")
-set(l, NULL, "id4", sprintf("id%.0f", l$id1)) # add factor and measure variables
-set(l, NULL, "id5", sprintf("id%.0f", l$id2))
-set(l, NULL, "id6", sprintf("id%.0f", l$id3))
-set(l, NULL, "v1", round(runif(nrow(l), max=100), 6))
-f = file.path(datadir, paste0(data_name, ".csv")) # write LHS data to file
-cat(sprintf("Writing LHS data to %s\n", f))
-fwrite(l, f, showProgress=FALSE)
-rm(l, f)
-
-r_data_name = join_to_tbls(data_name)
-do_rhs(r1, r_data_name[1L], datadir)
-rm(r1)
-do_rhs(r2, r_data_name[2L], datadir)
-rm(r2)
-do_rhs(r3, r_data_name[3L], datadir)
+rm(key1, key2, key3)
+set(r3, NULL, "v2", round(runif(nrow(r3), max=100), 6))
+stopifnot(uniqueN(r3, by="id3")==n)
+cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[3L]))
+handle_batches(r3, r_data_name[3L], datadir)
 rm(r3)
 
 cat(sprintf("Join datagen of %s rows finished in %ss\n", pretty_sci(N), trunc(proc.time()[["elapsed"]]-init)))
