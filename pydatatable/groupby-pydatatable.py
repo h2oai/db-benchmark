@@ -7,6 +7,7 @@ import gc
 import timeit
 import datatable as dt
 from datatable import f, sum, mean, count, sd, min, max, by, sort, median, corr
+dt.options.progress.enabled = False
 
 exec(open("./_helpers/helpers.py").read())
 
