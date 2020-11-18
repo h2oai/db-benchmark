@@ -24,7 +24,7 @@ DT = data.table(
   id5 = sample(K, N, TRUE),                          # large groups (int)
   id6 = sample(N/K, N, TRUE),                        # small groups (int)
   v1 =  sample(5, N, TRUE),                          # int in range [1,5]
-  v2 =  sample(5, N, TRUE),                          # int in range [1,5]
+  v2 =  sample(15, N, TRUE),                         # int in range [1,15]
   v3 =  round(runif(N,max=100),6)                    # numeric e.g. 23.574912
 )
 if (nas>0L) {
