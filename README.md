@@ -31,7 +31,7 @@ More solutions has been proposed. Status of those can be tracked in issues track
 - if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
 - install every solution, follow `$solution/setup-$solution.sh` scripts
 - edit `run.conf` to define solutions and tasks to benchmark
-- generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary format where needed (see below), create `data` directory and keep all data files there
+- generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to `feather` format where needed (see below), create `data` directory and keep all data files there
 - edit `_control/data.csv` to define data sizes to benchmark using `active` flag
 - ensure SWAP is disabled and ClickHouse server is not yet running
 - start benchmark with `./run.sh`
@@ -42,7 +42,7 @@ More solutions has been proposed. Status of those can be tracked in issues track
   - for python we recommend to use `virtualenv` for better isolation
   - for R ensure that library is installed in a solution subdirectory, so that `library("dplyr", lib.loc="./dplyr/r-dplyr")` or `library("data.table", lib.loc="./datatable/r-datatable")` works
   - note that some solutions may require another to be installed to speed-up csv data load, for example, `dplyr` requires `data.table` and similarly `pandas` requires (py)`datatable`
-- generate data using `_data/*-datagen.R` scripts, for example, `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` creates `G1_1e7_1e2_0_0.csv`, put data files in `data` directory
+- generate data using `_data/*-datagen.R` scripts, for example, `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` creates `G1_1e7_1e2_0_0.csv`, put data files in `data` directory; some of solutions uses `feather` format rather than `csv`, in case of running such create `feather` files as well, see [_launcher/setup.sh](./_launcher/setup.sh) for a function doing that.
 - run benchmark for a single solution using `./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7`
 - run other data cases by passing extra parameters `--k=1e2 --na=0 --sort=0`
 - use `--quiet=true` to suppress script's output and print timings only, using `--print=question,run,time_sec` specify columns to be printed to console, to print all use `--print=*`
