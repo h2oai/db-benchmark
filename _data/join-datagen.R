@@ -22,34 +22,34 @@ if (!dir.exists(datadir)) stop(sprintf("directory '%s' does not exists", datadir
 
 # pretty print big numbers as 1e9, 1e8, etc
 pretty_sci = function(x) {
-	stopifnot(length(x)==1L, !is.na(x))
-	tmp = strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
-	if (length(tmp)==1L) {
-		paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
-	} else if (length(tmp)==2L) {
-		paste0(tmp[1L], as.character(as.integer(tmp[2L])))
-	}
+  stopifnot(length(x)==1L, !is.na(x))
+  tmp = strsplit(as.character(x), "+", fixed=TRUE)[[1L]]
+  if (length(tmp)==1L) {
+    paste0(substr(tmp, 1L, 1L), "e", nchar(tmp)-1L)
+  } else if (length(tmp)==2L) {
+    paste0(tmp[1L], as.character(as.integer(tmp[2L])))
+  }
 }
 # data_name of table to join
 join_to_tbls = function(data_name) {
-	x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
-	y_n = setNames(x_n/c(1e6, 1e3, 1e0), c("small","medium","big"))
-	sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
+  x_n = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])
+  y_n = setNames(x_n/c(1e6, 1e3, 1e0), c("small","medium","big"))
+  sapply(sapply(y_n, pretty_sci), gsub, pattern="NA", x=data_name)
 }
 # sample ensuring none is missing
 sample_all = function(x, size) {
-	stopifnot(length(x) <= size)
-	y = c(x, sample(x, size=max(size-length(x), 0), replace=TRUE))
-	sample(y)
+  stopifnot(length(x) <= size)
+  y = c(x, sample(x, size=max(size-length(x), 0), replace=TRUE))
+  sample(y)
 }
 # split into common (0.9) left (0.1) and right (0.1)
 split_xlr = function(n) {
-	key = sample.int(n*1.1) # 1.1 = 0.9+0.1+0.1
-	list(
-		x = key[seq.int(1, n*0.9)],
-		l = key[seq.int(n*0.9+1, n)],
-		r = key[seq.int(n+1, n*1.1)]
-	)
+  key = sample.int(n*1.1) # 1.1 = 0.9+0.1+0.1
+  list(
+    x = key[seq.int(1, n*0.9)],
+    l = key[seq.int(n*0.9+1, n)],
+    r = key[seq.int(n+1, n*1.1)]
+  )
 }
 # we need to write in batches to reduce memory footprint
 write_batches = function(d, name, datadir, append) {
@@ -91,15 +91,15 @@ key3 = split_xlr(N)
 cat(sprintf("Producing LHS %s data from keys\n", N))
 lhs = c("x","l")
 l = data.table(
-	id1 = sample_all(unlist(key1[lhs], use.names=FALSE), N),
-	id2 = sample_all(unlist(key2[lhs], use.names=FALSE), N),
-	id3 = sample_all(unlist(key3[lhs], use.names=FALSE), N)
+  id1 = sample_all(unlist(key1[lhs], use.names=FALSE), N),
+  id2 = sample_all(unlist(key2[lhs], use.names=FALSE), N),
+  id3 = sample_all(unlist(key3[lhs], use.names=FALSE), N)
 )
 set(l, NULL, "v1", round(runif(nrow(l), max=100), 6))
 stopifnot(
-	uniqueN(l, by="id1")==N/1e6,
-	uniqueN(l, by="id2")==N/1e3,
-	uniqueN(l, by="id3")==N
+  uniqueN(l, by="id1")==N/1e6,
+  uniqueN(l, by="id2")==N/1e3,
+  uniqueN(l, by="id3")==N
 )
 cat(sprintf("Writing LHS %s data %s\n", N, data_name))
 handle_batches(l, data_name, datadir)
@@ -110,7 +110,7 @@ r_data_name = join_to_tbls(data_name)
 n = N/1e6
 cat(sprintf("Producing RHS %s data from keys\n", n))
 r1 = data.table(
-	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n)
+  id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n)
 )
 set(r1, NULL, "v2", round(runif(nrow(r1), max=100), 6))
 stopifnot(uniqueN(r1, by="id1")==n)
@@ -120,8 +120,8 @@ rm(r1)
 n = N/1e3
 cat(sprintf("Producing RHS %s data from keys\n", n))
 r2 = data.table(
-	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
-	id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n)
+  id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
+  id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n)
 )
 set(r2, NULL, "v2", round(runif(nrow(r2), max=100), 6))
 stopifnot(uniqueN(r2, by="id2")==n)
@@ -131,9 +131,9 @@ rm(r2)
 n = N
 cat(sprintf("Producing RHS %s data from keys\n", n))
 r3 = data.table(
-	id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
-	id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n),
-	id3 = sample_all(unlist(key3[rhs], use.names=FALSE), n)
+  id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
+  id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n),
+  id3 = sample_all(unlist(key3[rhs], use.names=FALSE), n)
 )
 rm(key1, key2, key3)
 set(r3, NULL, "v2", round(runif(nrow(r3), max=100), 6))
