@@ -4,7 +4,7 @@ cat("# join-dplyr.R\n")
 
 source("./_helpers/helpers.R")
 
-stopifnot(requireNamespace(c("data.table"), quietly=TRUE)) # used for data loading
+stopifnot(requireNamespace("arrow", quietly=TRUE)) # used for data loading
 .libPaths("./dplyr/r-dplyr") # tidyverse/dplyr#4641
 suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
@@ -15,14 +15,14 @@ cache = TRUE
 on_disk = FALSE
 
 data_name = Sys.getenv("SRC_JN_LOCAL")
-src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
+src_jn_x = file.path("data", paste(data_name, "feather", sep="."))
 y_data_name = join_to_tbls(data_name)
-src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names(y_data_name))
+src_jn_y = setNames(file.path("data", paste(y_data_name, "feather", sep=".")), names(y_data_name))
 stopifnot(length(src_jn_y)==3L)
 cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse=", ")))
 
-x = as_tibble(data.table::fread(src_jn_x, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE))
-JN = lapply(sapply(simplify=FALSE, src_jn_y, data.table::fread, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE), as_tibble)
+x = as_tibble(arrow::read_feather(src_jn_x, as_data_frame=TRUE))
+JN = lapply(sapply(simplify=FALSE, src_jn_y, arrow::read_feather, as_data_frame=TRUE), as_tibble)
 print(nrow(x))
 sapply(sapply(JN, nrow), print) -> nul
 small = JN$small

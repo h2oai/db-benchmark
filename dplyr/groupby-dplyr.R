@@ -4,7 +4,7 @@ cat("# groupby-dplyr.R\n")
 
 source("./_helpers/helpers.R")
 
-stopifnot(requireNamespace(c("bit64","data.table"), quietly=TRUE)) # used in chk to sum numeric columns and data loading
+stopifnot(sapply(c("bit64","arrow"), requireNamespace, quietly=TRUE)) # bit64 used in chk to sum numeric columns and data loading
 .libPaths("./dplyr/r-dplyr") # tidyverse/dplyr#4641
 suppressPackageStartupMessages(library("dplyr", lib.loc="./dplyr/r-dplyr", warn.conflicts=FALSE))
 ver = packageVersion("dplyr")
@@ -16,10 +16,10 @@ cache = TRUE
 on_disk = FALSE
 
 data_name = Sys.getenv("SRC_GRP_LOCAL")
-src_grp = file.path("data", paste(data_name, "csv", sep="."))
+src_grp = file.path("data", paste(data_name, "feather", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-x = as_tibble(data.table::fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE))
+x = as_tibble(arrow::read_feather(src_grp, as_data_frame=TRUE))
 print(nrow(x))
 
 task_init = proc.time()[["elapsed"]]
