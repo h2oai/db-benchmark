@@ -18,10 +18,10 @@ cache = "TRUE"
 on_disk = "FALSE"
 
 data_name = os.environ['SRC_GRP_LOCAL']
-src_grp = os.path.join("data", data_name+".fea")
+src_grp = os.path.join("data", data_name+".feather")
 print("loading dataset %s" % data_name, flush=True)
 
-x = pandas.read_feather(src_grp)
+x = pd.read_feather(src_grp)
 print(len(x.index), flush=True)
 
 task_init = timeit.default_timer()

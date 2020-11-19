@@ -18,28 +18,18 @@ cache = "TRUE"
 on_disk = "FALSE"
 
 data_name = os.environ['SRC_JN_LOCAL']
-src_jn_x = os.path.join("data", data_name+".csv")
+src_jn_x = os.path.join("data", data_name+".feather")
 y_data_name = join_to_tbls(data_name)
-src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_data_name[1]+".csv"), os.path.join("data", y_data_name[2]+".csv")]
+src_jn_y = [os.path.join("data", y_data_name[0]+".feather"), os.path.join("data", y_data_name[1]+".feather"), os.path.join("data", y_data_name[2]+".feather")]
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
-from datatable import fread # for loading data only, see #47
-x = fread(src_jn_x).to_pandas()
-x['id4'] = x['id4'].astype('category') # remove after datatable#1691
-x['id5'] = x['id5'].astype('category')
-x['id6'] = x['id6'].astype('category')
-small = fread(src_jn_y[0]).to_pandas()
-small['id4'] = small['id4'].astype('category')
-medium = fread(src_jn_y[1]).to_pandas()
-medium['id4'] = medium['id4'].astype('category')
-medium['id5'] = medium['id5'].astype('category')
-big = fread(src_jn_y[2]).to_pandas()
-big['id4'] = big['id4'].astype('category')
-big['id5'] = big['id5'].astype('category')
-big['id6'] = big['id6'].astype('category')
+x = pd.read_feather(src_jn_x)
+small = pd.read_feather(src_jn_y[0])
+medium = pd.read_feather(src_jn_y[1])
+big = pd.read_feather(src_jn_y[2])
 print(len(x.index), flush=True)
 print(len(small.index), flush=True)
 print(len(medium.index), flush=True)
