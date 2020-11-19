@@ -5,6 +5,7 @@ metastore_db/*
 *.csv
 *.md5
 .Rproj.user
+.Rhistory
 db-benchmark.Rproj
 */REVISION
 */VERSION
