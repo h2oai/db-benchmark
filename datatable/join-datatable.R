@@ -4,6 +4,7 @@ cat("# join-datatable.R\n")
 
 source("./_helpers/helpers.R")
 
+stopifnot(requireNamespace("arrow", quietly=TRUE))
 suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable"))
 setDTthreads(0L)
 ver = packageVersion("data.table")
@@ -15,19 +16,23 @@ cache = TRUE
 on_disk = FALSE
 
 data_name = Sys.getenv("SRC_JN_LOCAL")
-src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
+src_jn_x = file.path("data", paste(data_name, "feather", sep="."))
 y_data_name = join_to_tbls(data_name)
-src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names(y_data_name))
+src_jn_y = setNames(file.path("data", paste(y_data_name, "feather", sep=".")), names(y_data_name))
 stopifnot(length(src_jn_y)==3L)
 cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse=", ")))
 
-x = fread(src_jn_x, showProgress=FALSE, stringsAsFactors=TRUE)
-JN = sapply(simplify=FALSE, src_jn_y, fread, showProgress=FALSE, stringsAsFactors=TRUE)
+x = arrow::read_feather(src_jn_x, as_data_frame=TRUE)
+setDT(x)
+JN = sapply(simplify=FALSE, src_jn_y, arrow::read_feather, as_data_frame=TRUE)
 print(nrow(x))
 sapply(sapply(JN, nrow), print) -> nul
 small = JN$small
+setDT(small)
 medium = JN$medium
+setDT(medium)
 big = JN$big
+setDT(big)
 
 task_init = proc.time()[["elapsed"]]
 cat("joining...\n")

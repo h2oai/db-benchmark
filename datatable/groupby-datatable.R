@@ -4,10 +4,7 @@ cat("# groupby-datatable.R\n")
 
 source("./_helpers/helpers.R")
 
-stopifnot(
-  requireNamespace("bit64", quietly=TRUE), # used in chk to sum numeric columns
-  requireNamespace("arrow", quietly=TRUE) # used to load data
-)
+stopifnot(sapply(c("bit64","arrow"), requireNamespace, quietly=TRUE)) # bit64 used in chk to sum numeric columns and data loading
 suppressPackageStartupMessages(library("data.table", lib.loc="./datatable/r-datatable"))
 setDTthreads(0L)
 ver = packageVersion("data.table")
@@ -19,12 +16,10 @@ cache = TRUE
 on_disk = FALSE
 
 data_name = Sys.getenv("SRC_GRP_LOCAL")
-#src_grp = file.path("data", paste(data_name, "csv", sep="."))
-src_grp = file.path("data", paste(data_name, "fea", sep="."))
+src_grp = file.path("data", paste(data_name, "feather", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-#x = fread(src_grp, showProgress=FALSE, stringsAsFactors=TRUE)
-x = arrow::read_feather(src_grp)
+x = arrow::read_feather(src_grp, as_data_frame=TRUE)
 setDT(x)
 print(nrow(x))
 
