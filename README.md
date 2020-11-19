@@ -52,10 +52,6 @@ More solutions has been proposed. Status of those can be tracked in issues track
 
 - `cudf`
   - use `conda` instead of `virtualenv`
-- `clickhouse`
-  - follow "reproduce interactive environment" section from `clickhouse/setup-clickhouse.sh`
-- `pydatatable`
-  - re-save csv join-1e9 data into `jay` format (should not be needed after [h2oai/datatable#1750](https://github.com/h2oai/datatable/issues/1750))
 - `dask`
   - re-save csv groupby-1e9 and join-1e9 data into `parquet` format
 
