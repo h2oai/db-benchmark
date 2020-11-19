@@ -8,6 +8,7 @@ import timeit
 import datatable as dt
 from datatable import f, sum, join
 from datatable.math import isfinite
+dt.options.progress.enabled = False
 
 exec(open("./_helpers/helpers.py").read())
 
