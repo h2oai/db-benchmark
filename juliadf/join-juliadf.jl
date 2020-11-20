@@ -30,6 +30,9 @@ end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
+#https://github.com/JuliaData/Arrow.jl/issues/72
+#using Arrow;
+#x = DataFrame(copy(Arrow.Table(src_jn_x)))
 x = DataFrame(CSV.File(src_jn_x, pool=true));
 small = DataFrame(CSV.File(src_jn_y[1], pool=true));
 medium = DataFrame(CSV.File(src_jn_y[2], pool=true));
