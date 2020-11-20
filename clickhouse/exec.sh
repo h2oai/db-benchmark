@@ -17,6 +17,8 @@ ch_active || sleep 120
 ch_active || echo 'clickhouse-server should be already running, investigate' >&2
 ch_active || exit 1
 
+# not using Arrow yet due to: https://github.com/ClickHouse/ClickHouse/issues/17240
+
 # tune CH settings and load data
 CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
 clickhouse-client --query "DROP TABLE IF EXISTS ans"
