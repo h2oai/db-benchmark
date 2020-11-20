@@ -16,17 +16,17 @@ N=as.integer(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=a
 stopifnot(nas<=100L, nas>=0L, sort%in%c(0L,1L))
 set.seed(108)
 cat(sprintf("Producing data of %s rows and %s K groups factors\n", pretty_sci(N), pretty_sci(K)))
-DT = data.table(
-  id1 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
-  id2 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
-  id3 = sample(sprintf("id%010d",1:(N/K)), N, TRUE), # small groups (char)
-  id4 = sample(K, N, TRUE),                          # large groups (int)
-  id5 = sample(K, N, TRUE),                          # large groups (int)
-  id6 = sample(N/K, N, TRUE),                        # small groups (int)
-  v1 =  sample(5, N, TRUE),                          # int in range [1,5]
-  v2 =  sample(15, N, TRUE),                         # int in range [1,15]
-  v3 =  round(runif(N,max=100),6)                    # numeric e.g. 23.574912
-)
+DT = list()
+DT[["id1"]] = sample(sprintf("id%03d",1:K), N, TRUE)      # large groups (char)
+DT[["id2"]] = sample(sprintf("id%03d",1:K), N, TRUE)      # small groups (char)
+DT[["id3"]] = sample(sprintf("id%010d",1:(N/K)), N, TRUE) # large groups (int)
+DT[["id4"]] = sample(K, N, TRUE)                          # large groups (int)
+DT[["id5"]] = sample(K, N, TRUE)                          # small groups (int)
+DT[["id6"]] = sample(N/K, N, TRUE)                        # small groups (int)
+DT[["v1"]] =  sample(5, N, TRUE)                          # int in range [1,5]
+DT[["v2"]] =  sample(15, N, TRUE)                         # int in range [1,15]
+DT[["v3"]] =  round(runif(N,max=100),6)                   # numeric e.g. 23.574912
+setDT(DT)
 if (nas>0L) {
   real_nas = nas/100
   cat(sprintf("Turning %s of data in each column to NAs\n", real_nas))
