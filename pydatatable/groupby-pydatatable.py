@@ -24,6 +24,8 @@ src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
 x = dt.fread(src_grp)
+#from pyarrow import feather ## needs support for Multi-batch Arrow arrays not supported yet
+#x = dt.Frame(feather.read_table(src_grp)).materialize()
 print(x.nrows, flush=True)
 
 task_init = timeit.default_timer()

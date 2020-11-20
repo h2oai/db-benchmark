@@ -9,6 +9,7 @@ virtualenv pydatatable/py-pydatatable --python=/usr/bin/python3.6
 source pydatatable/py-pydatatable/bin/activate
 
 python -m pip install --upgrade psutil
+python -m pip install --upgrade pyarrow
 
 # build
 deactivate
