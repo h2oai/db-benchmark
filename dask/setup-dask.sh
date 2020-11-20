@@ -12,7 +12,7 @@ source dask/py-dask/bin/activate
 python -m pip install --upgrade dask
 python -m pip install --upgrade dask[dataframe]
 python -m pip install --upgrade dask[distributed]
-#python -m pip install --upgrade fastparquet # not used as slower, at least for 1e7, 1e8. parquet portability issue spark-fastparquet prevent to try 1e9
+python -m pip install --upgrade pyarrow
 
 # check
 python

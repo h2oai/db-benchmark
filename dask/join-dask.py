@@ -29,6 +29,7 @@ if len(src_jn_y) != 3:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
+# dask.dataframe.read_feather: https://github.com/dask/dask/issues/6865
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
 if on_disk:
     x = dd.read_parquet(src_jn_x, engine="fastparquet")

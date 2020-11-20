@@ -31,6 +31,7 @@ fext = "parquet" if on_disk else "csv"
 src_grp = os.path.join("data", data_name+"."+fext)
 print("loading dataset %s" % data_name, flush=True)
 
+# dask.dataframe.read_feather: https://github.com/dask/dask/issues/6865
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
 x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, na_filter=False, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "int32", "id5": "int32", "id6": "int32", "v1": "int32", "v2": "int32", "v3": "float64"})
 
