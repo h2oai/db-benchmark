@@ -26,30 +26,30 @@ if [ $1 == 'groupby' ]; then
   CH_EXT_SORT=53687091200
   clickhouse-client --query "DROP TABLE IF EXISTS $2"
   clickhouse-client --query "CREATE TABLE $2 (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.csv', 'CSVWithNames', 'id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.feather', 'Arrow', 'id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64')"
   # confirm all data loaded yandex/ClickHouse#4463
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $2'\n$2" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 elif [ $1 == 'join' ]; then
   # lhs
   clickhouse-client --query "DROP TABLE IF EXISTS $2"
   clickhouse-client --query "CREATE TABLE $2 (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v1 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1 FROM file('data/$2.csv', 'CSVWithNames', 'id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v1 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1 FROM file('data/$2.feather', 'Arrow', 'id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v1 Float64')"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $2'\n$2" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
   rhs=$(join_to_tbls $2)
   rhs1=$(echo $rhs | cut -d ' ' -f1)
   clickhouse-client --query "DROP TABLE IF EXISTS $rhs1"
   clickhouse-client --query "CREATE TABLE $rhs1 (id1 Int32, id4 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs1 SELECT id1, id4, v2 FROM file('data/$rhs1.csv', 'CSVWithNames', 'id1 Int32, id4 String, v2 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs1 SELECT id1, id4, v2 FROM file('data/$rhs1.feather', 'Arrow', 'id1 Int32, id4 String, v2 Float64')"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $rhs1'\n$rhs1" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][3L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
   rhs2=$(echo $rhs | cut -d ' ' -f2)
   clickhouse-client --query "DROP TABLE IF EXISTS $rhs2"
   clickhouse-client --query "CREATE TABLE $rhs2 (id1 Int32, id2 Int32, id4 String, id5 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs2 SELECT id1, id2, id4, id5, v2 FROM file('data/$rhs2.csv', 'CSVWithNames', 'id1 Int32, id2 Int32, id4 String, id5 String, v2 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs2 SELECT id1, id2, id4, id5, v2 FROM file('data/$rhs2.feather', 'Arrow', 'id1 Int32, id2 Int32, id4 String, id5 String, v2 Float64')"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $rhs2'\n$rhs2" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][3L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
   rhs3=$(echo $rhs | cut -d ' ' -f3)
   clickhouse-client --query "DROP TABLE IF EXISTS $rhs3"
   clickhouse-client --query "CREATE TABLE $rhs3 (id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v2 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs3 SELECT id1, id2, id3, id4, id5, id6, v2 FROM file('data/$rhs3.csv', 'CSVWithNames', 'id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v2 Float64')"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $rhs3 SELECT id1, id2, id3, id4, id5, id6, v2 FROM file('data/$rhs3.feather', 'Arrow', 'id1 Int32, id2 Int32, id3 Int32, id4 String, id5 String, id6 String, v2 Float64')"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $rhs3'\n$rhs3" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][3L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 else
   echo "clickhouse task $1 not implemented" >&2 && exit 1
