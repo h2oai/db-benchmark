@@ -36,6 +36,7 @@ spark = SparkSession.builder \
      .getOrCreate()
 #print(spark.sparkContext._conf.getAll(), flush=True)
 
+# https://stackoverflow.com/questions/53569580/how-to-read-feather-arrow-file-natively
 x = spark.read.csv(src_grp, header=True, inferSchema='true').persist(pyspark.StorageLevel.MEMORY_ONLY)
 
 print(x.count(), flush=True)

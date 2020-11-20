@@ -15,6 +15,7 @@ source path.env
 # install binaries
 python -m pip install --upgrade psutil
 python -m pip install --upgrade pyspark
+python -m pip install --upgrade pyarrow
 
 # check
 python

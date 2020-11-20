@@ -41,6 +41,7 @@ spark = SparkSession.builder \
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
+# https://stackoverflow.com/questions/53569580/how-to-read-feather-arrow-file-natively
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
 x = spark.read.csv(src_jn_x, header=True, inferSchema='true')
 small = spark.read.csv(src_jn_y[0], header=True, inferSchema='true')
