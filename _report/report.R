@@ -33,7 +33,8 @@ load_logs = function(path=getwd()) {
       nzchar(solution) &
       solution %in% get_report_solutions() &
       action %in% c("start","finish") &
-      !batch %in% get_excluded_batch()
+      !batch %in% get_excluded_batch() &
+      !(task=="groupby" & substr(data, 1L, 2L)=="G2")
     ][order(timestamp)]
 }
 load_questions = function(path=getwd()) {
