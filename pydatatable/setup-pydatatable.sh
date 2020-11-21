@@ -26,9 +26,9 @@ deactivate
 source pydatatable/py-pydatatable/bin/activate
 python
 import datatable as dt
-dt.Fread('data/J1_1e9_NA_0_0.csv').to_jay('data/J1_1e9_NA_0_0.jay')
-dt.Fread('data/J1_1e9_1e9_0_0.csv').to_jay('data/J1_1e9_1e9_0_0.jay')
-dt.Fread('data/J1_1e9_1e6_0_0.csv').to_jay('data/J1_1e9_1e6_0_0.jay')
-dt.Fread('data/J1_1e9_1e3_0_0.csv').to_jay('data/J1_1e9_1e3_0_0.jay')
+dt.fread('data/J1_1e9_NA_0_0.csv').to_jay('data/J1_1e9_NA_0_0.jay')
+dt.fread('data/J1_1e9_1e9_0_0.csv').to_jay('data/J1_1e9_1e9_0_0.jay')
+dt.fread('data/J1_1e9_1e6_0_0.csv').to_jay('data/J1_1e9_1e6_0_0.jay')
+dt.fread('data/J1_1e9_1e3_0_0.csv').to_jay('data/J1_1e9_1e3_0_0.jay')
 quit()
 deactivate
