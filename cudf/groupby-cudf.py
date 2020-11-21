@@ -17,7 +17,7 @@ fun = ".groupby"
 cache = "TRUE"
 
 data_name = os.environ['SRC_GRP_LOCAL']
-src_grp = os.path.join("data", data_name+".feather")
+src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
 ## spilling to main mem only make sense with dask-cudf, see#129
@@ -27,7 +27,10 @@ print("using video and main memory data storage" if on_disk else "using only vid
 if on_disk:
     cu.set_allocator("managed")
 
-x = cu.io.feather.read_feather(src_grp)
+x = cu.read_csv(src_grp, header=0, dtype=['str','str','str','int32','int32','int32','int32','int32','float64'])
+x['id1'] = x['id1'].astype('category')
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
 print(len(x.index), flush=True)
 
 task_init = timeit.default_timer()
