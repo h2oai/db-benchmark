@@ -50,10 +50,7 @@ More solutions has been proposed. Status of those can be tracked in issues track
 
 ## Extra care needed
 
-- `cudf`
-  - use `conda` instead of `virtualenv`
-- `dask`
-  - re-save csv groupby-1e9 and join-1e9 data into `parquet` format
+- `cudf` uses `conda` instead of `virtualenv`
 
 # Example environment
 
