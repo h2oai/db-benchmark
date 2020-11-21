@@ -42,6 +42,7 @@ j1 = sprintf("J1_%s_%s_0_0", rep(c("1e7","1e8","1e9"), each=4L), trimws(gsub("e+
 csv2feather = function(dn) {
   cat("csv2feather:", dn, "\n")
   df = fread(sprintf("data/%s.csv", dn), showProgress=FALSE, stringsAsFactors=TRUE, data.table=FALSE)
+  ## fails for G1_1e9_2e0_0_0 with https://github.com/apache/arrow/issues/8732
   write_feather(df, sprintf("data/%s.feather", dn))
   rm(df)
   TRUE
