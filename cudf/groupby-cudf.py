@@ -27,6 +27,7 @@ print("using video and main memory data storage" if on_disk else "using only vid
 if on_disk:
     cu.set_allocator("managed")
 
+# csv due to https://github.com/rapidsai/cudf/issues/6828
 x = cu.read_csv(src_grp, header=0, dtype=['str','str','str','int32','int32','int32','int32','int32','float64'])
 x['id1'] = x['id1'].astype('category')
 x['id2'] = x['id2'].astype('category')

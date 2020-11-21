@@ -32,6 +32,7 @@ if on_disk:
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
+# csv due to https://github.com/rapidsai/cudf/issues/6828
 x = cu.read_csv(src_jn_x, header=0, dtype=['int32','int32','int32','str','str','str','float64'])
 x['id4'] = x['id4'].astype('category')
 x['id5'] = x['id5'].astype('category')
