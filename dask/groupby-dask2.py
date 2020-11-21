@@ -26,7 +26,7 @@ client = distributed.Client(processes=True, silence_logs=logging.ERROR)
 dk.config.set({"optimization.fuse.ave-width": 20})
 
 data_name = os.environ['SRC_GRP_LOCAL']
-on_disk = data_name.split("_")[1] == "1e9" # on-disk data storage #126
+on_disk = False #data_name.split("_")[1] == "1e9" # on-disk data storage #126
 fext = "parquet" if on_disk else "csv"
 src_grp = os.path.join("data", data_name+"."+fext)
 print("loading dataset %s" % data_name, flush=True)
