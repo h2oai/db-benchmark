@@ -21,11 +21,17 @@ data_name = os.environ['SRC_GRP_LOCAL']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-from datatable import fread # for loading data only, see #47
-x = fread(src_grp).to_pandas()
-x['id1'] = x['id1'].astype('category') # remove after datatable#1691
-x['id2'] = x['id2'].astype('category')
-x['id3'] = x['id3'].astype('category')
+## remove branching after h2oai/datatable#2761 resolved
+na_flag = int(float(data_name.split("_")[3]))
+if na_flag > 0:
+  x = pd.read_csv(src_grp, dtype={'id1': 'category', 'id2': 'category', 'id3': 'category', 'id4': 'Int32', 'id5': 'Int32', 'id6': 'Int32', 'v1': 'Int32', 'v2': 'Int32', 'v3': 'float64'})
+else:
+  from datatable import fread # for loading data only, see #47
+  x = fread(src_grp, na_strings=['']).to_pandas() ## na_strings is not used because for NA-dataset we fallback to pandas.read_csv
+  x['id1'] = x['id1'].astype('category') # remove after datatable#1691
+  x['id2'] = x['id2'].astype('category')
+  x['id3'] = x['id3'].astype('category')
+
 print(len(x.index), flush=True)
 
 task_init = timeit.default_timer()
@@ -230,6 +236,7 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
+##TODO: this removes rows that have NA in v3?
 ans = x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'], observed=True).head(2)
 ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
@@ -287,6 +294,7 @@ del ans
 question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
+##TODO: missing NA in groupby columns?
 ans = x.groupby(['id1','id2','id3','id4','id5','id6'], observed=True).agg({'v3':'sum', 'v1':'count'})
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
