@@ -27,3 +27,4 @@ utils/
 report-done
 db-benchmark.gh-pages/
 run.out
+clickhouse/etc_sudoers.bak
