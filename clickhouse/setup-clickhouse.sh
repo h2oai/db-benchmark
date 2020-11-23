@@ -21,8 +21,9 @@ sudo sed -i -e "s|<user_files_path>/var/lib/clickhouse/user_files/</user_files_p
 grep 'user_files_path' /etc/clickhouse-server/config.xml
 
 # server start/stop without sudo: use visudo to edit sudoers
-#sudo cp /etc/sudoers ~/etc_sudoers.bak
+#sudo cp /etc/sudoers etc_sudoers.bak
 #sudo EDITOR=vim visudo
+# add two lines for your user at the end of section: Members of the admin group may gain root privileges
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server start
 #user     ALL=NOPASSWD: /usr/sbin/service clickhouse-server stop
 
