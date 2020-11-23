@@ -25,8 +25,8 @@ if [ $1 == 'groupby' ]; then
   CH_EXT_GRP_BY=53687091200 # twice less than CH_MEM #96
   CH_EXT_SORT=53687091200
   clickhouse-client --query "DROP TABLE IF EXISTS $2"
-  clickhouse-client --query "CREATE TABLE $2 (id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.csv', 'CSVWithNames', 'id1 String, id2 String, id3 String, id4 Int32, id5 Int32, id6 Int32, v1 Int32, v2 Int32, v3 Float64')"
+  clickhouse-client --query "CREATE TABLE $2 (id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
+  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $2 SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$2.csv', 'CSVWithNames', 'id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)')"
   # confirm all data loaded yandex/ClickHouse#4463
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $2'\n$2" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(strsplit(stdin[2L], "_", fixed=TRUE)[[1L]][2L])) stop("incomplete data load for ", stdin[2L],", loaded ", loaded, " rows only")'
 elif [ $1 == 'join' ]; then
