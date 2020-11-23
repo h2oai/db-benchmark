@@ -23,7 +23,7 @@ data_name = os.environ['SRC_GRP_LOCAL']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-x = dt.fread(src_grp)
+x = dt.fread(src_grp, na_strings=[''])
 print(x.nrows, flush=True)
 
 task_init = timeit.default_timer()
