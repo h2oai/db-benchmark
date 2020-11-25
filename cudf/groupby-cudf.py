@@ -16,7 +16,7 @@ solution = "cudf"
 fun = ".groupby"
 cache = "TRUE"
 
-data_name = os.environ['SRC_GRP_LOCAL']
+data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 

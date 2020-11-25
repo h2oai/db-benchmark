@@ -20,7 +20,7 @@ fun = "join";
 cache = true;
 on_disk = false;
 
-data_name = ENV["SRC_JN_LOCAL"];
+data_name = ENV["SRC_DATANAME"];
 src_jn_x = string("data/", data_name, ".csv");
 y_data_name = join_to_tbls(data_name);
 src_jn_y = [string("data/", y_data_name[1], ".csv"), string("data/", y_data_name[2], ".csv"), string("data/", y_data_name[3], ".csv")];

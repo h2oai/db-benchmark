@@ -21,7 +21,7 @@ fun = "by";
 cache = true;
 on_disk = false;
 
-data_name = ENV["SRC_GRP_LOCAL"];
+data_name = ENV["SRC_DATANAME"];
 src_grp = string("data/", data_name, ".csv");
 println(string("loading dataset ", data_name)); flush(stdout);
 

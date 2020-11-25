@@ -16,7 +16,7 @@ on_disk = FALSE
 h = h2o.init(startH2O=FALSE, port=55888)
 h2o.no_progress()
 
-data_name = Sys.getenv("SRC_GRP_LOCAL")
+data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 

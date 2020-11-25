@@ -18,7 +18,7 @@ solution = "dask"
 fun = ".merge"
 cache = "TRUE"
 
-data_name = os.environ['SRC_JN_LOCAL']
+data_name = os.environ['SRC_DATANAME']
 on_disk = False #data_name.split("_")[1] == "1e9" # on-disk data storage #126
 fext = "parquet" if on_disk else "csv"
 src_jn_x = os.path.join("data", data_name+"."+fext)

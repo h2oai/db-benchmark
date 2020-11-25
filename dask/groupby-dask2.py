@@ -25,7 +25,7 @@ client = distributed.Client(processes=True, silence_logs=logging.ERROR)
 # since we are running on local cluster of processes, we would prefer to keep the communication between workers to relative minimum, thus it's better to trade some tasks granularity for better processing locality
 dk.config.set({"optimization.fuse.ave-width": 20})
 
-data_name = os.environ['SRC_GRP_LOCAL']
+data_name = os.environ['SRC_DATANAME']
 on_disk = False #data_name.split("_")[1] == "1e9" # on-disk data storage #126
 fext = "parquet" if on_disk else "csv"
 src_grp = os.path.join("data", data_name+"."+fext)
