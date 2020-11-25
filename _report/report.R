@@ -23,7 +23,8 @@ load_time = function(path=getwd()) {
       in_rows %in% c(1e7, 1e8, 1e9) &
       solution %in% get_report_solutions() &
       !batch %in% get_excluded_batch() &
-      !(task=="groupby" & substr(data, 1L, 2L)=="G2")
+      !(task=="groupby" & substr(data, 1L, 2L)=="G2") &
+      batch >= 1605961721
     ][order(timestamp)]
 }
 load_logs = function(path=getwd()) {
@@ -34,7 +35,8 @@ load_logs = function(path=getwd()) {
       solution %in% get_report_solutions() &
       action %in% c("start","finish") &
       !batch %in% get_excluded_batch() &
-      !(task=="groupby" & substr(data, 1L, 2L)=="G2")
+      !(task=="groupby" & substr(data, 1L, 2L)=="G2") &
+      batch >= 1605961721
     ][order(timestamp)]
 }
 load_questions = function(path=getwd()) {
@@ -85,8 +87,8 @@ model_time = function(d) {
     ans[int] = vapply(l[int], function(y) {same=uniqueN(y)==1L; if (debug&&!same) browser() else same}, NA)
     ans[dbl] = vapply(l[dbl], function(y, t) {
       m = mean(y)
-      lb = m-m*t
-      ub = m+m*t
+      lb = m-abs(m)*t
+      ub = m+abs(m)*t
       same = all(y >= lb) && all(y <= ub)
       if (debug&&!same) browser() else same
     }, t=tolerance, NA)
