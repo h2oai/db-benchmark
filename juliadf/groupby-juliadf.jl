@@ -36,13 +36,13 @@ print("grouping...\n"); flush(stdout);
 
 question = "sum v1 by id1"; # q1
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id1), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id1), skipmissing(:v1) => sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id1), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id1), skipmissing(:v1) => sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
