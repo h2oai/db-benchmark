@@ -46,20 +46,20 @@ data = function() {
       ][]
 }
 plot = function(d, s, n, t) {
-  f = sapply(d, is.factor)
-  fn = function(d) {
-    # workaround deepayan/lattice#19
-    if (uniqueN(d$batch)<2L) stop("not enough ticks on X axis") else d
-  }
-  tryCatch(xyplot(
-    data=fn(d[task==t & solution==s & in_rows==n][, which(f) := lapply(.SD, factor), .SDcols=f]),
-    time_sec~batch|data+question_group,
-    groups=question,
-    auto.key=list(columns=length(levels(d$question_group)), lines=TRUE, points=FALSE),
-    type="l",
-    scales=list(y=list(relation="free", log=TRUE, equispaced.log=FALSE)),
-    xlab="benchmark run", ylab="query seconds (log)", main=paste(s, t, pretty_sci(n))
-  ), error = function(e) message(e$message))
+  tryCatch({
+    f = sapply(d, is.factor)
+    dd = d[task==t & solution==s & in_rows==n][, which(f) := lapply(.SD, factor), .SDcols=f]
+    if (uniqueN(dd$batch)<2L) stop("not enough ticks on X axis") ## workaround deepayan/lattice#19
+    xyplot(
+      data=dd,
+      time_sec~batch|data+question_group,
+      groups=question,
+      auto.key=list(columns=length(levels(dd$question_group)), lines=TRUE, points=FALSE),
+      type="l",
+      scales=list(y=list(relation="free", log=TRUE, equispaced.log=FALSE)),
+      xlab="benchmark run", ylab="query seconds (log)", main=paste(s, t, pretty_sci(n))
+    )
+  }, error = function(e) message(e$message))
 }
 d = data()
 ```
