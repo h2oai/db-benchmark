@@ -10,9 +10,15 @@ is.pause()
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
 
 run_tasks = getenv("RUN_TASKS") # run_tasks = c("groupby","join")
-if (!length(run_tasks)) q("no")
+if (!length(run_tasks)) {
+  cat("No benchmark tasks to run\n")
+  q("no")
+}
 run_solutions = getenv("RUN_SOLUTIONS") # run_solutions = c("data.table","dplyr","pydatatable","spark","pandas")
-if (!length(run_solutions)) q("no")
+if (!length(run_solutions)) {
+  cat("No benchmark solutions to run\n")
+  q("no")
+}
 
 data = fread("./_control/data.csv", logical01=TRUE, colClasses=c("character","character","character","character","character","character","logical"))
 data[active==TRUE, # filter on active datasets
@@ -41,6 +47,9 @@ if (any(is.na(dt$timeout_s))) stop("missing entries in ./_control/timeout.csv fo
 
 # detect if script has been already run before for currently installed version/revision
 lookup_run_batch(dt)
+
+# print list of solutions that are going to be run in this batch so we know upfront which will be skipped
+cat("Benchmark solutions to run: ", dt[is.na(run_batch), paste(unique(solution),collapse=", ")], "\n", sep="")
 
 # launch script, if not mockup, if not already run, unless forcerun
 launch(dt, mockup=mockup)
