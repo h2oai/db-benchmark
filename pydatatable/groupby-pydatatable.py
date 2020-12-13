@@ -213,30 +213,32 @@ del ans
 
 question = "largest two v3 by id6" # q8
 ## NAs not properly handled during Q: top 2 by group h2oai/datatable#2806
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, sum(f.largest2_v3)]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = ans[:, sum(f.largest2_v3)]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3), flush=True)
-print(ans.tail(3), flush=True)
-del ans
+na_flag = int(float(data_name.split("_")[3]))
+if na_flag == 0:
+  gc.collect()
+  t_start = timeit.default_timer()
+  ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
+  print(ans.shape, flush=True)
+  t = timeit.default_timer() - t_start
+  m = memory_usage()
+  t_start = timeit.default_timer()
+  chk = ans[:, sum(f.largest2_v3)]
+  chkt = timeit.default_timer() - t_start
+  write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
+  del ans
+  gc.collect()
+  t_start = timeit.default_timer()
+  ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
+  print(ans.shape, flush=True)
+  t = timeit.default_timer() - t_start
+  m = memory_usage()
+  t_start = timeit.default_timer()
+  chk = ans[:, sum(f.largest2_v3)]
+  chkt = timeit.default_timer() - t_start
+  write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(flatten(chk.to_list())), chk_time_sec=chkt, on_disk=on_disk)
+  print(ans.head(3), flush=True)
+  print(ans.tail(3), flush=True)
+  del ans
 
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
