@@ -21,6 +21,8 @@ if (!length(run_solutions)) {
 }
 
 data = fread("./_control/data.csv", logical01=TRUE, colClasses=c("character","character","character","character","character","character","logical"))
+if (anyDuplicated(data[["data"]]))
+  stop("_control/data.csv contains duplicated data cases")
 data[active==TRUE, # filter on active datasets
      ][run_tasks, on="task", nomatch=NA # filter for env var RUN_TASKS
        ][, c("active") := NULL # remove unused
