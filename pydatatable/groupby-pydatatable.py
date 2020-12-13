@@ -212,6 +212,7 @@ print(ans.tail(3), flush=True)
 del ans
 
 question = "largest two v3 by id6" # q8
+## NAs not properly handled during Q: top 2 by group h2oai/datatable#2806
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
