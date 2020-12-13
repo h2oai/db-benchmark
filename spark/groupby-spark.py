@@ -272,7 +272,7 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc nulls last) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -286,7 +286,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id6, largest2_v3 from (select id6, v3 as largest2_v3, row_number() over (partition by id6 order by v3 desc nulls last) as order_v3 from x) sub_query where order_v3 <= 2").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
