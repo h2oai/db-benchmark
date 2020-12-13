@@ -166,7 +166,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "median v3 sd v3 by id4 id5" # q6 # median/std implemented but not yet supported in groupby: https://github.com/rapidsai/cudf/issues/3429 https://github.com/rapidsai/cudf/issues/3736
+question = "median v3 sd v3 by id4 id5" # q6
 gc.collect()
 t_start = timeit.default_timer()
 ans = x.groupby(['id4','id5'],as_index=False,dropna=False).agg({'v3': ['median','std']})
