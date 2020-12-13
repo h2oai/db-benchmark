@@ -238,7 +238,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "regression v1 v2 by id2 id4" # q9 # not yet implemeneted https://github.com/h2oai/datatable/issues/1543
+question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
