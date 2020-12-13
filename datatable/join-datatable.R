@@ -14,7 +14,7 @@ fun = "[.data.table"
 cache = TRUE
 on_disk = FALSE
 
-data_name = Sys.getenv("SRC_JN_LOCAL")
+data_name = Sys.getenv("SRC_DATANAME")
 src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
 y_data_name = join_to_tbls(data_name)
 src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names(y_data_name))

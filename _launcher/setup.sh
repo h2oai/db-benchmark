@@ -10,9 +10,9 @@ sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 sudo apt-get update -qq
 sudo apt-get install -y r-base-dev
-echo 'LC_ALL=C' >> ~/.Renviron
 
-# setup ~/.R/Makevars
+# configure R
+echo 'LC_ALL=C' >> ~/.Renviron
 mkdir -p ~/.R
 echo 'CFLAGS=-O3 -mtune=native' > ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars

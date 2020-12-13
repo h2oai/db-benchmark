@@ -6,6 +6,7 @@
 # ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --quiet=true
 # ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --k=1e2 --na=0 --sort=0 --quiet=true
 # ./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --k=1e2 --na=0 --sort=0 --quiet=true --print=question,run,time_sec
+# ./_launcher/solution.R --solution=data.table --quiet=true --out=dt-grp.csv
 
 # input ----
 
@@ -117,16 +118,6 @@ file.ext = function(x) {
   if (is.null(ans)) stop(sprintf("solution %s does not have file extension defined in file.ext helper function", x))
   ans
 }
-# data_name env var for each task
-task.env = function(x) {
-  ans = switch(
-    x,
-    "groupby"="SRC_GRP_LOCAL",
-    "join"="SRC_JN_LOCAL"
-  )
-  if (is.null(ans)) stop(sprintf("task %s does not have data name environment variable defined in task.env helper function", x))
-  ans
-}
 # dynamic LHS in: Sys.setenv(var = value)
 setenv = function(var, value, quiet=TRUE) {
   stopifnot(is.character(var), !is.na(var), length(value)==1L, is.atomic(value))
@@ -145,9 +136,6 @@ data.desc = function(task, nrow, k, na, sort) {
   }
   sprintf("%s_%s_%s_%s_%s", prefix, nrow, k, na, sort)
 }
-data_name_exception = function(solution, task, d) {
-  d
-}
 # no dots solution name used in paths
 solution.path = function(x) {
   gsub(".", "", x, fixed=TRUE)
@@ -157,23 +145,21 @@ solution.path = function(x) {
 
 s = args[["solution"]]
 t = args[["task"]]
-data_name_env = task.env(t)
 d = data.desc(t, args[["nrow"]], args[["k"]], args[["na"]], args[["sort"]])
-d = data_name_exception(solution=s, task=t, d=d) # this is already handled in launch.R but here we handle ad-hoc single solution cmd runs
 
 Sys.setenv("CSV_TIME_FILE"=args[["out"]])
-setenv(data_name_env, d)
+setenv("SRC_DATANAME", d)
 
 ns = solution.path(s)
 ext = file.ext(s)
 localcmd = if (s %in% c("clickhouse","h2o")) { # custom launcher bash script, for clickhouse and h2o
-  sprintf("exec.sh %s %s", t, d)
+  sprintf("exec.sh %s", t)
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
 
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 
-Sys.unsetenv(data_name_env)
+Sys.unsetenv("SRC_DATANAME")
 Sys.unsetenv("CSV_TIME_FILE")
 
 if (stdout && file.size(args[["out"]])) {

@@ -16,7 +16,7 @@ on_disk = FALSE
 h = h2o.init(startH2O=FALSE, port=55888)
 h2o.no_progress()
 
-data_name = Sys.getenv("SRC_JN_LOCAL")
+data_name = Sys.getenv("SRC_DATANAME")
 src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
 y_data_name = join_to_tbls(data_name)
 src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names(y_data_name))

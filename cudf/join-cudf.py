@@ -16,7 +16,7 @@ solution = "cudf"
 fun = ".merge"
 cache = "TRUE"
 
-data_name = os.environ['SRC_JN_LOCAL']
+data_name = os.environ['SRC_DATANAME']
 src_jn_x = os.path.join("data", data_name+".csv")
 y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_data_name[1]+".csv"), os.path.join("data", y_data_name[2]+".csv")]
