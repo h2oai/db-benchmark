@@ -39,7 +39,7 @@ print("grouping...", flush=True)
 question = "sum v1 by id1" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1'],as_index=False).agg({'v1':'sum'})
+ans = x.groupby(['id1'],as_index=False,dropna=False).agg({'v1':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -50,7 +50,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1'],as_index=False).agg({'v1':'sum'})
+ans = x.groupby(['id1'],as_index=False,dropna=False).agg({'v1':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -65,7 +65,7 @@ del ans
 question = "sum v1 by id1:id2" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2'],as_index=False).agg({'v1':'sum'})
+ans = x.groupby(['id1','id2'],as_index=False,dropna=False).agg({'v1':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -76,7 +76,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2'],as_index=False).agg({'v1':'sum'})
+ans = x.groupby(['id1','id2'],as_index=False,dropna=False).agg({'v1':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -91,7 +91,7 @@ del ans
 question = "sum v1 mean v3 by id3" # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id3'],as_index=False).agg({'v1':'sum', 'v3':'mean'})
+ans = x.groupby(['id3'],as_index=False,dropna=False).agg({'v1':'sum', 'v3':'mean'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -102,7 +102,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id3'],as_index=False).agg({'v1':'sum', 'v3':'mean'})
+ans = x.groupby(['id3'],as_index=False,dropna=False).agg({'v1':'sum', 'v3':'mean'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -117,7 +117,7 @@ del ans
 question = "mean v1:v3 by id4" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id4'],as_index=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
+ans = x.groupby(['id4'],as_index=False,dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -128,7 +128,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id4'],as_index=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
+ans = x.groupby(['id4'],as_index=False,dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -143,7 +143,7 @@ del ans
 question = "sum v1:v3 by id6" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
+ans = x.groupby(['id6'],as_index=False,dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -154,7 +154,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id6'],as_index=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
+ans = x.groupby(['id6'],as_index=False,dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -169,7 +169,7 @@ del ans
 question = "median v3 sd v3 by id4 id5" # q6 # median/std implemented but not yet supported in groupby: https://github.com/rapidsai/cudf/issues/3429 https://github.com/rapidsai/cudf/issues/3736
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id4','id5'],as_index=False).agg({'v3': ['median','std']})
+ans = x.groupby(['id4','id5'],as_index=False,dropna=False).agg({'v3': ['median','std']})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -180,7 +180,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id4','id5'],as_index=False).agg({'v3': ['median','std']})
+ans = x.groupby(['id4','id5'],as_index=False,dropna=False).agg({'v3': ['median','std']})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -195,7 +195,7 @@ del ans
 #question = "max v1 - min v2 by id3" # q7 # not yet implemented: https://github.com/rapidsai/cudf/issues/2591
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id3'],as_index=False).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
+#ans = x.groupby(['id3'],as_index=False,dropna=False).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -206,7 +206,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id3'],as_index=False).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
+#ans = x.groupby(['id3'],as_index=False,dropna=False).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -221,7 +221,7 @@ del ans
 #question = "largest two v3 by id6" # q8 # not yet implemented: https://github.com/rapidsai/cudf/issues/2592
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'],as_index=False).head(2)
+#ans = x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'],as_index=False,dropna=False).head(2)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -232,7 +232,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'],as_index=False).head(2)
+#ans = x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6'],as_index=False,dropna=False).head(2)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -248,7 +248,7 @@ del ans
 #gc.collect()
 #t_start = timeit.default_timer()
 #x[['v1','v2']].corr()
-#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'],as_index=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'],as_index=False,dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -259,7 +259,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'],as_index=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'],as_index=False,dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -274,7 +274,7 @@ del ans
 question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False).agg({'v3':'sum', 'v1':'count'})
+ans = x.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False,dropna=False).agg({'v3':'sum', 'v1':'count'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -285,7 +285,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False).agg({'v3':'sum', 'v1':'count'})
+ans = x.groupby(['id1','id2','id3','id4','id5','id6'],as_index=False,dropna=False).agg({'v3':'sum', 'v1':'count'})
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
