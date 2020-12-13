@@ -15,7 +15,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 by id1' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q1_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -24,7 +24,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 by id1' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q1_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q2: question='sum v1 by id1:id2' */
@@ -35,7 +35,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 by id1:id2' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, id2, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1, id2;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q2_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -44,7 +44,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 by id1:id2' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, id2, sum(v1) AS v1 FROM DATA_NAME GROUP BY id1, id2;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q2_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q3: question='sum v1 mean v3 by id3' */
@@ -55,7 +55,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 mean v3 by id3' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM DATA_NAME GROUP BY id3;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q3_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -64,7 +64,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1 mean v3 by id3' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM DATA_NAME GROUP BY id3;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q3_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q4: question='mean v1:v3 by id4' */
@@ -75,7 +75,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'mean v1:v3 by id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id4, avg(v1) AS v1, avg(v2) AS v2, avg(v3) AS v3 FROM DATA_NAME GROUP BY id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q4_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -84,7 +84,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'mean v1:v3 by id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id4, avg(v1) AS v1, avg(v2) AS v2, avg(v3) AS v3 FROM DATA_NAME GROUP BY id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q4_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q5: question='sum v1:v3 by id6' */
@@ -95,7 +95,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1:v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q5_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -104,7 +104,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v1:v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q5_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q6: question='median v3 sd v3 by id4 id5' */
@@ -115,7 +115,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'median v3 sd v3 by id4 id5' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id4, id5, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM DATA_NAME GROUP BY id4, id5;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q6_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -124,7 +124,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'median v3 sd v3 by id4 id5' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id4, id5, medianExact(v3) AS median_v3, stddevPop(v3) AS sd_v3 FROM DATA_NAME GROUP BY id4, id5;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q6_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q7: question='max v1 - min v2 by id3' */
@@ -135,7 +135,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'max v1 - min v2 by id3' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM DATA_NAME GROUP BY id3;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q7_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -144,7 +144,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'max v1 - min v2 by id3' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id3, max(v1) - min(v2) AS range_v1_v2 FROM DATA_NAME GROUP BY id3;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q7_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q8: question='largest two v3 by id6' */
@@ -155,7 +155,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'largest two v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -164,7 +164,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'largest two v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q9: question='regression v1 v2 by id2 id4' */
@@ -175,7 +175,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'regression v1 v2 by id2 id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -184,7 +184,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'regression v1 v2 by id2 id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q10: question='sum v3 count by id1:id6' */
@@ -195,7 +195,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v3 count by id1:id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Log AS SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM DATA_NAME GROUP BY id1, id2, id3, id4, id5, id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q10_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -204,5 +204,5 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'sum v3 count by id1:id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Log AS SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM DATA_NAME GROUP BY id1, id2, id3, id4, id5, id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q10_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;

@@ -14,7 +14,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'small inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, x.id2, x.id3, x.id4, y.id4, x.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_SMALL AS y USING (id1);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q1_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -23,7 +23,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'small inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id1, x.id2, x.id3, x.id4, y.id4, x.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_SMALL AS y USING (id1);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q1_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q2: question='medium inner on int' */
@@ -34,7 +34,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_MEDIUM AS y USING (id2);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q2_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -43,7 +43,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_MEDIUM AS y USING (id2);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q2_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q3: question='medium outer on int' */
@@ -54,7 +54,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium outer on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x LEFT JOIN RHS_MEDIUM AS y USING (id2);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q3_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -63,7 +63,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium outer on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, id2, x.id3, x.id4, y.id4, x.id5, y.id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x LEFT JOIN RHS_MEDIUM AS y USING (id2);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q3_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q4: question='medium inner on factor' */
@@ -74,7 +74,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium inner on factor' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, x.id2, y.id2, x.id3, x.id4, y.id4, id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_MEDIUM AS y USING (id5);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q4_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -83,7 +83,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'medium inner on factor' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, x.id2, y.id2, x.id3, x.id4, y.id4, id5, x.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_MEDIUM AS y USING (id5);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q4_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 /* q5: question='big inner on int' */
@@ -94,7 +94,7 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'big inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, x.id2, y.id2, id3, x.id4, y.id4, x.id5, y.id5, x.id6, y.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_BIG AS y USING (id3);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q5_r1.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
@@ -103,5 +103,5 @@ SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'join' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'big inner on int' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select join' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
 FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT x.id1, y.id1, x.id2, y.id2, id3, x.id4, y.id4, x.id5, y.id5, x.id6, y.id6, x.v1, y.v2 FROM DATA_NAME AS x INNER JOIN RHS_BIG AS y USING (id3);\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/join_DATA_NAME_q5_r2.csv' FORMAT CSVWithNames;
-SELECT * FROM ans;
+SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
