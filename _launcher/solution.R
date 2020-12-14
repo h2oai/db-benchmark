@@ -12,7 +12,7 @@
 
 args = commandArgs(TRUE)
 if (length(args)<1L)
-  stop("running ./solution.R should be followed with --solution=x")
+  stop("example usage of ./_launcher/solution.R scripts launcher\n./_launcher/solution.R --solution=data.table --task=groupby --nrow=1e7 --k=1e2 --na=0 --sort=0 --quiet=true --print=question,run,time_sec")
 
 args = strsplit(args, "=", fixed=TRUE)
 if (length(unique(lengths(args)))!=1L)
