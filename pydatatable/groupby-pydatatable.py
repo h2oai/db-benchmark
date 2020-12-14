@@ -212,7 +212,7 @@ print(ans.tail(3), flush=True)
 del ans
 
 question = "largest two v3 by id6" # q8
-## NAs not properly handled during Q: top 2 by group h2oai/datatable#2806
+## pydatatable groupby Q top 2 by group orders NAs first #172
 na_flag = int(float(data_name.split("_")[3]))
 if na_flag == 0:
   gc.collect()

@@ -25,7 +25,7 @@ print("loading dataset %s" % data_name, flush=True)
 na_flag = int(float(data_name.split("_")[3]))
 if na_flag > 0:
   #x = pd.read_csv(src_grp, dtype={'id1': 'category', 'id2': 'category', 'id3': 'category', 'id4': 'Int32', 'id5': 'Int32', 'id6': 'Int32', 'v1': 'Int32', 'v2': 'Int32', 'v3': 'float64'})
-  exit(0) # not yet implemented https://github.com/pandas-dev/pandas/issues/36327
+  exit(0) # not yet implemented #171
 else:
   from datatable import fread # for loading data only, see #47
   x = fread(src_grp, na_strings=['']).to_pandas() ## na_strings is not used because for NA-dataset we fallback to pandas.read_csv
