@@ -48,6 +48,14 @@ More solutions has been proposed. Status of those can be tracked in issues track
 - use `--quiet=true` to suppress script's output and print timings only, using `--print=question,run,time_sec` specify columns to be printed to console, to print all use `--print=*`
 - use `--out=time.csv` to write timings to a file rather than console
 
+## Running script interactively
+
+- install software in expected location, details above
+- ensure data name to be used in env var below is present in `./data` dir
+- source python virtual environment if needed
+- call `SRC_DATANAME=G1_1e7_1e2_0_0 R`, if desired replace `R` with `python` or `julia`
+- proceed pasting code from benchmark script
+
 ## Extra care needed
 
 - `cudf` uses `conda` instead of `virtualenv`
