@@ -31,12 +31,12 @@ if (nas>0L) {
   cat(sprintf("Inputting NAs\n"))
   for (col in paste0("id",1:6)) {
     ucol = unique(DT[[col]])
-    nna = as.integer(length(ucol) * nas/100)
+    nna = as.integer(length(ucol) * (nas/100))
     if (nna)
       set(DT, DT[.(sample(ucol, nna)), on=col, which=TRUE], col, NA)
     rm(ucol)
   }
-  nna = as.integer(nrow(DT) * nas/100)
+  nna = as.integer(nrow(DT) * (nas/100))
   if (nna) {
     for (col in paste0("v",1:3))
       set(DT, sample(nrow(DT), nna), col, NA)
