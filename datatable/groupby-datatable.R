@@ -127,12 +127,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "largest two v3 by id6" # q8
-t = system.time(print(dim(ans<-x[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
+t = system.time(print(dim(ans<-x[order(-v3, na.last=NA), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(largest2_v3))])[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-x[order(-v3), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
+t = system.time(print(dim(ans<-x[order(-v3, na.last=NA), .(largest2_v3=head(v3, 2L)), by=id6])))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-ans[, .(sum(largest2_v3))])[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)

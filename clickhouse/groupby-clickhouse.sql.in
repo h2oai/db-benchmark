@@ -150,20 +150,20 @@ DROP TABLE ans;
 /* q8: question='largest two v3 by id6' */
 
 SET log_queries = 1;
-CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;
+CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME WHERE v3 IS NOT NULL GROUP BY id6;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'largest two v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
-FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r1.csv' FORMAT CSVWithNames;
+FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME WHERE v3 IS NOT NULL GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r1.csv' FORMAT CSVWithNames;
 SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
 SET log_queries = 1;
-CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;
+CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME WHERE v3 IS NOT NULL GROUP BY id6;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'largest two v3 by id6' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
-FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r2.csv' FORMAT CSVWithNames;
+FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM DATA_NAME WHERE v3 IS NOT NULL GROUP BY id6;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q8_r2.csv' FORMAT CSVWithNames;
 SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 
