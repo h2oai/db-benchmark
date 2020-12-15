@@ -138,12 +138,12 @@ print(tail(ans, 3))
 rm(ans)
 
 question = "regression v1 v2 by id2 id4" # q9
-t = system.time(print(dim(ans<-x %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2, use="complete.obs")^2))))[["elapsed"]]
+t = system.time(print(dim(ans<-x %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2, use="na.or.complete")^2))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), r2=sum(r2)))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
-t = system.time(print(dim(ans<-x %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2, use="complete.obs")^2))))[["elapsed"]]
+t = system.time(print(dim(ans<-x %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2, use="na.or.complete")^2))))[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-summarise(ungroup(ans), r2=sum(r2)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
