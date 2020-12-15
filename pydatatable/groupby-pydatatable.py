@@ -24,6 +24,11 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
+n_flag = int(float(data_name.split("_")[1]))
+na_flag = int(float(data_name.split("_")[3]))
+if n_flag==1e9 and na_flag > 0:
+  exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
+
 x = dt.fread(src_grp, na_strings=[''])
 print(x.nrows, flush=True)
 
@@ -213,7 +218,8 @@ print(ans.tail(3), flush=True)
 del ans
 
 question = "largest two v3 by id6" # q8
-## possible improvement after: sort should allow NAs last / NAs first option h2oai/datatable#2806
+## improve after: sort na_position="remove" crashes h2oai/datatable#2809
+#ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3, na_position="remove")]
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[~isna(f.v3),:][:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
@@ -242,7 +248,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
+ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -253,7 +259,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
+ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
