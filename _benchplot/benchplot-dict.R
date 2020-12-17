@@ -177,47 +177,40 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q4 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "dplyr" = {list(
-    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e2_0_1"),                                  # q10
-    "timeout" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1",       # q10 # after going back to 0.8.3 all successfully finish
-                  "G1_1e8_1e1_0_0","G1_1e8_2e0_0_0"),                                        # q10
-    "internal error" = c("G1_1e9_1e2_0_0","G1_1e9_1e2_0_1",                                  # q1 #152
+    "timeout" = c("G1_1e8_2e0_0_0"),                                                         # q10
+    "internal error" = c("G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0",                 # q1 #152
                   "G1_1e9_1e1_0_0",                                                          # q2 #152, before was q6
                   "G1_1e9_2e0_0_0")                                                          # q3 #152, before was q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
-    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"),# q10 #142
-    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1"),# q10 #142
+    "not implemented" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
   )},
   "pydatatable" = {list(
+    "fread bug" = c("G1_1e9_1e2_5_0")
   )},
   "spark" = {list(
   )},
   "dask" = {list(
-    "timeout" = c("G1_1e7_1e1_0_0",                                                # q8
-                  "G1_1e7_2e0_0_0",                                                # q8
-                  "G1_1e8_1e2_0_0",                                                # q8
-                  "G1_1e8_1e1_0_0",                                                # q8
-                  "G1_1e8_2e0_0_0",                                                # q8
-                  "G1_1e8_1e2_0_1",                                                # q8
-                  "G1_1e9_1e2_0_0",                                                # q3 #126
-                  "G1_1e9_1e2_0_1",                                                # q3 #126
-                  "G1_1e9_1e1_0_0",                                                # q3 #126
-                  "G1_1e9_2e0_0_0")                                                # q3 #126
+    "not implemented" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
+    "internal error" = "G1_1e8_1e2_0_0",                                           # q10 #174
+    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e2_0_1",                         # q10
+                        "G1_1e8_1e2_0_1",                                          # q10
+                        "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0"), # read.csv
+    "timeout" = c("G1_1e7_1e1_0_0",                                                # q10
+                  "G1_1e7_2e0_0_0",                                                # q10
+                  "G1_1e8_1e1_0_0",                                                # q7
+                  "G1_1e8_2e0_0_0")                                                # q3
   )},
   "juliadf" = {list(
     "timeout" = "G1_1e8_2e0_0_0",
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # CSV.File
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # CSV.File
   )},
   "cudf" = {list(
-    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1", # read_csv #94
-                        "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #97
+    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1","G1_1e8_1e2_5_0", # read_csv #94
+                        "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # read_csv #97
   )},
   "clickhouse" = {list(
-    "out of memory" = c("G1_1e9_1e2_0_0",                                                    # q10 #96
-                        "G1_1e9_1e1_0_0",                                                    # q10 #96
-                        "G1_1e9_2e0_0_0",                                                    # q10 #96
-                        "G1_1e9_1e2_0_1")                                                    # q10 #96
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)

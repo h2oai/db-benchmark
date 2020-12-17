@@ -189,7 +189,7 @@ format_exception = function(ex, s, d, q, which=c("data","query"), short=TRUE) {
   }
   if (is.null(ans)) {
     ans = "undefined exception"
-    message(sprintf("There is an undefined exception for s='%s' d='%s' q='%s'", as.character(s), as.character(d), paste(as.character(q), collapse=",")))
+    message(sprintf("undefined exception for s='%s' d='%s' q='%s'", as.character(s), as.character(d), paste(as.character(q), collapse=",")))
   }
   ans
 }
