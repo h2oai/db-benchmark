@@ -35,10 +35,10 @@ print(x.nrows, flush=True)
 task_init = timeit.default_timer()
 print("grouping...", flush=True)
 
-question = "sum v1 by id1" # q1
+question = 'sum v1 by id1' # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1)]
+ans = x[:, {'v1': sum(f.v1)}, by(f.id1)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -49,7 +49,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1)]
+ans = x[:, {'v1': sum(f.v1)}, by(f.id1)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -61,10 +61,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v1 by id1:id2" # q2
+question = 'sum v1 by id1:id2' # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1, f.id2)]
+ans = x[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -75,7 +75,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1)}, by(f.id1, f.id2)]
+ans = x[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -87,10 +87,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v1 mean v3 by id3" # q3
+question = 'sum v1 mean v3 by id3' # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, by(f.id3)]
+ans = x[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -101,7 +101,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v3": mean(f.v3)}, by(f.id3)]
+ans = x[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -113,10 +113,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "mean v1:v3 by id4" # q4
+question = 'mean v1:v3 by id4' # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, by(f.id4)]
+ans = x[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -127,7 +127,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": mean(f.v1), "v2": mean(f.v2), "v3": mean(f.v3)}, by(f.id4)]
+ans = x[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -139,10 +139,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v1:v3 by id6" # q5
+question = 'sum v1:v3 by id6' # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, by(f.id6)]
+ans = x[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -153,7 +153,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v1": sum(f.v1), "v2": sum(f.v2), "v3": sum(f.v3)}, by(f.id6)]
+ans = x[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -165,7 +165,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "median v3 sd v3 by id4 id5" # q6
+question = 'median v3 sd v3 by id4 id5' # q6
 gc.collect()
 t_start = timeit.default_timer()
 ans = x[:, {'median_v3': median(f.v3), 'sd_v3': sd(f.v3)}, by(f.id4, f.id5)]
@@ -191,10 +191,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "max v1 - min v2 by id3" # q7
+question = 'max v1 - min v2 by id3' # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id3)]
+ans = x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -205,7 +205,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"range_v1_v2": max(f.v1)-min(f.v2)}, by(f.id3)]
+ans = x[:, {'range_v1_v2': max(f.v1)-min(f.v2)}, by(f.id3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -217,12 +217,12 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "largest two v3 by id6" # q8
-## improve after: sort na_position="remove" crashes h2oai/datatable#2809
-#ans = x[:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3, na_position="remove")]
+question = 'largest two v3 by id6' # q8
+## improve after: sort na_position='remove' crashes h2oai/datatable#2809
+#ans = x[:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3, na_position='remove')]
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~isna(f.v3),:][:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
+ans = x[~isna(f.v3),:][:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -233,7 +233,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~isna(f.v3),:][:2, {"largest2_v3": f.v3}, by(f.id6), sort(-f.v3)]
+ans = x[~isna(f.v3),:][:2, {'largest2_v3': f.v3}, by(f.id6), sort(-f.v3)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -245,10 +245,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "regression v1 v2 by id2 id4" # q9
+question = 'regression v1 v2 by id2 id4' # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
+ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {'r2': corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -259,7 +259,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {"r2": corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
+ans = x[~isna(f.v1) & ~isna(f.v2),:][:, {'r2': corr(f.v1, f.v2)**2}, by(f.id2, f.id4)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -271,10 +271,10 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v3 count by id1:id6" # q10
+question = 'sum v3 count by id1:id6' # q10
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v3": sum(f.v3), "count": count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]
+ans = x[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -285,7 +285,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[:, {"v3": sum(f.v3), "count": count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]
+ans = x[:, {'v3': sum(f.v3), 'count': count()}, by(f.id1, f.id2, f.id3, f.id4, f.id5, f.id6)]
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
