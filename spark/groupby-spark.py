@@ -304,7 +304,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x where v1 is not null and v2 is not null group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -318,7 +318,7 @@ spark.catalog.uncacheTable("ans")
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
+ans = spark.sql("select id2, id4, pow(corr(v1, v2), 2) as r2 from x where v1 is not null and v2 is not null group by id2, id4").persist(pyspark.StorageLevel.MEMORY_ONLY)
 print((ans.count(), len(ans.columns)), flush=True) # shape
 t = timeit.default_timer() - t_start
 m = memory_usage()
