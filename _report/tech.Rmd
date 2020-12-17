@@ -8,7 +8,7 @@ output:
       in_header: ga.html
 ---
 ```{r render, include=FALSE}
-# Rscript -e 'rmarkdown::render("./_report/tech.Rmd", output_dir="public")'
+# Rscript -e 'rmarkdown::render("./_report/tech.Rmd", output_dir="public")' && xdg-open public/tech.html
 ```
 
 ```{r opts, echo=FALSE}
