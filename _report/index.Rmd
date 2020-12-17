@@ -84,16 +84,12 @@ hours_took = function(lld) {
 ```
 
 ```{r report_groupby, message=FALSE}
-in_rows = c("1e7","1e8","1e9")
-k_na_sort = c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1","1e2_5_0")
-data_name = paste("G1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+data_name = get_data_levels()[["groupby"]]
 loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic","advanced"), title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
 ```{r report_join, message=FALSE}
-in_rows = c("1e7","1e8","1e9")
-k_na_sort = c("NA_0_0")
-data_name = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+data_name = get_data_levels()[["join"]]
 loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
@@ -256,7 +252,7 @@ Because we have been asked many times to do so, the first task and initial motiv
 ## Explore more data cases
 
 ```{r link_all_benchplot}
-lld[order(task), .(task, in_rows, data, knasorted, question_group)
+lld[order(task, data), .(task, in_rows, data, knasorted, question_group)
     ][, unique(.SD)
       ][, .(benchplot=link(data, question_group, task)), .(task, in_rows, knasorted)
         ][, .(task, `in rows`=in_rows, `data description`=knasorted, benchplot)

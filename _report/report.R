@@ -7,6 +7,17 @@ get_report_status_file = function(path=getwd()) {
 get_report_solutions = function() {
   c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse", "cudf")
 }
+get_data_levels = function() {
+  ## groupby
+  in_rows = c("1e7","1e8","1e9")
+  k_na_sort = c("1e2_0_0","1e1_0_0","2e0_0_0","1e2_0_1","1e2_5_0")
+  groupby = paste("G1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+  ## join
+  in_rows = c("1e7","1e8","1e9")
+  k_na_sort = c("NA_0_0")
+  join = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+  list(groupby=groupby, join=join)
+}
 get_excluded_batch = function() {
   c(
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
@@ -56,14 +67,15 @@ clean_time = function(d) {
           ][task=="groupby" & solution=="pandas" & batch<=1558106628 & question=="largest two v3 by id2 id4", "out_cols" := NA_integer_
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
-                ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task), data=ft(data))
+                ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
+                         data=fctr(data, levels=unlist(get_data_levels())))
                   ][]
 }
 clean_logs = function(l) {
   if (nrow(l[!nzchar(version) | is.na(version)]))
     stop("logs data contains NA or '' as version field, that should not happen")
   l[!nzchar(git), git := NA_character_
-    ][, `:=`(nodename=ft(nodename), solution=ft(solution), version=ft(version), git=ft(git), task=ft(task), data=ft(data), action=ft(action))
+    ][, `:=`(nodename=ft(nodename), solution=ft(solution), version=ft(version), git=ft(git), task=ft(task), data=fctr(data, levels=unlist(get_data_levels())), action=ft(action))
       ][]
 }
 clean_questions = function(q) {
@@ -96,8 +108,9 @@ model_time = function(d) {
   }
   if (nrow(
     d[!is.na(chk), .(unqn1_chk=approxUniqueN1(chk)), .(task, solution, data, question)][unqn1_chk==FALSE]
-    ))
-    stop("Value of 'chk' varies for different runs for single solution+question")
+    )) browser()
+    #stop("Value of 'chk' varies for different runs for single solution+question")
+  #d[,.SD][!is.na(chk), `:=`(unq_chk=approxUniqueN1(chk), paste_unq_chk=paste(unique(chk), collapse=",")), .(task, data, question)][unq_chk==FALSE, .(paste_unq_chk), .(task, solution, data, question)]
   if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unqn_out_rows>1L]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_cols), .(unqn_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unqn_out_cols>1L]))
@@ -150,9 +163,10 @@ merge_time_logsquestions = function(d, lq) {
 
 # transform ----
 
-ft = function(x) {
-  factor(x, levels=unique(x))
+fctr = function(x, levels=unique(x), ..., rev=FALSE) {
+  factor(x, levels=if (rev) rev(levels) else levels, ...)
 }
+ft = function(x) fctr(x)
 ftdata = function(x, task) {
   labsorted = function(x) {
     ans = rep("unsorted data", length(x))
