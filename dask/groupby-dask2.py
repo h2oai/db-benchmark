@@ -39,8 +39,6 @@ print("using disk memory-mapped data storage" if on_disk else "using in-memory d
 x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "Int32", "id5": "Int32", "id6": "Int32", "v1": "Int32", "v2": "Int32", "v3": "float64"})
 
 x = x.persist()
-# sync data reading, and rebalance data among workers - no actual impact as of now, come back to this if rebalance used in future: https://github.com/h2oai/db-benchmark/pull/144/files#r430733102
-#client.rebalance(x)
 
 in_rows = len(x)
 print(in_rows, flush=True)
