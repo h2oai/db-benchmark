@@ -183,7 +183,7 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q3 #152, before was q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
-    "not yet implemented" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
+    "not yet implemented: pandas#36327" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
   )},
   "pydatatable" = {list(
@@ -192,7 +192,7 @@ groupby.data.exceptions = {list(                                                
   "spark" = {list(
   )},
   "dask" = {list(
-    "not yet implemented" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
+    "not yet implemented: dask#6986" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
     "internal error" = "G1_1e8_1e2_0_0",                                           # q10 #174
     "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e2_0_1",                         # q10
                         "G1_1e8_1e2_0_1",                                          # q10
