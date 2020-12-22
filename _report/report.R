@@ -108,13 +108,13 @@ model_time = function(d) {
   }
   if (nrow(
     d[!is.na(chk), .(unqn1_chk=approxUniqueN1(chk)), .(task, solution, data, question)][unqn1_chk==FALSE]
-    )) browser()
-    #stop("Value of 'chk' varies for different runs for single solution+question")
+    )) stop("Value of 'chk' varies for different runs for single solution+question")
   #d[,.SD][!is.na(chk), `:=`(unq_chk=approxUniqueN1(chk), paste_unq_chk=paste(unique(chk), collapse=",")), .(task, data, question)][unq_chk==FALSE, .(paste_unq_chk), .(task, solution, data, question)]
   if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, solution, data, question)][unqn_out_rows>1L]))
     stop("Value of 'out_rows' varies for different runs for single solution+question")
   if (nrow(d[!is.na(out_cols), .(unqn_out_cols=uniqueN(out_cols)), .(task, solution, data, question)][unqn_out_cols>1L]))
     stop("Value of 'out_cols' varies for different runs for single solution+question")
+  #d[,.SD][!is.na(out_cols), `:=`(unq_out_cols=uniqueN(out_cols), paste_unq_out_cols=paste(unique(out_cols), collapse=",")), .(task, data, question)][unq_out_cols>1, .(paste_unq_out_cols), .(task, solution, data, question)]
   if (nrow(d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows)), .(task, data, question)][unqn_out_rows>1L]))
     stop("Value of 'out_rows' varies for different runs for single question")
   #d[,.SD][!is.na(out_rows), `:=`(unq_out_rows=uniqueN(out_rows), paste_unq_out_rows=paste(unique(out_rows), collapse=",")), .(task, data, question)][unq_out_rows>1, .(paste_unq_out_rows), .(task, solution, data, question)]
