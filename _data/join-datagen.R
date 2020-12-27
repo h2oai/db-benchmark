@@ -45,9 +45,24 @@ split_xlr = function(n) {
     r = key[seq.int(n+1, n*1.1)]
   )
 }
+# check if data name is LHS and has NAs
+lhs_nas = function(data_name) {
+  tmp = strsplit(data_name, "_", fixed=TRUE)[[1L]]
+  if (!identical(tmp[3L], "NA"))
+    return(FALSE)        ## RHS
+  as.integer(tmp[4L])>0L ## NAs
+}
+# NA aware sprintf for single argument only
+sprintfId = function(fmt, id) {
+  x = rep(NA_character_, length(id))
+  idx = !is.na(id)
+  x[idx] = sprintf("id%.0f", id[idx])
+  x
+}
 # we need to write in batches to reduce memory footprint
 write_batches = function(d, name, append) {
   cols = names(d)
+  if (lhs_nas(name)) sprintf = sprintfId
   if ("id1" %in% cols) set(d, NULL, "id4", sprintf("id%.0f", d$id1))
   if ("id2" %in% cols) set(d, NULL, "id5", sprintf("id%.0f", d$id2))
   if ("id3" %in% cols) set(d, NULL, "id6", sprintf("id%.0f", d$id3))
