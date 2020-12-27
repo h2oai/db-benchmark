@@ -8,13 +8,9 @@
 init = proc.time()[["elapsed"]]
 args = commandArgs(TRUE)
 N=as.numeric(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
-#N=1e7; K=NA_integer_; nas=0L; sort=0L
 stopifnot(N>=1e7, nas<=100L, nas>=0L, sort%in%c(0L,1L))
 if (N > .Machine$integer.max) stop("no support for long vector in join-datagen yet")
 N = as.integer(N)
-
-datadir = "." ## this is meant to be called from data directory as Rscript ../_data/join-datagen.R so readers don't have to create etra directory to generate, same as for groupby data
-if (!dir.exists(datadir)) stop(sprintf("directory '%s' does not exists", datadir))
 
 # helper functions ----
 
@@ -50,25 +46,24 @@ split_xlr = function(n) {
   )
 }
 # we need to write in batches to reduce memory footprint
-write_batches = function(d, name, datadir, append) {
+write_batches = function(d, name, append) {
   cols = names(d)
   if ("id1" %in% cols) set(d, NULL, "id4", sprintf("id%.0f", d$id1))
   if ("id2" %in% cols) set(d, NULL, "id5", sprintf("id%.0f", d$id2))
   if ("id3" %in% cols) set(d, NULL, "id6", sprintf("id%.0f", d$id3))
   setcolorder(d, neworder=setdiff(names(d), c("v1","v2")))
-  f = file.path(datadir, paste0(name, ".csv"))
-  fwrite(d, f, showProgress=FALSE, append=append)
+  fwrite(d, paste0(name, ".csv"), showProgress=FALSE, append=append)
 }
-handle_batches = function(d, data_name, datadir) {
+handle_batches = function(d, data_name) {
   N = nrow(d)
   if (N > 1e8) {
     stopifnot(N==1e9)
     for (i in 1:10) {
       cat(sprintf("Writing %s data batch %s\n", pretty_sci(N), i))
-      write_batches(d[((i-1)*1e8+1L):(i*1e8)], data_name, datadir, append=i>1L)
+      write_batches(d[((i-1)*1e8+1L):(i*1e8)], data_name, append=i>1L)
     }
   } else {
-    write_batches(d, data_name, datadir, append=FALSE)
+    write_batches(d, data_name, append=FALSE)
   }
 }
 
@@ -118,7 +113,7 @@ if (nas>0L) {
     set(l, sample(nrow(l), nna), "v1", NA)
 }
 cat(sprintf("Writing LHS %s data %s\n", N, data_name))
-handle_batches(l, data_name, datadir)
+handle_batches(l, data_name)
 rm(l)
 
 rhs = c("x","r")
@@ -136,7 +131,7 @@ if (sort==1L) {
 set(r1, NULL, "v2", round(runif(nrow(r1), max=100), 6))
 stopifnot(uniqueN(r1, by="id1")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[1L]))
-handle_batches(r1, r_data_name[1L], datadir)
+handle_batches(r1, r_data_name[1L])
 rm(r1)
 n = N/1e3
 cat(sprintf("Producing RHS %s data from keys\n", n))
@@ -152,7 +147,7 @@ if (sort==1L) {
 set(r2, NULL, "v2", round(runif(nrow(r2), max=100), 6))
 stopifnot(uniqueN(r2, by="id2")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[2L]))
-handle_batches(r2, r_data_name[2L], datadir)
+handle_batches(r2, r_data_name[2L])
 rm(r2)
 n = N
 cat(sprintf("Producing RHS %s data from keys\n", n))
@@ -170,7 +165,7 @@ if (sort==1L) {
 set(r3, NULL, "v2", round(runif(nrow(r3), max=100), 6))
 stopifnot(uniqueN(r3, by="id3")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[3L]))
-handle_batches(r3, r_data_name[3L], datadir)
+handle_batches(r3, r_data_name[3L])
 rm(r3)
 
 cat(sprintf("Join datagen of %s rows finished in %ss\n", pretty_sci(N), trunc(proc.time()[["elapsed"]]-init)))
