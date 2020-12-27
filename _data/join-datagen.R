@@ -11,7 +11,6 @@ N=as.numeric(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=a
 #N=1e7; K=NA_integer_; nas=0L; sort=0L
 stopifnot(N>=1e7, nas<=100L, nas>=0L, sort%in%c(0L,1L))
 if (nas>0L) stop("'NA' not yet implemented")
-if (sort==1L) stop("'sort' not yet implemented")
 if (N > .Machine$integer.max) stop("no support for long vector in join-datagen yet")
 N = as.integer(N)
 
@@ -90,11 +89,16 @@ key3 = split_xlr(N)
 
 cat(sprintf("Producing LHS %s data from keys\n", N))
 lhs = c("x","l")
-l = data.table(
+l = list(
   id1 = sample_all(unlist(key1[lhs], use.names=FALSE), N),
   id2 = sample_all(unlist(key2[lhs], use.names=FALSE), N),
   id3 = sample_all(unlist(key3[lhs], use.names=FALSE), N)
 )
+setDT(l)
+if (sort==1L) {
+  cat("Sorting LHS data\n")
+  setkeyv(l, c("id1","id2","id3"))
+}
 set(l, NULL, "v1", round(runif(nrow(l), max=100), 6))
 stopifnot(
   uniqueN(l, by="id1")==N/1e6,
@@ -109,9 +113,14 @@ rhs = c("x","r")
 r_data_name = join_to_tbls(data_name)
 n = N/1e6
 cat(sprintf("Producing RHS %s data from keys\n", n))
-r1 = data.table(
+r1 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n)
 )
+setDT(r1)
+if (sort==1L) {
+  cat("Sorting RHS small data\n")
+  setkeyv(r1, "id1")
+}
 set(r1, NULL, "v2", round(runif(nrow(r1), max=100), 6))
 stopifnot(uniqueN(r1, by="id1")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[1L]))
@@ -119,10 +128,15 @@ handle_batches(r1, r_data_name[1L], datadir)
 rm(r1)
 n = N/1e3
 cat(sprintf("Producing RHS %s data from keys\n", n))
-r2 = data.table(
+r2 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
   id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n)
 )
+setDT(r2)
+if (sort==1L) {
+  cat("Sorting RHS medium data\n")
+  setkeyv(r2, "id2")
+}
 set(r2, NULL, "v2", round(runif(nrow(r2), max=100), 6))
 stopifnot(uniqueN(r2, by="id2")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[2L]))
@@ -130,12 +144,17 @@ handle_batches(r2, r_data_name[2L], datadir)
 rm(r2)
 n = N
 cat(sprintf("Producing RHS %s data from keys\n", n))
-r3 = data.table(
+r3 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
   id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n),
   id3 = sample_all(unlist(key3[rhs], use.names=FALSE), n)
 )
 rm(key1, key2, key3)
+setDT(r3)
+if (sort==1L) {
+  cat("Sorting RHS big data\n")
+  setkeyv(r3, "id3")
+}
 set(r3, NULL, "v2", round(runif(nrow(r3), max=100), 6))
 stopifnot(uniqueN(r3, by="id3")==n)
 cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[3L]))
