@@ -28,7 +28,7 @@ DT[["v2"]] =  sample(15, N, TRUE)                         # int in range [1,15]
 DT[["v3"]] =  round(runif(N,max=100),6)                   # numeric e.g. 23.574912
 setDT(DT)
 if (nas>0L) {
-  cat(sprintf("Inputting NAs\n"))
+  cat("Inputting NAs\n")
   for (col in paste0("id",1:6)) {
     ucol = unique(DT[[col]])
     nna = as.integer(length(ucol) * (nas/100))
@@ -43,7 +43,7 @@ if (nas>0L) {
   }
 }
 if (sort==1L) {
-  cat(sprintf("Sorting data\n"))
+  cat("Sorting data\n")
   setkeyv(DT, paste0("id", 1:6))
 }
 file = sprintf("G1_%s_%s_%s_%s.csv", pretty_sci(N), pretty_sci(K), nas, sort)
