@@ -10,7 +10,6 @@ args = commandArgs(TRUE)
 N=as.numeric(args[1L]); K=as.integer(args[2L]); nas=as.integer(args[3L]); sort=as.integer(args[4L])
 #N=1e7; K=NA_integer_; nas=0L; sort=0L
 stopifnot(N>=1e7, nas<=100L, nas>=0L, sort%in%c(0L,1L))
-if (nas>0L) stop("'NA' not yet implemented")
 if (N > .Machine$integer.max) stop("no support for long vector in join-datagen yet")
 N = as.integer(N)
 
@@ -105,6 +104,19 @@ stopifnot(
   uniqueN(l, by="id2")==N/1e3,
   uniqueN(l, by="id3")==N
 )
+if (nas>0L) {
+  cat("Inputting NAs in LHS data\n")
+  for (col in paste0("id",1:3)) {
+    ucol = unique(l[[col]])
+    nna = as.integer(length(ucol) * (nas/100))
+    if (nna)
+      set(l, l[.(sample(ucol, nna)), on=col, which=TRUE], col, NA)
+    rm(ucol)
+  }
+  nna = as.integer(nrow(l) * (nas/100))
+  if (nna)
+    set(l, sample(nrow(l), nna), "v1", NA)
+}
 cat(sprintf("Writing LHS %s data %s\n", N, data_name))
 handle_batches(l, data_name, datadir)
 rm(l)
