@@ -36,7 +36,8 @@ if na_flag > 0:
   exit(0) # not yet implemented #171, currently groupby's dropna=False argument is ignored
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
-x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else dd.read_csv(src_grp, dtype={"id1": "category", "id2": "category", "id3": "category", "id4": "Int32", "id5": "Int32", "id6": "Int32", "v1": "Int32", "v2": "Int32", "v3": "float64"})
+#x = dd.read_parquet(src_grp, engine="fastparquet") if on_disk else
+x = dd.read_csv(src_grp, dtype={"id1":"category","id2":"category","id3":"category","id4":"Int32","id5":"Int32","id6":"Int32","v1":"Int32","v2":"Int32","v3":"float64"})
 
 x = x.persist()
 

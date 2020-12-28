@@ -21,23 +21,22 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-## remove branching after h2oai/datatable#2761 resolved
 na_flag = int(float(data_name.split("_")[3]))
 if na_flag > 0:
-  #x = pd.read_csv(src_grp, dtype={'id1': 'category', 'id2': 'category', 'id3': 'category', 'id4': 'Int32', 'id5': 'Int32', 'id6': 'Int32', 'v1': 'Int32', 'v2': 'Int32', 'v3': 'float64'})
+  #x = pd.read_csv(src_grp, dtype={'id1':'category','id2':'category','id3':'category','id4':'Int32','id5':'Int32','id6':'Int32','v1':'Int32','v2':'Int32','v3':'float64'})
   exit(0) # not yet implemented #171
-else:
-  from datatable import fread # for loading data only, see #47
-  x = fread(src_grp, na_strings=['']).to_pandas() ## na_strings is not used because for NA-dataset we fallback to pandas.read_csv
-  x['id1'] = x['id1'].astype('category') # remove after datatable#1691
-  x['id2'] = x['id2'].astype('category')
-  x['id3'] = x['id3'].astype('category')
-  x['id4'] = x['id4'].astype('Int32') ## NA-aware types
-  x['id5'] = x['id5'].astype('Int32')
-  x['id6'] = x['id6'].astype('Int32')
-  x['v1'] = x['v1'].astype('Int32')
-  x['v2'] = x['v2'].astype('Int32')
-  x['v3'] = x['v3'].astype('float64')
+
+from datatable import fread # for loading data only, see #47
+x = fread(src_grp, na_strings=['']).to_pandas()
+x['id1'] = x['id1'].astype('category') # remove after datatable#1691
+x['id2'] = x['id2'].astype('category')
+x['id3'] = x['id3'].astype('category')
+x['id4'] = x['id4'].astype('Int32') ## NA-aware types improved after h2oai/datatable#2761 resolved
+x['id5'] = x['id5'].astype('Int32')
+x['id6'] = x['id6'].astype('Int32')
+x['v1'] = x['v1'].astype('Int32')
+x['v2'] = x['v2'].astype('Int32')
+x['v3'] = x['v3'].astype('float64')
 
 print(len(x.index), flush=True)
 
