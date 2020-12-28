@@ -25,21 +25,25 @@ src_jn_x = os.path.join("data", data_name+"."+fext)
 y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+"."+fext), os.path.join("data", y_data_name[1]+"."+fext), os.path.join("data", y_data_name[2]+"."+fext)]
 if len(src_jn_y) != 3:
-    raise Exception("Something went wrong in preparing files used for join")
+  raise Exception("Something went wrong in preparing files used for join")
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
+na_flag = int(float(data_name.split("_")[3]))
+if na_flag > 0:
+  exit(0) # dask/dask#7015
+
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
-if on_disk:
-    x = dd.read_parquet(src_jn_x, engine="fastparquet")
-    small = dd.read_parquet(src_jn_y[0], engine="fastparquet")
-    medium = dd.read_parquet(src_jn_y[1], engine="fastparquet")
-    big = dd.read_parquet(src_jn_y[2], engine="fastparquet")
-else:
-    x = dd.read_csv(src_jn_x, na_filter=False, dtype={'id4':'category', 'id5':'category', 'id6':'category'}).persist()
-    small = dd.read_csv(src_jn_y[0], na_filter=False, dtype={'id4':'category'}).persist()
-    medium = dd.read_csv(src_jn_y[1], na_filter=False, dtype={'id4':'category', 'id5':'category'}).persist()
-    big = dd.read_csv(src_jn_y[2], na_filter=False, dtype={'id4':'category', 'id5':'category', 'id6':'category'}).persist()
+#if on_disk:
+#  x = dd.read_parquet(src_jn_x, engine="fastparquet")
+#  small = dd.read_parquet(src_jn_y[0], engine="fastparquet")
+#  medium = dd.read_parquet(src_jn_y[1], engine="fastparquet")
+#  big = dd.read_parquet(src_jn_y[2], engine="fastparquet")
+#else:
+x = dd.read_csv(src_jn_x, dtype={'id1':'Int32','id2':'Int32','id3':'Int32','id4':'category','id5':'category','id6':'category','v1':'float64'}).persist()
+small = dd.read_csv(src_jn_y[0], dtype={'id1':'Int32','id4':'category','v2':'float64'}).persist()
+medium = dd.read_csv(src_jn_y[1], dtype={'id1':'Int32','id2':'Int32','id4':'category','id5':'category','v2':'float64'}).persist()
+big = dd.read_csv(src_jn_y[2], dtype={'id1':'Int32','id2':'Int32','id3':'Int32','id4':'category','id5':'category','id6':'category','v2':'float64'}).persist()
 
 in_rows = len(x)
 print(in_rows, flush=True)

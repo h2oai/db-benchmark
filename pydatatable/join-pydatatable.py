@@ -26,15 +26,20 @@ src_jn_x = os.path.join("data", data_name+"."+fext)
 y_data_name = join_to_tbls(data_name)
 src_jn_y = [os.path.join("data", y_data_name[0]+"."+fext), os.path.join("data", y_data_name[1]+"."+fext), os.path.join("data", y_data_name[2]+"."+fext)]
 if len(src_jn_y) != 3:
-    raise Exception("Something went wrong in preparing files used for join")
+  raise Exception("Something went wrong in preparing files used for join")
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
+n_flag = int(float(data_name.split("_")[1]))
+na_flag = int(float(data_name.split("_")[3]))
+if n_flag==1e9 and na_flag > 0:
+  exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
+
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
-x = dt.fread(src_jn_x)
-small = dt.fread(src_jn_y[0])
-medium = dt.fread(src_jn_y[1])
-big = dt.fread(src_jn_y[2])
+x = dt.fread(src_jn_x, na_strings=[''])
+small = dt.fread(src_jn_y[0], na_strings=[''])
+medium = dt.fread(src_jn_y[1], na_strings=[''])
+big = dt.fread(src_jn_y[2], na_strings=[''])
 
 print(x.nrows, flush=True)
 print(small.nrows, flush=True)

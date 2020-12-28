@@ -192,7 +192,7 @@ rpivotTable::rpivotTable(
 
 ### join
 
-Timings are presented for datasets having random order, no NAs (missing values). Data size on tabs corresponds to the LHS dataset of join, while RHS datasets are of the following sizes: _small_ (LHS/1e6), _medium_ (LHS/1e3), _big_ (LHS).
+Timings are presented for datasets having random order, no NAs (missing values). Data size on tabs corresponds to the LHS dataset of join, while RHS datasets are of the following sizes: _small_ (LHS/1e6), _medium_ (LHS/1e3), _big_ (LHS). Data case having NAs is testing NAs in LHS data only (having NAs on both sides of the join would result in many-to-many join on NA). Data case of sorted datasets tests data sorted by the join columns, in case of LHS these are all three columns _id1, id2, id3_ in that order.
 
 ### join timings
 
