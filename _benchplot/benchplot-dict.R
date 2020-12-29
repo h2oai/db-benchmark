@@ -246,11 +246,11 @@ join.syntax.dict = {list(
     "big inner on int" = "inner_join(DF, big, by='id3')"
   )},
   "juliadf" = {c(
-    "small inner on int" = "innerjoin(DF, small, on = :id1, makeunique=true)",
-    "medium inner on int" = "innerjoin(DF, medium, on = :id2, makeunique=true)",
-    "medium outer on int" = "leftjoin(DF, medium, on = :id2, makeunique=true)",
-    "medium inner on factor" = "innerjoin(DF, medium, on = :id5, makeunique=true)",
-    "big inner on int" = "innerjoin(DF, big, on = :id3, makeunique=true)"
+    "small inner on int" = "innerjoin(DF, small, on = :id1, makeunique=true, matchmissing=:equal)",
+    "medium inner on int" = "innerjoin(DF, medium, on = :id2, makeunique=true, matchmissing=:equal)",
+    "medium outer on int" = "leftjoin(DF, medium, on = :id2, makeunique=true, matchmissing=:equal)",
+    "medium inner on factor" = "innerjoin(DF, medium, on = :id5, makeunique=true, matchmissing=:equal)",
+    "big inner on int" = "innerjoin(DF, big, on = :id3, makeunique=true, matchmissing=:equal)"
   )},
   "pandas" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
