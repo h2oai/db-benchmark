@@ -66,12 +66,12 @@ question = "medium outer on int" # q3
 fun = "left_join"
 t = system.time(print(dim(ans<-left_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 rm(ans)
 t = system.time(print(dim(ans<-left_join(x, medium, by="id2"))))[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-summarise(ans, sum(v1), sum(v2, na.rm=TRUE)))[["elapsed"]]
+chkt = system.time(chk<-summarise(ans, sum(v1, na.rm=TRUE), sum(v2, na.rm=TRUE)))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=nrow(x), question=question, out_rows=nrow(ans), out_cols=ncol(ans), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(head(ans, 3))
 print(tail(ans, 3))
