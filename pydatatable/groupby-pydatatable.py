@@ -25,8 +25,9 @@ src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
 n_flag = int(float(data_name.split("_")[1]))
-na_flag = int(float(data_name.split("_")[3]))
+na_flag = int(data_name.split("_")[3])
 if n_flag==1e9 and na_flag > 0:
+  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True)
   exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
 
 x = dt.fread(src_grp, na_strings=[''])

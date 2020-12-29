@@ -31,8 +31,9 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[2] + ", " + y_data_name[2], flush=True)
 
 n_flag = int(float(data_name.split("_")[1]))
-na_flag = int(float(data_name.split("_")[3]))
+na_flag = int(data_name.split("_")[3])
 if n_flag==1e9 and na_flag > 0:
+  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True)
   exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)

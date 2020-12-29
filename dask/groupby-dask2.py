@@ -31,8 +31,9 @@ fext = "parquet" if on_disk else "csv"
 src_grp = os.path.join("data", data_name+"."+fext)
 print("loading dataset %s" % data_name, flush=True)
 
-na_flag = int(float(data_name.split("_")[3]))
+na_flag = int(data_name.split("_")[3])
 if na_flag > 0:
+  print("skip due to na_flag>0: #171", flush=True)
   exit(0) # not yet implemented #171, currently groupby's dropna=False argument is ignored
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)

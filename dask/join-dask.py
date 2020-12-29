@@ -32,6 +32,7 @@ print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_na
 na_flag = int(data_name.split("_")[3])
 sort_flag = int(data_name.split("_")[4])
 if na_flag > 0 or sort_flag > 0:
+  print("skip due to na_flag>0 or sort_flag>0: dask/dask#7015", flush=True)
   exit(0) # dask/dask#7015
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
