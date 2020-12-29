@@ -12,12 +12,22 @@ header_title_fun = function(x) {
   stopifnot(is.data.table(x), "data" %in% names(x))
   data_name = unique1(x[["data"]])
   file = file.path("data", paste(data_name, "csv",sep="."))
-  ds = data_spec(file, nrow=as.numeric(substr(data_name, 4L, 6L)))
+  tmp = strsplit(as.character(data_name), "_", fixed=TRUE)[[1L]]
+  ds = data_spec(file, nrow=as.numeric(tmp[2]))
+  na = as.numeric(tmp[4])
+  sort = as.integer(tmp[5])
+  extra = if (na>0 || sort>0L) {
+    if (na>0 && sort>0L) sprintf(" %d%% NAs, pre-sorted", na)
+    else if (na>0) sprintf(" %d%% NAs", na)
+    else if (sort>0L) " pre-sorted"
+    else stop("internal error")
+  } else ""
   sprintf(
-    "Input table: %s rows x %s columns ( %s GB )",
+    "Input table: %s rows x %s columns ( %s GB )%s",
     format_comma(as.numeric(ds[["nrow"]])[1L]),
     as.numeric(ds[["ncol"]])[1L],
-    as.numeric(ds[["gb"]])[1L]
+    as.numeric(ds[["gb"]])[1L],
+    extra
   )
 }
 solution.dict = {list(
