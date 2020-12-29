@@ -96,7 +96,7 @@ key1 = split_xlr(N/1e6)
 key2 = split_xlr(N/1e3)
 key3 = split_xlr(N)
 
-cat(sprintf("Producing LHS %s data from keys\n", N))
+cat(sprintf("Producing LHS %s data from keys\n", pretty_sci(N)))
 lhs = c("x","l")
 l = list(
   id1 = sample_all(unlist(key1[lhs], use.names=FALSE), N),
@@ -127,14 +127,14 @@ if (nas>0L) {
   if (nna)
     set(l, sample(nrow(l), nna), "v1", NA)
 }
-cat(sprintf("Writing LHS %s data %s\n", N, data_name))
+cat(sprintf("Writing LHS %s data %s\n", pretty_sci(N), data_name))
 handle_batches(l, data_name)
 rm(l)
 
 rhs = c("x","r")
 r_data_name = join_to_tbls(data_name)
 n = N/1e6
-cat(sprintf("Producing RHS %s data from keys\n", n))
+cat(sprintf("Producing RHS %s data from keys\n", pretty_sci(n)))
 r1 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n)
 )
@@ -145,11 +145,11 @@ if (sort==1L) {
 }
 set(r1, NULL, "v2", round(runif(nrow(r1), max=100), 6))
 stopifnot(uniqueN(r1, by="id1")==n)
-cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[1L]))
+cat(sprintf("Writing RHS %s data %s\n", pretty_sci(n), r_data_name[1L]))
 handle_batches(r1, r_data_name[1L])
 rm(r1)
 n = N/1e3
-cat(sprintf("Producing RHS %s data from keys\n", n))
+cat(sprintf("Producing RHS %s data from keys\n", pretty_sci(n)))
 r2 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
   id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n)
@@ -161,11 +161,11 @@ if (sort==1L) {
 }
 set(r2, NULL, "v2", round(runif(nrow(r2), max=100), 6))
 stopifnot(uniqueN(r2, by="id2")==n)
-cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[2L]))
+cat(sprintf("Writing RHS %s data %s\n", pretty_sci(n), r_data_name[2L]))
 handle_batches(r2, r_data_name[2L])
 rm(r2)
 n = N
-cat(sprintf("Producing RHS %s data from keys\n", n))
+cat(sprintf("Producing RHS %s data from keys\n", pretty_sci(n)))
 r3 = list(
   id1 = sample_all(unlist(key1[rhs], use.names=FALSE), n),
   id2 = sample_all(unlist(key2[rhs], use.names=FALSE), n),
@@ -179,7 +179,7 @@ if (sort==1L) {
 }
 set(r3, NULL, "v2", round(runif(nrow(r3), max=100), 6))
 stopifnot(uniqueN(r3, by="id3")==n)
-cat(sprintf("Writing RHS %s data %s\n", n, r_data_name[3L]))
+cat(sprintf("Writing RHS %s data %s\n", pretty_sci(n), r_data_name[3L]))
 handle_batches(r3, r_data_name[3L])
 rm(r3)
 
