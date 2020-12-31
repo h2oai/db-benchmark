@@ -33,7 +33,7 @@ print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_na
 n_flag = int(float(data_name.split("_")[1]))
 na_flag = int(data_name.split("_")[3])
 if n_flag==1e9 and na_flag > 0:
-  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True)
+  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True) ## when removing remember to create 1e9 jay file
   exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
