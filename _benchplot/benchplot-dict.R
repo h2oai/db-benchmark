@@ -311,35 +311,37 @@ join.query.exceptions = {list(
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
   )},
   "dplyr" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # fread
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # fread
   )},
   "pandas" = {list(
-    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q5 # now with extended timeout to 4h it finishes
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # read_csv
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # read_csv
   )},
   "pydatatable" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # q5 out of memory due to a deep copy
+    "csv reader NAs bug: datatable#2808" = "J1_1e9_NA_5_0",
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_0_1")                                  # q5 out of memory due to a deep copy
   )},
   "spark" = {list(
-    "timeout" = c("J1_1e9_NA_0_0")                                                        # q5 using new 8h timeout #126
+    "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                        # q5 using new 8h timeout #126
   )},
   "dask" = {list(
-    "out of memory" = c("J1_1e8_NA_0_0"),                                                 # q5 using in-memory, after 93m (120m timeout)
+    "internal error: dask#7015" = c("J1_1e7_NA_5_0","J1_1e7_NA_0_1",                      # dask/dask#7015
+                         "J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1",
+                         "J1_1e9_NA_5_0","J1_1e9_NA_0_1"),
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 even when using on-disk, after 47m (480m timeout)
   )},
   "juliadf" = {list(
-    "timeout" = c("J1_1e8_NA_0_0"),                                                       # q3 not longer a problem after extending timeout, finishes in 93m (120m timeout)
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # CSV.File
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
   )},
   "cudf" = {list(
-    #"corrupted driver" = c("J1_1e7_NA_0_0","J1_1e8_NA_0_0"),                              # #129#issuecomment-573204532
-    "out of memory" = c("J1_1e8_NA_0_0","J1_1e9_NA_0_0")                                   # read_csv #94 #97
+    "out of memory" = c("J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1",                  # read_csv #94 #97
+                        "J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "clickhouse" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 r2 #169
+    "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169
+                        "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
