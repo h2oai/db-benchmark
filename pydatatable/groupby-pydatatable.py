@@ -4,6 +4,7 @@ print("# groupby-pydatatable.py", flush=True)
 
 import os
 import gc
+import sys
 import timeit
 import datatable as dt
 from datatable import f, sum, mean, count, sd, min, max, by, sort, median, corr
@@ -27,7 +28,7 @@ print("loading dataset %s" % data_name, flush=True)
 n_flag = int(float(data_name.split("_")[1]))
 na_flag = int(data_name.split("_")[3])
 if n_flag==1e9 and na_flag > 0:
-  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True)
+  print("skip due to n=1e9 and na_flag>0: h2oai/datatable#2808", flush=True, file=sys.stderr)
   exit(0) # fread string with NAs generates extra distinct group h2oai/datatable#2808
 
 x = dt.fread(src_grp, na_strings=[''])

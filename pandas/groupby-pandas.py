@@ -4,6 +4,7 @@ print("# groupby-pandas.py", flush=True)
 
 import os
 import gc
+import sys
 import timeit
 import pandas as pd
 
@@ -24,7 +25,7 @@ print("loading dataset %s" % data_name, flush=True)
 na_flag = int(data_name.split("_")[3])
 if na_flag > 0:
   #x = pd.read_csv(src_grp, dtype={'id1':'category','id2':'category','id3':'category','id4':'Int32','id5':'Int32','id6':'Int32','v1':'Int32','v2':'Int32','v3':'float64'})
-  print("skip due to na_flag>0: #171", flush=True)
+  print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
   exit(0) # not yet implemented #171
 
 from datatable import fread # for loading data only, see #47

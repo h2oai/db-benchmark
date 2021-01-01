@@ -4,6 +4,7 @@ print("# groupby-dask.py", flush=True)
 
 import os
 import gc
+import sys
 import timeit
 import pandas as pd
 import dask as dk
@@ -33,7 +34,7 @@ print("loading dataset %s" % data_name, flush=True)
 
 na_flag = int(data_name.split("_")[3])
 if na_flag > 0:
-  print("skip due to na_flag>0: #171", flush=True)
+  print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
   exit(0) # not yet implemented #171, currently groupby's dropna=False argument is ignored
 
 print("using disk memory-mapped data storage" if on_disk else "using in-memory data storage", flush=True)
