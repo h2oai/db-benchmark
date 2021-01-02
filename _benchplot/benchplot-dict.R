@@ -204,7 +204,7 @@ groupby.data.exceptions = {list(                                                
   "dask" = {list(
     "not yet implemented: dask#6986" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
     "internal error" = "G1_1e8_1e2_0_0",                                           # q10 #174
-    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e2_0_1",                         # q10
+    "out of memory" = c("G1_1e7_1e2_0_0","G1_1e7_1e2_0_1",                         # q10 #176
                         "G1_1e8_1e2_0_1",                                          # q10
                         "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0"), # read.csv
     "timeout" = c("G1_1e7_1e1_0_0",                                                # q10
@@ -327,7 +327,7 @@ join.data.exceptions = {list(                                                   
     "timeout" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                        # q5 using new 8h timeout #126
   )},
   "dask" = {list(
-    "internal error: dask#7015" = c("J1_1e7_NA_5_0","J1_1e7_NA_0_1",                      # dask/dask#7015
+    "internal error: dask#7015" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1",      # dask/dask#7015
                          "J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1",
                          "J1_1e9_NA_5_0","J1_1e9_NA_0_1"),
     "out of memory" = c("J1_1e9_NA_0_0")                                                  # q1 even when using on-disk, after 47m (480m timeout)
