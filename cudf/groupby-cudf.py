@@ -247,7 +247,7 @@ del ans
 #question = "regression v1 v2 by id2 id4" # q9 # not yet implemented: https://github.com/rapidsai/cudf/issues/1267
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[~x['v1'].isna() & ~x['v2'].isna()][['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()
@@ -258,7 +258,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[~x['v1'].isna() & ~x['v2'].isna()][['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
 #m = memory_usage()

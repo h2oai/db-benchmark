@@ -162,19 +162,19 @@ DROP TABLE ans;
 /* q9: question='regression v1 v2 by id2 id4' */
 
 SET log_queries = 1;
-CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME WHERE v1 IS NOT NULL AND v2 IS NOT NULL GROUP BY id2, id4;
+CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 1 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'regression v1 v2 by id2 id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
-FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME WHERE v1 IS NOT NULL AND v2 IS NOT NULL GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r1.csv' FORMAT CSVWithNames;
+FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r1.csv' FORMAT CSVWithNames;
 DROP TABLE ans;
 
 SET log_queries = 1;
-CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME WHERE v1 IS NOT NULL AND v2 IS NOT NULL GROUP BY id2, id4;
+CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;
 SET log_queries = 0;
 SYSTEM FLUSH LOGS;
 SELECT 2 AS run, toUnixTimestamp(now()) AS timestamp, 'groupby' AS task, 'DATA_NAME' AS data_name, NULL AS in_rows, 'regression v1 v2 by id2 id4' AS question, result_rows AS out_rows, NULL AS out_cols, 'clickhouse' AS solution, version() AS version, NULL AS git, 'select group by' AS fun, query_duration_ms/1000 AS time_sec, memory_usage/1073741824 AS mem_gb, 1 AS cache, NULL AS chk, NULL AS chk_time_sec, 1 AS on_disk
-FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME WHERE v1 IS NOT NULL AND v2 IS NOT NULL GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r2.csv' FORMAT CSVWithNames;
+FROM system.query_log WHERE type=2 AND query='CREATE TABLE ans ENGINE = Memory AS SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM DATA_NAME GROUP BY id2, id4;\n' ORDER BY query_start_time DESC LIMIT 1 INTO OUTFILE 'clickhouse/log/groupby_DATA_NAME_q9_r2.csv' FORMAT CSVWithNames;
 SELECT * FROM ans LIMIT 3;
 DROP TABLE ans;
 

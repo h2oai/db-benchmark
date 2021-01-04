@@ -278,7 +278,7 @@ del ans
 #question = "regression v1 v2 by id2 id4" # q9 - https://github.com/dask/dask/issues/4828
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[~x['v1'].isna() & ~x['v2'].isna()][['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
@@ -290,7 +290,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x[~x['v1'].isna() & ~x['v2'].isna()][['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
+#ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
