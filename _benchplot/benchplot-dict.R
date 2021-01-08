@@ -173,8 +173,7 @@ groupby.query.exceptions = {list(
   "pandas" =      list(),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
-  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5",
-                       "not yet documented: dask#5622" = "regression v1 v2 by id2 id4"), #122
+  "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
   "juliadf" =     list(),
   "cudf" =        list("not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
