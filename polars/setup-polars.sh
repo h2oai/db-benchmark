@@ -12,13 +12,12 @@ python -m pip install --upgrade psutil py-polars
 
 # build
 deactivate
-./pydatatable/upg-pydatatable.sh
+./polars/upg-polars.sh
 
 # check
-source pydatatable/py-pydatatable/bin/activate
+source polars/py-polars/bin/activate
 python
 import pypolars as pl
 pl.__version__
 quit()
 deactivate
-
