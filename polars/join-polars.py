@@ -52,7 +52,7 @@ print("joining...", flush=True)
 question = "small inner on int" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(small, on="id1", how="inner")
+ans = x.join(small, on="id1")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -63,7 +63,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(small, on="id1", how="inner")
+ans = x.join(small, on="id1")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -78,7 +78,7 @@ del ans
 question = "medium inner on int" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(medium, on="id2", how="inner")
+ans = x.join(medium, on="id2")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -89,7 +89,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(medium, on="id2", how="inner")
+ans = x.join(medium, on="id2")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -130,7 +130,7 @@ del ans
 question = "medium inner on factor" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(medium, on="id5", how="inner")
+ans = x.join(medium, on="id5")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -141,7 +141,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(medium, on="id5", how="inner")
+ans = x.join(medium, on="id5")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -156,7 +156,7 @@ del ans
 question = "big inner on int" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(big, on="id3", how="inner")
+ans = x.join(big, on="id3")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -167,7 +167,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.join(big, on="id3", how="inner")
+ans = x.join(big, on="id3")
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()

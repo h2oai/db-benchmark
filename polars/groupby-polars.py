@@ -22,7 +22,7 @@ data_name = os.environ["SRC_DATANAME"]
 src_grp = os.path.join("data", data_name + ".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-x = pl.read_csv(src_grp, dtype={"id4": pl.Int32, "id5": pl.Int32, "id6": pl.Int32, "v1": pl.Int32, "v2": pl.Int32, "v3": pl.Float64})
+x = pl.read_csv(src_grp, dtype={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64})
 x["id1"] = x["id1"].cast(pl.Categorical)
 x["id2"] = x["id2"].cast(pl.Categorical)
 x["id3"] = x["id3"].cast(pl.Categorical)
@@ -221,23 +221,23 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("v3_top_2")).explode("v3_top_2").collect()
+ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-chk = [ans["v3_top_2"].sum()]
+chk = [ans["largest2_v3"].sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("v3_top_2")).explode("v3_top_2").collect()
+ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
 t_start = timeit.default_timer()
-chk = [ans["v3_top_2"].sum()]
+chk = [ans["largest2_v3"].sum()]
 chkt = timeit.default_timer() - t_start
 write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)

@@ -39,8 +39,12 @@ solution.dict = {list(
   "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
-  "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1"))
+  "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1")),
+  "polars" = list(name=c(short="Polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3"))
 )}
+#barplot(rep(c(0L,1L,1L), length(solution.dict)),
+#        col=rev(c(rbind(sapply(solution.dict, `[[`, "color"), "black"))),
+#        horiz=TRUE, axes=FALSE)
 
 # groupby ----
 
@@ -165,6 +169,18 @@ groupby.syntax.dict = {list(
     "largest two v3 by id6" = "SELECT id6, arrayJoin(arraySlice(arrayReverseSort(groupArray(v3)), 1, 2)) AS v3 FROM (SELECT id6, v3 FROM tbl WHERE v3 IS NOT NULL) AS subq GROUP BY id6",
     "regression v1 v2 by id2 id4" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM tbl GROUP BY id2, id4",
     "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, sum(v3) AS v3, count() AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6"
+  )},
+  "polars" = {c(
+    "sum v1 by id1" = "DF.groupby('id1').agg(pl.sum('v1')).collect()",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg(pl.sum('v1')).collect()",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3').agg([pl.sum('v1'), pl.mean('v3')]).collect()",
+    "mean v1:v3 by id4" = "DF.groupby('id4').agg([pl.mean('v1'), pl.mean('v2'), pl.mean('v3')]).collect()",
+    "sum v1:v3 by id6" = "DF.groupby('id6').agg([pl.sum('v1'), pl.sum('v2''), pl.sum('v3'')]).collect()",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5']).agg([pl.median('v3').alias('v3_median'), pl.std('v3').alias('v3_std')]).collect()",
+    "max v1 - min v2 by id3" = "DF.groupby('id3').agg([pl.max('v1'), pl.min('v2')]).select(['id3', (col('v1_max')-col('v2_min')).alias('range_v1_v2')]).collect()",
+    "largest two v3 by id6" = "DF.drop_nulls('v3').sort('v3', reverse=True).groupby('id6').agg(col('v3').head(2).alias('largest2_v3)).explode('largest2_v3').collect()",
+    "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg(pl.pearson_corr('v1','v2').alias('r2')).with_column(col('r2')**2).collect()",
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
   )}
 )}
 groupby.query.exceptions = {list(
@@ -178,7 +194,8 @@ groupby.query.exceptions = {list(
   "cudf" =        list("not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
-  "clickhouse" =  list()
+  "clickhouse" =  list(),
+  "polars"     =  list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -220,6 +237,8 @@ groupby.data.exceptions = {list(                                                
                         "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # read_csv #97
   )},
   "clickhouse" = {list(
+  )},
+  "polars" = {list(
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
@@ -295,6 +314,13 @@ join.syntax.dict = {list(
     "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
     "medium inner on factor" = "DF.merge(medium, on='id5')",
     "big inner on int" = "DF.merge(big, on='id3')"
+  )},
+  "polars" = {c(
+    "small inner on int" = "DF.merge(small, on='id1')",
+    "medium inner on int" = "DF.merge(medium, on='id2')",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
+    "medium inner on factor" = "DF.merge(medium, on='id5')",
+    "big inner on int" = "DF.merge(big, on='id3')"
   )}
 )}
 join.query.exceptions = {list(
@@ -306,7 +332,8 @@ join.query.exceptions = {list(
   "dask" =        list(),
   "juliadf" =     list(),
   "cudf" =        list(),
-  "clickhouse" =  list()
+  "clickhouse" =  list(),
+  "polars"     =  list()
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -341,6 +368,8 @@ join.data.exceptions = {list(                                                   
   "clickhouse" = {list(
     "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169
                         "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
+  )},
+  "polars" = {list(
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
