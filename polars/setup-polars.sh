@@ -21,3 +21,14 @@ import pypolars as pl
 pl.__version__
 quit()
 deactivate
+
+# fix: print(ans.head(3), flush=True): UnicodeEncodeError: 'ascii' codec can't encode characters in position 14-31: ordinal not in range(128)
+vim polars/py-polars/bin/activate
+#deactivate () {
+#    unset PYTHONIOENCODING
+#    ...
+#}
+#...
+#PYTHONIOENCODING="utf-8"
+#export PYTHONIOENCODING
+#...
