@@ -467,7 +467,7 @@ t_start = timeit.default_timer()
 
 q = (
     x.groupby("id3")
-    .agg([col("v1").max().alias("v1"), col("v2").min().alias("v2")])
+    .agg([pl.max("v1").alias("v1"), pl.min("v2").alias("v2")])
     .select(["id3", (col("v1") - col("v2")).alias("range_v1_v2")])
 )
 ans = q.collect()
@@ -503,7 +503,7 @@ t_start = timeit.default_timer()
 
 q = (
     x.groupby("id3")
-    .agg([col("v1").max().alias("v1"), col("v2").min().alias("v2")])
+    .agg([pl.max("v1").alias("v1"), pl.min("v2").alias("v2")])
     .select(["id3", (col("v1") - col("v2")).alias("range_v1_v2")])
 )
 
