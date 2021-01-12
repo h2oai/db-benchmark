@@ -239,6 +239,7 @@ groupby.data.exceptions = {list(                                                
   "clickhouse" = {list(
   )},
   "polars" = {list(
+    "segfault: polars#260" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # polars#260
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
@@ -370,6 +371,7 @@ join.data.exceptions = {list(                                                   
                         "J1_1e9_NA_5_0","J1_1e9_NA_0_1")                                  # q1 r1
   )},
   "polars" = {list(
+    "segfault: polars#260" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1") # polars#260
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
