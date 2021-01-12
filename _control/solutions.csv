@@ -17,5 +17,5 @@ clickhouse,groupby
 clickhouse,join
 cudf,groupby
 cudf,join
-h2o,groupby
-h2o,join
+polars,groupby
+polars,join

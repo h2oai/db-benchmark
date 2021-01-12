@@ -39,13 +39,13 @@ dict[,1:2] = lapply(dict[,1:2], function(x) factor(x, levels=unique(x))) # retai
 
 solutions = levels(dict$solution)
 if (!args[["solution"]] %in% solutions)
-  stop("unsupported solution: ", args[["solution"]])
+  stop("unsupported solution in control/solutions.csv: ", args[["solution"]])
 
 tasks = levels(dict$task)
 if (!"task" %in% names(args)) {
   args[["task"]] = tasks[1L]
 } else if (!args[["task"]] %in% tasks) {
-  stop("unsupported task for this solution: ", args[["task"]])
+  stop("unsupported task for solution in control/solutions.csv: ", args[["task"]])
 }
 
 datadict = read.csv("_control/data.csv", colClasses=c("character","character","character","character","character","character","integer"))
@@ -111,7 +111,7 @@ file.ext = function(x) {
   ans = switch(
     x,
     "data.table"=, "dplyr"=, "h2o"="R",
-    "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"="py",
+    "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
   )
