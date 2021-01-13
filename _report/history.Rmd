@@ -444,6 +444,48 @@ plot(d, "clickhouse", 1e8, "join")
 plot(d, "clickhouse", 1e9, "join")
 ```
 
+### polars {.tabset .tabset-fade .tabset-pills}
+
+#### groupby {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r polars.groupby.1e7}
+plot(d, "polars", 1e7, "groupby")
+```
+
+##### 5 GB
+
+```{r polars.groupby.1e8}
+plot(d, "polars", 1e8, "groupby")
+```
+
+##### 50 GB {.active}
+
+```{r polars.groupby.1e9}
+plot(d, "polars", 1e9, "groupby")
+```
+
+#### join {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r polars.join.1e7}
+plot(d, "polars", 1e7, "join")
+```
+
+##### 5 GB {.active}
+
+```{r polars.join.1e8}
+plot(d, "polars", 1e8, "join")
+```
+
+##### 50 GB
+
+```{r polars.join.1e9}
+plot(d, "polars", 1e9, "join")
+```
+
 ## Details
 
 ### Environment
