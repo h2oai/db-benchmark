@@ -28,7 +28,7 @@ async fn main() -> Result<()> {
     let options = CsvReadOptions::new().schema(&schema).has_header(true);
 
     let csv = CsvFile::try_new(&data, options).unwrap();
-    let batch_size = 16384;
+    let batch_size = 65536;
     let memtable = MemTable::load(&csv, batch_size).await?;
     ctx.register_table("t", Box::new(memtable));
 
