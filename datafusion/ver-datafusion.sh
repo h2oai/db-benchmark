@@ -1,0 +1,1 @@
+cargo tree | grep "├── datafusion (.*)"

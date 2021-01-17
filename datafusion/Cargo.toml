@@ -1,0 +1,13 @@
+[package]
+name = "db-benchmark"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+datafusion = { git = "https://github.com/apache/arrow.git", features = ["simd"] }
+arrow = { git = "https://github.com/apache/arrow.git", features = ["simd"] }
+tokio = { version = "0.2", features = ["macros", "rt-core", "rt-threaded"] }
+snmalloc-rs = "0.2"
+
+[profile.release]
+lto = true
