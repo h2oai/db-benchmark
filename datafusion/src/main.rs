@@ -59,7 +59,7 @@ async fn main() -> Result<()> {
     // "q4"
     let start = Instant::now();
     let df =
-        ctx.sql("SELECT id1, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM t GROUP BY id4")?;
+        ctx.sql("SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM t GROUP BY id4")?;
 
     let _results = df.collect().await?;
 
