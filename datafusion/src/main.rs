@@ -81,7 +81,8 @@ async fn main() -> Result<()> {
         "q7",
     )
     .await?;
-    exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v5, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "q10").await?;
+    
+    exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "q10").await?;
 
     Ok(())
 }
