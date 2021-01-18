@@ -9,6 +9,17 @@ use std::time::Instant;
 #[global_allocator]
 static ALLOC: snmalloc_rs::SnMalloc = snmalloc_rs::SnMalloc;
 
+async fn exec_query(ctx: &mut ExecutionContext, query: &str, name: &str) -> Result<()> {
+    let start = Instant::now();
+
+    let ans = ctx.sql(query)?.collect().await?;
+
+    // TODO: print details
+
+    println!("{} took {} ms", name, start.elapsed().as_millis());
+
+    Ok(())
+}
 #[tokio::main]
 async fn main() -> Result<()> {
     let mut ctx = ExecutionContext::new();
@@ -34,68 +45,43 @@ async fn main() -> Result<()> {
     let memtable = MemTable::load(&csv, batch_size, Some(partition_size)).await?;
     ctx.register_table("tbl", Box::new(memtable));
 
-    // "q1"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id1, SUM(v1) AS v1 FROM tbl GROUP BY id1")?
-        .collect()
-        .await?;
-
-    println!("q1 took {} ms", start.elapsed().as_millis());
-
-    // "q2"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id1, id2, SUM(v1) AS v1 FROM tbl GROUP BY id1, id2")?
-        .collect()
-        .await?;
-
-    println!("q2 took {} ms", start.elapsed().as_millis());
-
-    // "q3"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id3, SUM(v1) AS v1, AVG(v3) AS v3 FROM tbl GROUP BY id3")?
-        .collect()
-        .await?;
-
-    println!("q3 took {} ms", start.elapsed().as_millis());
-
-    // "q4"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM tbl GROUP BY id4")?
-        .collect()
-        .await?;
-
-    println!("q4 took {} ms", start.elapsed().as_millis());
-
-    // "q5"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id6, SUM(v1) AS v1, SUM(v2) AS v2, SUM(v3) AS v3 FROM tbl GROUP BY id6")?
-        .collect()
-        .await?;
-
-    println!("q5 took {} ms", start.elapsed().as_millis());
-
-    // "q7"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id3, MAX(v1) - MIN(v2) AS range_v1_v2 FROM tbl GROUP BY id3")?
-        .collect()
-        .await?;
-
-    println!("q7 took {} ms", start.elapsed().as_millis());
-
-    // "q10"
-    let start = Instant::now();
-    let ans = ctx
-        .sql("SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v5, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6")?
-        .collect()
-        .await?;
-
-    println!("q10 took {} ms", start.elapsed().as_millis());
+    exec_query(
+        &mut ctx,
+        "SELECT id1, SUM(v1) AS v1 FROM tbl GROUP BY id1",
+        "q1",
+    )
+    .await?;
+    exec_query(
+        &mut ctx,
+        "SELECT id1, id2, SUM(v1) AS v1 FROM tbl GROUP BY id1, id2",
+        "q2",
+    )
+    .await?;
+    exec_query(
+        &mut ctx,
+        "SELECT id3, SUM(v1) AS v1, AVG(v3) AS v3 FROM tbl GROUP BY id3",
+        "q3",
+    )
+    .await?;
+    exec_query(
+        &mut ctx,
+        "SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM tbl GROUP BY id4",
+        "q4",
+    )
+    .await?;
+    exec_query(
+        &mut ctx,
+        "SELECT id6, SUM(v1) AS v1, SUM(v2) AS v2, SUM(v3) AS v3 FROM tbl GROUP BY id6",
+        "q5",
+    )
+    .await?;
+    exec_query(
+        &mut ctx,
+        "SELECT id3, MAX(v1) - MIN(v2) AS range_v1_v2 FROM tbl GROUP BY id3",
+        "q7",
+    )
+    .await?;
+    exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v5, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "q10").await?;
 
     Ok(())
 }
