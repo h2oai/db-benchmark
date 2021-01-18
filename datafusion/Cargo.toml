@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-datafusion = { git = "https://github.com/apache/arrow.git", features = ["simd"] }
-arrow = { git = "https://github.com/apache/arrow.git", features = ["simd"] }
+datafusion = { git = "https://github.com/Dandandan/arrow.git", features = ["simd"], branch="mem_table_repartition" }
+arrow = { git = "https://github.com/Dandandan/arrow.git", features = ["simd"], branch="mem_table_repartition"}
 tokio = { version = "0.2", features = ["macros", "rt-core", "rt-threaded"] }
 snmalloc-rs = "0.2"
+num_cpus="1.0"
 
 [profile.release]
 lto = true

@@ -29,7 +29,9 @@ async fn main() -> Result<()> {
 
     let csv = CsvFile::try_new(&data, options).unwrap();
     let batch_size = 65536;
-    let memtable = MemTable::load(&csv, batch_size).await?;
+    let partition_size = num_cpus::get() * 2;
+
+    let memtable = MemTable::load(&csv, batch_size, Some(partition_size)).await?;
     ctx.register_table("tbl", Box::new(memtable));
 
     // "q1"
