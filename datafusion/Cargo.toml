@@ -7,8 +7,9 @@ edition = "2018"
 datafusion = { git = "https://github.com/Dandandan/arrow.git", features = ["simd"], branch="mem_table_repartition" }
 arrow = { git = "https://github.com/Dandandan/arrow.git", features = ["simd"], branch="mem_table_repartition"}
 tokio = { version = "0.2", features = ["macros", "rt-core", "rt-threaded"] }
-snmalloc-rs = "0.2"
+snmalloc-rs = {version = "0.2", features= ["cache-friendly"]}
 num_cpus="1.0"
 
 [profile.release]
 lto = true
+codegen-units = 1
