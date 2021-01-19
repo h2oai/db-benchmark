@@ -1,1 +1,1 @@
-cargo tree | grep "├── datafusion"
+cargo tree | grep "├── datafusion" | cut -d ' ' -f3
