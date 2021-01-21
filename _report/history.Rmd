@@ -82,6 +82,7 @@ plot(d, "data.table", 1e7, "groupby")
 plot(d, "data.table", 1e8, "groupby")
 ```
 
+
 ##### 50 GB {.active}
 
 ```{r datatable.groupby.1e9}
@@ -106,6 +107,27 @@ plot(d, "data.table", 1e8, "join")
 
 ```{r datatable.join.1e9}
 plot(d, "data.table", 1e9, "join")
+```
+
+#### groupby2014 {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r datatable.groupby2014.1e7}
+plot(d, "data.table", 1e7, "groupby2014")
+```
+
+##### 5 GB
+
+```{r datatable.groupby2014.1e8}
+plot(d, "data.table", 1e8, "groupby2014")
+```
+
+
+##### 50 GB {.active}
+
+```{r datatable.groupby2014.1e9}
+plot(d, "data.table", 1e9, "groupby2014")
 ```
 
 ### pydatatable {.tabset .tabset-fade .tabset-pills}

@@ -48,6 +48,7 @@ if (nrow(lld_unfinished)) {
 
 dt_groupby = lld[task=="groupby"][substr(data,1,2)=="G1"]
 dt_join = lld[task=="join"]
+dt_groupby2014 = lld[task=="groupby2014"]
 ```
 
 ```{r helpers}
@@ -91,6 +92,11 @@ loop_benchplot(dt_groupby, report_name="groupby", syntax.dict=groupby.syntax.dic
 ```{r report_join, message=FALSE}
 data_name = get_data_levels()[["join"]]
 loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, exceptions=join.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv=c("basic"), title.txt.fun = header_title_fun, question.txt.fun = join_q_title_fun, cutoff = "spark", pending = "Modin")
+```
+
+```{r report_groupby2014, message=FALSE}
+data_name = get_data_levels()[["groupby2014"]]
+loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv="basic", title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = "Modin")
 ```
 
 ## Task {.tabset .tabset-fade .tabset-pills}
@@ -164,6 +170,26 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ![](./join/J1_1e9_NA_0_0_advanced.png)
 -->
+
+### groupby2014 {.tabset .tabset-fade .tabset-pills}
+
+#### 0.5 GB
+
+##### **basic questions**
+
+![](./groupby/G0_1e7_1e2_0_0_basic.png)
+
+#### 5 GB
+
+##### **basic questions**
+
+![](./groupby/G0_1e8_1e2_0_0_basic.png)
+
+#### 50 GB {.active}
+
+##### **basic questions**
+
+![](./groupby/G0_1e9_1e2_0_0_basic.png)
 
 ---
 

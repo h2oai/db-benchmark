@@ -16,7 +16,11 @@ get_data_levels = function() {
   in_rows = c("1e7","1e8","1e9")
   k_na_sort = c("NA_0_0","NA_5_0","NA_0_1")
   join = paste("J1", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
-  list(groupby=groupby, join=join)
+  ## groupby2014
+  in_rows = c("1e7","1e8","1e9")
+  k_na_sort = "1e2_0_0"
+  groupby2014 = paste("G0", paste(rep(in_rows, each=length(k_na_sort)), k_na_sort, sep="_"), sep="_")
+  list(groupby=groupby, join=join, groupby2014=groupby2014)
 }
 get_excluded_batch = function() {
   c(
@@ -174,7 +178,7 @@ ftdata = function(x, task) {
     ans[as.logical(as.integer(x))] = "pre-sorted data"
     ans
   }
-  if (all(task %in% c("groupby","join"))) {
+  if (all(task %in% c("groupby","join","groupby2014"))) {
     y = strsplit(as.character(x), "_", fixed = TRUE)
     y = lapply(y, function(yy) {yy[yy=="NA"] = NA_character_; yy})
     in_rows=ft(sapply(y, `[`, 2L))
@@ -188,7 +192,7 @@ ftdata = function(x, task) {
     knasorted=ft(sprintf("%s%s", labk, as.character(nasorted)))
     list(in_rows=in_rows, k=k, na=na, sort=sort, sorted=sorted, nasorted=nasorted, knasorted=knasorted)
   } else {
-    stop("no task defined for ftdata other than groupby and join")
+    stop("task not defined for ftdata")
   }
 }
 transform = function(ld) {
