@@ -58,7 +58,7 @@ if (!"nrow" %in% names(args)) {
 } else if (!args[["nrow"]] %in% nrows) {
   stop("unsupported nrow: ", args[["nrow"]])
 }
-if (args[["task"]]=="groupby") {
+if (args[["task"]]%in%c("groupby","groupby2014")) {
   ks = levels(datadict$k)
   if (!"k" %in% names(args)) {
     args[["k"]] = ks[1L]
@@ -131,6 +131,8 @@ data.desc = function(task, nrow, k, na, sort) {
     prefix = "G1"
   } else if (task=="join") {
     prefix = "J1"
+  } else if (task=="groupby2014") {
+    prefix = "G0"
   } else {
     stop("undefined task in solution.R data.desc function")
   }
