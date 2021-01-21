@@ -14,3 +14,8 @@ join,medium inner on int,basic
 join,medium outer on int,basic
 join,medium inner on factor,basic
 join,big inner on int,basic
+groupby2014,sum v1 by id1,basic
+groupby2014,sum v1 by id1:id2,basic
+groupby2014,sum v1 mean v3 by id3,basic
+groupby2014,mean v1:v3 by id4,basic
+groupby2014,sum v1:v3 by id6,basic

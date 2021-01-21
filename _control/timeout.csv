@@ -5,3 +5,6 @@ groupby,1e9,180
 join,1e7,120
 join,1e8,240
 join,1e9,360
+groupby2014,1e7,60
+groupby2014,1e8,120
+groupby2014,1e9,180
