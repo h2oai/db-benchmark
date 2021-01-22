@@ -169,13 +169,13 @@ question = "regression v1 v2 by id2 id4"; # q9
 GC.gc();
 t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
-chkt = @elapsed chk = sum(ANS.r2);
+chkt = @elapsed chk = sum(skipmissing(ANS.r2));
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
 t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
-chkt = @elapsed chk = sum(ANS.r2);
+chkt = @elapsed chk = sum(skipmissing(ANS.r2));
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 println(first(ANS, 3));
 println(last(ANS, 3));
