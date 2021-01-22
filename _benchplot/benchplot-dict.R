@@ -380,7 +380,7 @@ join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
 
 # groupby2014 ----
 
-groupby.syntax.dict = {list(
+groupby2014.syntax.dict = {list(
   "data.table" = {c(
     "sum v1 by id1" = "DT[, sum(v1), keyby=id1]",
     "sum v1 by id1:id2" = "DT[, sum(v1), by='id1,id2']",
