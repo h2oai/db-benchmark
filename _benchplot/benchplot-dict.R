@@ -428,7 +428,7 @@ groupby.syntax.dict = {list(
     "sum v1 by id1:id2" = "combine(groupby(DF, [:id1, :id2]), :v1 => sum∘skipmissing => :v1)",
     "sum v1 mean v3 by id3" = "combine(groupby(DF, :id3), :v1 => sum∘skipmissing => :v1, :v3 => mean∘skipmissing => :v3)",
     "mean v1:v3 by id4" = "combine(groupby(DF, :id4), :v1 => mean∘skipmissing => :v1, :v2 => mean∘skipmissing => :v2, :v3 => mean∘skipmissing => :v3)",
-    "sum v1:v3 by id6" = "combine(groupby(DF, :id6), :v1 => sum∘skipmissing => :v1, :v2 => sum∘skipmissing => :v2, :v3 => sum∘skipmissing => :v3)",
+    "sum v1:v3 by id6" = "combine(groupby(DF, :id6), :v1 => sum∘skipmissing => :v1, :v2 => sum∘skipmissing => :v2, :v3 => sum∘skipmissing => :v3)"
   )},
   "cudf" = {c(
     "sum v1 by id1" = "DF.groupby('id1', as_index=False, sort=False, dropna=False).agg({'v1':'sum'})",
