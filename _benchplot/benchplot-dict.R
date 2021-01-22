@@ -216,6 +216,7 @@ groupby.data.exceptions = {list(                                                
     "csv reader NAs bug: datatable#2808" = c("G1_1e9_1e2_5_0")
   )},
   "spark" = {list(
+    "timeout" = "G1_1e9_1e2_5_0" ## seems that both runs have finished but second run timing was not logged to time.csv due to timeout
   )},
   "dask" = {list(
     "not yet implemented: dask#6986" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
