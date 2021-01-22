@@ -376,3 +376,79 @@ join.data.exceptions = {list(                                                   
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
+
+
+# groupby2014 ----
+
+groupby.syntax.dict = {list(
+  "data.table" = {c(
+    "sum v1 by id1" = "DT[, sum(v1), keyby=id1]",
+    "sum v1 by id1:id2" = "DT[, sum(v1), by='id1,id2']",
+    "sum v1 mean v3 by id3" = "DT[, list(sum(v1), mean(v3)), keyby=id3]",
+    "mean v1:v3 by id4" = "DT[, lapply(.SD, mean), by=id4, .SDcols=7:9]",
+    "sum v1:v3 by id6" = "DT[, lapply(.SD, sum), by=id6, .SDcols=7:9]"
+  )},
+  "dplyr" = {c(
+    "sum v1 by id1" = "DF %>% group_by(id1) %>% summarise(sum(v1))",
+    "sum v1 by id1:id2" = "DF %>% group_by(id1,id2) %>% summarise(sum(v1))",
+    "sum v1 mean v3 by id3" = "DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))",
+    "mean v1:v3 by id4" = "DF %>% group_by(id4) %>% summarise(across(v1:v3, mean))",
+    "sum v1:v3 by id6" = "DF %>% group_by(id6) %>% summarise(across(v1:v3, sum))"
+  )},
+  "pandas" = {c(
+    "sum v1 by id1" = "DF.groupby(['id1']).agg({'v1':'sum'})",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg({'v1':'sum'})",
+    "sum v1 mean v3 by id3" = "DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
+    "mean v1:v3 by id4" = "DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
+    "sum v1:v3 by id6" = "DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})"
+  )},
+  "pydatatable" = {c(
+    "sum v1 by id1" = "DT[:, {'v1': sum(f.v1)}, by(f.id1)]",
+    "sum v1 by id1:id2" = "DT[:, {'v1': sum(f.v1)}, by(f.id1, f.id2)]",
+    "sum v1 mean v3 by id3" = "DT[:, {'v1': sum(f.v1), 'v3': mean(f.v3)}, by(f.id3)]",
+    "mean v1:v3 by id4" = "DT[:, {'v1': mean(f.v1), 'v2': mean(f.v2), 'v3': mean(f.v3)}, by(f.id4)]",
+    "sum v1:v3 by id6" = "DT[:, {'v1': sum(f.v1), 'v2': sum(f.v2), 'v3': sum(f.v3)}, by(f.id6)]"
+  )},
+  "dask" = {c(
+    "sum v1 by id1" = "DF.groupby('id1', dropna=False).agg({'v1':'sum'}).compute()",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], dropna=False).agg({'v1':'sum'}).compute()",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3', dropna=False).agg({'v1':'sum', 'v3':'mean'}).compute()",
+    "mean v1:v3 by id4" = "DF.groupby('id4', dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
+    "sum v1:v3 by id6" = "DF.groupby('id6', dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()"
+  )},
+  "spark" = {c(
+    "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM tbl GROUP BY id1",
+    "sum v1 by id1:id2" = "SELECT id1, id2, sum(v1) AS v1 FROM tbl GROUP BY id1, id2",
+    "sum v1 mean v3 by id3" = "SELECT id3, sum(v1) AS v1, mean(v3) AS v3 FROM tbl GROUP BY id3",
+    "mean v1:v3 by id4" = "SELECT id4, mean(v1) AS v1, mean(v2) AS v2, mean(v3) AS v3 FROM tbl GROUP BY id4",
+    "sum v1:v3 by id6" = "SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM tbl GROUP BY id6"
+  )},
+  "juliadf" = {c(
+    "sum v1 by id1" = "combine(groupby(DF, :id1), :v1 => sum∘skipmissing => :v1)",
+    "sum v1 by id1:id2" = "combine(groupby(DF, [:id1, :id2]), :v1 => sum∘skipmissing => :v1)",
+    "sum v1 mean v3 by id3" = "combine(groupby(DF, :id3), :v1 => sum∘skipmissing => :v1, :v3 => mean∘skipmissing => :v3)",
+    "mean v1:v3 by id4" = "combine(groupby(DF, :id4), :v1 => mean∘skipmissing => :v1, :v2 => mean∘skipmissing => :v2, :v3 => mean∘skipmissing => :v3)",
+    "sum v1:v3 by id6" = "combine(groupby(DF, :id6), :v1 => sum∘skipmissing => :v1, :v2 => sum∘skipmissing => :v2, :v3 => sum∘skipmissing => :v3)",
+  )},
+  "cudf" = {c(
+    "sum v1 by id1" = "DF.groupby('id1', as_index=False, sort=False, dropna=False).agg({'v1':'sum'})",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], as_index=False, sort=False, dropna=False).agg({'v1':'sum'})",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3', as_index=False, sort=False, dropna=False).agg({'v1':'sum', 'v3':'mean'})",
+    "mean v1:v3 by id4" = "DF.groupby('id4', as_index=False, sort=False, dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
+    "sum v1:v3 by id6" = "DF.groupby('id6', as_index=False, sort=False, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})"
+  )},
+  "clickhouse" = {c(
+    "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM tbl GROUP BY id1",
+    "sum v1 by id1:id2" = "SELECT id1, id2, sum(v1) AS v1 FROM tbl GROUP BY id1, id2",
+    "sum v1 mean v3 by id3" = "SELECT id3, sum(v1) AS v1, avg(v3) AS v3 FROM tbl GROUP BY id3",
+    "mean v1:v3 by id4" = "SELECT id4, avg(v1) AS v1, avg(v2) AS v2, avg(v3) AS v3 FROM tbl GROUP BY id4",
+    "sum v1:v3 by id6" = "SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM tbl GROUP BY id6"
+  )},
+  "polars" = {c(
+    "sum v1 by id1" = "DF.groupby('id1').agg(pl.sum('v1')).collect()",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2']).agg(pl.sum('v1')).collect()",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3').agg([pl.sum('v1'), pl.mean('v3')]).collect()",
+    "mean v1:v3 by id4" = "DF.groupby('id4').agg([pl.mean('v1'), pl.mean('v2'), pl.mean('v3')]).collect()",
+    "sum v1:v3 by id6" = "DF.groupby('id6').agg([pl.sum('v1'), pl.sum('v2''), pl.sum('v3'')]).collect()"
+  )}
+)}
