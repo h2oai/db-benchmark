@@ -452,3 +452,40 @@ groupby2014.syntax.dict = {list(
     "sum v1:v3 by id6" = "DF.groupby('id6').agg([pl.sum('v1'), pl.sum('v2''), pl.sum('v3'')]).collect()"
   )}
 )}
+groupby2014.query.exceptions = {list(
+  "data.table" =  list(),
+  "dplyr" =       list(),
+  "pandas" =      list(),
+  "pydatatable" = list(),
+  "spark" =       list(),
+  "dask" =        list(),
+  "juliadf" =     list(),
+  "cudf" =        list(),
+  "clickhouse" =  list(),
+  "polars"     =  list()
+)}
+groupby2014.data.exceptions = {list(
+  "data.table" = {list(
+  )},
+  "dplyr" = {list(
+    "internal error" = "G0_1e9_1e2_0_0"
+  )},
+  "pandas" = {list(
+    "out of memory" = "G0_1e9_1e2_0_0"
+  )},
+  "pydatatable" = {list(
+  )},
+  "spark" = {list(
+  )},
+  "dask" = {list(
+  )},
+  "juliadf" = {list(
+  )},
+  "cudf" = {list(
+  )},
+  "clickhouse" = {list(
+  )},
+  "polars" = {list(
+  )}
+)}
+groupby2014.exceptions = task.exceptions(groupby2014.query.exceptions, groupby2014.data.exceptions)

@@ -96,7 +96,7 @@ loop_benchplot(dt_join, report_name="join", syntax.dict=join.syntax.dict, except
 
 ```{r report_groupby2014, message=FALSE}
 data_name = get_data_levels()[["groupby2014"]]
-loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby2014.syntax.dict, exceptions=groupby.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv="basic", title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = character())
+loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby2014.syntax.dict, exceptions=groupby2014.exceptions, solution.dict=solution.dict, data_namev=data_name, q_groupv="basic", title.txt.fun = header_title_fun, question.txt.fun = groupby_q_title_fun, cutoff = "spark", pending = character())
 ```
 
 ## Task {.tabset .tabset-fade .tabset-pills}
