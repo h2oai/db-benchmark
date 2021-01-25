@@ -166,14 +166,18 @@ println(last(ANS, 3));
 ANS = 0;
 
 question = "regression v1 v2 by id2 id4"; # q9
+function cor2(x, y) ## 73647e5a81d4b643c51bd784b3c8af04144cfaf6
+    nm = @. !ismissing(x) & !ismissing(y)
+    return count(nm) < 2 ? NaN : cor(view(x, nm), view(y, nm))
+end
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor2(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(skipmissing(ANS.r2));
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor2(v1, v2)^2) => :r2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(skipmissing(ANS.r2));
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
