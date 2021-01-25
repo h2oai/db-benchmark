@@ -30,3 +30,5 @@ run.out
 clickhouse/etc_sudoers.bak
 workdir/
 timeout-exit-codes.out
+*/target
+*.lock
