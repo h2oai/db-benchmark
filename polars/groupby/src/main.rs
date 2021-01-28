@@ -16,8 +16,7 @@ macro_rules! run_query {
 }
 
 fn main() -> Result<()> {
-    let path =
-        std::env::var("CSV_SRC").expect("env var CSV_SRC pointing to the csv_file is not set");
+    let path = format!("../data/{}.csv", std::env::var("SRC_DATANAME").unwrap());
 
     let overwrite_schema = Schema::new(vec![
         Field::new("id4", DataType::Int32),
