@@ -236,6 +236,27 @@ rpivotTable::rpivotTable(
 )
 ```
 
+### groupby2014
+
+This task reflects precisely grouping benchmark made by Matt Dowle in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). Differences are well summarized in the following [post on Data Science stackexchange](https://datascience.stackexchange.com/a/40532/10588).
+
+### groupby2014 timings
+
+```{r pivot_groupby2014}
+sdcols = c("solution","question_group","question","data","in_rows","time_sec_1","time_sec_2","version","git","chk_time_sec_1","na_time_sec","out_rows","out_cols")
+data = dt_groupby2014[, .SD, .SDcols=sdcols]
+rpivotTable::rpivotTable(
+  data,
+  rows = c("in_rows","question"),
+  cols = "solution",
+  aggregatorName = "Average",
+  vals = "time_sec_1",
+  height = "100%",
+  sorters = make_sorters(data),
+  unusedAttrsVertical = TRUE
+)
+```
+
 ## Notes
 
 - You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in [repository](https://github.com/h2oai/db-benchmark).
