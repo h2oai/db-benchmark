@@ -72,6 +72,7 @@ clean_time = function(d) {
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
                 ][task=="groupby" & solution=="dask" & batch>=1609583373 & batch<Inf & question=="regression v1 v2 by id2 id4", c("out_rows","chk") := .(NA_integer_, NA_character_) ## change Inf to batch after upgrading to dask#7024
+                ][task=="groupby" & solution=="polars" & question=="regression v1 v2 by id2 id4" & batch<Inf, "chk" := NA_character_ ## upgrade batch after resolved: ritchie46/polars#357
                   ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]
