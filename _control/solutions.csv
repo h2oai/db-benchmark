@@ -22,3 +22,5 @@ cudf,groupby
 cudf,join
 polars,groupby
 polars,join
+arrow,groupby
+arrow,join

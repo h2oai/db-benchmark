@@ -21,6 +21,7 @@ Contribution and feedback are very welcome!
   - [x] [cuDF](https://github.com/rapidsai/cudf)
   - [x] [ClickHouse](https://github.com/yandex/ClickHouse)
   - [x] [Polars](https://github.com/ritchie46/polars)
+  - [ ] [arrow](https://github.com/apache/arrow)
 
 More solutions has been proposed. Status of those can be tracked in issues tracker of our project repository by using [_new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) label.
 

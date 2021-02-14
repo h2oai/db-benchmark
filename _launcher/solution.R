@@ -110,7 +110,7 @@ if ("quiet" %in% names(args)) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "data.table"=, "dplyr"=, "h2o"="R",
+    "data.table"=, "dplyr"=, "h2o"=, "arrow"="R",
     "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
