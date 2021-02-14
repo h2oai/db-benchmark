@@ -40,7 +40,8 @@ solution.dict = {list(
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1")),
-  "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3"))
+  "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
+  "arrow" = list(name=c(short="arrow", long="Arrow"), color=c(strong="aquamarine3", light="aquamarine1"))
 )}
 #barplot(rep(c(0L,1L,1L), length(solution.dict)),
 #        col=rev(c(rbind(sapply(solution.dict, `[[`, "color"), "black"))),
@@ -181,6 +182,18 @@ groupby.syntax.dict = {list(
     "largest two v3 by id6" = "DF.drop_nulls('v3').sort('v3', reverse=True).groupby('id6').agg(col('v3').head(2).alias('largest2_v3)).explode('largest2_v3').collect()",
     "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg(pl.pearson_corr('v1','v2').alias('r2')).with_column(col('r2')**2).collect()",
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
+  )},
+  "arrow" = {c(
+    "sum v1 by id1" = "AT %>% select(id1, v1) %>% group_by(id1) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 by id1:id2" = "AT %>% select(id1, id2, v1) %>% group_by(id1, id2) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 mean v3 by id3" = "AT %>% select(id3, v1, v3) %>% group_by(id3) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
+    "mean v1:v3 by id4" = "AT %>% select(id4, v1, v2, v3) %>% group_by(id4) %>% collect() %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "sum v1:v3 by id6" = "AT %>% select(id6, v1, v2, v3) %>% group_by(id6) %>% collect () %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "median v3 sd v3 by id4 id5" = "AT %>% select(id4, id5, v3) %>% group_by(id4, id5) %>% collect() %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
+    "max v1 - min v2 by id3" = "AT %>% select(id3, v1, v2) %>% group_by(id3) %>% collect() %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
+    "largest two v3 by id6" = "AT %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L) %>% compute()",
+    "regression v1 v2 by id2 id4" = "AT %>% select(id2, id4, v1, v2) %>% group_by(id2, id4) %>% collect() %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
+    "sum v3 count by id1:id6" = "AT %>% select(id1, id2, id3, id4, id5, id6, v3) %>% group_by(id1, id2, id3, id4, id5, id6) %>% collect() %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
   )}
 )}
 groupby.query.exceptions = {list(
@@ -195,7 +208,8 @@ groupby.query.exceptions = {list(
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list(),
-  "polars"     =  list()
+  "polars"     =  list(),
+  "arrow"      =  list()
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -242,6 +256,8 @@ groupby.data.exceptions = {list(                                                
   "polars" = {list(
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1"), # q10
     "internal error: #188" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0")
+  )},
+  "arrow" = {list(
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
@@ -324,6 +340,13 @@ join.syntax.dict = {list(
     "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
     "medium inner on factor" = "DF.merge(medium, on='id5')",
     "big inner on int" = "DF.merge(big, on='id3')"
+  )},
+  "arrow" = {c(
+    "small inner on int" = "inner_join(DF, small, by='id1')",
+    "medium inner on int" = "inner_join(DF, medium, by='id2')",
+    "medium outer on int" = "left_join(DF, medium, by='id2')",
+    "medium inner on factor" = "inner_join(DF, medium, by='id5')",
+    "big inner on int" = "inner_join(DF, big, by='id3')"
   )}
 )}
 join.query.exceptions = {list(
@@ -336,7 +359,8 @@ join.query.exceptions = {list(
   "juliadf" =     list(),
   "cudf" =        list(),
   "clickhouse" =  list(),
-  "polars"     =  list()
+  "polars"     =  list(),
+  "arrow"      =  list()
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -375,6 +399,9 @@ join.data.exceptions = {list(                                                   
   "polars" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1"),
     "internal error: #187" = "J1_1e8_NA_5_0"
+  )},
+  "arrow" = {list(
+    "not yet implemented: #189" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1","J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
@@ -451,6 +478,13 @@ groupby2014.syntax.dict = {list(
     "sum v1 mean v3 by id3" = "DF.groupby('id3').agg([pl.sum('v1'), pl.mean('v3')]).collect()",
     "mean v1:v3 by id4" = "DF.groupby('id4').agg([pl.mean('v1'), pl.mean('v2'), pl.mean('v3')]).collect()",
     "sum v1:v3 by id6" = "DF.groupby('id6').agg([pl.sum('v1'), pl.sum('v2''), pl.sum('v3'')]).collect()"
+  )},
+  "arrow" = {c(
+    "sum v1 by id1" = "AT %>% select(id1, v1) %>% group_by(id1) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 by id1:id2" = "AT %>% select(id1, id2, v1) %>% group_by(id1, id2) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 mean v3 by id3" = "AT %>% select(id3, v1, v3) %>% group_by(id3) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
+    "mean v1:v3 by id4" = "AT %>% select(id4, v1, v2, v3) %>% group_by(id4) %>% collect() %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "sum v1:v3 by id6" = "AT %>% select(id6, v1, v2, v3) %>% group_by(id6) %>% collect () %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)"
   )}
 )}
 groupby2014.query.exceptions = {list(
@@ -463,7 +497,8 @@ groupby2014.query.exceptions = {list(
   "juliadf" =     list(),
   "cudf" =        list(),
   "clickhouse" =  list(),
-  "polars"     =  list()
+  "polars"     =  list(),
+  "arrow"      =  list()
 )}
 groupby2014.data.exceptions = {list(
   "data.table" = {list(
@@ -487,6 +522,8 @@ groupby2014.data.exceptions = {list(
   "clickhouse" = {list(
   )},
   "polars" = {list(
-  )}
+  )},
+  "arrow" = {list(
+  )},
 )}
 groupby2014.exceptions = task.exceptions(groupby2014.query.exceptions, groupby2014.data.exceptions)
