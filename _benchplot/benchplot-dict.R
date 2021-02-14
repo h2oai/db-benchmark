@@ -522,6 +522,6 @@ groupby2014.data.exceptions = {list(
   "polars" = {list(
   )},
   "arrow" = {list(
-  )},
+  )}
 )}
 groupby2014.exceptions = task.exceptions(groupby2014.query.exceptions, groupby2014.data.exceptions)
