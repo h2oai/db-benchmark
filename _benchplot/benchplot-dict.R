@@ -257,6 +257,9 @@ groupby.data.exceptions = {list(                                                
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
   )},
   "arrow" = {list(
+    "timeout" = "G1_1e8_2e0_0_0", # q10
+    "internal error" = c("G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0","G1_1e9_1e1_0_0", # inherits from dplyr
+                         "G1_1e9_2e0_0_0"), # #190
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
