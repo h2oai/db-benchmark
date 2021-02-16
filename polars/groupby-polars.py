@@ -246,7 +246,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(["id2","id4"]).agg(pl.pearson_corr("v1","v2").alias("r2")).with_column(col("r2")**2).collect()
+ans = x.groupby(["id2","id4"]).agg((pl.pearson_corr("v1","v2")**2).alias("r2")).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -257,7 +257,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(["id2","id4"]).agg(pl.pearson_corr("v1","v2").alias("r2")).with_column(col("r2")**2).collect()
+ans = x.groupby(["id2","id4"]).agg((pl.pearson_corr("v1","v2")**2).alias("r2")).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
