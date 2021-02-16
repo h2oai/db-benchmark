@@ -54,7 +54,7 @@ groupby_q_title_fun = function(x) {
             uniqueN(x, by="iquestion")==nrow(x))
   x = copy(x)[, "top2":=FALSE][, "iquestion":=rev(seq_along(iquestion))]
   x[question=="largest two v3 by id6", "top2":=TRUE] #118
-  x[, sprintf("Question %s: \"%s\": %s%s ad hoc groups of ~%s rows;  result %s x %s",
+  x[, sprintf("Query %s: \"%s\": %s%s ad hoc groups of ~%s rows;  result %s x %s",
               iquestion, as.character(question),
               if (top2) "~" else "",
               format_comma(if (top2) out_rows/2 else out_rows),
@@ -270,7 +270,7 @@ join_q_title_fun = function(x) {
   stopifnot(c("question","iquestion","out_rows","out_cols","in_rows") %in% names(x),
             uniqueN(x, by="iquestion")==nrow(x))
   x = copy(x)[, "iquestion":=rev(seq_along(iquestion))]
-  x[, sprintf("Question %s: \"%s\": result %s x %s", iquestion, as.character(question), format_comma(out_rows), out_cols), by="iquestion"]$V1
+  x[, sprintf("Query %s: \"%s\": result %s x %s", iquestion, as.character(question), format_comma(out_rows), out_cols), by="iquestion"]$V1
 }
 join.syntax.dict = {list(
   "dask" = {c(
