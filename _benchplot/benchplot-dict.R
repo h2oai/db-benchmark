@@ -180,7 +180,7 @@ groupby.syntax.dict = {list(
     "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5']).agg([pl.median('v3').alias('v3_median'), pl.std('v3').alias('v3_std')]).collect()",
     "max v1 - min v2 by id3" = "DF.groupby('id3').agg([pl.max('v1'), pl.min('v2')]).select(['id3', (col('v1_max')-col('v2_min')).alias('range_v1_v2')]).collect()",
     "largest two v3 by id6" = "DF.drop_nulls('v3').sort('v3', reverse=True).groupby('id6').agg(col('v3').head(2).alias('largest2_v3)).explode('largest2_v3').collect()",
-    "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg(pl.pearson_corr('v1','v2').alias('r2')).with_column(col('r2')**2).collect()",
+    "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg((pl.pearson_corr('v1','v2')**2).alias('r2')).collect()",
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
   )},
   "arrow" = {c(
