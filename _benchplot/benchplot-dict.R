@@ -184,16 +184,16 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
   )},
   "arrow" = {c(
-    "sum v1 by id1" = "AT %>% select(id1, v1) %>% group_by(id1) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
-    "sum v1 by id1:id2" = "AT %>% select(id1, id2, v1) %>% group_by(id1, id2) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE))",
-    "sum v1 mean v3 by id3" = "AT %>% select(id3, v1, v3) %>% group_by(id3) %>% collect() %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
-    "mean v1:v3 by id4" = "AT %>% select(id4, v1, v2, v3) %>% group_by(id4) %>% collect() %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
-    "sum v1:v3 by id6" = "AT %>% select(id6, v1, v2, v3) %>% group_by(id6) %>% collect () %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
-    "median v3 sd v3 by id4 id5" = "AT %>% select(id4, id5, v3) %>% group_by(id4, id5) %>% collect() %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
-    "max v1 - min v2 by id3" = "AT %>% select(id3, v1, v2) %>% group_by(id3) %>% collect() %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
-    "largest two v3 by id6" = "AT %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L) %>% compute()",
-    "regression v1 v2 by id2 id4" = "AT %>% select(id2, id4, v1, v2) %>% group_by(id2, id4) %>% collect() %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
-    "sum v3 count by id1:id6" = "AT %>% select(id1, id2, id3, id4, id5, id6, v3) %>% group_by(id1, id2, id3, id4, id5, id6) %>% collect() %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
+    "sum v1 by id1" = "AT %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 by id1:id2" = "AT %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 mean v3 by id3" = "AT %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
+    "mean v1:v3 by id4" = "AT %>% group_by(id4) %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "sum v1:v3 by id6" = "AT %>% group_by(id6) %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "median v3 sd v3 by id4 id5" = "AT %>% group_by(id4, id5) %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
+    "max v1 - min v2 by id3" = "AT %>% group_by(id3) %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
+    "largest two v3 by id6" = "AT %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L)",
+    "regression v1 v2 by id2 id4" = "AT %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
+    "sum v3 count by id1:id6" = "AT %>% group_by(id1, id2, id3, id4, id5, id6) %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
   )}
 )}
 groupby.query.exceptions = {list(
