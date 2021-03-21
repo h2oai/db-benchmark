@@ -5,7 +5,7 @@ print("# join-polars.py", flush=True)
 import os
 import gc
 import timeit
-import pypolars as pl
+import polars as pl
 
 exec(open("./_helpers/helpers.py").read())
 
