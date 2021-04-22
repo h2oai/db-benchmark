@@ -30,10 +30,10 @@ end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
-x = DataFrame(CSV.File(src_jn_x, pool=true));
-small = DataFrame(CSV.File(src_jn_y[1], pool=true));
-medium = DataFrame(CSV.File(src_jn_y[2], pool=true));
-big = DataFrame(CSV.File(src_jn_y[3], pool=true));
+x = CSV.read(src_jn_x, DataFrame);
+small = CSV.read(src_jn_y[1], DataFrame);
+medium = CSV.read(src_jn_y[2], DataFrame);
+big = CSV.read(src_jn_y[3], DataFrame);
 
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
