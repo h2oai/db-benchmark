@@ -26,10 +26,7 @@ src_grp = string("data/", data_name, ".csv");
 println(string("loading dataset ", data_name)); flush(stdout);
 
 # Types are provided explicitly only to reduce memory use when parsing
-x = DataFrame(CSV.File(
-  src_grp, pool=true,
-  types=[PooledString, PooledString, PooledString, Int, Int, Int, Int, Int, Float64]
-));
+x = CSV.read(src_grp, DataFrame);
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
 
