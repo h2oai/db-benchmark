@@ -8,7 +8,7 @@ sudo apt-get install -y python3.6-dev virtualenv
 virtualenv polars/py-polars --python=/usr/bin/python3.6
 source polars/py-polars/bin/activate
 
-python -m pip install --upgrade psutil py-polars
+python -m pip install --upgrade psutil polars
 
 # build
 deactivate
@@ -17,7 +17,7 @@ deactivate
 # check
 source polars/py-polars/bin/activate
 python
-import pypolars as pl
+import polars as pl
 pl.__version__
 quit()
 deactivate

@@ -5,8 +5,8 @@ print("# groupby-polars.py", flush=True)
 import os
 import gc
 import timeit
-import pypolars as pl
-from pypolars.lazy import col
+import polars as pl
+from polars.lazy import col
 
 exec(open("./_helpers/helpers.py").read())
 
