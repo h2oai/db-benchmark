@@ -1,4 +1,4 @@
-#!/usr/bin/env julia
+#!/usr/bin/env -S julia -t 20
 
 print("# join-juliadf.jl\n"); flush(stdout);
 
