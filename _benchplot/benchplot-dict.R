@@ -76,16 +76,16 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "DT[, .(v3=sum(v3, na.rm=TRUE), count=.N), by=id1:id6]"
   )},
   "dplyr" = {c(
-    "sum v1 by id1" = "DF %>% group_by(id1, .drop=TRUE) %>% summarise(v1=sum(v1, na.rm=TRUE))",
-    "sum v1 by id1:id2" = "DF %>% group_by(id1, id2, .drop=TRUE) %>% summarise(v1=sum(v1, na.rm=TRUE))",
-    "sum v1 mean v3 by id3" = "DF %>% group_by(id3, .drop=TRUE) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
-    "mean v1:v3 by id4" = "DF %>% group_by(id4, .drop=TRUE) %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
-    "sum v1:v3 by id6" = "DF %>% group_by(id6, .drop=TRUE) %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
-    "median v3 sd v3 by id4 id5" = "DF %>% group_by(id4, id5, .drop=TRUE) %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
-    "max v1 - min v2 by id3" = "DF %>% group_by(id3, .drop=TRUE) %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
-    "largest two v3 by id6" = "DF %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6, .drop=TRUE) %>% filter(row_number() <= 2L)",
-    "regression v1 v2 by id2 id4" = "DF %>% group_by(id2, id4, .drop=TRUE) %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
-    "sum v3 count by id1:id6" = "DF %>% group_by(id1, id2, id3, id4, id5, id6, .drop=TRUE) %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
+    "sum v1 by id1" = "DF %>% group_by(id1) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 by id1:id2" = "DF %>% group_by(id1, id2) %>% summarise(v1=sum(v1, na.rm=TRUE))",
+    "sum v1 mean v3 by id3" = "DF %>% group_by(id3) %>% summarise(v1=sum(v1, na.rm=TRUE), v3=mean(v3, na.rm=TRUE))",
+    "mean v1:v3 by id4" = "DF %>% group_by(id4) %>% summarise_at(.funs=\"mean\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "sum v1:v3 by id6" = "DF %>% group_by(id6) %>% summarise_at(.funs=\"sum\", .vars=c(\"v1\",\"v2\",\"v3\"), na.rm=TRUE)",
+    "median v3 sd v3 by id4 id5" = "DF %>% group_by(id4, id5) %>% summarise(median_v3=median(v3, na.rm=TRUE), sd_v3=sd(v3, na.rm=TRUE))",
+    "max v1 - min v2 by id3" = "DF %>% group_by(id3) %>% summarise(range_v1_v2=max(v1, na.rm=TRUE)-min(v2, na.rm=TRUE))",
+    "largest two v3 by id6" = "DF %>% select(id6, largest2_v3=v3) %>% filter(!is.na(largest2_v3)) %>% arrange(desc(largest2_v3)) %>% group_by(id6) %>% filter(row_number() <= 2L)",
+    "regression v1 v2 by id2 id4" = "DF %>% group_by(id2, id4) %>% summarise(r2=cor(v1, v2, use=\"na.or.complete\")^2)",
+    "sum v3 count by id1:id6" = "DF %>% group_by(id1, id2, id3, id4, id5, id6) %>% summarise(v3=sum(v3, na.rm=TRUE), count=n())"
   )},
   "pandas" = {c(
     "sum v1 by id1" = "DF.groupby('id1', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum'})",
