@@ -5,7 +5,7 @@ set -e
 sudo apt-get update
 sudo apt-get install build-essential python3-dev python3-pip
 
-virtualenv pandas/py-pandas --python=/usr/bin/python3.6
+virtualenv pandas/py-pandas --python=/usr/bin/python3.7
 source pandas/py-pandas/bin/activate
 
 # install binaries
