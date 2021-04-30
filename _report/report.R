@@ -26,6 +26,7 @@ get_excluded_batch = function() {
   c(
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
     , 1552454531L, 1555929111L, 1555754148L # dl11 testing
+    , 1619552039L, 1619596289L ## polars migration
     )
 }
 
@@ -72,7 +73,7 @@ clean_time = function(d) {
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
                 ][task=="groupby" & solution=="dask" & batch>=1609583373 & batch<Inf & question=="regression v1 v2 by id2 id4", c("out_rows","chk") := .(NA_integer_, NA_character_) ## change Inf to batch after upgrading to dask#7024
-                ][solution=="polars" & batch<1614590447, "chk" := NA_character_
+                ][solution=="polars" & batch<=1619596689, "chk" := NA_character_
                   ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]
