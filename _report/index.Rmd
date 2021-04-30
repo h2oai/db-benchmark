@@ -272,7 +272,7 @@ rpivotTable::rpivotTable(
 ## Environment configuration
 
 - R 4.0.3
-- python 3.6 an 3.7
+- python 3.6 and 3.7
 - Julia 1.6.0
 
 ```{r environment_hardware}
