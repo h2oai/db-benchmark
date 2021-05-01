@@ -31,8 +31,8 @@ end;
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
 x = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, PooledString, PooledString, PooledString, Float64]);
-small = CSV.read(src_jn_y[1], DataFrame, type=[Int32, PooledString, Float64]);
-medium = CSV.read(src_jn_y[2], DataFrame, type=[Int32, Int32, PooledString, PooledString, Float64]);
+small = CSV.read(src_jn_y[1], DataFrame, types=[Int32, PooledString, Float64]);
+medium = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, PooledString, PooledString, Float64]);
 big = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, PooledString, PooledString, PooledString, Float64]);
 
 in_rows = size(x, 1);
