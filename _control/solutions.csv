@@ -24,3 +24,5 @@ polars,groupby
 polars,join
 arrow,groupby
 arrow,join
+duckdb,groupby
+duckdb,join
