@@ -42,7 +42,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS chk FROM ans")$chk)[["elapsed"]]
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
@@ -50,7 +50,7 @@ t = system.time({
   print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS chk FROM ans")$chk)[["elapsed"]]
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1 FROM ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
 print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
