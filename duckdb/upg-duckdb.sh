@@ -3,4 +3,4 @@ set -e
 
 # upgrade all packages in duckdb library only if new arrow is out
 echo 'upgrading duckdb...'
-Rscript -e 'ap=available.packages(repo="https://cloud.r-project.org/"); if (ap["duckdb","Version"]!=packageVersion("duckdb", lib.loc="./duckdb")) update.packages(lib.loc="./duckdb", ask=FALSE, checkBuilt=TRUE, quiet=TRUE, repo="https://cloud.r-project.org/")'
+Rscript -e 'ap=available.packages(repos="https://cloud.r-project.org/"); if (ap["duckdb","Version"]!=packageVersion("duckdb", lib.loc="./duckdb/r-duckdb")) update.packages(lib.loc="./duckdb/r-duckdb", ask=FALSE, checkBuilt=TRUE, quiet=TRUE, repos="https://cloud.r-project.org/")'
