@@ -1,15 +1,15 @@
 #!/usr/bin/env Rscript
 
-cat("# groupby-duckdb\n")
+cat("# groupby-duckdb.R\n")
 
 source("./_helpers/helpers.R")
 
 suppressPackageStartupMessages({
-  library("DBI", warn.conflicts=FALSE)
-  library("duckdb", lib.loc="./duckdb", warn.conflicts=FALSE)
+  library("DBI", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
+  library("duckdb", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
 })
 ver = packageVersion("duckdb")
-git = ""
+#git = "" # set up later on after connecting to db
 task = "groupby"
 solution = "duckdb"
 fun = "group_by"
@@ -27,9 +27,9 @@ con = dbConnect(duckdb::duckdb())
 
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
-git = dbGetQuery(con, "select source_id from pragma_version()")[[1]]
+git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
-invisible(dbExecute(con, sprintf("CREATE TABLE x as SELECT * FROM READ_CSV_AUTO('%s')", src_grp)))
+invisible(dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM READ_CSV_AUTO('%s')", src_grp)))
 
 task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")

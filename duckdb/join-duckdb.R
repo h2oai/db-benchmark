@@ -1,15 +1,15 @@
 #!/usr/bin/env Rscript
 
-cat("# join-duckdb\n")
+cat("# join-duckdb.R\n")
 
 source("./_helpers/helpers.R")
 
 suppressPackageStartupMessages({
-  library("DBI", warn.conflicts=FALSE)
-  library("duckdb", lib.loc="./duckdb", warn.conflicts=FALSE)
+  library("DBI", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
+  library("duckdb", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
 })
 ver = packageVersion("duckdb")
-git = ""
+#git = "" # set up later on after connecting to db
 task = "join"
 solution = "duckdb"
 cache = TRUE
@@ -25,9 +25,9 @@ cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse="
 con = dbConnect(duckdb::duckdb())
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
-git = dbGetQuery(con, "select source_id from pragma_version()")[[1]]
+git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
-duckdb_import <- function(table, file) invisible(dbExecute(con, sprintf("CREATE TABLE %s as SELECT * FROM READ_CSV_AUTO('%s')", table, file)))
+duckdb_import <- function(table, file) invisible(dbExecute(con, sprintf("CREATE TABLE %s AS SELECT * FROM READ_CSV_AUTO('%s')", table, file)))
 
 duckdb_import("x", src_jn_x)
 duckdb_import("small", src_jn_y[1L])
