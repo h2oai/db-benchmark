@@ -30,9 +30,33 @@ invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 invisible(dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM READ_CSV_AUTO('%s')", src_grp)))
+print(in_nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM x")$cnt)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")
+
+question = "sum v1 by id1" # q1
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT id1, SUM(v1) AS v1 FROM x GROUP BY id1")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS chk FROM ans")$chk)[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT id1, SUM(v1) AS v1 FROM x GROUP BY id1")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS chk FROM ans")$chk)[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+
+stop("dev")
 
 # globals galore but meh
 duckdb_bench = function(query, check_query) {
