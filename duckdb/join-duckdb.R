@@ -27,69 +27,125 @@ ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
-duckdb_import <- function(table, file) invisible(dbExecute(con, sprintf("CREATE TABLE %s AS SELECT * FROM READ_CSV_AUTO('%s')", table, file)))
+invisible({
+  dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM READ_CSV_AUTO('%s')", src_jn_x))
+  dbExecute(con, sprintf("CREATE TABLE small AS SELECT * FROM READ_CSV_AUTO('%s')", src_jn_y[1L]))
+  dbExecute(con, sprintf("CREATE TABLE medium AS SELECT * FROM READ_CSV_AUTO('%s')", src_jn_y[2L]))
+  dbExecute(con, sprintf("CREATE TABLE big AS SELECT * FROM READ_CSV_AUTO('%s')", src_jn_y[3L]))
+})
 
-duckdb_import("x", src_jn_x)
-duckdb_import("small", src_jn_y[1L])
-duckdb_import("medium", src_jn_y[2L])
-duckdb_import("big", src_jn_y[3L])
-
-duckdb_nrow <- function(table) dbGetQuery(con, sprintf("SELECT COUNT(*) c FROM %s", table))$c
-
-print(duckdb_nrow("x"))
-print(duckdb_nrow("small"))
-print(duckdb_nrow("medium"))
-print(duckdb_nrow("big"))
+print(in_nr<-dbGetQuery(con, "SELECT COUNT(*) AS cnt FROM x")$cnt)
+print(dbGetQuery(con, "SELECT COUNT(*) AS cnt FROM small")$cnt)
+print(dbGetQuery(con, "SELECT COUNT(*) AS cnt FROM medium")$cnt)
+print(dbGetQuery(con, "SELECT COUNT(*) AS cnt FROM big")$cnt)
 
 task_init = proc.time()[["elapsed"]]
 cat("joining...\n")
 
-
-# globals galore but meh
-duckdb_bench = function(query, check_query) {
-	get_x_count   = function(con) dbGetQuery(con, "SELECT COUNT(*) c FROM x")$c
-	get_ans_count = function(con) dbGetQuery(con, "SELECT COUNT(*) c FROM ans")$c
-	get_ans_cols  = function(con) ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 1"))
-
-	invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-	# run 1 
-	t = system.time(invisible(dbExecute(con, sprintf("CREATE TABLE ans AS %s", query))))[["elapsed"]]
-	m = memory_usage()
-	chkt = system.time(chk <<- dbGetQuery(con, check_query)[[1]])[["elapsed"]]
-	write.log(run=1L, task=task, data=data_name, in_rows=get_x_count(con), question=question, out_rows=get_ans_count(con), out_cols=get_ans_count(con), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-	invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-	# run 2
-	t = system.time(invisible(dbExecute(con, sprintf("CREATE TABLE ans AS %s", query))))[["elapsed"]]
-	m = memory_usage()
-	chkt = system.time(chk <<- dbGetQuery(con, check_query)[[1]])[["elapsed"]]
-	write.log(run=2L, task=task, data=data_name, in_rows=get_x_count(con), question=question, out_rows=get_ans_count(con), out_cols=get_ans_count(con), solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-	print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))
-	print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4"))
-	invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
-}
-
 question = "small inner on int" # q1
 fun = "inner_join"
-duckdb_bench("select x.*, small.id4 AS small_id4,v2 from x join small using (id1)", "select sum(v1) as v1, sum(v2) as v2 from ans")
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "medium inner on int" # q2
 fun = "inner_join"
-duckdb_bench("select x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4,medium.id5 AS medium_id5,v2
- from x join medium using (id2)", "select sum(v1) as v1, sum(v2) as v2 from ans")
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "medium outer on int" # q3
 fun = "left_join"
-duckdb_bench("select x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4,medium.id5 AS medium_id5,v2 from x left join medium using (id2)", "select sum(v1) as v1, sum(v2) as v2 from ans")
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x LEFT JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "medium inner on factor" # q4
 fun = "inner_join"
-duckdb_bench("select x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4,v2 from x join medium using (id5)", "select sum(v1) as v1, sum(v2) as v2 from ans")
-
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id2 AS medium_id2, medium.id4 AS medium_id4, v2 FROM x JOIN medium USING (id5)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "big inner on int" # q5
 fun = "inner_join"
-duckdb_bench("select x.*, big.id1 as big_id1,big.id2 as big_id2, big.id4 as big_id4, big.id5 as big_id5,big.id6 as big_id6,v2
- from x join big using (id3)", "select sum(v1) as v1, sum(v2) as v2 from ans")
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+t = system.time({
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, big.id1 AS big_id1, big.id2 AS big_id2, big.id4 AS big_id4, big.id5 AS big_id5, big.id6 AS big_id6, v2 FROM x JOIN big USING (id3)")
+  print(c(nr<-dbGetQuery(con, "SELECT COUNT(*) cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+})[["elapsed"]]
+m = memory_usage()
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM ans"))[["elapsed"]]
+write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(dbGetQuery(con, "SELECT * FROM ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM ans WHERE ROWID > (SELECT COUNT(*) FROM ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 cat(sprintf("joining finished, took %.0fs\n", proc.time()[["elapsed"]]-task_init))
 
