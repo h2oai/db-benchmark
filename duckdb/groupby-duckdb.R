@@ -16,9 +16,6 @@ fun = "group_by"
 cache = TRUE
 on_disk = FALSE
 
-# we could also do an on-disk version if you like ^^
-# just pass tempfile() to dbConnect() below
-
 data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))

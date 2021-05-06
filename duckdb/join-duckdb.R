@@ -13,7 +13,6 @@ ver = packageVersion("duckdb")
 task = "join"
 solution = "duckdb"
 cache = TRUE
-on_disk = FALSE
 
 data_name = Sys.getenv("SRC_DATANAME")
 src_jn_x = file.path("data", paste(data_name, "csv", sep="."))
@@ -22,7 +21,15 @@ src_jn_y = setNames(file.path("data", paste(y_data_name, "csv", sep=".")), names
 stopifnot(length(src_jn_y)==3L)
 cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse=", ")))
 
-con = dbConnect(duckdb::duckdb())
+on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+if (on_disk) {
+  print("using disk memory-mapped data storage")
+  con = dbConnect(duckdb::duckdb(), dbdir=tempfile())
+} else {
+  print("using in-memory data storage")
+  con = dbConnect(duckdb::duckdb())
+}
+
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
