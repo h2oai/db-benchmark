@@ -588,6 +588,49 @@ plot(d, "arrow", 1e8, "join")
 plot(d, "arrow", 1e9, "join")
 ```
 
+
+### duckdb {.tabset .tabset-fade .tabset-pills}
+
+#### groupby {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r duckdb.groupby.1e7}
+plot(d, "duckdb", 1e7, "groupby")
+```
+
+##### 5 GB
+
+```{r duckdb.groupby.1e8}
+plot(d, "duckdb", 1e8, "groupby")
+```
+
+##### 50 GB {.active}
+
+```{r duckdb.groupby.1e9}
+plot(d, "duckdb", 1e9, "groupby")
+```
+
+#### join {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r duckdb.join.1e7}
+plot(d, "duckdb", 1e7, "join")
+```
+
+##### 5 GB {.active}
+
+```{r duckdb.join.1e8}
+plot(d, "duckdb", 1e8, "join")
+```
+
+##### 50 GB
+
+```{r duckdb.join.1e9}
+plot(d, "duckdb", 1e9, "join")
+```
+
 ## Details
 
 ### Environment
