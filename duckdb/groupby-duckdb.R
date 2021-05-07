@@ -14,13 +14,19 @@ task = "groupby"
 solution = "duckdb"
 fun = "group_by"
 cache = TRUE
-on_disk = FALSE
 
 data_name = Sys.getenv("SRC_DATANAME")
 src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
-con = dbConnect(duckdb::duckdb())
+on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+if (on_disk) {
+  print("using disk memory-mapped data storage")
+  con = dbConnect(duckdb::duckdb(), dbdir=tempfile())
+} else {
+  print("using in-memory data storage")
+  con = dbConnect(duckdb::duckdb())
+}
 
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
