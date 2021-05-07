@@ -333,11 +333,11 @@ join.syntax.dict = {list(
     "big inner on int" = "y.key = 'id3'; DT[:, :, join(y)][isfinite(f.v2), :]"
   )},
   "spark" = {c(
-    "small inner on int" = "spark.sql('select * from x join small using (id1)')",
-    "medium inner on int" = "spark.sql('select * from x join medium using (id2)')",
-    "medium outer on int" = "spark.sql('select * from x left join medium using (id2)')",
-    "medium inner on factor" = "spark.sql('select * from x join medium using (id5)')",
-    "big inner on int" = "spark.sql('select * from x join big using (id3)')"
+    "small inner on int" = "select * from x join small using (id1)",
+    "medium inner on int" = "select * from x join medium using (id2)",
+    "medium outer on int" = "select * from x left join medium using (id2)",
+    "medium inner on factor" = "select * from x join medium using (id5)",
+    "big inner on int" = "select * from x join big using (id3)"
   )},
   "clickhouse" = {c(
     "small inner on int" = "SELECT id1, x.id2, x.id3, x.id4, y.id4, x.id5, x.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id1)",
