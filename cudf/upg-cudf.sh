@@ -15,6 +15,7 @@ conda activate cudf
 #conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults dask-cudf=0.11 #116
 #conda install --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.12 python=3.6 cudatoolkit=10.0
 #conda install -y --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.13 python=3.6 cudatoolkit=10.0
-conda install -y --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.16 python=3.8 cudatoolkit=11.0
+#conda install -y --name cudf -c rapidsai -c nvidia -c conda-forge -c defaults cudf=0.16 python=3.8 cudatoolkit=11.0
+conda install -y --name cudf -c rapidsai -c nvidia -c conda-forge blazingsql=0.19 cudf=0.19 python=3.7 cudatoolkit=11.0
 conda install -y --name cudf psutil
 conda deactivate
