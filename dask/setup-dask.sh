@@ -5,14 +5,11 @@ set -e
 sudo apt-get update
 sudo apt-get install build-essential python3-dev python3-pip
 
-virtualenv dask/py-dask --python=/usr/bin/python3.6
+virtualenv dask/py-dask --python=/usr/bin/python3.7
 source dask/py-dask/bin/activate
 
 # install binaries
-python -m pip install --upgrade dask
-python -m pip install --upgrade dask[dataframe]
-python -m pip install --upgrade dask[distributed]
-#python -m pip install --upgrade fastparquet # not used as slower, at least for 1e7, 1e8. parquet portability issue spark-fastparquet prevent to try 1e9
+python -m pip install --upgrade dask[complete]
 
 # check
 python
