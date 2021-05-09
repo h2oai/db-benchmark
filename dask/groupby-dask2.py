@@ -52,7 +52,7 @@ print("grouping...", flush=True)
 question = "sum v1 by id1" # q1
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id1', dropna=False).agg({'v1':'sum'}).compute()
+ans = x.groupby('id1', dropna=False, observed=True).agg({'v1':'sum'}).compute()
 ans.reset_index(inplace=True) # #68
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -64,7 +64,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id1', dropna=False).agg({'v1':'sum'}).compute()
+ans = x.groupby('id1', dropna=False, observed=True).agg({'v1':'sum'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -80,7 +80,7 @@ del ans
 question = "sum v1 by id1:id2" # q2
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2'], dropna=False).agg({'v1':'sum'}).compute()
+ans = x.groupby(['id1','id2'], dropna=False, observed=True).agg({'v1':'sum'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -92,7 +92,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2'], dropna=False).agg({'v1':'sum'}).compute()
+ans = x.groupby(['id1','id2'], dropna=False, observed=True).agg({'v1':'sum'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -108,7 +108,7 @@ del ans
 question = "sum v1 mean v3 by id3" # q3
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id3', dropna=False).agg({'v1':'sum', 'v3':'mean'}).compute()
+ans = x.groupby('id3', dropna=False, observed=True).agg({'v1':'sum', 'v3':'mean'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -120,7 +120,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id3', dropna=False).agg({'v1':'sum', 'v3':'mean'}).compute()
+ans = x.groupby('id3', dropna=False, observed=True).agg({'v1':'sum', 'v3':'mean'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -136,7 +136,7 @@ del ans
 question = "mean v1:v3 by id4" # q4
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id4', dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
+ans = x.groupby('id4', dropna=False, observed=True).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -148,7 +148,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id4', dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
+ans = x.groupby('id4', dropna=False, observed=True).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -164,7 +164,7 @@ del ans
 question = "sum v1:v3 by id6" # q5
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id6', dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
+ans = x.groupby('id6', dropna=False, observed=True).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -176,7 +176,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id6', dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
+ans = x.groupby('id6', dropna=False, observed=True).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -192,7 +192,7 @@ del ans
 #question = "median v3 sd v3 by id4 id5" # q6 # median function not yet implemented: https://github.com/dask/dask/issues/4362
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id4','id5'], dropna=False).agg({'v3': ['median','std']}).compute()
+#ans = x.groupby(['id4','id5'], dropna=False, observed=True).agg({'v3': ['median','std']}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
@@ -204,7 +204,7 @@ del ans
 #del ans
 #gc.collect()
 #t_start = timeit.default_timer()
-#ans = x.groupby(['id4','id5'], dropna=False).agg({'v3': ['median','std']}).compute()
+#ans = x.groupby(['id4','id5'], dropna=False, observed=True).agg({'v3': ['median','std']}).compute()
 #ans.reset_index(inplace=True)
 #print(ans.shape, flush=True)
 #t = timeit.default_timer() - t_start
@@ -220,7 +220,7 @@ del ans
 question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id3', dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()
+ans = x.groupby('id3', dropna=False, observed=True).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -232,7 +232,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby('id3', dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()
+ans = x.groupby('id3', dropna=False, observed=True).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -248,7 +248,7 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6':'Int64', 'v3':'float64'})[['v3']].compute()
+ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False, observed=True).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6':'Int64', 'v3':'float64'})[['v3']].compute()
 ans.reset_index(level='id6', inplace=True)
 ans.reset_index(drop=True, inplace=True) # drop because nlargest creates some extra new index field
 print(ans.shape, flush=True)
@@ -261,7 +261,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6':'Int64', 'v3':'float64'})[['v3']].compute()
+ans = x[~x['v3'].isna()][['id6','v3']].groupby('id6', dropna=False, observed=True).apply(lambda x: x.nlargest(2, columns='v3'), meta={'id6':'Int64', 'v3':'float64'})[['v3']].compute()
 ans.reset_index(level='id6', inplace=True)
 ans.reset_index(drop=True, inplace=True)
 print(ans.shape, flush=True)
@@ -278,7 +278,7 @@ del ans
 question = "regression v1 v2 by id2 id4" # q9
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False, observed=True).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -290,7 +290,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], dropna=False, observed=True).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}), meta={'r2':'float64'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -306,7 +306,7 @@ del ans
 question = "sum v3 count by id1:id6" # q10
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'], dropna=False).agg({'v3':'sum', 'v1':'size'}).compute() # column name different than expected, ignore it because: ValueError: Metadata inference failed in `rename`: Original error is below: ValueError('Level values must be unique: [nan, nan] on level 0',)
+ans = x.groupby(['id1','id2','id3','id4','id5','id6'], dropna=False, observed=True).agg({'v3':'sum', 'v1':'size'}).compute() # column name different than expected, ignore it because: ValueError: Metadata inference failed in `rename`: Original error is below: ValueError('Level values must be unique: [nan, nan] on level 0',)
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
@@ -318,7 +318,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'], dropna=False).agg({'v3':'sum', 'v1':'size'}).compute()
+ans = x.groupby(['id1','id2','id3','id4','id5','id6'], dropna=False, observed=True).agg({'v3':'sum', 'v1':'size'}).compute()
 ans.reset_index(inplace=True)
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
