@@ -74,14 +74,11 @@ clean_time = function(d) {
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
                 ][task=="groupby" & solution=="dask" & batch>=1609583373 & batch<Inf & question=="regression v1 v2 by id2 id4", c("out_rows","chk") := .(NA_integer_, NA_character_) ## change Inf to batch after upgrading to dask#7024
                 ][solution=="polars" & batch<=1619596689, "chk" := NA_character_
-                ][solution=="duckdb"  & batch<Inf & ((
-                  ## duckdb NA handling regression in 0.2.6 #206
-                  (task=="join" & data%like%"5_0") | (task=="groupby" & data%like%"5_0" & question=="sum v3 count by id1:id6")
-                  ) | (
-                  ## duckdb median is inaccurate #205
-                  task=="groupby" & question=="median v3 sd v3 by id4 id5"
-                  )),
-                  `:=`(chk=NA_character_, time_sec=NA_real_)
+                ][solution=="duckdb" & batch<=1620549597 & task=="groupby" & question=="median v3 sd v3 by id4 id5", ## duckdb median is inaccurate #205
+                  , `:=`(chk=NA_character_, time_sec=NA_real_)
+                  ][solution=="duckdb" & batch<Inf & ( ## duckdb NA handling regression in 0.2.6 #206
+                    (task=="join" & data%like%"5_0") | (task=="groupby" & data%like%"5_0" & question=="sum v3 count by id1:id6")
+                  ), `:=`(chk=NA_character_, time_sec=NA_real_)
                   ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]
