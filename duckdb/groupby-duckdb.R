@@ -141,7 +141,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "median v3 sd v3 by id4 id5" # q6
 t = system.time({
-  dbExecute(con, "CREATE TABLE ans AS SELECT id4, id5, median(v3) AS median_v3, stddev(v3) AS sd_v3 FROM x GROUP BY id4, id5")
+  dbExecute(con, "CREATE TABLE ans AS SELECT id4, id5, quantile_cont(v3, 0.5) AS median_v3, stddev(v3) AS sd_v3 FROM x GROUP BY id4, id5")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -149,7 +149,7 @@ chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(median_v3) AS median_v3, sum
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
-  dbExecute(con, "CREATE TABLE ans AS SELECT id4, id5, median(v3) AS median_v3, stddev(v3) AS sd_v3 FROM x GROUP BY id4, id5")
+  dbExecute(con, "CREATE TABLE ans AS SELECT id4, id5, quantile_cont(v3, 0.5) AS median_v3, stddev(v3) AS sd_v3 FROM x GROUP BY id4, id5")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()

@@ -202,7 +202,7 @@ groupby.syntax.dict = {list(
     "sum v1 mean v3 by id3" = "SELECT id3, sum(v1) AS v1, mean(v3) AS v3 FROM tbl GROUP BY id3",
     "mean v1:v3 by id4" = "SELECT id4, mean(v1) AS v1, mean(v2) AS v2, mean(v3) AS v3 FROM tbl GROUP BY id4",
     "sum v1:v3 by id6" = "SELECT id6, sum(v1) AS v1, sum(v2) AS v2, sum(v3) AS v3 FROM tbl GROUP BY id6",
-    "median v3 sd v3 by id4 id5" = "SELECT id4, id5, median(v3) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5",
+    "median v3 sd v3 by id4 id5" = "SELECT id4, id5, quantile_cont(v3, 0.5) AS median_v3, stddev(v3) AS sd_v3 FROM tbl GROUP BY id4, id5",
     "max v1 - min v2 by id3" = "SELECT id3, max(v1)-min(v2) AS range_v1_v2 FROM tbl GROUP BY id3",
     "largest two v3 by id6" = "SELECT id6, v3 AS largest2_v3 FROM (SELECT id6, v3, row_number() OVER (PARTITION BY id6 ORDER BY v3 DESC) AS order_v3 FROM x WHERE v3 IS NOT NULL) sub_query WHERE order_v3 <= 2",
     "regression v1 v2 by id2 id4" = "SELECT id2, id4, pow(corr(v1, v2), 2) AS r2 FROM tbl GROUP BY id2, id4",
