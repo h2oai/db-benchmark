@@ -27,6 +27,8 @@ get_excluded_batch = function() {
     1552478772L, 1552482879L # testing different data as 1e9_1e2_0_0 to test logical compression of measures
     , 1552454531L, 1555929111L, 1555754148L # dl11 testing
     , 1619552039L, 1619596289L ## polars migration
+    , 1609583373L ## clickhouse log timing issue
+    , 1620737545L ## pydatatable unfinished run
     )
 }
 
