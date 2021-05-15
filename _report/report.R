@@ -75,7 +75,7 @@ clean_time = function(d) {
             ][task=="groupby" & solution=="spark" & batch<1548084547, "chk_time_sec" := NA_real_ # spark chk calculation speed up, NA to make validation work on bigger threshold
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
                 ][task=="groupby" & solution=="dask" & batch>=1609583373 & batch<Inf & question=="regression v1 v2 by id2 id4", c("out_rows","chk") := .(NA_integer_, NA_character_) ## change Inf to batch after upgrading to dask#7024
-                ][solution=="polars" & batch<=1619596689, "chk" := NA_character_
+                ][solution=="polars" & batch<1621087539, "chk" := NA_character_
                 ][solution=="duckdb" & batch<=1620549597 & task=="groupby" & question=="median v3 sd v3 by id4 id5", ## duckdb median is inaccurate #205
                   `:=`(chk=NA_character_, time_sec=NA_real_)
                   ][solution=="duckdb" & batch<Inf & ( ## duckdb NA handling regression in 0.2.6 #206
