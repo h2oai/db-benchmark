@@ -31,6 +31,9 @@ publishGhPages(){
   md5sum time.csv > time.csv.md5
   md5sum logs.csv > logs.csv.md5
   git add time.csv.md5 logs.csv.md5 2>err.txt
+  gzip --keep time.csv
+  gzip --keep logs.csv
+  git add time.csv.gz logs.csv.gz 2>err.txt
   git commit -q -m 'publish benchmark timings and logs' 2>err.txt
   git push --force upstream gh-pages 2>err.txt
   
