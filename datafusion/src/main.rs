@@ -1,8 +1,7 @@
-use arrow::datatypes::{DataType, Field, Schema};
-use datafusion::datasource::{CsvFile, MemTable};
+use datafusion::{arrow::datatypes::{DataType, Field, Schema}, datasource::{CsvFile, MemTable}};
 use datafusion::error::Result;
 use datafusion::prelude::*;
-use std::env;
+use std::{env, sync::Arc};
 use std::time::Instant;
 
 #[global_allocator]
@@ -41,8 +40,8 @@ async fn main() -> Result<()> {
     let batch_size = 65536;
     let partition_size = num_cpus::get();
 
-    let memtable = MemTable::load(&csv, batch_size, Some(partition_size)).await?;
-    ctx.register_table("tbl", Box::new(memtable));
+    let memtable = MemTable::load(Arc::new(csv), batch_size, Some(partition_size)).await?;
+    ctx.register_table("tbl", Arc::new(memtable));
 
     exec_query(
         &mut ctx,
