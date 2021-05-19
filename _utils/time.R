@@ -59,8 +59,11 @@ compare.time = function(solutions, task, drop=TRUE) {
   ans
 }
 
-if (!identical(Sys.info()[["user"]], "jan")) { # one wants to grab recent timings, but "jan" might have used scp to get unpublished timings
-  download.time()
-}
-tail.time("data.table", "groupby", i=c(1L, 6L, 11L)) # every fifth run
-compare.time(c("data.table","spark","pydatatable"), "join")
+## maintainer mode
+#scp -C mr-dl11:~/git/db-benchmark/logs.csv ~/git/db-benchmark/logs.csv && scp -C mr-dl11:~/git/db-benchmark/time.csv ~/git/db-benchmark/time.csv
+
+## user mode
+#download.time()
+#tail.time("juliadf", "groupby", i=c(1L, 2L))
+#tail.time("data.table", "groupby", i=c(1L, 2L))
+#compare.time(c("data.table","spark","pydatatable"), "join")
