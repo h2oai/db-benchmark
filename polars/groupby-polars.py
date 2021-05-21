@@ -194,7 +194,7 @@ del ans
 question = "max v1 - min v2 by id3" # q7
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby("id3").agg([pl.max("v1"), pl.min("v2")]).select(["id3", (col("v1_max")-col("v2_min")).alias("range_v1_v2")]).collect()
+ans = x.groupby("id3").agg([(pl.max("v1") - pl.min("v2")).alias("range_v1_v2")]).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -205,7 +205,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.groupby("id3").agg([pl.max("v1"), pl.min("v2")]).select(["id3", (col("v1_max")-col("v2_min")).alias("range_v1_v2")]).collect()
+ans = x.groupby("id3").agg([(pl.max("v1") - pl.min("v2")).alias("range_v1_v2")]).collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -220,7 +220,7 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
+ans = x.drop_nulls("v3").groupby("id6").agg(col("v3").sort(reverse=True).head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -231,7 +231,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
+ans = x.drop_nulls("v3").groupby("id6").agg(col("v3").sort(reverse=True).head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
