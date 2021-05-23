@@ -220,7 +220,7 @@ del ans
 question = "largest two v3 by id6" # q8
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").groupby("id6").agg(col("v3").sort(reverse=True).head(2).alias("largest2_v3")).explode("largest2_v3").collect()
+ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -231,7 +231,7 @@ write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_row
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x.drop_nulls("v3").groupby("id6").agg(col("v3").sort(reverse=True).head(2).alias("largest2_v3")).explode("largest2_v3").collect()
+ans = x.drop_nulls("v3").sort("v3", reverse=True).groupby("id6").agg(col("v3").head(2).alias("largest2_v3")).explode("largest2_v3").collect()
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
