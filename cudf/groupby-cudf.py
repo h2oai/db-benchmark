@@ -31,6 +31,7 @@ x = dc.read_csv(src_grp, header=0, dtype=['str','str','str','int32','int32','int
 x['id1'] = x['id1'].astype('category')
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
+x = x.persist()
 print(len(x.index), flush=True)
 
 task_init = timeit.default_timer()
