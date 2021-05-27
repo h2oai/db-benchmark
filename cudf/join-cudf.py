@@ -6,6 +6,7 @@ import os
 import gc
 import timeit
 import cudf as cu
+import dask_cudf as dc
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -23,25 +24,24 @@ src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_
 if len(src_jn_y) != 3:
   raise Exception("Something went wrong in preparing files used for join")
 
-## spilling to main mem only make sense with dask-cudf, see#129
-#on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
-on_disk = False #not(on_vmem) # no really disk, just variable name used to log in script below
+on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
+on_disk = not(on_vmem) # no really disk, just variable name used to log in script below
 print("using video and main memory data storage" if on_disk else "using only video memory data storage", flush=True)
 if on_disk:
   cu.set_allocator("managed")
 
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
-x = cu.read_csv(src_jn_x, header=0, dtype=['int32','int32','int32','str','str','str','float64'])
+x = dc.read_csv(src_jn_x, header=0, dtype=['int32','int32','int32','str','str','str','float64'])
 x['id4'] = x['id4'].astype('category')
 x['id5'] = x['id5'].astype('category')
 x['id6'] = x['id6'].astype('category')
-small = cu.read_csv(src_jn_y[0], header=0, dtype=['int32','str','float64'])
+small = dc.read_csv(src_jn_y[0], header=0, dtype=['int32','str','float64'])
 small['id4'] = small['id4'].astype('category')
-medium = cu.read_csv(src_jn_y[1], header=0, dtype=['int32','int32','str','str','float64'])
+medium = dc.read_csv(src_jn_y[1], header=0, dtype=['int32','int32','str','str','float64'])
 medium['id4'] = medium['id4'].astype('category')
 medium['id5'] = medium['id5'].astype('category')
-big = cu.read_csv(src_jn_y[2], header=0, dtype=['int32','int32','int32','str','str','str','float64'])
+big = dc.read_csv(src_jn_y[2], header=0, dtype=['int32','int32','int32','str','str','str','float64'])
 big['id4'] = big['id4'].astype('category')
 big['id5'] = big['id5'].astype('category')
 big['id6'] = big['id6'].astype('category')
