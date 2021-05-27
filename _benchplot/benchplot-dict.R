@@ -149,16 +149,16 @@ groupby.syntax.dict = {list(
     "sum v3 count by id1:id6" = "combine(groupby(DF, [:id1, :id2, :id3, :id4, :id5, :id6]), :v3 => sum∘skipmissing => :v3, :v3 => length => :count)"
   )},
   "cudf" = {c(
-    "sum v1 by id1" = "DF.groupby('id1', as_index=False, dropna=False).agg({'v1':'sum'})",
-    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], as_index=False, dropna=False).agg({'v1':'sum'})",
-    "sum v1 mean v3 by id3" = "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'sum', 'v3':'mean'})",
-    "mean v1:v3 by id4" = "DF.groupby('id4', as_index=False, dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
-    "sum v1:v3 by id6" = "DF.groupby('id6', as_index=False, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
-    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'], as_index=False, dropna=False).agg({'v3': ['median','std']})",
-    "max v1 - min v2 by id3" = "", # "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']]"
-    "largest two v3 by id6" = "", # "DF[~x['v3'].isna()][['id6','v3']].sort_values('v3', ascending=False).groupby('id6', as_index=False, dropna=False).head(2)"
-    "regression v1 v2 by id2 id4" = "", # "DF[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))"
-    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, dropna=False).agg({'v3':'sum', 'v1':'size'})"
+    "sum v1 by id1" = "DF.groupby('id1', as_index=False, dropna=False).agg({'v1':'sum'}).compute()",
+    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], as_index=False, dropna=False).agg({'v1':'sum'}).compute()",
+    "sum v1 mean v3 by id3" = "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'sum', 'v3':'mean'}).compute()",
+    "mean v1:v3 by id4" = "DF.groupby('id4', as_index=False, dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
+    "sum v1:v3 by id6" = "DF.groupby('id6', as_index=False, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
+    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'], as_index=False, dropna=False).agg({'v3': ['median','std']}).compute()",
+    "max v1 - min v2 by id3" = "", # "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()"
+    "largest two v3 by id6" = "", # "DF[~x['v3'].isna()][['id6','v3']].sort_values('v3', ascending=False).groupby('id6', as_index=False, dropna=False).head(2).compute()"
+    "regression v1 v2 by id2 id4" = "", # "DF[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()"
+    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, dropna=False).agg({'v3':'sum', 'v1':'size'}).compute()"
   )},
   "clickhouse" = {c(
     "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM tbl GROUP BY id1",
@@ -348,11 +348,11 @@ join.syntax.dict = {list(
     "big inner on int" = "SELECT x.id1, y.id1, x.id2, y.id2, id3, x.id4, y.id4, x.id5, y.id5, x.id6, y.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id3)"
   )},
   "cudf" = {c(
-    "small inner on int" = "DF.merge(small, on='id1')",
-    "medium inner on int" = "DF.merge(medium, on='id2')",
-    "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
-    "medium inner on factor" = "DF.merge(medium, on='id5')",
-    "big inner on int" = "DF.merge(big, on='id3')"
+    "small inner on int" = "DF.merge(small, on='id1').compute()",
+    "medium inner on int" = "DF.merge(medium, on='id2').compute()",
+    "medium outer on int" = "DF.merge(medium, how='left', on='id2').compute()",
+    "medium inner on factor" = "DF.merge(medium, on='id5').compute()",
+    "big inner on int" = "DF.merge(big, on='id3').compute()"
   )},
   "polars" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
