@@ -6,6 +6,7 @@ import os
 import gc
 import timeit
 import cudf as cu
+import dask_cudf as dc
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -20,14 +21,13 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-## spilling to main mem only make sense with dask-cudf, see#129
-#on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
-on_disk = False #not(on_vmem) # no really disk, just variable name used to log in script below
+on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
+on_disk = not(on_vmem) # no really disk, just variable name used to log in script below
 print("using video and main memory data storage" if on_disk else "using only video memory data storage", flush=True)
 if on_disk:
     cu.set_allocator("managed")
 
-x = cu.read_csv(src_grp, header=0, dtype=['str','str','str','int32','int32','int32','int32','int32','float64'])
+x = dc.read_csv(src_grp, header=0, dtype=['str','str','str','int32','int32','int32','int32','int32','float64'])
 x['id1'] = x['id1'].astype('category')
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
