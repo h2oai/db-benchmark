@@ -166,6 +166,7 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
+# cudf with dask does not yet have median implemented #216
 #question = "median v3 sd v3 by id4 id5" # q6
 #gc.collect()
 #t_start = timeit.default_timer()
