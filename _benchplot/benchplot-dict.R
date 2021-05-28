@@ -421,8 +421,8 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
   )},
   "cudf" = {list(
-    "out of memory" = c("J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1",                  # read_csv #94 #97
-                        "J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
+    "internal error: cudf#8401" = c("J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"), # #220
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # read_csv #94 #97
   )},
   "clickhouse" = {list(
     "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169
