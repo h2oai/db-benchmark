@@ -82,6 +82,8 @@ clean_time = function(d) {
                   ][solution=="duckdb" & batch<Inf & ( ## duckdb NA handling regression in 0.2.6 #206
                     (task=="join" & data%like%"5_0") | (task=="groupby" & data%like%"5_0" & question=="sum v3 count by id1:id6")
                   ), `:=`(chk=NA_character_, time_sec=NA_real_)
+                  ][solution=="cudf" & batch==1622464755 & data%in%c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), #221
+                    `:=`(out_rows=NA_integer_, out_cols=NA_integer_, time_sec=NA_real_, chk=NA_character_, chk_time_sec=NA_real_)
                   ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]

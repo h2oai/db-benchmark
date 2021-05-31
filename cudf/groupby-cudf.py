@@ -21,6 +21,11 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
+na_flag = int(data_name.split("_")[3])
+if na_flag > 0:
+  print("skip due to na_flag>0: #221", flush=True, file=sys.stderr)
+  exit(0) # not yet implemented #221
+
 on_vmem = data_name.split("_")[1] == "1e7" # spilling vmem to mem
 on_disk = not(on_vmem) # no really disk, just variable name used to log in script below
 print("using video and main memory data storage" if on_disk else "using only video memory data storage", flush=True)
