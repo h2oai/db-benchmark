@@ -29,6 +29,7 @@ get_excluded_batch = function() {
     , 1619552039L, 1619596289L ## polars migration
     , 1609583373L ## clickhouse log timing issue
     , 1620737545L ## pydatatable unfinished run
+    , 1592482882L ## clickhoue incompletely loaded table
     )
 }
 
@@ -81,6 +82,8 @@ clean_time = function(d) {
                   ][solution=="duckdb" & batch<Inf & ( ## duckdb NA handling regression in 0.2.6 #206
                     (task=="join" & data%like%"5_0") | (task=="groupby" & data%like%"5_0" & question=="sum v3 count by id1:id6")
                   ), `:=`(chk=NA_character_, time_sec=NA_real_)
+                  ][solution=="cudf" & batch==1622464755 & data%in%c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), #221
+                    `:=`(out_rows=NA_integer_, out_cols=NA_integer_, time_sec=NA_real_, chk=NA_character_, chk_time_sec=NA_real_)
                   ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]
@@ -100,6 +103,8 @@ clean_questions = function(q) {
 # model ----
 
 model_time = function(d) {
+  if (!nrow(d))
+    stop("timings is a 0 row table")
   # chk tolerance for cudf: https://github.com/rapidsai/cudf/issues/2494
   #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
   # and dask #136
