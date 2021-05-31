@@ -29,6 +29,7 @@ get_excluded_batch = function() {
     , 1619552039L, 1619596289L ## polars migration
     , 1609583373L ## clickhouse log timing issue
     , 1620737545L ## pydatatable unfinished run
+    , 1592482882L ## clickhoue incompletely loaded table
     )
 }
 
@@ -100,6 +101,8 @@ clean_questions = function(q) {
 # model ----
 
 model_time = function(d) {
+  if (!nrow(d))
+    stop("timings is a 0 row table")
   # chk tolerance for cudf: https://github.com/rapidsai/cudf/issues/2494
   #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
   # and dask #136
