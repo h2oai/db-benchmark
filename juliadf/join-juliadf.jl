@@ -30,10 +30,20 @@ end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
-x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, PooledString, PooledString, PooledString, Float64], threaded=false);
-small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, PooledString, Float64], threaded=false);
-medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, PooledString, PooledString, Float64], threaded=false);
-big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, PooledString, PooledString, PooledString, Float64], threaded=false);
+x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
+small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, Symbol, Float64], threaded=false);
+medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, Symbol, Symbol, Float64], threaded=false);
+big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
+
+x_df.id4 = DataFrames.PooledArray(x_df.id4)
+x_df.id5 = DataFrames.PooledArray(x_df.id5)
+x_df.id6 = DataFrames.PooledArray(x_df.id6)
+small_df.id4 = DataFrames.PooledArray(small_df.id4)
+medium_df.id4 = DataFrames.PooledArray(medium_df.id4)
+medium_df.id5 = DataFrames.PooledArray(medium_df.id5)
+big_df.id4 = DataFrames.PooledArray(big_df.id4)
+big_df.id5 = DataFrames.PooledArray(big_df.id5)
+big_df.id6 = DataFrames.PooledArray(big_df.id6)
 
 in_rows = size(x_df, 1);
 println(in_rows); flush(stdout);
