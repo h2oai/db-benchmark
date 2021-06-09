@@ -22,10 +22,14 @@ data_name = os.environ["SRC_DATANAME"]
 src_grp = os.path.join("data", data_name + ".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-x = pl.read_csv(src_grp, dtype={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64})
-x["id1"] = x["id1"].cast(pl.Categorical)
-x["id2"] = x["id2"].cast(pl.Categorical)
-x["id3"] = x["id3"].cast(pl.Categorical)
+with pl.StringCache():
+    x = pl.read_csv(src_grp, dtype={"id4":pl.Int32, "id5":pl.Int32, "id6":pl.Int32, "v1":pl.Int32, "v2":pl.Int32, "v3":pl.Float64}, low_memory=True)
+    x["id1"] = x["id1"].cast(pl.Categorical)
+    x["id1"].shrink_to_fit(in_place=True)
+    x["id2"] = x["id2"].cast(pl.Categorical)
+    x["id2"].shrink_to_fit(in_place=True)
+    x["id3"] = x["id3"].cast(pl.Categorical)
+    x["id3"].shrink_to_fit(in_place=True)
 
 in_rows = x.shape[0]
 x = x.lazy()
