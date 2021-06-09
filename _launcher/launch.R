@@ -3,9 +3,6 @@ if (!packageVersion("data.table") >= "1.13.0")
   stop("db-benchmark launcher script depends on recent data.table features, install at least 1.13.0.")
 source("./_launcher/launcher.R")
 
-is.stop()
-is.pause()
-
 .nodename = Sys.info()[["nodename"]]
 mockup = as.logical(Sys.getenv("MOCKUP", "false"))
 
@@ -52,6 +49,10 @@ lookup_run_batch(dt)
 
 # print list of solutions that are going to be run in this batch so we know upfront which will be skipped
 cat("Benchmark solutions to run: ", dt[is.na(run_batch), paste(unique(solution),collapse=", ")], "\n", sep="")
+
+is.stop()
+is.pause()
+is.stop()
 
 # launch script, if not mockup, if not already run, unless forcerun
 launch(dt, mockup=mockup)
