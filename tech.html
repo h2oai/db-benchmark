@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Technical measures of db-benchmark</title>
+
+<script src="tech_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="tech_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="tech_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="tech_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="tech_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="tech_files/navigation-1.1/tabsets.js"></script>
+<link href="tech_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="tech_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="tech_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="tech_files/anchor-sections-1.0/anchor-sections.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-129166154-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-129166154-1');
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Technical measures of db-benchmark</h1>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#incompleted-timings-of-last-run">Incompleted timings of last run</a><ul>
+<li><a href="#groupby">groupby</a></li>
+</ul></li>
+<li><a href="#full-scripts-executions">Full scripts executions</a><ul>
+<li><a href="#groupby-1">groupby</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="incompleted-timings-of-last-run" class="section level2">
+<h2>Incompleted timings of last run</h2>
+<div id="groupby" class="section level3">
+<h3>groupby</h3>
+<table>
+<colgroup>
+<col width="10%" />
+<col width="13%" />
+<col width="7%" />
+<col width="4%" />
+<col width="20%" />
+<col width="10%" />
+<col width="8%" />
+<col width="26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">solution</th>
+<th align="left">data</th>
+<th align="left">in_rows</th>
+<th align="left">k</th>
+<th align="left">NA, sorted</th>
+<th align="right">n_completed</th>
+<th align="right">n_failed</th>
+<th align="left">q_failed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e7_1e2_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e7_1e1_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">13</td>
+<td align="right">7</td>
+<td align="left">q6,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e7_2e0_0_0</td>
+<td align="left">1e7</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">12</td>
+<td align="right">8</td>
+<td align="left">q6,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e7_1e2_0_1</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e7_1e2_5_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e8_1e2_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">16</td>
+<td align="right">4</td>
+<td align="left">q6,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e8_1e1_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">12</td>
+<td align="right">8</td>
+<td align="left">q6,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e8_2e0_0_0</td>
+<td align="left">1e8</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e8_1e2_0_1</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">16</td>
+<td align="right">4</td>
+<td align="left">q6,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e8_1e2_5_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dask</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dask</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">juliadf</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="left">q10</td>
+</tr>
+<tr class="odd">
+<td align="left">juliadf</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">14</td>
+<td align="right">6</td>
+<td align="left">q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">juliadf</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">juliadf</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="left">q10</td>
+</tr>
+<tr class="even">
+<td align="left">juliadf</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">14</td>
+<td align="right">6</td>
+<td align="left">q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e7_1e2_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e7_1e1_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e7_2e0_0_0</td>
+<td align="left">1e7</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e7_1e2_0_1</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e7_1e2_5_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e8_1e2_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e8_1e1_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e8_2e0_0_0</td>
+<td align="left">1e8</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e8_1e2_0_1</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e8_1e2_5_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">cudf</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="left">q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">cudf</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e7_1e2_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e7_1e1_0_0</td>
+<td align="left">1e7</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e7_2e0_0_0</td>
+<td align="left">1e7</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e7_1e2_0_1</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e7_1e2_5_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e8_1e2_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e8_1e1_0_0</td>
+<td align="left">1e8</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e8_2e0_0_0</td>
+<td align="left">1e8</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e8_1e2_0_1</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e8_1e2_5_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">spark</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="even">
+<td align="left">spark</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q6</td>
+</tr>
+<tr class="odd">
+<td align="left">arrow</td>
+<td align="left">G1_1e8_2e0_0_0</td>
+<td align="left">1e8</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="even">
+<td align="left">arrow</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">arrow</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">2</td>
+<td align="right">18</td>
+<td align="left">q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">arrow</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">arrow</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">arrow</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">duckdb</td>
+<td align="left">G1_1e7_1e2_5_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="even">
+<td align="left">duckdb</td>
+<td align="left">G1_1e8_1e2_5_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="odd">
+<td align="left">duckdb</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">duckdb</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">duckdb</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">duckdb</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">duckdb</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">G1_1e8_2e0_0_0</td>
+<td align="left">1e8</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">2</td>
+<td align="right">18</td>
+<td align="left">q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="left">q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">data.table</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">6</td>
+<td align="right">14</td>
+<td align="left">q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">pydatatable</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">pandas</td>
+<td align="left">G1_1e7_1e2_5_0</td>
+<td align="left">1e7</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">pandas</td>
+<td align="left">G1_1e8_1e2_5_0</td>
+<td align="left">1e8</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">pandas</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">pandas</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">pandas</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">pandas</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">pandas</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">q1,q2,q3,q4,q5,q6,q7,q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">polars</td>
+<td align="left">G1_1e9_1e2_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="even">
+<td align="left">polars</td>
+<td align="left">G1_1e9_1e1_0_0</td>
+<td align="left">1e9</td>
+<td align="left">1e1</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">15</td>
+<td align="right">5</td>
+<td align="left">q8,q9,q10</td>
+</tr>
+<tr class="odd">
+<td align="left">polars</td>
+<td align="left">G1_1e9_2e0_0_0</td>
+<td align="left">1e9</td>
+<td align="left">2e0</td>
+<td align="left">0% NAs, unsorted data</td>
+<td align="right">14</td>
+<td align="right">6</td>
+<td align="left">q8,q9,q10</td>
+</tr>
+<tr class="even">
+<td align="left">polars</td>
+<td align="left">G1_1e9_1e2_0_1</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">0% NAs, pre-sorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+<tr class="odd">
+<td align="left">polars</td>
+<td align="left">G1_1e9_1e2_5_0</td>
+<td align="left">1e9</td>
+<td align="left">1e2</td>
+<td align="left">5% NAs, unsorted data</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="left">q10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="full-scripts-executions" class="section level2">
+<h2>Full scripts executions</h2>
+<p>Things to consider when looking at below plots.</p>
+<ul>
+<li>Red dotted line refers to script timeout which initially was not set up. Later it was set to 60 minutes, more recently, after adding new set of questions, it was increased to 120 minutes. Up to date timeout value can be looked up in <code>_control/timeout.csv</code> file.</li>
+<li>It might happen that script was terminated by <em>out of memory killer</em> an OS feature. In result script timing will be smaller than in reality it should be.</li>
+</ul>
+<p>Refer to table above to see which script has been fully completed.</p>
+<div id="groupby-1" class="section level3">
+<h3>groupby</h3>
+<p><img src="tech_files/figure-html/logs_plot-1.png" width="768" /></p>
+<hr />
+<p>Report was generated on: 2021-07-02 06:45:36 PDT.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

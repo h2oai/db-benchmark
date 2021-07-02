@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>History of db-benchmark timings</title>
+
+<script src="history_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="history_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="history_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="history_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="history_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="history_files/navigation-1.1/tabsets.js"></script>
+<link href="history_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="history_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="history_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="history_files/anchor-sections-1.0/anchor-sections.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-129166154-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-129166154-1');
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">History of db-benchmark timings</h1>
+
+</div>
+
+
+<div id="solution" class="section level2 tabset">
+<h2>Solution</h2>
+<div id="data.table" class="section level3 tabset tabset-fade tabset-pills">
+<h3>data.table</h3>
+<div id="groupby" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-1" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-2" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-3" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/datatable.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-4" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/datatable.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-5" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+<div id="groupby2014" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby2014</h4>
+<div id="gb-6" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby2014.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-7" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby2014.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-8" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/datatable.groupby2014.1e9-1.png" width="864" /></p>
+</div>
+</div>
+</div>
+<div id="pydatatable" class="section level3 tabset tabset-fade tabset-pills">
+<h3>pydatatable</h3>
+<div id="groupby-1" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-9" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-10" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-11" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-1" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-12" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-13" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-14" class="section level5">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/pydatatable.join.1e9-1.png" width="864" /></p>
+</div>
+</div>
+</div>
+<div id="pandas" class="section level3 tabset tabset-fade tabset-pills">
+<h3>pandas</h3>
+<div id="groupby-2" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-15" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/pandas.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-16" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/pandas.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-17" class="section level5 active">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+<div id="join-2" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-18" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/pandas.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-19" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/pandas.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-20" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+<div id="groupby2014-1" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby2014</h4>
+<div id="gb-21" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/pandas.groupby2014.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-22" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/pandas.groupby2014.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-23" class="section level5 active">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="dplyr" class="section level3 tabset tabset-fade tabset-pills">
+<h3>dplyr</h3>
+<div id="groupby-3" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-24" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-25" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-26" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/dplyr.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-3" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-27" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-28" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-29" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+<div id="groupby2014-2" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby2014</h4>
+<div id="gb-30" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.groupby2014.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-31" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/dplyr.groupby2014.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-32" class="section level5 active">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="dask" class="section level3 tabset tabset-fade tabset-pills">
+<h3>dask</h3>
+<div id="groupby-4" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-33" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/dask.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-34" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/dask.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-35" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/dask.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-4" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-36" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/dask.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-37" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/dask.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-38" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="spark" class="section level3 tabset tabset-fade tabset-pills">
+<h3>spark</h3>
+<div id="groupby-5" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-39" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/spark.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-40" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/spark.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-41" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/spark.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-5" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-42" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/spark.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-43" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/spark.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-44" class="section level5">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/spark.join.1e9-1.png" width="864" /></p>
+</div>
+</div>
+</div>
+<div id="juliadf" class="section level3 tabset tabset-fade tabset-pills">
+<h3>juliadf</h3>
+<div id="groupby-6" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-45" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/juliadf.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-46" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/juliadf.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-47" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/juliadf.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-6" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-48" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/juliadf.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-49" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/juliadf.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-50" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="cudf" class="section level3 tabset tabset-fade tabset-pills">
+<h3>cudf</h3>
+<div id="groupby-7" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-51" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/cudf.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-52" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/cudf.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-53" class="section level5 active">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+<div id="join-7" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-54" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/cudf.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-55" class="section level5 active">
+<h5>5 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+<div id="gb-56" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="clickhouse" class="section level3 tabset tabset-fade tabset-pills">
+<h3>clickhouse</h3>
+<div id="groupby-8" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-57" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-58" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-59" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-8" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-60" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-61" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-62" class="section level5">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/clickhouse.join.1e9-1.png" width="864" /></p>
+</div>
+</div>
+</div>
+<div id="polars" class="section level3 tabset tabset-fade tabset-pills">
+<h3>polars</h3>
+<div id="groupby-9" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-63" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/polars.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-64" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/polars.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-65" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/polars.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-9" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-66" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/polars.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-67" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/polars.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-68" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="arrow" class="section level3 tabset tabset-fade tabset-pills">
+<h3>arrow</h3>
+<div id="groupby-10" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-69" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/arrow.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-70" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/arrow.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-71" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/arrow.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-10" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-72" class="section level5">
+<h5>0.5 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+<div id="gb-73" class="section level5 active">
+<h5>5 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+<div id="gb-74" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+<div id="duckdb" class="section level3 tabset tabset-fade tabset-pills">
+<h3>duckdb</h3>
+<div id="groupby-11" class="section level4 tabset tabset-fade tabset-pills">
+<h4>groupby</h4>
+<div id="gb-75" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/duckdb.groupby.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-76" class="section level5">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/duckdb.groupby.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-77" class="section level5 active">
+<h5>50 GB</h5>
+<p><img src="history_files/figure-html/duckdb.groupby.1e9-1.png" width="864" /></p>
+</div>
+</div>
+<div id="join-11" class="section level4 tabset tabset-fade tabset-pills">
+<h4>join</h4>
+<div id="gb-78" class="section level5">
+<h5>0.5 GB</h5>
+<p><img src="history_files/figure-html/duckdb.join.1e7-1.png" width="864" /></p>
+</div>
+<div id="gb-79" class="section level5 active">
+<h5>5 GB</h5>
+<p><img src="history_files/figure-html/duckdb.join.1e8-1.png" width="864" /></p>
+</div>
+<div id="gb-80" class="section level5">
+<h5>50 GB</h5>
+<pre><code>## not enough ticks on X axis</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="details" class="section level2">
+<h2>Details</h2>
+<div id="environment" class="section level3">
+<h3>Environment</h3>
+<p>Nodename: mr-dl11</p>
+<hr />
+<p>Report was generated on: 2021-07-02 06:45:29 PDT.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
