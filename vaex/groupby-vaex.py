@@ -29,38 +29,10 @@ print("loaded dataset")
 x.ordinal_encode('id1', inplace=True)
 x.ordinal_encode('id2', inplace=True)
 x.ordinal_encode('id3', inplace=True)
+x.ordinal_encode('id4', inplace=True)
+x.ordinal_encode('id5', inplace=True)
+x.ordinal_encode('id6', inplace=True)
 
-
-# Questions
-def question_1():
-    return x.groupby(['id1']).agg({'v1': 'sum'})
-
-def question_2():
-    return x.groupby(['id1', 'id2']).agg({'v1': 'sum'})
-
-def question_3():
-    return x.groupby(['id3']).agg({'v1': 'sum', 'v3': 'mean'})
-
-def question_4():
-    return x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
-
-def question_5():
-    return x.groupby(['id6']).agg({'v1': 'sum', 'v2': 'sum', 'v3': 'sum'})
-
-def question_6():
-    return x.groupby(['id4','id5']).agg({'v3': ['median','std']})
-
-def question_7():
-    return x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
-
-def question_8():
-    return x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)
-
-def question_9():
-    return x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: vaex.Series({'r2': x.corr()['v1']['v2']**2}))
-
-def question_10():
-    return x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
 
 # Generic benchmark function - to improve code readability
 def benchmark(func, question, chk_sum_cols):
@@ -90,6 +62,47 @@ def benchmark(func, question, chk_sum_cols):
     del ans
 
 
+# Questions
+def question_1():
+    return x.groupby(['id1']).agg({'v1': 'sum'})
+
+
+def question_2():
+    return x.groupby(['id1', 'id2']).agg({'v1': 'sum'})
+
+
+def question_3():
+    return x.groupby(['id3']).agg({'v1': 'sum', 'v3': 'mean'})
+
+
+def question_4():
+    return x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
+
+
+def question_5():
+    return x.groupby(['id6']).agg({'v1': 'sum', 'v2': 'sum', 'v3': 'sum'})
+
+
+def question_6():
+    return x.groupby(['id4','id5']).agg({'v3': ['median','std']})
+
+
+def question_7():
+    return x.groupby(['id3']).agg({'v1': 'max', 'v2': 'min'}).assign(range_v1_v2=lambda x: x['v1'] - x['v2'])[['range_v1_v2']]
+
+
+def question_8():
+    return x[['id6','v3']].sort_values('v3', ascending=False).groupby(['id6']).head(2)
+
+
+def question_9():
+    return x[['id2','id4','v1','v2']].groupby(['id2','id4']).apply(lambda x: vaex.Series({'r2': x.corr()['v1']['v2']**2}))
+
+
+def question_10():
+    return x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
+
+
 task_init = timeit.default_timer()
 print("grouping...", flush=True)
 
@@ -99,7 +112,7 @@ benchmark(question_3, question="sum v1 mean v3 by id3", chk_sum_cols=['v1', 'v3'
 benchmark(question_4, question="mean v1:v3 by id4", chk_sum_cols=['v1', 'v2', 'v3'])
 benchmark(question_5, question="sum v1:v3 by id6", chk_sum_cols=['v1', 'v2', 'v3'])
 # benchmark(question_6, question="median v3 sd v3 by id4 id5", chk_sum_cols=['v3_median', 'v3_std'])
-# benchmark(question_7, question="max v1 - min v2 by id3", chk_sum_cols=['range_v1_v2'])
+# benchmark(question_7, question="max v1 - min v2 by id3", chk_sum_cols=['range_v1_v2'])с
 # benchmark(question_8, question="largest two v3 by id6", chk_sum_cols=['v3'])
 # benchmark(question_9, question="regression v1 v2 by id2 id4", chk_sum_cols=['r2'])
 # benchmark(question_10, question="sum v3 count by id1:id6", chk_sum_cols=['v3', 'v1'])
