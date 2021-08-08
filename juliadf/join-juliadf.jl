@@ -5,6 +5,7 @@ print("# join-juliadf.jl\n"); flush(stdout);
 using DataFrames;
 using CSV;
 using Printf;
+using WeakRefStrings
 
 # Precompile methods for common patterns
 DataFrames.precompile(true)
