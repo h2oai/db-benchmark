@@ -2,13 +2,13 @@
 
 print("# join-juliadf.jl\n"); flush(stdout);
 
-using DataFrames;
-using CSV;
-using Printf;
+using DataFrames
+using CSV
+using Printf
 using WeakRefStrings
 
 # Precompile methods for common patterns
-DataFrames.precompile(true)
+DataFrames.precompile(true);
 
 include("$(pwd())/_helpers/helpers.jl");
 
@@ -26,25 +26,25 @@ src_jn_x = string("data/", data_name, ".csv");
 y_data_name = join_to_tbls(data_name);
 src_jn_y = [string("data/", y_data_name[1], ".csv"), string("data/", y_data_name[2], ".csv"), string("data/", y_data_name[3], ".csv")];
 if length(src_jn_y) != 3
-  error("Something went wrong in preparing files used for join")
+    error("Something went wrong in preparing files used for join")
 end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
-x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
-small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, Symbol, Float64], threaded=false);
-medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, Symbol, Symbol, Float64], threaded=false);
-big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
+x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, InlineString15, InlineString15, InlineString15, Float64], threaded=false);
+small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, InlineString15, Float64], threaded=false);
+medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, InlineString15, InlineString15, Float64], threaded=false);
+big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, InlineString15, InlineString15, InlineString15, Float64], threaded=false);
 
-x_df.id4 = DataFrames.PooledArray(x_df.id4)
-x_df.id5 = DataFrames.PooledArray(x_df.id5)
-x_df.id6 = DataFrames.PooledArray(x_df.id6)
-small_df.id4 = DataFrames.PooledArray(small_df.id4)
-medium_df.id4 = DataFrames.PooledArray(medium_df.id4)
-medium_df.id5 = DataFrames.PooledArray(medium_df.id5)
-big_df.id4 = DataFrames.PooledArray(big_df.id4)
-big_df.id5 = DataFrames.PooledArray(big_df.id5)
-big_df.id6 = DataFrames.PooledArray(big_df.id6)
+x_df.id4 = DataFrames.PooledArray(x_df.id4);
+x_df.id5 = DataFrames.PooledArray(x_df.id5);
+x_df.id6 = DataFrames.PooledArray(x_df.id6);
+small_df.id4 = DataFrames.PooledArray(small_df.id4);
+medium_df.id4 = DataFrames.PooledArray(medium_df.id4);
+medium_df.id5 = DataFrames.PooledArray(medium_df.id5);
+big_df.id4 = DataFrames.PooledArray(big_df.id4);
+big_df.id5 = DataFrames.PooledArray(big_df.id5);
+big_df.id6 = DataFrames.PooledArray(big_df.id6);
 
 in_rows = size(x_df, 1);
 println(in_rows); flush(stdout);
@@ -56,85 +56,74 @@ task_init = time();
 print("joining...\n"); flush(stdout);
 
 question = "small inner on int"; # q1
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, small_df, on = :id1, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-ANS = 0;
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, small_df, on = :id1, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-println(first(ANS, 3));
-println(last(ANS, 3));
-ANS = 0;
+for i in 1:2
+    GC.gc(false)
+    t = @elapsed (ANS = innerjoin(x_df, small_df, on = :id1, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout))
+    m = memory_usage()
+    chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))]
+    write_log(i, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk)
+    if i == 2
+        println(first(ANS, 3))
+        println(last(ANS, 3))
+    end
+    ANS = 0
+end;
 
 question = "medium inner on int"; # q2
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-ANS = 0;
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-println(first(ANS, 3));
-println(last(ANS, 3));
-ANS = 0;
+for i in 1:2
+    GC.gc(false)
+    t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout))
+    m = memory_usage()
+    chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))]
+    write_log(i, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk)
+    if i == 2
+        println(first(ANS, 3))
+        println(last(ANS, 3))
+    end
+    ANS = 0
+end;
 
 question = "medium outer on int"; # q3
-GC.gc(false);
-t = @elapsed (ANS = leftjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-ANS = 0;
-GC.gc(false);
-t = @elapsed (ANS = leftjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-println(first(ANS, 3));
-println(last(ANS, 3));
-ANS = 0;
+for i in 1:2
+    GC.gc(false)
+    t = @elapsed (ANS = leftjoin(x_df, medium_df, on = :id2, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout))
+    m = memory_usage()
+    chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))]
+    write_log(i, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk)
+    if i == 2
+        println(first(ANS, 3))
+        println(last(ANS, 3))
+    end
+    ANS = 0
+end;
 
 question = "medium inner on factor"; # q4
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id5, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-t_start = time_ns();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-ANS = 0;
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id5, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-println(first(ANS, 3));
-println(last(ANS, 3));
-ANS = 0;
+for i in 1:2
+    GC.gc(false)
+    t = @elapsed (ANS = innerjoin(x_df, medium_df, on = :id5, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout))
+    m = memory_usage()
+    chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))]
+    write_log(i, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk)
+    if i == 2
+        println(first(ANS, 3))
+        println(last(ANS, 3))
+    end
+    ANS = 0
+end;
 
 question = "big inner on int"; # q5
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, big_df, on = :id3, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-ANS = 0;
-GC.gc(false);
-t = @elapsed (ANS = innerjoin(x_df, big_df, on = :id3, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout));
-m = memory_usage();
-chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))];
-write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
-println(first(ANS, 3));
-println(last(ANS, 3));
-ANS = 0;
+for i in 1:2
+    GC.gc(false)
+    t = @elapsed (ANS = innerjoin(x_df, big_df, on = :id3, makeunique=true, matchmissing=:equal); println(size(ANS)); flush(stdout))
+    m = memory_usage()
+    chkt = @elapsed chk = [sum(skipmissing(ANS.v1)), sum(skipmissing(ANS.v2))]
+    write_log(i, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk)
+    if i == 2
+        println(first(ANS, 3))
+        println(last(ANS, 3))
+    end
+    ANS = 0
+end;
 
 print(@sprintf "joining finished, took %.0fs\n" (time()-task_init)); flush(stdout);
 
