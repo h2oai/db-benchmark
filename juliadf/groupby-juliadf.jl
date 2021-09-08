@@ -27,11 +27,7 @@ src_grp = string("data/", data_name, ".csv");
 println(string("loading dataset ", data_name)); flush(stdout);
 
 # Types are provided explicitly only to reduce memory use when parsing
-x = CSV.read(src_grp, DataFrame, types=[InlineString7, InlineString7, InlineString15, Int32, Int32, Int32, Int32, Int32, Float64], threaded=false);
-
-x.id1 = DataFrames.PooledArray(x.id1);
-x.id2 = DataFrames.PooledArray(x.id2);
-x.id3 = DataFrames.PooledArray(x.id3);
+x = CSV.read(src_grp, DataFrame, types=[InlineString7, InlineString7, InlineString15, Int32, Int32, Int32, Int32, Int32, Float64], threaded=false, pool=true);
 
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
