@@ -11,6 +11,6 @@ echo 'export PATH=$PATH:$JULIA_HOME/bin' >> path.env
 
 source path.env
 
-# install julia DataFrames.jl, CSV.jl, and WeakRefStrings.jl packages
-julia -q -e 'using Pkg; Pkg.add(["DataFrames","CSV","WeakRefStrings"])'
-julia -q -e 'include("$(pwd())/_helpers/helpers.jl"); pkgmeta = getpkgmeta("DataFrames"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("CSV"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("WeakRefStrings"); println(string(pkgmeta["version"]))'
+# install julia DataFrames.jl and CSV.jl packages
+julia -q -e 'using Pkg; Pkg.add(["DataFrames","CSV"])'
+julia -q -e 'include("$(pwd())/_helpers/helpers.jl"); pkgmeta = getpkgmeta("DataFrames"); println(string(pkgmeta["version"])); pkgmeta = getpkgmeta("CSV"); println(string(pkgmeta["version"]))'

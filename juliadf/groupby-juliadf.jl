@@ -6,7 +6,6 @@ using DataFrames
 using CSV
 using Statistics # mean function
 using Printf
-using WeakRefStrings
 
 # Precompile methods for common patterns
 DataFrames.precompile(true);
@@ -27,7 +26,7 @@ src_grp = string("data/", data_name, ".csv");
 println(string("loading dataset ", data_name)); flush(stdout);
 
 # Types are provided explicitly only to reduce memory use when parsing
-x = CSV.read(src_grp, DataFrame, types=[InlineString7, InlineString7, InlineString15, Int32, Int32, Int32, Int32, Int32, Float64], threaded=false, pool=true);
+x = CSV.read(src_grp, DataFrame, types=[String7, String7, String15, Int32, Int32, Int32, Int32, Int32, Float64], threaded=false, pool=true);
 
 in_rows = size(x, 1);
 println(in_rows); flush(stdout);
