@@ -30,10 +30,10 @@ end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
-x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], threaded=false, pool=true);
-small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, String15, Float64], threaded=false, pool=true);
-medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, String15, String15, Float64], threaded=false, pool=true);
-big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], threaded=false, pool=true);
+x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], ntasks=1, pool=true);
+small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, String15, Float64], ntasks=1, pool=true);
+medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, String15, String15, Float64], ntasks=1, pool=true);
+big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], ntasks=1, pool=true);
 
 in_rows = size(x_df, 1);
 println(in_rows); flush(stdout);
