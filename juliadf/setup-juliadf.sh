@@ -1,11 +1,11 @@
 
 # install julia
-wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.2-linux-x86_64.tar.gz
-tar -xvf julia-1.6.2-linux-x86_64.tar.gz
-sudo mv julia-1.6.2 /opt
-rm julia-1.6.2-linux-x86_64.tar.gz
+wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.3-linux-x86_64.tar.gz
+tar -xvf julia-1.6.3-linux-x86_64.tar.gz
+sudo mv julia-1.6.3 /opt
+rm julia-1.6.3-linux-x86_64.tar.gz
 # put to paths
-echo 'export JULIA_HOME=/opt/julia-1.6.2' >> path.env
+echo 'export JULIA_HOME=/opt/julia-1.6.3' >> path.env
 echo 'export PATH=$PATH:$JULIA_HOME/bin' >> path.env
 # note that cron job must have path updated as well
 
