@@ -1,8 +1,11 @@
-use datafusion::{arrow::datatypes::{DataType, Field, Schema}, datasource::{CsvFile, MemTable}};
 use datafusion::error::Result;
 use datafusion::prelude::*;
-use std::{env, sync::Arc};
+use datafusion::{
+    arrow::datatypes::{DataType, Field, Schema},
+    datasource::MemTable,
+};
 use std::time::Instant;
+use std::{env, sync::Arc};
 
 #[global_allocator]
 static ALLOC: snmalloc_rs::SnMalloc = snmalloc_rs::SnMalloc;
@@ -10,7 +13,7 @@ static ALLOC: snmalloc_rs::SnMalloc = snmalloc_rs::SnMalloc;
 async fn exec_query(ctx: &mut ExecutionContext, query: &str, name: &str) -> Result<()> {
     let start = Instant::now();
 
-    let ans = ctx.sql(query)?.collect().await?;
+    let ans = ctx.sql(query).await?.collect().await?;
 
     // TODO: print details
 
@@ -20,8 +23,13 @@ async fn exec_query(ctx: &mut ExecutionContext, query: &str, name: &str) -> Resu
 }
 #[tokio::main]
 async fn main() -> Result<()> {
-    let mut ctx = ExecutionContext::new();
-    let data = format!("../data/{}.csv", env::var("SRC_DATANAME").unwrap());
+    let batch_size = 65536;
+    let partition_size = num_cpus::get();
+    let cfg = ExecutionConfig::new()
+        .with_target_partitions(partition_size)
+        .with_batch_size(batch_size);
+    let mut ctx = ExecutionContext::with_config(cfg);
+    let data = format!("../{}.csv", env::var("SRC_DATANAME").unwrap());
 
     let schema = Schema::new(vec![
         Field::new("id1", DataType::Utf8, false),
@@ -36,12 +44,10 @@ async fn main() -> Result<()> {
     ]);
     let options = CsvReadOptions::new().schema(&schema).has_header(true);
 
-    let csv = CsvFile::try_new(&data, options).unwrap();
-    let batch_size = 65536;
-    let partition_size = num_cpus::get();
-
-    let memtable = MemTable::load(Arc::new(csv), batch_size, Some(partition_size)).await?;
-    ctx.register_table("tbl", Arc::new(memtable));
+    let df = ctx.read_csv(&data, options).await?;
+    let batches = df.collect_partitioned().await?;
+    let memtbl = MemTable::try_new(Arc::new(schema), batches)?;
+    ctx.register_table("tbl", Arc::new(memtbl))?;
 
     exec_query(
         &mut ctx,
@@ -79,7 +85,7 @@ async fn main() -> Result<()> {
         "q7",
     )
     .await?;
-    
+
     exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "q10").await?;
 
     Ok(())
