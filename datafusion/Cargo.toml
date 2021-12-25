@@ -12,3 +12,11 @@ num_cpus = "1.0"
 [profile.release]
 lto = true
 codegen-units = 1
+
+[[bin]]
+name = "groupby"
+path = "src/bin/groupby.rs"
+
+[[bin]]
+name = "join"
+path = "src/bin/join.rs"
