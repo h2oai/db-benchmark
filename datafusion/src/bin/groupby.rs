@@ -52,41 +52,48 @@ async fn main() -> Result<()> {
     exec_query(
         &mut ctx,
         "SELECT id1, SUM(v1) AS v1 FROM tbl GROUP BY id1",
-        "Gq1",
+        "q1",
     )
     .await?;
     exec_query(
         &mut ctx,
         "SELECT id1, id2, SUM(v1) AS v1 FROM tbl GROUP BY id1, id2",
-        "Gq2",
+        "q2",
     )
     .await?;
     exec_query(
         &mut ctx,
         "SELECT id3, SUM(v1) AS v1, AVG(v3) AS v3 FROM tbl GROUP BY id3",
-        "Gq3",
+        "q3",
     )
     .await?;
     exec_query(
         &mut ctx,
         "SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM tbl GROUP BY id4",
-        "Gq4",
+        "q4",
     )
     .await?;
     exec_query(
         &mut ctx,
         "SELECT id6, SUM(v1) AS v1, SUM(v2) AS v2, SUM(v3) AS v3 FROM tbl GROUP BY id6",
-        "Gq5",
+        "q5",
     )
     .await?;
     exec_query(
         &mut ctx,
         "SELECT id3, MAX(v1) - MIN(v2) AS range_v1_v2 FROM tbl GROUP BY id3",
-        "Gq7",
+        "q7",
     )
     .await?;
 
-    exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "Gq10").await?;
+    exec_query(
+        &mut ctx,
+        "select id6, v3 from (select id6, v3, row_number() over (partition by id6 order by v3) as row from tbl) t where row <= 2",
+        "q8",
+    )
+    .await?;
+
+    exec_query(&mut ctx, "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM tbl GROUP BY id1, id2, id3, id4, id5, id6", "q10").await?;
 
     Ok(())
 }
