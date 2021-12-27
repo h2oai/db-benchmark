@@ -88,7 +88,7 @@ async fn main() -> Result<()> {
 
     exec_query(
         &mut ctx,
-        "select id6, v3 from (select id6, v3, row_number() over (partition by id6 order by v3) as row from tbl) t where row <= 2",
+        "select id6, v3 from (select id6, v3, row_number() over (partition by id6 order by v3 desc) as row from tbl) t where row <= 2",
         "q8",
     )
     .await?;

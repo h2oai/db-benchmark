@@ -1,0 +1,18 @@
+#V2
+\\h
+\\h Create table as
+\\h create table
+CREATE EXTERNAL TABLE x STORED AS CSV LOCATION "data/J1_1e7_NA_0_0.csv";
+SELECT * FROM x LIMIT 5;
+\\q
+CREATE EXTERNAL TABLE x STORED AS CSV WITH HEADER ROW LOCATION "data/J1_1e7_NA_0_0.csv"\n;
+select * from x limit 5;
+show x\n;
+show columns from x;
+\\q
+select 2^2;
+select 2 * 2;
+\\q
+select 2^2;
+select power(2,2);
+\\q
