@@ -5,7 +5,7 @@ get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse", "cudf", "polars")
+  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse", "cudf", "polars", "datafusion")
 }
 get_data_levels = function() {
   ## groupby

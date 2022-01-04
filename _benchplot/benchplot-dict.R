@@ -40,7 +40,8 @@ solution.dict = {list(
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1")),
-  "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3"))
+  "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
+  "datafusion" = list(name=c(short="datafusion", long="Datafusion"), color=c(strong="deepskyblue4", light="deepskyblue3"))
 )}
 #barplot(rep(c(0L,1L,1L), length(solution.dict)),
 #        col=rev(c(rbind(sapply(solution.dict, `[[`, "color"), "black"))),
@@ -181,6 +182,18 @@ groupby.syntax.dict = {list(
     "largest two v3 by id6" = "DF.drop_nulls('v3').sort('v3', reverse=True).groupby('id6').agg(col('v3').head(2).alias('largest2_v3)).explode('largest2_v3').collect()",
     "regression v1 v2 by id2 id4" = "DF.groupby(['id2','id4']).agg(pl.pearson_corr('v1','v2').alias('r2')).with_column(col('r2')**2).collect()",
     "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6']).agg([pl.sum('v3').alias('v3'), pl.count('v1').alias('count')]).collect()"
+  )},
+  "datafusion" = {c(
+    "sum v1 by id1" = "SELECT id1, SUM(v1) AS v1 FROM x GROUP BY id1",
+    "sum v1 by id1:id2" = "SELECT id1, id2, SUM(v1) AS v1 FROM x GROUP BY id1, id2",
+    "sum v1 mean v3 by id3" = "SELECT id3, SUM(v1) AS v1, AVG(v3) AS v3 FROM x GROUP BY id3",
+    "mean v1:v3 by id4" = "SELECT id4, AVG(v1) AS v1, AVG(v2) AS v2, AVG(v3) AS v3 FROM x GROUP BY id4",
+    "sum v1:v3 by id6" = "SELECT id6, SUM(v1) AS v1, SUM(v2) AS v2, SUM(v3) AS v3 FROM x GROUP BY id6",
+    "median v3 sd v3 by id4 id5" = "",
+    "max v1 - min v2 by id3" = "SELECT id3, MAX(v1) - MIN(v2) AS range_v1_v2 FROM x GROUP BY id3",
+    "largest two v3 by id6" = "SELECT id6, v3 from (SELECT id6, v3, row_number() OVER (PARTITION BY id6 ORDER BY v3 DESC) AS row FROM x) t WHERE row <= 2",
+    "regression v1 v2 by id2 id4" = "",
+    "sum v3 count by id1:id6" = "SELECT id1, id2, id3, id4, id5, id6, SUM(v3) as v3, COUNT(*) AS cnt FROM x GROUP BY id1, id2, id3, id4, id5, id6"
   )}
 )}
 groupby.query.exceptions = {list(
@@ -195,7 +208,9 @@ groupby.query.exceptions = {list(
                        "not yet implemented: cudf#2592" = "largest two v3 by id6",
                        "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list(),
-  "polars"     =  list()
+  "polars"     =  list(),
+  "datafusion" =  list("not yet implemented: datafusion#1486" = "median v3 sd v3 by id4 id5",
+                       "not yet implemented: datafusion#1486" = "regression v1 v2 by id2 id4"),
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -240,7 +255,8 @@ groupby.data.exceptions = {list(                                                
   )},
   "polars" = {list(
     "segfault: polars#260" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # polars#260
-  )}
+  )},
+  "datafusion" = {list()}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
 
@@ -322,6 +338,13 @@ join.syntax.dict = {list(
     "medium outer on int" = "DF.merge(medium, how='left', on='id2')",
     "medium inner on factor" = "DF.merge(medium, on='id5')",
     "big inner on int" = "DF.merge(big, on='id3')"
+  )},
+  "datafusion" = {c(
+    "small inner on int" = "SELECT x.id1, x.id2, x.id3, x.id4 as xid4, small.id4 as smallid4, x.id5, x.id6, x.v1, small.v2 FROM x INNER JOIN small ON x.id1 = small.id1",
+    "medium inner on int" = "SELECT x.id1 as xid1, medium.id1 as mediumid1, x.id2, x.id3, x.id4 as xid4, medium.id4 as mediumid4, x.id5 as xid5, medium.id5 as mediumid5, x.id6, x.v1, medium.v2 FROM x INNER JOIN medium ON x.id2 = medium.id2",
+    "medium outer on int" = "SELECT x.id1 as xid1, medium.id1 as mediumid1, x.id2, x.id3, x.id4 as xid4, medium.id4 as mediumid4, x.id5 as xid5, medium.id5 as mediumid5, x.id6, x.v1, medium.v2 FROM x LEFT JOIN medium ON x.id2 = medium.id2",
+    "medium inner on factor" = "SELECT x.id1 as xid1, medium.id1 as mediumid1, x.id2, x.id3, x.id4 as xid4, medium.id4 as mediumid4, x.id5 as xid5, medium.id5 as mediumid5, x.id6, x.v1, medium.v2 FROM x LEFT JOIN medium ON x.id5 = medium.id5",
+    "big inner on int" = "SELECT x.id1 as xid1, large.id1 as largeid1, x.id2 as xid2, large.id2 as largeid2, x.id3, x.id4 as xid4, large.id4 as largeid4, x.id5 as xid5, large.id5 as largeid5, x.id6 as xid6, large.id6 as largeid6, x.v1, large.v2 FROM x LEFT JOIN large ON x.id3 = large.id3"
   )}
 )}
 join.query.exceptions = {list(
@@ -334,7 +357,8 @@ join.query.exceptions = {list(
   "juliadf" =     list(),
   "cudf" =        list(),
   "clickhouse" =  list(),
-  "polars"     =  list()
+  "polars"     =  list(),
+  "datafusion" =  list()
 )}
 join.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -372,6 +396,7 @@ join.data.exceptions = {list(                                                   
   )},
   "polars" = {list(
     "segfault: polars#260" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1") # polars#260
-  )}
+  )},
+  "datafusion" = {list()}
 )}
 join.exceptions = task.exceptions(join.query.exceptions, join.data.exceptions)
