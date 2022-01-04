@@ -1,1 +1,1 @@
-cargo tree | grep "├── datafusion" | cut -d ' ' -f3
+echo "0.4.0" > datafusion/VERSION

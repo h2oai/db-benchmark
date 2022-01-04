@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-cd datafusion
+echo 'upgrading datafusion...'
 
-cargo update
+source ./datafusion/py-datafusion/bin/activate
 
-cd ../
+python -m pip install --upgrade datafusion > /dev/null

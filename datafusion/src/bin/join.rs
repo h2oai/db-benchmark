@@ -13,7 +13,8 @@ static ALLOC: snmalloc_rs::SnMalloc = snmalloc_rs::SnMalloc;
 async fn exec_query(ctx: &mut ExecutionContext, query: &str, name: &str) -> Result<()> {
     let start = Instant::now();
 
-    let ans = ctx.sql(query).await?.collect().await?;
+    // let ans = ctx.sql(query).await?.collect().await?;
+    let ans = ctx.sql(query).await?.show().await?;
 
     // TODO: print details
 
@@ -106,33 +107,33 @@ async fn main() -> Result<()> {
     )
     .await?;
 
-    exec_query(
-        &mut ctx,
-        "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left INNER JOIN medium ON left.id2 = medium.id2;",
-        "q2",
-    )
-    .await?;
+    // exec_query(
+    //     &mut ctx,
+    //     "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left INNER JOIN medium ON left.id2 = medium.id2;",
+    //     "q2",
+    // )
+    // .await?;
 
-    exec_query(
-        &mut ctx,
-        "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left INNER JOIN medium ON left.id2 = medium.id2;",
-        "q3",
-    )
-    .await?;
+    // exec_query(
+    //     &mut ctx,
+    //     "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left INNER JOIN medium ON left.id2 = medium.id2;",
+    //     "q3",
+    // )
+    // .await?;
 
-    exec_query(
-        &mut ctx,
-        "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left LEFT JOIN medium ON left.id5 = medium.id5;",
-        "q4",
-    )
-    .await?;
+    // exec_query(
+    //     &mut ctx,
+    //     "SELECT left.id1, medium.id1, left.id2, left.id3, left.id4, medium.id4, left.id5, medium.id5, left.id6, left.v1, medium.v2 FROM left LEFT JOIN medium ON left.id5 = medium.id5;",
+    //     "q4",
+    // )
+    // .await?;
 
-    exec_query(
-        &mut ctx,
-        "SELECT left.id1, large.id1, left.id2, large.id2, left.id3, left.id4, large.id4, left.id5, large.id5, left.id6, large.id6, left.v1, large.v2 FROM left LEFT JOIN large ON left.id3 = large.id3;",
-        "q5",
-    )
-    .await?;
+    // exec_query(
+    //     &mut ctx,
+    //     "SELECT left.id1, large.id1, left.id2, large.id2, left.id3, left.id4, large.id4, left.id5, large.id5, left.id6, large.id6, left.v1, large.v2 FROM left LEFT JOIN large ON left.id3 = large.id3;",
+    //     "q5",
+    // )
+    // .await?;
 
     Ok(())
 }
