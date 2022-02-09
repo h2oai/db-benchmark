@@ -6,7 +6,6 @@ import os
 import gc
 import timeit
 import vaex
-vaex.multithreading.thread_count_default = 8
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -18,69 +17,38 @@ fun = ".groupby"
 cache = "TRUE"
 on_disk = "TRUE"
 
-# vaex.cache.redis()
-
 data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
-x = vaex.open(src_grp, convert=True,  dtype={"id4":"Int32", "id5":"Int32", "id6":"Int32", "v1":"Int32", "v2":"Int32"})
+x = vaex.open(src_grp, convert=True,  dtype={"id4":"Int8", "id5":"Int8", "id6":"Int32", "v1":"Int8", "v2":"Int8"})
 print("loaded dataset")
-x.ordinal_encode('id1', inplace=True)
-x.ordinal_encode('id2', inplace=True)
-x.ordinal_encode('id3', inplace=True)
-x.ordinal_encode('id4', inplace=True)
-x.ordinal_encode('id5', inplace=True)
-x.ordinal_encode('id6', inplace=True)
-
-
-# Generic benchmark function - to improve code readability
-def benchmark(func, question, chk_sum_cols):
-    gc.collect()
-    t_start = timeit.default_timer()
-    ans = func()
-    print(ans.shape, flush=True)
-    t = timeit.default_timer() - t_start
-    m = memory_usage()
-    t_start = timeit.default_timer()
-    chk = [ans[col].sum() for col in chk_sum_cols]
-    chkt = timeit.default_timer() - t_start
-    write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-    del ans
-    gc.collect()
-    t_start = timeit.default_timer()
-    ans = func()
-    print(ans.shape, flush=True)
-    t = timeit.default_timer() - t_start
-    m = memory_usage()
-    t_start = timeit.default_timer()
-    chk = [ans[col].sum() for col in chk_sum_cols]
-    chkt = timeit.default_timer() - t_start
-    write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-    print(ans.head(3), flush=True)
-    print(ans.tail(3), flush=True)
-    del ans
+with vaex.cache.disk():
+    x.ordinal_encode('id1', inplace=True)
+    x.ordinal_encode('id2', inplace=True)
+    x.ordinal_encode('id3', inplace=True)
+    print(x.dtypes)
 
 
 # Questions
 def question_1():
-    return x.groupby(['id1']).agg({'v1': 'sum'})
+    return x.groupby(['id1'], agg={'v1': 'sum'})
 
 
 def question_2():
-    return x.groupby(['id1', 'id2']).agg({'v1': 'sum'})
+    return x.groupby(['id1', 'id2'], agg={'v1': 'sum'})
 
 
 def question_3():
-    return x.groupby(['id3']).agg({'v1': 'sum', 'v3': 'mean'})
+    return x.groupby(['id3'], agg={'v1': 'sum', 'v3': 'mean'})
 
 
 def question_4():
-    return x.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})
+    return x.groupby(['id4'], agg={'v1':'mean', 'v2':'mean', 'v3':'mean'})
 
 
 def question_5():
-    return x.groupby(['id6']).agg({'v1': 'sum', 'v2': 'sum', 'v3': 'sum'})
+    return x.groupby(['id6'], agg={'v1': 'sum', 'v2': 'sum', 'v3': 'sum'})
 
 
 def question_6():
@@ -101,6 +69,39 @@ def question_9():
 
 def question_10():
     return x.groupby(['id1','id2','id3','id4','id5','id6']).agg({'v3':'sum', 'v1':'count'})
+
+# Generic benchmark function - to improve code readability
+def benchmark(func, question, chk_sum_cols):
+    with vaex.progress.tree(title=question) as progress:
+        gc.collect()
+        t_start = timeit.default_timer()
+        with progress.add("iter1"):
+            ans = func()
+        if verbose:
+            print(ans.shape, flush=True)
+        t = timeit.default_timer() - t_start
+        m = memory_usage()
+        t_start = timeit.default_timer()
+        chk = [ans[col].sum() for col in chk_sum_cols]
+        chkt = timeit.default_timer() - t_start
+        write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+        del ans
+        gc.collect()
+        t_start = timeit.default_timer()
+        with progress.add("iter2"):
+            ans = func()
+        if verbose:
+            print(ans.shape, flush=True)
+        t = timeit.default_timer() - t_start
+        m = memory_usage()
+        t_start = timeit.default_timer()
+        chk = [ans[col].sum() for col in chk_sum_cols]
+        chkt = timeit.default_timer() - t_start
+        write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+        if verbose:
+            print(ans.head(3), flush=True)
+            print(ans.tail(3), flush=True)
+        del ans
 
 
 task_init = timeit.default_timer()
