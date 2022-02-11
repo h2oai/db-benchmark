@@ -43,65 +43,144 @@ big.ordinal_encode('id1', inplace=True)
 big.ordinal_encode('id2', inplace=True)
 big.ordinal_encode('id3', inplace=True)
 
-print(len(x), flush=True)
+in_rows = len(x)
+print(in_rows, flush=True)
 print(len(small), flush=True)
 print(len(medium), flush=True)
 print(len(big), flush=True)
 
-def benchmark(func, question, chk_sum_cols):
-    gc.collect()
-    t_start = timeit.default_timer()
-    ans = func()
-    print(ans.shape, flush=True)
-    t = timeit.default_timer() - t_start
-    m = memory_usage()
-    t_start = timeit.default_timer()
-    chk = [ans[col].sum() for col in chk_sum_cols]
-    chkt = timeit.default_timer() - t_start
-    write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-    del ans
-    gc.collect()
-    t_start = timeit.default_timer()
-    ans = func()
-    t = timeit.default_timer() - t_start
-    m = memory_usage()
-    t_start = timeit.default_timer()
-    chk = [ans[col].sum() for col in chk_sum_cols]
-    chkt = timeit.default_timer() - t_start
-    write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-    print(ans.head(3), flush=True)
-    print(ans.tail(3), flush=True)
-    del ans
-
-
-def question_1():
-    return x.join(small, how='inner', on='id1', rsuffix='_r')
-
-
-def question_2():
-    return x.join(medium, how='inner', on='id2', rsuffix='_r')
-
-
-def question_3():
-    return x.join(medium, how='left', on='id2', rsuffix='_r')
-
-
-def question_4():
-    return x.join(medium, how='inner', on='id5', rsuffix='_r')
-
-
-def question_5():
-    return x.join(big, how='inner', on='id3', rsuffix='_r')
-
-
 task_init = timeit.default_timer()
 print("joining...", flush=True)
 
-benchmark(question_1, question="small inner on int", chk_sum_cols=['v1', 'v2'])
-benchmark(question_2, question="medium inner on int", chk_sum_cols=['v1', 'v2'])
-benchmark(question_3, question="medium outer on int", chk_sum_cols=['v1', 'v2'])
-benchmark(question_4, question="medium inner on factor", chk_sum_cols=['v1', 'v2'])
-benchmark(question_5, question="big inner on int", chk_sum_cols=['v1', 'v2'])
+question = "small inner on int" # q1
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(small, how='inner', on='id1', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(small, how='inner', on='id1', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
+
+question = "medium inner on int" # q2
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='inner', on='id2', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='inner', on='id2', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
+
+question = "medium outer on int" # q3
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='left', on='id2', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='left', on='id2', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
+
+question = "medium inner on factor" # q4
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='inner', on='id5', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(medium, how='inner', on='id5', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
+
+question = "big inner on int" # q5
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(big, how='inner', on='id3', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+del ans
+gc.collect()
+t_start = timeit.default_timer()
+ans = x.join(big, how='inner', on='id3', rsuffix='_r')
+print(ans.shape, flush=True)
+t = timeit.default_timer() - t_start
+m = memory_usage()
+t_start = timeit.default_timer()
+chk = [ans['v1'].sum(), ans['v2'].sum()]
+chkt = timeit.default_timer() - t_start
+write_log(task=task, data=data_name, in_rows=in_rows, question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+print(ans.head(3), flush=True)
+print(ans.tail(3), flush=True)
+del ans
 
 print("joining finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
