@@ -23,11 +23,9 @@ print("loading dataset %s" % data_name, flush=True)
 
 x = vaex.open(src_grp, convert=True,  dtype={"id4":"Int8", "id5":"Int8", "id6":"Int32", "v1":"Int8", "v2":"Int8"})
 print("loaded dataset")
-with vaex.cache.disk():
-    x.ordinal_encode('id1', inplace=True)
-    x.ordinal_encode('id2', inplace=True)
-    x.ordinal_encode('id3', inplace=True)
-    print(x.dtypes)
+x.ordinal_encode('id1', inplace=True)
+x.ordinal_encode('id2', inplace=True)
+x.ordinal_encode('id3', inplace=True)
 
 in_rows = x.shape[0]
 print(in_rows, flush=True)

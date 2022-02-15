@@ -10,12 +10,12 @@ import vaex
 exec(open("./_helpers/helpers.py").read())
 
 ver = vaex.__version__['vaex-core']
-git = 'alpha'
+git = '-'
 task = "join"
 solution = "vaex"
 fun = ".join"
 cache = "TRUE"
-on_disk = "FALSE"
+on_disk = "TRUE"
 
 data_name = os.environ['SRC_DATANAME']
 src_jn_x = os.path.join("data", data_name+".csv")
@@ -27,11 +27,9 @@ if len(src_jn_y) != 3:
 print("loading datasets " + data_name + ", " + y_data_name[0] + ", " + y_data_name[1] + ", " + y_data_name[2], flush=True)
 
 print(src_jn_x, src_jn_y)
-x = vaex.open(src_jn_x, convert=True, dtype={"id1": "Int8", "id2": "Int32", "id3": "Int32", "v2": "Float32"})
+x = vaex.open(src_jn_x, convert=True, dtype={"id1": "Int16", "id2": "Int32", "id3": "Int32", "v1": "Float32"})
 x.ordinal_encode('id1', inplace=True)
 x.ordinal_encode('id2', inplace=True)
-x.ordinal_encode('id3', inplace=True)
-
 
 small = vaex.open(src_jn_y[0], convert=True, dtype={"id1": "Int16", "v2": "Float32"})
 small.ordinal_encode('id1', inplace=True)
@@ -41,7 +39,6 @@ medium.ordinal_encode('id2', inplace=True)
 big = vaex.open(src_jn_y[2], convert=True, dtype={"id1": "Int16", "id2": "Int32", "id3": "Int32", "v2": "Float32"})
 big.ordinal_encode('id1', inplace=True)
 big.ordinal_encode('id2', inplace=True)
-big.ordinal_encode('id3', inplace=True)
 
 in_rows = len(x)
 print(in_rows, flush=True)
