@@ -26,3 +26,5 @@ arrow,groupby
 arrow,join
 duckdb,groupby
 duckdb,join
+vaex,groupby
+vaex,join
