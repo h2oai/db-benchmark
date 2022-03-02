@@ -7,7 +7,9 @@ using Printf;
 using DLMReader;
 using PooledArrays
 
+# Force Julia to precompile methods for common patterns
 IMD.warmup()
+
 include("$(pwd())/_helpers/helpersds.jl");
 
 pkgmeta = getpkgmeta("InMemoryDatasets");
