@@ -133,13 +133,13 @@ ANS = 0;
 
 question = "max v1 - min v2 by id3"; # q7
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), (:v1, :v2) => ((x,y) -> maximum(x) - minimum(y)) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => maximum, :v2 => minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), (:v1, :v2) => ((x,y) -> maximum(x) - minimum(y)) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => maximum, :v2 => minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
