@@ -36,13 +36,13 @@ print("grouping...\n"); flush(stdout);
 
 question = "sum v1 by id1"; # q1
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id1, stable = false), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id1, stable = false), :v1 => IMD.sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id1, stable = false), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id1, stable = false), :v1 => IMD.sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -52,13 +52,13 @@ ANS = 0;
 
 question = "sum v1 by id1:id2"; # q2
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2], stable = false), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2], stable = false), :v1 => IMD.sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2], stable = false), :v1 => sum => :v1); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2], stable = false), :v1 => IMD.sum => :v1); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.v1);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -68,13 +68,13 @@ ANS = 0;
 
 question = "sum v1 mean v3 by id3"; # q3
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => sum => :v1, :v3 => mean => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => IMD.sum => :v1, :v3 => IMD.mean => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v3)];
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => sum => :v1, :v3 => mean => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => IMD.sum => :v1, :v3 => IMD.mean => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v3)];
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -84,14 +84,14 @@ ANS = 0;
 
 question = "mean v1:v3 by id4"; # q4
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id4, stable = false), :v1 => mean => :v1, :v2 => mean => :v2, :v3 => mean => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id4, stable = false), :v1 => IMD.mean => :v1, :v2 => IMD.mean => :v2, :v3 => IMD.mean => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 t_start = time_ns();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id4, stable = false), :v1 => mean => :v1, :v2 => mean => :v2, :v3 => mean => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id4, stable = false), :v1 => IMD.mean => :v1, :v2 => IMD.mean => :v2, :v3 => IMD.mean => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -101,13 +101,13 @@ ANS = 0;
 
 question = "sum v1:v3 by id6"; # q5
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id6, stable=false), :v1 => sum => :v1, :v2 => sum => :v2, :v3 => sum => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id6, stable=false), :v1 => IMD.sum => :v1, :v2 => IMD.sum => :v2, :v3 => IMD.sum => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(groupby(x, :id6, stable=false), :v1 => sum => :v1, :v2 => sum => :v2, :v3 => sum => :v3); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(groupby(x, :id6, stable=false), :v1 => IMD.sum => :v1, :v2 => IMD.sum => :v2, :v3 => IMD.sum => :v3); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -133,13 +133,13 @@ ANS = 0;
 
 question = "max v1 - min v2 by id3"; # q7
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => maximum, :v2 => minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => IMD.maximum, :v2 => IMD.minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => maximum, :v2 => minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, :id3, stable = false), :v1 => IMD.maximum, :v2 => IMD.minimum, 2:3 => byrow(-) => :range_v1_v2); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = sum(ANS.range_v1_v2);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
@@ -185,13 +185,13 @@ ANS = 0;
 
 question = "sum v3 count by id1:id6"; # q10
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2, :id3, :id4, :id5, :id6], stable=false), :v3 => sum => :v3, :v3 => length => :count); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2, :id3, :id4, :id5, :id6], stable=false), :v3 => IMD.sum => :v3, :v3 => length => :count); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v3), sum(ANS.count)];
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
 ANS = 0;
 GC.gc();
-t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2, :id3, :id4, :id5, :id6], stable=false), :v3 => sum => :v3, :v3 => length => :count); println(size(ANS)); flush(stdout));
+t = @elapsed (ANS = combine(gatherby(x, [:id1, :id2, :id3, :id4, :id5, :id6], stable=false), :v3 => IMD.sum => :v3, :v3 => length => :count); println(size(ANS)); flush(stdout));
 m = memory_usage();
 chkt = @elapsed chk = [sum(ANS.v3), sum(ANS.count)];
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt, on_disk);
