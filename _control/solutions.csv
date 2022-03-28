@@ -16,6 +16,8 @@ dask,groupby
 dask,join
 juliadf,groupby
 juliadf,join
+juliads,groupby
+juliads,join
 clickhouse,groupby
 clickhouse,join
 cudf,groupby
