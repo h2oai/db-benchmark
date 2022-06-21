@@ -2,12 +2,12 @@
 
 print("# join-juliadf.jl\n"); flush(stdout);
 
-using DataFrames;
-using CSV;
-using Printf;
+using DataFrames
+using CSV
+using Printf
 
 # Precompile methods for common patterns
-DataFrames.precompile(true)
+DataFrames.precompile(true);
 
 include("$(pwd())/_helpers/helpers.jl");
 
@@ -25,25 +25,15 @@ src_jn_x = string("data/", data_name, ".csv");
 y_data_name = join_to_tbls(data_name);
 src_jn_y = [string("data/", y_data_name[1], ".csv"), string("data/", y_data_name[2], ".csv"), string("data/", y_data_name[3], ".csv")];
 if length(src_jn_y) != 3
-  error("Something went wrong in preparing files used for join")
+    error("Something went wrong in preparing files used for join")
 end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
-x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
-small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, Symbol, Float64], threaded=false);
-medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, Symbol, Symbol, Float64], threaded=false);
-big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, Symbol, Symbol, Symbol, Float64], threaded=false);
-
-x_df.id4 = DataFrames.PooledArray(x_df.id4)
-x_df.id5 = DataFrames.PooledArray(x_df.id5)
-x_df.id6 = DataFrames.PooledArray(x_df.id6)
-small_df.id4 = DataFrames.PooledArray(small_df.id4)
-medium_df.id4 = DataFrames.PooledArray(medium_df.id4)
-medium_df.id5 = DataFrames.PooledArray(medium_df.id5)
-big_df.id4 = DataFrames.PooledArray(big_df.id4)
-big_df.id5 = DataFrames.PooledArray(big_df.id5)
-big_df.id6 = DataFrames.PooledArray(big_df.id6)
+x_df = CSV.read(src_jn_x, DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], ntasks=1, pool=true);
+small_df = CSV.read(src_jn_y[1], DataFrame, types=[Int32, String15, Float64], ntasks=1, pool=true);
+medium_df = CSV.read(src_jn_y[2], DataFrame, types=[Int32, Int32, String15, String15, Float64], ntasks=1, pool=true);
+big_df = CSV.read(src_jn_y[3], DataFrame, types=[Int32, Int32, Int32, String15, String15, String15, Float64], ntasks=1, pool=true);
 
 in_rows = size(x_df, 1);
 println(in_rows); flush(stdout);

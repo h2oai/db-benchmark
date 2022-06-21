@@ -274,7 +274,7 @@ rpivotTable::rpivotTable(
 
 - R 4.0.3
 - python 3.6 and 3.7
-- Julia 1.6.1
+- Julia 1.6.3
 
 ```{r environment_hardware}
 pretty_component = function(x) gsub("_", " ", fixed=TRUE,
@@ -310,9 +310,9 @@ lld[order(task, data), .(task, in_rows, data, knasorted, question_group)
 
 ------
 
-Benchmark run took around `r hours_took(lld)` hours.  
+Benchmark run took around `r hours_took(lld)` hours.
 
-Report was generated on: `r format(Sys.time(), usetz=TRUE)`.  
+Report was generated on: `r format(Sys.time(), usetz=TRUE)`.
 
 ```{r status_set_success}
 cat("index\n", file=get_report_status_file(), append=TRUE)
