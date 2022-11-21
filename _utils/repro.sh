@@ -1,7 +1,25 @@
-# full repro on Ubuntu 16.04
+# full repro on Ubuntu 22.04
 
 sudo apt-get -qq update
+sudo apt upgrade
+
 sudo apt-get -qq install -y lsb-release software-properties-common wget curl vim htop git byobu libcurl4-openssl-dev libssl-dev
+sudo apt-get -qq install -y libfreetype6-dev
+sudo apt-get -qq install -y libfribidi-dev
+sudo apt-get -qq install -y libharfbuzz-dev
+sudo apt-get -qq install -y git
+sudo apt-get -qq install -y libxml2-dev
+sudo apt-get -qq install -y make
+sudo apt-get -qq install -y libfontconfig1-dev
+sudo apt-get -qq install -y libicu-dev
+sudo apt-get -qq install -y pandoc
+sudo apt-get -qq install -y zlib1g-dev
+sudo apt-get -qq install -y libgit2-dev
+sudo apt-get -qq install -y libcurl4-openssl-dev
+sudo apt-get -qq install -y libssl-dev
+sudo apt-get -qq install -y libjpeg-dev
+sudo apt-get -qq install -y libpng-dev
+sudo apt-get -qq install -y libtiff-dev
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu `lsb_release -sc`-cran35/"
 sudo apt-get -qq update
@@ -17,39 +35,42 @@ echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
 mkdir -p git
 cd git
-git clone http://github.com/h2oai/datatable
-git clone http://github.com/h2oai/db-benchmark
+git clone https://github.com/h2oai/datatable
+git clone https://github.com/Tmonster/h2oai-db-benchmark
 
-cd db-benchmark
+cd h2oai-db-benchmark
 cd pydatatable
-virtualenv py-pydatatable --python=/usr/bin/python3.6
+virtualenv py-pydatatable --python=/usr/bin/python3.10
 cd ../pandas
-virtualenv py-pandas --python=/usr/bin/python3.6
+virtualenv py-pandas --python=/usr/bin/python3.10
 cd ../modin
-virtualenv py-modin --python=/usr/bin/python3.6
+virtualenv py-modin --python=/usr/bin/python3.10
 cd ..
 
-Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), repos="https://cloud.r-project.org")'
+
+Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
 byobu
 source ./pandas/py-pandas/bin/activate
-python -m pip install --upgrade psutil
-python -m pip install --upgrade pandas
+python3 -m pip install --upgrade psutil
+python3 -m pip install --upgrade pandas
 deactivate
 
 source ./modin/py-modin/bin/activate
-python -m pip install --upgrade modin
+python3 -m pip install --upgrade modin
 deactivate
 
 source ./pydatatable/py-pydatatable/bin/activate
-pip install --upgrade git+https://github.com/h2oai/datatable
+python3 -m pip install --upgrade git+https://github.com/h2oai/datatable
 deactivate
 
 # install dplyr
 Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
 
 # install data.table
-Rscript -e 'install.packages("data.table", repos="https://Rdatatable.github.io/data.table")'
+# changed to not point to the repo, otherwise an error where 'data.table' is not available for this versoin
+# of R
+Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table/")'
 
 # benchmark
 cd db-benchmark
