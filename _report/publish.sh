@@ -15,11 +15,11 @@ publishGhPages(){
   GH_TOKEN=`cat ../token` 2>err.txt
 
   ## Reset gh-pages branch
-  git remote add upstream "https://$GH_TOKEN@github.com/h2oai/db-benchmark.git" 2>err.txt
+  git remote add upstream "https://$GH_TOKEN@github.com/Tmonster/h2oai-db-benchmark.git" 2>err.txt
   git fetch -q upstream gh-pages 2>err.txt
   rm -f err.txt
   git checkout -q gh-pages
-  git reset -q --hard "f2d1593f0e760f0526ce2d8759d16955f29e2c6b" 2>err.txt
+  git reset -q --hard "1377d84373eabf8c511974b356335f2536c39033" 2>err.txt
 
   rm -f err.txt
   cp -r ../public/* ./
