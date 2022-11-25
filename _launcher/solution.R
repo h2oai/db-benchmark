@@ -111,7 +111,7 @@ file.ext = function(x) {
   ans = switch(
     x,
     "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R",
-    "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
+    "pandas"="py", "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
   )
@@ -158,7 +158,7 @@ localcmd = if (s %in% c("clickhouse","h2o","juliadf")) { # custom launcher bash 
   sprintf("exec.sh %s", t)
 } else sprintf("%s-%s.%s", t, ns, ext)
 cmd = sprintf("./%s/%s", ns, localcmd)
-
+cmd
 ret = system(cmd, ignore.stdout=as.logical(args[["quiet"]]))
 
 Sys.unsetenv("SRC_DATANAME")
