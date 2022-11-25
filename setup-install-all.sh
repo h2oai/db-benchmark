@@ -7,6 +7,8 @@ chmod u+x clickhouse/setup-clickhouse.sh
 chmod u+x cudf/setup-cudf.sh
 ./cudf/setup-cudf.sh
 
+
+# need to fix this. Some weird stuff with a key and whatnot
 chmod u+x dask/setup-dask.sh
 ./dask/setup-dask.sh
 

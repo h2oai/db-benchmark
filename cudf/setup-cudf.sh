@@ -14,7 +14,8 @@ nvcc --version
 
 # test
 conda activate cudf
-python
+# python3 -m pip install cudf
+python3
 import cudf as cu
 cu.__version__.split("+", 1)[0]
 x = cu.read_csv("data/G1_1e7_1e2_0_0.csv", skiprows=1,

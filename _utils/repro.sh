@@ -11,17 +11,9 @@ sudo apt-get -qq install -y git
 sudo apt-get -qq install -y libxml2-dev
 sudo apt-get -qq install -y make
 sudo apt-get -qq install -y libfontconfig1-dev
-sudo apt-get -qq install -y libicu-dev
-sudo apt-get -qq install -y pandoc
-sudo apt-get -qq install -y zlib1g-dev
-sudo apt-get -qq install -y libgit2-dev
-sudo apt-get -qq install -y libcurl4-openssl-dev
-sudo apt-get -qq install -y libssl-dev
-sudo apt-get -qq install -y libjpeg-dev
-sudo apt-get -qq install -y libpng-dev
-sudo apt-get -qq install -y libtiff-dev
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu `lsb_release -sc`-cran35/"
+sudo apt-get -qq install -y libicu-dev pandoc zlib1g-dev libgit2-dev libcurl4-openssl-dev libssl-dev libjpeg-dev libpng-dev libtiff-dev
+# sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu `lsb_release -sc`-cran40/"
 sudo apt-get -qq update
 sudo apt-get -qq install -y r-base-dev virtualenv
 
@@ -33,10 +25,10 @@ mkdir -p .R
 echo 'CFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
-mkdir -p git
-cd git
-git clone https://github.com/h2oai/datatable
-git clone https://github.com/Tmonster/h2oai-db-benchmark
+# mkdir -p git
+# cd git
+# git clone https://github.com/h2oai/datatable
+# git clone https://github.com/Tmonster/h2oai-db-benchmark
 
 cd h2oai-db-benchmark
 cd pydatatable
@@ -50,7 +42,7 @@ cd ..
 
 Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
-byobu
+# byobu
 source ./pandas/py-pandas/bin/activate
 python3 -m pip install --upgrade psutil
 python3 -m pip install --upgrade pandas
@@ -68,9 +60,10 @@ deactivate
 Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
 
 # install data.table
-# changed to not point to the repo, otherwise an error where 'data.table' is not available for this versoin
-# of R
 Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table/")'
+
+# mkdir -p ./datatable/r-datatable
+# Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table", method="curl", lib="./datatable/r-datatable")'
 
 # benchmark
 cd db-benchmark
