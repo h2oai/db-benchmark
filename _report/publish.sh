@@ -8,14 +8,13 @@ publishGhPages(){
 
   ## Set up Repo parameters
   git init > /dev/null
-  git config user.name "publish.gh-pages"
-  git config user.email "publish.gh-pages@h2o.ai"
+  git config user.name "Tmonster"
+  git config user.email "tom@ebergen.com"
 
   ## Set gh token from local file
-  GH_TOKEN=`cat ../token` 2>err.txt
 
   ## Reset gh-pages branch
-  git remote add upstream "https://$GH_TOKEN@github.com/Tmonster/h2oai-db-benchmark.git" 2>err.txt
+  git remote add upstream "git@github.com:Tmonster/h2oai-db-benchmark.git"
   git fetch -q upstream gh-pages 2>err.txt
   rm -f err.txt
   git checkout -q gh-pages
