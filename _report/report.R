@@ -110,7 +110,7 @@ model_time = function(d) {
   # and dask #136
   #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
   approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6, cudf needs 1e-3
-    l = lapply(as.list(rbindlist(lapply(strsplit(x, ";", fixed=TRUE), as.list))), type.convert)
+    l = lapply(as.list(rbindlist(lapply(strsplit(x, ";", fixed=TRUE), as.list))), type.convert, as.is = TRUE)
     int = sapply(l, is.integer)
     dbl = sapply(l, is.double)
     if (sum(int, dbl)!=length(l)) stop("chk has elements that were not converted to int or double")
@@ -249,9 +249,13 @@ transform = function(ld) {
 }
 
 # all ----
+library(dplyr)
 
 time_logs = function(path=getwd()) {
-  d = model_time(clean_time(load_time(path=path)))
+  ct = clean_time(load_time(path=path))
+  # filter out arrow because it produces error in the output logs"
+  ct_filtered = ct %>% filter(solution != "arrow")
+  d = model_time(ct_filtered)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
   
@@ -261,3 +265,4 @@ time_logs = function(path=getwd()) {
   lld = transform(ld)
   lld
 }
+
