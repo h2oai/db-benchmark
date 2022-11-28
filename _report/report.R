@@ -249,7 +249,7 @@ transform = function(ld) {
 }
 
 # all ----
-library(dplyr)
+library(dplyr, quiet=TRUE)
 
 time_logs = function(path=getwd()) {
   ct = clean_time(load_time(path=path))
