@@ -1,4 +1,5 @@
 library(data.table)
+suppressPackageStartupMessages(library(dplyr))
 stopifnot(requireNamespace("knitr", quietly=TRUE))
 kk = knitr::kable
 get_report_status_file = function(path=getwd()) {
@@ -249,7 +250,6 @@ transform = function(ld) {
 }
 
 # all ----
-library(dplyr, quiet=TRUE)
 
 time_logs = function(path=getwd()) {
   ct = clean_time(load_time(path=path))
