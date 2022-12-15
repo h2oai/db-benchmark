@@ -13,7 +13,7 @@ source ./_helpers/helpers.sh
 ch_start
 
 # confirm server working, wait if it crashed in last run
-ch_active || sleep 120
+ch_active || sleep 20
 ch_active || echo 'clickhouse-server should be already running, investigate' >&2
 ch_active || exit 1
 

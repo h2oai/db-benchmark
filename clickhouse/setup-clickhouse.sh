@@ -1,8 +1,9 @@
+
 # install
+sudo apt-get install -y apt-transport-https ca-certificates dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8919F6BD2B48D754
 
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E0C56BD4
-
-echo "deb https://repo.yandex.ru/clickhouse/deb/stable/ main/" | sudo tee /etc/apt/sources.list.d/clickhouse.list
+echo "deb https://packages.clickhouse.com/deb stable main" | sudo tee /etc/apt/sources.list.d/clickhouse.list
 sudo apt-get update
 
 sudo apt-get install -y clickhouse-server clickhouse-client
@@ -17,8 +18,8 @@ sudo service clickhouse-server start
 
 # let file table function access csv
 grep '<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>' /etc/clickhouse-server/config.xml
-sudo sed -i -e "s|<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>|<user_files_path>/home/jan/git/db-benchmark/</user_files_path>|" /etc/clickhouse-server/config.xml
-grep 'user_files_path' /etc/clickhouse-server/config.xml
+sudo sed -i -e "s|<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>|<user_files_path>/home/ubuntu/h2oai-db-benchmark/</user_files_path>|" /etc/clickhouse-server/config.xml
+sudo grep 'user_files_path' /etc/clickhouse-server/config.xml
 
 # server start/stop without sudo: use visudo to edit sudoers
 #sudo cp /etc/sudoers etc_sudoers.bak

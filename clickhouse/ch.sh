@@ -3,11 +3,11 @@ ch_installed() {
 }
 ch_start() {
   echo '# ch_start: starting clickhouse-server'
-  sudo /usr/sbin/service clickhouse-server start && sleep 10
+  sudo service clickhouse-server start && sleep 15
 }
 ch_stop() {
   echo '# ch_stop: stopping clickhouse-server'
-  sudo /usr/sbin/service clickhouse-server stop && sleep 10
+  ssudo service clickhouse-server stop && sleep 15
 }
 ch_active() {
   clickhouse-client --query="SELECT 0;" > /dev/null 2>&1

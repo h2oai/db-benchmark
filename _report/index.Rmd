@@ -141,11 +141,11 @@ loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby201
 
 ![](./join/J1_1e7_NA_0_0_basic.png)
 
-
+<!--
 ##### **advanced questions**
 
 ![](./join/J1_1e7_NA_0_0_advanced.png)
-
+-->
 
 #### 5 GB {.active}
 
@@ -154,10 +154,11 @@ loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby201
 ![](./join/J1_1e8_NA_0_0_basic.png)
 
 
+<!--
 ##### **advanced questions**
 
 ![](./join/J1_1e8_NA_0_0_advanced.png)
-
+-->
 
 #### 50 GB
 
