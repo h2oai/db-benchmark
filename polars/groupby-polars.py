@@ -6,7 +6,7 @@ import os
 import gc
 import timeit
 import polars as pl
-from polars.lazy import col
+from polars import col
 
 exec(open("./_helpers/helpers.py").read())
 
