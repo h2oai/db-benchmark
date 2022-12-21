@@ -7,7 +7,7 @@ ch_start() {
 }
 ch_stop() {
   echo '# ch_stop: stopping clickhouse-server'
-  ssudo service clickhouse-server stop && sleep 15
+  sudo service clickhouse-server stop && sleep 15
 }
 ch_active() {
   clickhouse-client --query="SELECT 0;" > /dev/null 2>&1

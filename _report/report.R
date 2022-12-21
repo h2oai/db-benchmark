@@ -111,7 +111,8 @@ model_time = function(d) {
   # and dask #136
   #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
   approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6, cudf needs 1e-3
-    l = lapply(as.list(rbindlist(lapply(strsplit(x, ";", fixed=TRUE), as.list))), type.convert, as.is = TRUE)
+    # message(paste('ok made it this far with x=',x))
+    l = lapply(as.list(rbindlist(lapply(strsplit(as.character(x), ";", fixed=TRUE), as.list))), type.convert, as.is = TRUE)
     int = sapply(l, is.integer)
     dbl = sapply(l, is.double)
     if (sum(int, dbl)!=length(l)) stop("chk has elements that were not converted to int or double")
@@ -126,7 +127,7 @@ model_time = function(d) {
     }, t=tolerance, NA)
     all(ans)
   }
-  #d[solution=="polars" & data%like%"G1_1e[7|8]_1e2_5_0" & run==1L & {z=tail(unique(batch, na.rm=TRUE), 3); print(z); batch%in%z}][, dcast(.SD, data+question~batch+version, value.var="chk")]
+  # d[solution=="polars" & data%like%"G1_1e[7|8]_1e2_5_0" & run==1L & {z=tail(unique(batch, na.rm=TRUE), 3); print(z); batch%in%z}][, dcast(.SD, data+question~batch+version, value.var="chk")]
   if (nrow(
     d[!is.na(chk), .(unqn1_chk=approxUniqueN1(chk)), .(task, solution, data, question)][unqn1_chk==FALSE]
     )) stop("Value of 'chk' varies for different runs for single solution+question")
@@ -252,7 +253,7 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  ct = clean_time(load_time(path=path))
+  ct = clean_time(load_time(path=getwd()))
   # filter out arrow because it produces error in the output logs"
   ct_filtered = ct %>% filter(solution != "arrow")
   d = model_time(ct_filtered)
