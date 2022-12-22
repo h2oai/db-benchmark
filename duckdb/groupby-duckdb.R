@@ -32,9 +32,17 @@ ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
-invisible(dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM read_csv_auto('%s')", src_grp)))
+
+invisible(dbExecute(con, sprintf("CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM read_csv_auto('%s'))", src_grp)))
+invisible(dbExecute(con, sprintf("CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM read_csv_auto('%s'))", src_grp)))
+invisible(dbExecute(con, sprintf("CREATE TYPE id3ENUM AS ENUM (SELECT id3 FROM read_csv_auto('%s'))", src_grp)))
+
+invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 id3ENUM, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
+invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
+
+
 
 task_init = proc.time()[["elapsed"]]
 cat("grouping...\n")
