@@ -36,20 +36,20 @@ git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 invisible({
   dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (SELECT id4 FROM read_csv_auto('%s'))", src_jn_x))
-  dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (SELECT id6 FROM read_csv_auto('%s'))", src_jn_x))
-  dbExecute(con, sprintf("CREATE TYPE id6ENUM AS ENUM (SELECT id3 FROM read_csv_auto('%s'))", src_jn_x))
+  dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (SELECT id5 FROM read_csv_auto('%s'))", src_jn_x))
+  dbExecute(con, sprintf("CREATE TYPE id6ENUM AS ENUM (SELECT id6 FROM read_csv_auto('%s'))", src_jn_x))
 
   dbExecute(con, "CREATE TABLE x(id1 INT, id2 INT, id3 INT, id4 id4ENUM, id5 id5ENUM, id6 id6ENUM, v1 FLOAT)")
-  dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)"), src_jn_x)
+  dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_jn_x)
 
   dbExecute(con, "CREATE TABLE small(id1 INT, id4 id4ENUM, v2 FLOAT)")
-  dbExecute(con, sprintf("CREATE TABLE small AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
+  dbExecute(con, sprintf("copy small FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[1L]))
 
   dbExecute(con, "CREATE TABLE medium(id1 INT, id2 INT, id4 id4ENUM, id5 id5ENUM, v2 FLOAT)")
-  dbExecute(con, sprintf("CREATE TABLE medium AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
+  dbExecute(con, sprintf("copy medium FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[2L]))
 
   dbExecute(con, "CREATE TABLE big(id1 INT, id2 INT, id3 INT, id4 id4ENUM, id5 id5ENUM, id6 id6ENUM, v2 FLOAT)")
-  dbExecute(con, sprintf("CREATE TABLE big AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
+  dbExecute(con, sprintf("Ccopy big FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[3L]))
 })
 
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
