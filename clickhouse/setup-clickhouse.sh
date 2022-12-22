@@ -16,10 +16,10 @@ sudo service clickhouse-server start
 # stop server
 #sudo service clickhouse-server stop
 
-# let file table function access csv
-grep '<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>' /etc/clickhouse-server/config.xml
-sudo sed -i -e "s|<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>|<user_files_path>/home/ubuntu/h2oai-db-benchmark/</user_files_path>|" /etc/clickhouse-server/config.xml
-sudo grep 'user_files_path' /etc/clickhouse-server/config.xml
+# let file table function access csv -- NO LONGER NECESSARY
+# grep '<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>' /etc/clickhouse-server/config.xml
+# sudo sed -i -e "s|<user_files_path>/home/ubuntu/</user_files_path>|<user_files_path>/var/lib/clickhouse/user_files/</user_files_path>|" /etc/clickhouse-server/config.xml
+# sudo grep 'user_files_path' /etc/clickhouse-server/config.xml
 
 # server start/stop without sudo: use visudo to edit sudoers
 #sudo cp /etc/sudoers etc_sudoers.bak
