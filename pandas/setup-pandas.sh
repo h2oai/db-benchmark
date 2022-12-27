@@ -5,7 +5,7 @@ set -e
 sudo apt-get update
 sudo apt-get install build-essential python3-dev python3-pip
 
-virtualenv pandas/py-pandas --python=/usr/bin/python3.7
+virtualenv pandas/py-pandas --python=/usr/bin/python3.10
 source pandas/py-pandas/bin/activate
 
 # install binaries
@@ -16,7 +16,10 @@ python3 -m pip install git+https://github.com/h2oai/datatable
 # install datatable for fast data import
 python3 -m pip install --upgrade datatable
 
+deactivate
+
 # check
+source pandas/py-pandas/bin/activate
 python3
 import pandas as pd
 pd.__version__

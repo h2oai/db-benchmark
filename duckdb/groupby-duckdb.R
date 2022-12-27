@@ -20,6 +20,7 @@ src_grp = file.path("data", paste(data_name, "csv", sep="."))
 cat(sprintf("loading dataset %s\n", data_name))
 
 on_disk = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][2L])>=1e9
+uses_NAs = as.numeric(strsplit(data_name, "_", fixed=TRUE)[[1L]][4L])>0
 if (on_disk) {
   print("using disk memory-mapped data storage")
   con = dbConnect(duckdb::duckdb(), dbdir=tempfile())
@@ -32,13 +33,19 @@ ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
+if (!uses_NAs) {
+  invisible(dbExecute(con, sprintf("CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM read_csv_auto('%s'))", src_grp)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM read_csv_auto('%s'))", src_grp)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id3ENUM AS ENUM (SELECT id3 FROM read_csv_auto('%s'))", src_grp)))
 
-invisible(dbExecute(con, sprintf("CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM read_csv_auto('%s'))", src_grp)))
-invisible(dbExecute(con, sprintf("CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM read_csv_auto('%s'))", src_grp)))
-invisible(dbExecute(con, sprintf("CREATE TYPE id3ENUM AS ENUM (SELECT id3 FROM read_csv_auto('%s'))", src_grp)))
+  invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 id3ENUM, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
+  invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
+} else {
+  invisible(dbExecute(con, "CREATE TABLE x(id1 VARCHAR, id2 VARCHAR, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
+  invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
+}
 
-invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 id3ENUM, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
-invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
+
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 

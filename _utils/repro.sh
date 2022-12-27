@@ -13,7 +13,7 @@ sudo apt-get -qq install -y make
 sudo apt-get -qq install -y libfontconfig1-dev
 sudo apt-get -qq install -y libicu-dev pandoc zlib1g-dev libgit2-dev libcurl4-openssl-dev libssl-dev libjpeg-dev libpng-dev libtiff-dev
 # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu `lsb_release -sc`-cran40/"
+sudo add-apt-repository "deb [arch=amd64,i386] https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
 sudo apt-get -qq update
 sudo apt-get -qq install -y r-base-dev virtualenv
 
