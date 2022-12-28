@@ -31,12 +31,15 @@ if (on_disk) {
   con = dbConnect(duckdb::duckdb())
 }
 
+
+
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 
 if (!uses_NAs) {
+  print("data set contains no NA/Nulls. Using Enums")
   invisible({
     dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (SELECT distinct(id4) FROM (select distinct(id4) from read_csv_auto('%s') UNION ALL select distinct(id4) FROM read_csv_auto('%s') UNION ALL select distinct(id4) from read_csv_auto('%s') UNION ALL select distinct(id4) from read_csv_auto('%s')))", src_jn_x, src_jn_y[1L], src_jn_y[2L], src_jn_y[3L]))
     dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (SELECT distinct(id5) FROM (select distinct(id5) FROM read_csv_auto('%s') UNION ALL select distinct(id5) from read_csv_auto('%s') UNION ALL select distinct(id5) from read_csv_auto('%s')))", src_jn_x, src_jn_y[2L], src_jn_y[3L]))
@@ -55,18 +58,12 @@ if (!uses_NAs) {
     dbExecute(con, sprintf("Copy big FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[3L]))
   })
 } else {
+  print("data set contains no NA/Nulls. Using varchars")
   invisible({
-    dbExecute(con, "CREATE TABLE x(id1 INT, id2 INT, id3 INT, id4 VARCHAR, id5 VARCHAR, id6 VARCHAR, v1 FLOAT)")
-    dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_jn_x))
-
-    dbExecute(con, "CREATE TABLE small(id1 INT64, id4 VARCHAR, v2 FLOAT)")
-    dbExecute(con, sprintf("copy small FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[1L]))
-
-    dbExecute(con, "CREATE TABLE medium(id1 INT, id2 INT, id4 VARCHAR, id5 VARCHAR, v2 FLOAT)")
-    dbExecute(con, sprintf("copy medium FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[2L]))
-
-    dbExecute(con, "CREATE TABLE big(id1 INT, id2 INT, id3 INT, id4 VARCHAR, id5 VARCHAR, id6 VARCHAR, v2 FLOAT)")
-    dbExecute(con, sprintf("Copy big FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[3L]))
+    dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
+    dbExecute(con, sprintf("CREATE TABLE small AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
+    dbExecute(con, sprintf("CREATE TABLE medium AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
+    dbExecute(con, sprintf("CREATE TABLE big AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
   })
 }
 
