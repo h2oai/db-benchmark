@@ -224,7 +224,7 @@ groupby.query.exceptions = {list(
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list(),
-  "duckdb"     =  list("inaccurate: duckdb#1738" = "median v3 sd v3 by id4 id5")
+  # "duckdb"     =  list("inaccurate: duckdb#1738" = "median v3 sd v3 by id4 id5")
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -434,8 +434,8 @@ join.data.exceptions = {list(                                                   
     "not yet implemented: #189" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1","J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "duckdb" = {list(
-    "internal error: duckdb#1739" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"),
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
+    # "internal error: duckdb#1739" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"),
+    # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
     #"incorrect: duckdb#1737" = c("J1_1e7_NA_5_0","J1_1e8_NA_5_0")
   )}
 )}
