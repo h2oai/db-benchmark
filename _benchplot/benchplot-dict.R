@@ -224,6 +224,7 @@ groupby.query.exceptions = {list(
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list(),
+  "duckdb"     =  list()
   # "duckdb"     =  list("inaccurate: duckdb#1738" = "median v3 sd v3 by id4 id5")
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
