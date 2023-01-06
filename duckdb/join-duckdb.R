@@ -35,6 +35,7 @@ if (on_disk) {
 
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
+invisible(dbExecute(con, "SET experimental_parallel_csv=true;"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
   invisible({
