@@ -34,17 +34,23 @@ invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 invisible(dbExecute(con, "SET experimental_parallel_csv=true;"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
-if (!uses_NAs) {
-  invisible(dbExecute(con, sprintf("CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM read_csv_auto('%s'))", src_grp)))
-  invisible(dbExecute(con, sprintf("CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM read_csv_auto('%s'))", src_grp)))
-  invisible(dbExecute(con, sprintf("CREATE TYPE id3ENUM AS ENUM (SELECT id3 FROM read_csv_auto('%s'))", src_grp)))
+# first create and ingest the table.
+invisible(dbExecute(con, "CREATE TABLE y(id1 VARCHAR, id2 VARCHAR, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
+invisible(dbExecute(con, sprintf("COPY y FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
 
-  invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 id3ENUM, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
-  invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
-} else {
+# if there are no nulls (which our enums can't handle, make enums)
+if (!uses_NAs) {
+  invisible(dbExecute(con, sprintf("CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM y)", src_grp)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM y)", src_grp)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id3ENUM AS ENUM (SELECT id3 FROM y)", src_grp)))
+
   invisible(dbExecute(con, "CREATE TABLE x(id1 VARCHAR, id2 VARCHAR, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
-  invisible(dbExecute(con, sprintf("COPY x FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
+  invisible(dbExecute(con, sprintf("INSERT INTO x (SELECT * FROM y)"))
+} else {
+  # otherwise rename y
+  invisible(dbExecute(con, "ALTER TABLE y RENAME TO x"))
 }
+
 
 
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
