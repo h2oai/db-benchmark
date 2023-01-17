@@ -31,19 +31,39 @@ if (on_disk) {
   con = dbConnect(duckdb::duckdb())
 }
 
-
-
 ncores = parallel::detectCores()
 invisible(dbExecute(con, sprintf("PRAGMA THREADS=%d", ncores)))
 invisible(dbExecute(con, "SET experimental_parallel_csv=true;"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
+invisible(dbExecute(con, "CREATE TABLE y(id1 INT64, id2 INT64, id3 INT64, id4 VARCHAR, id5 VARCHAR, id6 VARCHAR, v1 DOUBLE)"))
+invisible(dbExecute(con, sprintf("COPY y FROM '%s' (AUTO_DETECT TRUE)", src_jn_x)))
+
+if (!uses_NAs) {
+  invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (SELECT id4 FROM y)", src_jn_x)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (SELECT id5 FROM y)", src_jn_x)))
+
+  invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
+  invisible(dbExecute(con, sprintf("COPY small FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[1L])))
+
+  invisible(dbExecute(con, "CREATE TABLE medium(id1 INT64, id2 INT64, id4 id4ENUM, id5 id5ENUM, v2 DOUBLE)"))
+  invisible(dbExecute(con, sprintf("COPY medium FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[2L])))
+
+  invisible(dbExecute(con, "CREATE TABLE big(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v2 DOUBLE)"))
+  invisible(dbExecute(con, sprintf("COPY big FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[3L])))
+
+  invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
+  invisible(dbExecute(con, "COPY small FROM y;"))
+
+  invisible(dbExecute(con, "DROP TABLE y;"))
+} else {
   invisible({
     dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
     dbExecute(con, sprintf("CREATE TABLE small AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
     dbExecute(con, sprintf("CREATE TABLE medium AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
     dbExecute(con, sprintf("CREATE TABLE big AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
   })
+}
 
 print(in_nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM x")$cnt)
 print(dbGetQuery(con, "SELECT count(*) AS cnt FROM small")$cnt)
