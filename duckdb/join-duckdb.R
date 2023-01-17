@@ -37,11 +37,18 @@ invisible(dbExecute(con, "SET experimental_parallel_csv=true;"))
 git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 
 invisible(dbExecute(con, "CREATE TABLE y(id1 INT64, id2 INT64, id3 INT64, id4 VARCHAR, id5 VARCHAR, id6 VARCHAR, v1 DOUBLE)"))
-invisible(dbExecute(con, sprintf("COPY y FROM '%s' (AUTO_DETECT TRUE)", src_jn_x)))
+invisible({
+  dbExecute(con, sprintf("CREATE TABLE x_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
+  dbExecute(con, sprintf("CREATE TABLE small_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
+  dbExecute(con, sprintf("CREATE TABLE medium_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
+  dbExecute(con, sprintf("CREATE TABLE big_csv AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
+})
 
 if (!uses_NAs) {
-  invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM (SELECT id4 FROM y)", src_jn_x)))
-  invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM (SELECT id5 FROM y)", src_jn_x)))
+  id4_enum_statement = "SELECT id4 FROM x_csv UNION ALL SELECT id4 FROM small_csv UNION ALL SELECT id4 from medium_csv UNION ALL SELECT id4 from big_csv;"
+  id5_enum_statement = "SELECT id5 FROM x_csv UNION ALL SELECT id5 from medium_csv UNION ALL SELECT id5 from big_csv"
+  invisible(dbExecute(con, sprintf("CREATE TYPE id4ENUM AS ENUM ('%s')", id4_enum_statement)))
+  invisible(dbExecute(con, sprintf("CREATE TYPE id5ENUM AS ENUM ('%s')", id5_enum_statement)))
 
   invisible(dbExecute(con, "CREATE TABLE small(id1 INT64, id4 id4ENUM, v2 DOUBLE)"))
   invisible(dbExecute(con, sprintf("COPY small FROM '%s' (AUTO_DETECT TRUE)", src_jn_y[1L])))
@@ -54,14 +61,12 @@ if (!uses_NAs) {
 
   invisible(dbExecute(con, "CREATE TABLE x(id1 INT64, id2 INT64, id3 INT64, id4 id4ENUM, id5 id5ENUM, id6 VARCHAR, v1 DOUBLE)"))
   invisible(dbExecute(con, "COPY small FROM y;"))
-
-  invisible(dbExecute(con, "DROP TABLE y;"))
 } else {
   invisible({
-    dbExecute(con, sprintf("CREATE TABLE x AS SELECT * FROM read_csv_auto('%s')", src_jn_x))
-    dbExecute(con, sprintf("CREATE TABLE small AS SELECT * FROM read_csv_auto('%s')", src_jn_y[1L]))
-    dbExecute(con, sprintf("CREATE TABLE medium AS SELECT * FROM read_csv_auto('%s')", src_jn_y[2L]))
-    dbExecute(con, sprintf("CREATE TABLE big AS SELECT * FROM read_csv_auto('%s')", src_jn_y[3L]))
+    dbExecute(con, "ALTER TABLE x_csv RENAME TO x")
+    dbExecute(con, "ALTER TABLE small_csv RENAME TO small")
+    dbExecute(con, "ALTER TABLE medium_csv RENAME TO medium")
+    dbExecute(con, "ALTER TABLE big_csv RENAME TO big")
   })
 }
 
