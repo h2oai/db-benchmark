@@ -10,6 +10,8 @@ output:
 # Rscript -e 'rmarkdown::render("./_report/index.Rmd", output_dir="public")' && xdg-open public/index.html
 ```
 
+The code for this benchmark can be found at [https://github.com/Tmonster/h2oai-db-benchmark](https://github.com/Tmonster/h2oai-db-benchmark) and has been forked from [https://github.com/h2oai/db-benchmark](https://github.com/h2oai/db-benchmark).
+
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. You can find out more about the project in [_Efficiency in data processing_ slides](https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf) and [talk made by Matt Dowle on H2OWorld 2019 NYC conference](https://www.youtube.com/watch?v=fZpA_cU0SPg).
 
 We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
