@@ -38,13 +38,13 @@ git = dbGetQuery(con, "SELECT source_id FROM pragma_version()")[[1L]]
 invisible(dbExecute(con, "CREATE TABLE y(id1 VARCHAR, id2 VARCHAR, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
 invisible(dbExecute(con, sprintf("COPY y FROM '%s' (AUTO_DETECT TRUE)", src_grp)))
 
-# if there are no nulls (which our enums can't handle, make enums)
+# if there are no nulls (which duckdb enums can't handle, make enums)
 if (!uses_NAs) {
   invisible(dbExecute(con, "CREATE TYPE id1ENUM AS ENUM (SELECT id1 FROM y)"))
   invisible(dbExecute(con, "CREATE TYPE id2ENUM AS ENUM (SELECT id2 FROM y)"))
 
   invisible(dbExecute(con, "CREATE TABLE x(id1 id1ENUM, id2 id2ENUM, id3 VARCHAR, id4 INT, id5 INT, id6 INT, v1 INT, v2 INT, v3 FLOAT)"))
-  invisible(dbExecute(con, sprintf("INSERT INTO x (SELECT * FROM y)"))
+  invisible(dbExecute(con, "INSERT INTO x (SELECT * FROM y)"))
   invisible(dbExecute(con, "DROP TABLE IF EXISTS y"))
 } else {
   # otherwise rename y
