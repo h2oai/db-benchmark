@@ -135,25 +135,25 @@ fun = "inner_join"
 
 attach_and_use(con, 'q2.db', 'q2')
 t = system.time({
-  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
-  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2 LIMIT 0"))))
+  dbExecute(con, "CREATE TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM q2"))[["elapsed"]]
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM q2.ans"))[["elapsed"]]
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-invisible(dbExecute(con, "DROP TABLE IF EXISTS q2"))
+invisible(dbExecute(con, "DROP TABLE IF EXISTS q2.ans"))
 detach_and_drop(con, 'q2.db', 'q2')
 attach_and_use(con, 'q2.db', 'q2')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q2 AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
-  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2 LIMIT 0"))))
+  dbExecute(con, "CREATE TABLE q2.ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
-chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM q2"))[["elapsed"]]
+chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM q2.ans"))[["elapsed"]]
 write.log(run=2L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(dbGetQuery(con, "SELECT * FROM q2 LIMIT 3"))                                      ## head
-print(dbGetQuery(con, "SELECT * FROM q2 WHERE ROWID > (SELECT count(*) FROM q2) - 4")) ## tail
-invisible(dbExecute(con, "DROP TABLE IF EXISTS q2"))
+print(dbGetQuery(con, "SELECT * FROM q2.ans LIMIT 3"))                                      ## head
+print(dbGetQuery(con, "SELECT * FROM q2.ans WHERE ROWID > (SELECT count(*) FROM q2.ans) - 4")) ## tail
+invisible(dbExecute(con, "DROP TABLE IF EXISTS q2.ans"))
 detach_and_drop(con, 'q2.db', 'q2')
 
 question = "medium outer on int" # q3
