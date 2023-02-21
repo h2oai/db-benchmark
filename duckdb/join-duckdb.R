@@ -26,6 +26,7 @@ attach_and_use <- function(con, db_file, db) {
     dbExecute(con, sprintf("ATTACH '%s'", db_file))
   } else {
     dbExecute(con, sprintf("CREATE SCHEMA %s", db))
+  }
 }
 
 detach_and_drop <- function(con, db_file, db) {
@@ -108,7 +109,7 @@ fun = "inner_join"
 attach_and_use(con, 'q1.db', 'q1')
 t = system.time({
   dbExecute(con, "CREATE TABLE q1.ans AS SELECT x.*, small.id4 AS small_id4, v2 FROM x JOIN small USING (id1)")
-  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
+  print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q1.ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q1.ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
 chkt = system.time(chk<-dbGetQuery(con, "SELECT SUM(v1) AS v1, SUM(v2) AS v2 FROM q1.ans"))[["elapsed"]]
@@ -134,7 +135,7 @@ fun = "inner_join"
 
 attach_and_use(con, 'q2.db', 'q2')
 t = system.time({
-  dbExecute(con, "CREATE TABLE q2 AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
+  dbExecute(con, "CREATE TABLE ans AS SELECT x.*, medium.id1 AS medium_id1, medium.id4 AS medium_id4, medium.id5 AS medium_id5, v2 FROM x JOIN medium USING (id2)")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM q2")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM q2 LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
