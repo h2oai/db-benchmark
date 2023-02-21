@@ -23,14 +23,17 @@ cat(sprintf("loading datasets %s\n", paste(c(data_name, y_data_name), collapse="
 
 attach_and_use <- function(con, db_file, db) {
   if (on_disk) {
-    dbExecute(con, sprintf("ATTACH %s", db_file))
-  }
+    dbExecute(con, sprintf("ATTACH '%s'", db_file))
+  } else {
+    dbExecute(con, sprintf("CREATE SCHEMA %s", db))
 }
 
 detach_and_drop <- function(con, db_file, db) {
   if (on_disk) {
     dbExecute(con, sprintf("DETACH %s", db))
     unlink(db_file)
+  } else {
+    dbExecute(con, sprintf("DROP SCHEMA %s CASCADE", db))
   }
 }
 
