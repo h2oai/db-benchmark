@@ -111,7 +111,7 @@ file.ext = function(x) {
   ans = switch(
     x,
     "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R",
-    "pandas"="py", "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
+    "pandas"="py", "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
   )

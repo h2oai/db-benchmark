@@ -15,7 +15,7 @@ file.ext = function(x) {
   ans = switch(
     x,
     "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", 
-    "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
+    "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
   )
@@ -33,7 +33,6 @@ solution.venv = function(x) {
   ext = file.ext(x)
   if (ext=="py") { # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
     ns = solution.path(x)
-    if (x%in%c("cudf")) sprintf("source ~/anaconda3/etc/profile.d/conda.sh && conda activate %s && ", ns)
     else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
   } else ""
 }

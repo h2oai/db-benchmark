@@ -39,7 +39,6 @@ solution.dict = {list(
   "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
-  "cudf" = list(name=c(short="cuDF", long="cuDF"), color=c(strong="peachpuff3", light="peachpuff1")),
   "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
   "arrow" = list(name=c(short="arrow", long="Arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
   "duckdb" = list(name=c(short="duckdb", long="DuckDB"), color=c(strong="#ddcd07", light="#fff100"))
@@ -148,18 +147,6 @@ groupby.syntax.dict = {list(
     "regression v1 v2 by id2 id4" = "combine(groupby(DF, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2)",
     "sum v3 count by id1:id6" = "combine(groupby(DF, [:id1, :id2, :id3, :id4, :id5, :id6]), :v3 => sum∘skipmissing => :v3, :v3 => length => :count)"
   )},
-  "cudf" = {c(
-    "sum v1 by id1" = "DF.groupby('id1', as_index=False, dropna=False).agg({'v1':'sum'}).compute()",
-    "sum v1 by id1:id2" = "DF.groupby(['id1','id2'], as_index=False, dropna=False).agg({'v1':'sum'}).compute()",
-    "sum v1 mean v3 by id3" = "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'sum', 'v3':'mean'}).compute()",
-    "mean v1:v3 by id4" = "DF.groupby('id4', as_index=False, dropna=False).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'}).compute()",
-    "sum v1:v3 by id6" = "DF.groupby('id6', as_index=False, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'}).compute()",
-    "median v3 sd v3 by id4 id5" = "DF.groupby(['id4','id5'], as_index=False, dropna=False).agg({'v3': ['median','std']}).compute()",
-    "max v1 - min v2 by id3" = "", # "DF.groupby('id3', as_index=False, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['range_v1_v2']].compute()"
-    "largest two v3 by id6" = "", # "DF[~x['v3'].isna()][['id6','v3']].sort_values('v3', ascending=False).groupby('id6', as_index=False, dropna=False).head(2).compute()"
-    "regression v1 v2 by id2 id4" = "", # "DF[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2})).compute()"
-    "sum v3 count by id1:id6" = "DF.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, dropna=False).agg({'v3':'sum', 'v1':'size'}).compute()"
-  )},
   "clickhouse" = {c(
     "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM tbl GROUP BY id1",
     "sum v1 by id1:id2" = "SELECT id1, id2, sum(v1) AS v1 FROM tbl GROUP BY id1, id2",
@@ -217,15 +204,10 @@ groupby.query.exceptions = {list(
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
   "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#4706" = "median v3 sd v3 by id4 id5",
-                       "not yet implemented: cudf#2591" = "max v1 - min v2 by id3",
-                       "not yet implemented: cudf#2592" = "largest two v3 by id6",
-                       "not yet implemented: cudf#1267" = "regression v1 v2 by id2 id4"),
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list(),
   "duckdb"     =  list()
-  # "duckdb"     =  list("inaccurate: duckdb#1738" = "median v3 sd v3 by id4 id5")
 )}
 groupby.data.exceptions = {list(                                                             # exceptions as of run 1575727624
   "data.table" = {list(
@@ -262,12 +244,6 @@ groupby.data.exceptions = {list(                                                
   "juliadf" = {list(
     "timeout" = "G1_1e8_2e0_0_0",
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # CSV.File
-  )},
-  "cudf" = {list(
-    "not yet implemented: cudf#8409" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #221
-    "internal error: cudf#6828" = c("G1_1e7_1e2_0_0","G1_1e7_1e1_0_0","G1_1e7_2e0_0_0","G1_1e7_1e2_0_1"), #217
-    "out of memory" = c("G1_1e8_1e2_0_0","G1_1e8_1e1_0_0","G1_1e8_2e0_0_0","G1_1e8_1e2_0_1", # read_csv #94
-                        "G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #97
   )},
   "clickhouse" = {list(
   )},
@@ -351,13 +327,6 @@ join.syntax.dict = {list(
     "medium inner on factor" = "SELECT x.id1, y.id1, x.id2, y.id2, x.id3, x.id4, y.id4, id5, x.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id5)",
     "big inner on int" = "SELECT x.id1, y.id1, x.id2, y.id2, id3, x.id4, y.id4, x.id5, y.id5, x.id6, y.id6, x.v1, y.v2 FROM x INNER JOIN y USING (id3)"
   )},
-  "cudf" = {c(
-    "small inner on int" = "DF.merge(small, on='id1').compute()",
-    "medium inner on int" = "DF.merge(medium, on='id2').compute()",
-    "medium outer on int" = "DF.merge(medium, how='left', on='id2').compute()",
-    "medium inner on factor" = "DF.merge(medium, on='id5').compute()",
-    "big inner on int" = "DF.merge(big, on='id3').compute()"
-  )},
   "polars" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
     "medium inner on int" = "DF.merge(medium, on='id2')",
@@ -388,7 +357,6 @@ join.query.exceptions = {list(
   "spark" =       list(),
   "dask" =        list(),
   "juliadf" =     list(),
-  "cudf" =        list("not yet implemented: cudf#8200" = "medium inner on factor"),
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list(),
@@ -419,10 +387,6 @@ join.data.exceptions = {list(                                                   
   )},
   "juliadf" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
-  )},
-  "cudf" = {list(
-    "internal error: cudf#8401" = c("J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"), # #220
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # read_csv #94 #97
   )},
   "clickhouse" = {list(
     "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169

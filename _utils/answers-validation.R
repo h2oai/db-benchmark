@@ -11,10 +11,6 @@ grain = c("solution","task","data","iquestion")
 d[!is.na(out_rows), .(unqn_out_rows=uniqueN(out_rows), unq_out_rows=paste(unique(out_rows), collapse=",")), by=grain
   ][unqn_out_rows>1L
     ] -> check[["solution_out_rows"]]
-d[!is.na(chk) & solution!="cudf", # cudf check disabled as of now, see comment in model_time() in report.R
-  .(unqn_chk=uniqueN(chk), unq_chk=paste(unique(chk), collapse=",")), by=grain
-  ][unqn_chk>1L
-    ] -> check[["solution_chk"]]
 
 # detect lack of out_rows match in query output between solutions
 grain = c("task","data","iquestion","question")

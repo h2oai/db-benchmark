@@ -42,7 +42,7 @@ cd ..
 
 Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
-# byobu
+
 source ./pandas/py-pandas/bin/activate
 python3 -m pip install --upgrade psutil
 python3 -m pip install --upgrade pandas
@@ -61,9 +61,6 @@ Rscript -e 'devtools::install_github(c("tidyverse/readr","tidyverse/dplyr"))'
 
 # install data.table
 Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table/")'
-
-# mkdir -p ./datatable/r-datatable
-# Rscript -e 'install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table", method="curl", lib="./datatable/r-datatable")'
 
 # benchmark
 cd db-benchmark

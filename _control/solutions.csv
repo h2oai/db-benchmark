@@ -18,8 +18,6 @@ juliadf,groupby
 juliadf,join
 clickhouse,groupby
 clickhouse,join
-cudf,groupby
-cudf,join
 polars,groupby
 polars,join
 arrow,groupby
