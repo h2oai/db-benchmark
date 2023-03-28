@@ -1,3 +1,5 @@
+# FORKED FROM [H2OAI](https://github.com/h2oai/db-benchmark)
+
 Repository for reproducible benchmarking of database-like operations in single-node environment.  
 Benchmark report is available at [h2oai.github.io/db-benchmark](https://h2oai.github.io/db-benchmark).  
 We focused mainly on portability and reproducibility. Benchmark is routinely re-run to present up-to-date timings. Most of solutions used are automatically upgraded to their stable or development versions.  
@@ -15,25 +17,22 @@ Contribution and feedback are very welcome!
   - [x] [dask](https://github.com/dask/dask)
   - [x] [data.table](https://github.com/Rdatatable/data.table)
   - [x] [dplyr](https://github.com/tidyverse/dplyr)
-  - [x] [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl)
   - [x] [pandas](https://github.com/pandas-dev/pandas)
   - [x] [(py)datatable](https://github.com/h2oai/datatable)
   - [x] [spark](https://github.com/apache/spark)
-  - [x] [cuDF](https://github.com/rapidsai/cudf)
   - [x] [ClickHouse](https://github.com/yandex/ClickHouse)
   - [x] [Polars](https://github.com/ritchie46/polars)
   - [x] [Arrow](https://github.com/apache/arrow)
   - [x] [DuckDB](https://github.com/duckdb/duckdb)
 
-More solutions has been proposed. Status of those can be tracked in issues tracker of our project repository by using [_new solution_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3A%22new+solution%22) label.
+If you would like your solution to be included, you can file an issue and track the status by using a [_new solution_]() issue.
 
 # Reproduce
 
 ## Batch benchmark run
 
-- edit `path.env` and set `julia` and `java` paths
-- if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.6`
-- install every solution, follow `$solution/setup-$solution.sh` scripts
+- if solution uses python create new `virtualenv` as `$solution/py-$solution`, example for `pandas` use `virtualenv pandas/py-pandas --python=/usr/bin/python3.10`
+- install every solution, follow `$solution/setup-$solution.sh` scripts by hand, they are not automatic scripts.
 - edit `run.conf` to define solutions and tasks to benchmark
 - generate data, for `groupby` use `Rscript _data/groupby-datagen.R 1e7 1e2 0 0` to create `G1_1e7_1e2_0_0.csv`, re-save to binary format where needed (see below), create `data` directory and keep all data files there
 - edit `_control/data.csv` to define data sizes to benchmark using `active` flag
@@ -60,9 +59,6 @@ More solutions has been proposed. Status of those can be tracked in issues track
 - call `SRC_DATANAME=G1_1e7_1e2_0_0 R`, if desired replace `R` with `python` or `julia`
 - proceed pasting code from benchmark script
 
-## Extra care needed
-
-- `cudf` uses `conda` instead of `virtualenv`
 
 # Example environment
 
@@ -72,5 +68,5 @@ More solutions has been proposed. Status of those can be tracked in issues track
 # Acknowledgment
 
 Timings for some solutions might be missing for particular data sizes or questions. Some functions are not yet implemented in all solutions so we were unable to answer all questions in all solutions. Some solutions might also run out of memory when running benchmark script which results the process to be killed by OS. Lastly we also added timeout for single benchmark script to run, once timeout value is reached script is terminated.
-Please check [_exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) label in our repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
+Please check [_exceptions_](https://github.com/h2oai/db-benchmark/issues?q=is%3Aissue+is%3Aopen+label%3Aexceptions) label in the original h2oai repository for a list of issues/defects in solutions, that makes us unable to provide all timings.
 There is also [_no documentation_](https://github.com/h2oai/db-benchmark/labels/no%20documentation) label that lists issues that are blocked by missing documentation in solutions we are benchmarking.

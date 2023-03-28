@@ -54,9 +54,7 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pyda
 if [[ "$RUN_SOLUTIONS" =~ "pydatatable" ]]; then ./pydatatable/ver-pydatatable.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/upg-spark.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "spark" ]]; then ./spark/ver-spark.sh; fi;
-#if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/upg-cudf.sh; fi; # upgrade manually as full re-install
-if [[ "$RUN_SOLUTIONS" =~ "cudf" ]]; then ./cudf/ver-cudf.sh; fi;
-#if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/upg-clickhouse.sh; fi; # manual as requires sudo: apt-get install --only-upgrade clickhouse-server clickhouse-client
+# if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/upg-clickhouse.sh; fi; # manual as requires sudo: apt-get install --only-upgrade clickhouse-server clickhouse-client
 if [[ "$RUN_SOLUTIONS" =~ "clickhouse" ]]; then ./clickhouse/ver-clickhouse.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "h2o" ]]; then ./h2o/upg-h2o.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "h2o" ]]; then ./h2o/ver-h2o.sh; fi;
