@@ -18,10 +18,10 @@ python3 -m pip install --upgrade datatable
 
 deactivate
 
-# check
-source pandas/py-pandas/bin/activate
-python3
-import pandas as pd
-pd.__version__
-quit()
-deactivate
+# # check
+# source pandas/py-pandas/bin/activate
+# python3
+# import pandas as pd
+# pd.__version__
+# quit()
+# deactivate

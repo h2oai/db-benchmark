@@ -33,7 +33,7 @@ solution.venv = function(x) {
   ext = file.ext(x)
   if (ext=="py") { # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
     ns = solution.path(x)
-    else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
+    sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
   } else ""
 }
 

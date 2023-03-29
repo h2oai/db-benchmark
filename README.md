@@ -1,4 +1,4 @@
-# FORKED FROM [H2OAI](https://github.com/h2oai/db-benchmark)
+# Forked from [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark)
 
 Repository for reproducible benchmarking of database-like operations in single-node environment.  
 Benchmark report is available at [h2oai.github.io/db-benchmark](https://h2oai.github.io/db-benchmark).  
