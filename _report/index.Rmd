@@ -40,7 +40,8 @@ source("./_benchplot/benchplot.R", chdir=TRUE)
 source("./_benchplot/benchplot-dict.R", chdir=TRUE)
 ld = time_logs()
 lld = ld[script_recent==TRUE]
-lld_nodename = as.character(unique(lld$nodename))
+# lld_nodename = as.character(unique(lld$nodename))
+lld_nodename = "m4.10xlarge"
 if (length(lld_nodename)>1L)
   stop(sprintf("There are multiple different 'nodename' to be presented on single report '%s'", report_name))
 lld_unfinished = lld[is.na(script_time_sec)]

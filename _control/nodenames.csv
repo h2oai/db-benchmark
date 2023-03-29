@@ -1,4 +1,4 @@
 nodename,cpu_model,cpu_cores,memory_model,memory_gb,gpu_model,gpu_num,gpu_gb
 mr-0xc11,Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz,20,DIMM DDR4 Synchronous 2133 MHz,125.80,,,
 mr-dl11,Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz,40,DIMM Synchronous 2133 MHz,125.78,GeForce GTX 1080 Ti,2,21.83
-m4.10xlarge,Intel(R) Xeon(R) CPU E5-2676 v3 @ 2.40GHz,40,unkown,157,None,None
+m4.10xlarge,Intel(R) Xeon(R) CPU E5-2676 v3 @ 2.40GHz,40,unkown,157,None,None,None
