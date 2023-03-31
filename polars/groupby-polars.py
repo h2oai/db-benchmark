@@ -28,9 +28,14 @@ with pl.StringCache():
          .with_columns(pl.col(["id1", "id2", "id3"]).cast(pl.Categorical)))
 
 in_rows = x.shape[0]
+x.write_ipc("/tmp/tmp.ipc")
+del x
+x = pl.read_ipc("/tmp/tmp.ipc", memory_map=True)
 x = x.lazy()
 
+# materialize
 print(len(x.collect()), flush=True)
+in_rows = x.collect().shape[0]
 
 task_init = timeit.default_timer()
 print("grouping...", flush=True)
