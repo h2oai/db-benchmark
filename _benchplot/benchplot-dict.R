@@ -248,7 +248,7 @@ groupby.data.exceptions = {list(                                                
   "clickhouse" = {list(
   )},
   "polars" = {list(
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
+    # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
   )},
   "arrow" = {list(
     "timeout" = "G1_1e8_2e0_0_0", # q10
@@ -256,8 +256,8 @@ groupby.data.exceptions = {list(                                                
                          "G1_1e9_2e0_0_0") # #190
   )},
   "duckdb" = {list(
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"),
-    "incorrect: duckdb#1737" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0")
+    # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"),
+    # "incorrect: duckdb#1737" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0")
   )}
 )}
 groupby.exceptions = task.exceptions(groupby.query.exceptions, groupby.data.exceptions)
@@ -400,7 +400,7 @@ join.data.exceptions = {list(                                                   
   )},
   "duckdb" = {list(
     # "internal error: duckdb#1739" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1"),
-    # "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
     #"incorrect: duckdb#1737" = c("J1_1e7_NA_5_0","J1_1e8_NA_5_0")
   )}
 )}
