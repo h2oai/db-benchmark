@@ -11,10 +11,7 @@ source pandas/py-pandas/bin/activate
 # install binaries
 python3 -m pip install --upgrade psutil
 python3 -m pip install --upgrade pandas
-python3 -m pip install git+https://github.com/h2oai/datatable
-
-# install datatable for fast data import
-python3 -m pip install --upgrade datatable
+python3 -m pip install --upgrade pyarrow
 
 deactivate
 

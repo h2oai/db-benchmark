@@ -7,6 +7,7 @@ import gc
 import sys
 import timeit
 import pandas as pd
+import pyarrow as pa
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -18,7 +19,7 @@ fun = ".groupby"
 cache = "TRUE"
 on_disk = "FALSE"
 
-data_name = os.environ['SRC_DATANAME']
+data_name = "G1_1e7_1e2_0_0" #os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
@@ -28,17 +29,16 @@ if na_flag > 0:
   print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
   exit(0) # not yet implemented #171
 
-from datatable import fread # for loading data only, see #47
-x = fread(src_grp, na_strings=['']).to_pandas()
+x = pd.read_csv(src_grp, engine='pyarrow', dtype_backend='pyarrow')
 x['id1'] = x['id1'].astype('category') # remove after datatable#1691
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
-x['id4'] = x['id4'].astype('Int32') ## NA-aware types improved after h2oai/datatable#2761 resolved
-x['id5'] = x['id5'].astype('Int32')
-x['id6'] = x['id6'].astype('Int32')
-x['v1'] = x['v1'].astype('Int32')
-x['v2'] = x['v2'].astype('Int32')
-x['v3'] = x['v3'].astype('float64')
+# x['id4'] = x['id4'].astype('Int32') ## NA-aware types improved after h2oai/datatable#2761 resolved
+# x['id5'] = x['id5'].astype('Int32')
+# x['id6'] = x['id6'].astype('Int32')
+# x['v1'] = x['v1'].astype('Int32')
+# x['v2'] = x['v2'].astype('Int32')
+# x['v3'] = x['v3'].astype('float64')
 
 print(len(x.index), flush=True)
 
@@ -55,7 +55,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -66,7 +66,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -81,7 +81,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -92,7 +92,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -107,7 +107,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -118,7 +118,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -133,7 +133,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -144,7 +144,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -159,7 +159,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -170,7 +170,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -185,7 +185,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3']['median'].sum(), ans['v3']['std'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -196,7 +196,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3']['median'].sum(), ans['v3']['std'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -211,7 +211,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['range_v1_v2'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -222,7 +222,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['range_v1_v2'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -238,7 +238,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -250,7 +250,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -266,7 +266,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['r2'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -277,7 +277,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['r2'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -292,7 +292,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3'].sum(), ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 del ans
 gc.collect()
 t_start = timeit.default_timer()
@@ -303,7 +303,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v3'].sum(), ans['v1'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
