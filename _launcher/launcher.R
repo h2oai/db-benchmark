@@ -14,7 +14,7 @@ readret = function(x) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", 
+    "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", "duckdb-latest"="R",
     "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"

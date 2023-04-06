@@ -24,3 +24,5 @@ arrow,groupby
 arrow,join
 duckdb,groupby
 duckdb,join
+duckdb-latest,groupby
+duckdb-latest,join

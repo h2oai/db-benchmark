@@ -64,6 +64,8 @@ if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "arrow" ]]; then ./arrow/upg-
 if [[ "$RUN_SOLUTIONS" =~ "arrow" ]]; then ./arrow/ver-arrow.sh; fi;
 if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "duckdb" ]]; then ./duckdb/upg-duckdb.sh; fi;
 if [[ "$RUN_SOLUTIONS" =~ "duckdb" ]]; then ./duckdb/ver-duckdb.sh; fi;
+if [[ "$DO_UPGRADE" == true && "$RUN_SOLUTIONS" =~ "duckdb-latest" ]]; then ./duckdb-latest/setup-duckdb-latest.sh; fi;
+if [[ "$RUN_SOLUTIONS" =~ "duckdb-latest" ]]; then ./duckdb-latest/ver-duckdb-latest.sh; fi;
 
 # run
 if [[ -f ./stop ]]; then echo "# Benchmark run $BATCH has been interrupted after $(($(date +%s)-$BATCH))s due to 'stop' file" && rm -f ./stop && rm -f ./run.lock && exit; fi;
