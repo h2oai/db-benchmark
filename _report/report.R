@@ -244,8 +244,6 @@ transform = function(ld) {
 
 time_logs = function(path=getwd()) {
   ct = clean_time(load_time(path=getwd()))
-  # filter out arrow because it produces error in the output logs"
-  ct_filtered = ct %>% filter(solution != "arrow")
   d = model_time(ct_filtered)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
