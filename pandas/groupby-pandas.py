@@ -29,7 +29,7 @@ if na_flag > 0:
   print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
   exit(0) # not yet implemented #171
 
-x = pd.read_csv(src_grp, engine='pyarrow', dtype_backend='pyarrow')
+x = pd.read_csv(src_grp, engine='pyarrow',  dtype_backend='pyarrow')
 x['id1'] = x['id1'].astype('category') # remove after datatable#1691
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
@@ -39,6 +39,15 @@ x['id3'] = x['id3'].astype('category')
 # x['v1'] = x['v1'].astype('Int32')
 # x['v2'] = x['v2'].astype('Int32')
 # x['v3'] = x['v3'].astype('float64')
+
+
+x['id4'].dtype
+x['id5'].dtype
+x['id6'].dtype
+x['v1'].dtype
+x['v2'].dtype
+x['v3'].dtype
+
 
 print(len(x.index), flush=True)
 
@@ -97,31 +106,46 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v1 mean v3 by id3" # q3
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v3':'mean'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v1'].sum(), ans['v3'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v3':'mean'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v1'].sum(), ans['v3'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3), flush=True)
-print(ans.tail(3), flush=True)
-del ans
+
+# Get the following error for pandas with pyarrow backends
+# Traceback (most recent call last):
+#   File "/home/ubuntu/h2oai-db-benchmark/pandas/py-pandas/lib/python3.10/site-packages/pandas/core/groupby/groupby.py", line 1490, in array_func
+#     result = self.grouper._cython_operation(
+#   File "/home/ubuntu/h2oai-db-benchmark/pandas/py-pandas/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 959, in _cython_operation
+#     return cy_op.cython_operation(
+#   File "/home/ubuntu/h2oai-db-benchmark/pandas/py-pandas/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 649, in cython_operation
+#     return self._ea_wrap_cython_operation(
+#   File "/home/ubuntu/h2oai-db-benchmark/pandas/py-pandas/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 365, in _ea_wrap_cython_operation
+#     npvalues = self._ea_to_cython_values(values)
+#   File "/home/ubuntu/h2oai-db-benchmark/pandas/py-pandas/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 394, in _ea_to_cython_values
+#     raise NotImplementedError(
+# NotImplementedError: function is not implemented for this dtype: int64[pyarrow]
+
+# question = "sum v1 mean v3 by id3" # q3
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v3':'mean'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v1'].sum(), ans['v3'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v3':'mean'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v1'].sum(), ans['v3'].sum()]
+# chkt = timeit.default_timer() - t_start
+# # write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# print(ans.head(3), flush=True)
+# print(ans.tail(3), flush=True)
+# del ans
 
 question = "mean v1:v3 by id4" # q4
 gc.collect()
@@ -149,31 +173,33 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v1:v3 by id6" # q5
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id6', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id6', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3), flush=True)
-print(ans.tail(3), flush=True)
-del ans
+
+# Skipped for same reason as q3
+# question = "sum v1:v3 by id6" # q5
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id6', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id6', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v1'].sum(), ans['v2'].sum(), ans['v3'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# print(ans.head(3), flush=True)
+# print(ans.tail(3), flush=True)
+# del ans
 
 question = "median v3 sd v3 by id4 id5" # q6
 gc.collect()
@@ -201,31 +227,32 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "max v1 - min v2 by id3" # q7
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['range_v1_v2'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['range_v1_v2'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3), flush=True)
-print(ans.tail(3), flush=True)
-del ans
+# Skipped for same reason as q3
+# question = "max v1 - min v2 by id3" # q7
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['range_v1_v2'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby('id3', as_index=False, sort=False, observed=True, dropna=False).agg({'v1':'max', 'v2':'min'}).assign(range_v1_v2=lambda x: x['v1']-x['v2'])[['id3','range_v1_v2']]
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['range_v1_v2'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# print(ans.head(3), flush=True)
+# print(ans.tail(3), flush=True)
+# del ans
 
 question = "largest two v3 by id6" # q8
 gc.collect()
@@ -282,31 +309,32 @@ print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
 
-question = "sum v3 count by id1:id6" # q10
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v3'].sum(), ans['v1'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-del ans
-gc.collect()
-t_start = timeit.default_timer()
-ans = x.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})
-print(ans.shape, flush=True)
-t = timeit.default_timer() - t_start
-m = memory_usage()
-t_start = timeit.default_timer()
-chk = [ans['v3'].sum(), ans['v1'].sum()]
-chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
-print(ans.head(3), flush=True)
-print(ans.tail(3), flush=True)
-del ans
+# skipped for same reason as q3.
+# question = "sum v3 count by id1:id6" # q10
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v3'].sum(), ans['v1'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=1, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# del ans
+# gc.collect()
+# t_start = timeit.default_timer()
+# ans = x.groupby(['id1','id2','id3','id4','id5','id6'], as_index=False, sort=False, observed=True, dropna=False).agg({'v3':'sum', 'v1':'size'})
+# print(ans.shape, flush=True)
+# t = timeit.default_timer() - t_start
+# m = memory_usage()
+# t_start = timeit.default_timer()
+# chk = [ans['v3'].sum(), ans['v1'].sum()]
+# chkt = timeit.default_timer() - t_start
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# print(ans.head(3), flush=True)
+# print(ans.tail(3), flush=True)
+# del ans
 
 print("grouping finished, took %0.fs" % (timeit.default_timer()-task_init), flush=True)
 
