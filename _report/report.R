@@ -244,7 +244,7 @@ transform = function(ld) {
 
 time_logs = function(path=getwd()) {
   ct = clean_time(load_time(path=getwd()))
-  d = model_time(ct_filtered)
+  d = model_time(ct)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
   
