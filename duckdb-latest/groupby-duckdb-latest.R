@@ -203,7 +203,7 @@ invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 
 question = "largest two v3 by id6" # q8
 t = system.time({
-  dbExecute(con, "CREATE TABLE ans AS SELECT id6, unnest(list_sort(list(v3), 'desc')[1:2]) AS v3 FROM (SELECT id6, v3 FROM x_group WHERE v3 IS NOT NULL) AS subq GROUP BY id6;")
+  dbExecute(con, "CREATE TABLE ans AS SELECT id6, unnest(list_sort(list(v3), 'desc')[1:2]) AS largest2_v3 FROM (SELECT id6, v3 FROM x WHERE v3 IS NOT NULL) AS subq GROUP BY id6;")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
@@ -211,7 +211,7 @@ chkt = system.time(chk<-dbGetQuery(con, "SELECT sum(largest2_v3) AS largest2_v3 
 write.log(run=1L, task=task, data=data_name, in_rows=in_nr, question=question, out_rows=nr, out_cols=nc, solution=solution, version=ver, git=git, fun=fun, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 invisible(dbExecute(con, "DROP TABLE IF EXISTS ans"))
 t = system.time({
-  dbExecute(con, "CREATE TABLE ans AS SELECT id6, unnest(list_sort(list(v3), 'desc')[1:2]) AS v3 FROM (SELECT id6, v3 FROM x_group WHERE v3 IS NOT NULL) AS subq GROUP BY id6;")
+  dbExecute(con, "CREATE TABLE ans AS SELECT id6, unnest(list_sort(list(v3), 'desc')[1:2]) AS largest2_v3 FROM (SELECT id6, v3 FROM x WHERE v3 IS NOT NULL) AS subq GROUP BY id6;")
   print(c(nr<-dbGetQuery(con, "SELECT count(*) AS cnt FROM ans")$cnt, nc<-ncol(dbGetQuery(con, "SELECT * FROM ans LIMIT 0"))))
 })[["elapsed"]]
 m = memory_usage()
