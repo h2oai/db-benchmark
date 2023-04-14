@@ -212,14 +212,14 @@ groupby.syntax.dict = {list(
 groupby.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
-  "pandas" =      list(),
+  "pandas" =      list("Arithmetic not implemented for pyarrow backend" = "sum v1 mean v3 by id3", "Arithmetic not implemented for pyarrow backend" = "sum v1:v3 by id6", "Arithmetic not implemented for pyarrow backend" = "max v1 - min v2 by id3", "Arithmetic not implemented for pyarrow backend" = "sum v3 count by id1:id6"),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
   "juliadf" =     list(),
   "clickhouse" =  list(),
   "polars"     =  list(),
-  "arrow"      =  list(),
+  "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
   "duckdb"     =  list(),
   "duckdb-latest"     =  list()
 )}
@@ -235,8 +235,8 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q3 #152, before was q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
-    "not yet implemented: pandas#36327" = c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), # #171
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #99
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1"), # read_csv #99
+    "not implemented" = c("G1_1e7_1e2_0_0", "G1_1e7_1e1_0_0", "G1_1e7_2e0_0_0", "G1_1e7_1e2_0_1", "G1_1e7_1e2_5_0", "G1_1e8_1e2_0_0", "G1_1e8_1e1_0_0", "G1_1e8_2e0_0_0", "G1_1e8_1e2_0_1", "G1_1e8_1e2_5_0")
   )},
   "pydatatable" = {list(
     "csv reader NAs bug: datatable#2808" = c("G1_1e9_1e2_5_0")
@@ -265,9 +265,10 @@ groupby.data.exceptions = {list(                                                
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # q10
   )},
   "arrow" = {list(
-    "timeout" = "G1_1e8_2e0_0_0", # q10
-    "internal error" = c("G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0","G1_1e9_1e1_0_0", # inherits from dplyr
-                         "G1_1e9_2e0_0_0") # #190
+    # "timeout" = c(), # q10
+    "internal error" = c("G1_1e8_2e0_0_0", "G1_1e8_1e2_0_1", "G1_1e8_1e2_5_0", "G1_1e9_1e2_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0","G1_1e9_1e1_0_0", # inherits from dplyr
+                         "G1_1e9_2e0_0_0"), # #190
+    "not implemented" = c("G1_1e7_1e2_0_0", "G1_1e7_1e1_0_0", "G1_1e7_2e0_0_0", "G1_1e7_1e2_0_1", "G1_1e7_1e2_5_0", "G1_1e8_1e2_0_0", "G1_1e8_1e1_0_0")
   )},
   "duckdb" = {list(
     # "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0"),
