@@ -268,7 +268,6 @@ rpivotTable::rpivotTable(
 - Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
 - Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 160 GB machine), it will use on-disk data storage if possible. In such a case solution name is denoted by a `*` suffix on the legend.
 - ClickHouse and DuckDB queries are `CREATE TABLE ans AS SELECT ...` to match the functionality provided by other solutions in terms of caching results of queries, see [#151](https://github.com/h2oai/db-benchmark/issues/151).
-- Arrow results are currently causing errors when generating the report. Please file an issue if you wish to see this fixed.
 - We ensure that calculations are not deferred by solution.
 - Because of the above, as of current moment, join timings of python datatable suffers from an extra deep copy. As a result of that extra overhead it suffers additionally with out of memory error for 1e9 join q5 _big-to-big_ join.
 - We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
