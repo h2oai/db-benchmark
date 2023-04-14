@@ -14,7 +14,7 @@ publishGhPages(){
   ## Set gh token from local file
 
   ## Reset gh-pages branch
-  git remote add upstream "git@github.com:Tmonster/h2oai-db-benchmark.git"
+  git remote add upstream "git@github.com:duckdblabs/db-benchmark.git"
   git fetch -q upstream gh-pages 2>err.txt
   rm -f err.txt
   git checkout -q gh-pages
