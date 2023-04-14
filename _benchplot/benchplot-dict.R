@@ -212,7 +212,7 @@ groupby.syntax.dict = {list(
 groupby.query.exceptions = {list(
   "data.table" =  list(),
   "dplyr" =       list(),
-  "pandas" =      list("Arithmetic not implemented for pyarrow backend" = "sum v1 mean v3 by id3", "Arithmetic not implemented for pyarrow backend" = "sum v1:v3 by id6", "Arithmetic not implemented for pyarrow backend" = "max v1 - min v2 by id3", "Arithmetic not implemented for pyarrow backend" = "sum v3 count by id1:id6"),
+  "pandas" =      list(),
   "pydatatable" = list(),
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
@@ -235,8 +235,7 @@ groupby.data.exceptions = {list(                                                
                   "G1_1e9_2e0_0_0")                                                          # q3 #152, before was q2 #110 also sometimes segfaults during fread but not easily reproducible
   )},
   "pandas" = {list(
-    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1"), # read_csv #99
-    "not implemented" = c("G1_1e7_1e2_0_0", "G1_1e7_1e1_0_0", "G1_1e7_2e0_0_0", "G1_1e7_1e2_0_1", "G1_1e7_1e2_5_0", "G1_1e8_1e2_0_0", "G1_1e8_1e1_0_0", "G1_1e8_2e0_0_0", "G1_1e8_1e2_0_1", "G1_1e8_1e2_5_0")
+    "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1") # read_csv #9
   )},
   "pydatatable" = {list(
     "csv reader NAs bug: datatable#2808" = c("G1_1e9_1e2_5_0")
