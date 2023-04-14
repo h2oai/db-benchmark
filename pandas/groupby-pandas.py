@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 print("# groupby-pandas.py", flush=True)
 
@@ -7,6 +7,7 @@ import gc
 import sys
 import timeit
 import pandas as pd
+import pyarrow as pa
 
 exec(open("./_helpers/helpers.py").read())
 
@@ -28,17 +29,18 @@ if na_flag > 0:
   print("skip due to na_flag>0: #171", flush=True, file=sys.stderr)
   exit(0) # not yet implemented #171
 
-from datatable import fread # for loading data only, see #47
-x = fread(src_grp, na_strings=['']).to_pandas()
+# NOTE: pandas with pyarrow backends produces worse results. Most likely because arithmetic
+# is not implemented for pyarrow backends and the columns are then converted into numpy arrays.
+x = pd.read_csv(src_grp, engine='pyarrow')
 x['id1'] = x['id1'].astype('category') # remove after datatable#1691
 x['id2'] = x['id2'].astype('category')
 x['id3'] = x['id3'].astype('category')
-x['id4'] = x['id4'].astype('Int32') ## NA-aware types improved after h2oai/datatable#2761 resolved
-x['id5'] = x['id5'].astype('Int32')
-x['id6'] = x['id6'].astype('Int32')
-x['v1'] = x['v1'].astype('Int32')
-x['v2'] = x['v2'].astype('Int32')
-x['v3'] = x['v3'].astype('float64')
+# x['id4'] = x['id4'].astype('Int32') ## NA-aware types improved after h2oai/datatable#2761 resolved
+# x['id5'] = x['id5'].astype('Int32')
+# x['id6'] = x['id6'].astype('Int32')
+# x['v1'] = x['v1'].astype('Int32')
+# x['v2'] = x['v2'].astype('Int32')
+# x['v3'] = x['v3'].astype('float64')
 
 print(len(x.index), flush=True)
 
@@ -118,7 +120,7 @@ m = memory_usage()
 t_start = timeit.default_timer()
 chk = [ans['v1'].sum(), ans['v3'].sum()]
 chkt = timeit.default_timer() - t_start
-write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
+# write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_rows=ans.shape[0], out_cols=ans.shape[1], solution=solution, version=ver, git=git, fun=fun, run=2, time_sec=t, mem_gb=m, cache=cache, chk=make_chk(chk), chk_time_sec=chkt, on_disk=on_disk)
 print(ans.head(3), flush=True)
 print(ans.tail(3), flush=True)
 del ans
@@ -259,7 +261,7 @@ question = "regression v1 v2 by id2 id4" # q9
 #corr().iloc[0::2][['v2']]**2 # on 1e8,k=1e2 slower, 76s vs 47s
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: pd.Series({'r2': x.corr(numeric_only=True)['v1']['v2']**2}))
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()
@@ -270,7 +272,7 @@ write_log(task=task, data=data_name, in_rows=x.shape[0], question=question, out_
 del ans
 gc.collect()
 t_start = timeit.default_timer()
-ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: pd.Series({'r2': x.corr()['v1']['v2']**2}))
+ans = x[['id2','id4','v1','v2']].groupby(['id2','id4'], as_index=False, sort=False, observed=True, dropna=False).apply(lambda x: pd.Series({'r2': x.corr(numeric_only=True)['v1']['v2']**2}))
 print(ans.shape, flush=True)
 t = timeit.default_timer() - t_start
 m = memory_usage()

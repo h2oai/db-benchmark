@@ -5,4 +5,4 @@ echo 'upgrading polars...'
 
 source ./polars/py-polars/bin/activate
 
-python -m pip install --upgrade polars > /dev/null
+python3 -m pip install --upgrade polars > /dev/null

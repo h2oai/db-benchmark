@@ -5,13 +5,13 @@ cat("# join-duckdb.R\n")
 source("./_helpers/helpers.R")
 
 suppressPackageStartupMessages({
-  library("DBI", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
-  library("duckdb", lib.loc="./duckdb/r-duckdb", warn.conflicts=FALSE)
+  library("DBI", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
+  library("duckdb", lib.loc="./duckdb-latest/r-duckdb-latest", warn.conflicts=FALSE)
 })
 ver = packageVersion("duckdb")
 #git = "" # set up later on after connecting to db
 task = "join"
-solution = "duckdb"
+solution = "duckdb-latest"
 cache = TRUE
 
 data_name = Sys.getenv("SRC_DATANAME")

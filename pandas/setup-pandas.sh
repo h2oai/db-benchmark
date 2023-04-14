@@ -5,19 +5,20 @@ set -e
 sudo apt-get update
 sudo apt-get install build-essential python3-dev python3-pip
 
-virtualenv pandas/py-pandas --python=/usr/bin/python3.7
+virtualenv pandas/py-pandas --python=/usr/bin/python3.10
 source pandas/py-pandas/bin/activate
 
 # install binaries
-python -m pip install --upgrade psutil
-python -m pip install --upgrade pandas
+python3 -m pip install --upgrade psutil
+python3 -m pip install --upgrade pandas
+python3 -m pip install --upgrade pyarrow
 
-# install datatable for fast data import
-python -m pip install --upgrade datatable
-
-# check
-python
-import pandas as pd
-pd.__version__
-quit()
 deactivate
+
+# # check
+# source pandas/py-pandas/bin/activate
+# python3
+# import pandas as pd
+# pd.__version__
+# quit()
+# deactivate

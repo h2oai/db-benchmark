@@ -3,12 +3,11 @@ set -e
 
 # install dependencies
 sudo apt-get update -qq
-sudo apt-get install -y python3.6-dev virtualenv
 
-virtualenv polars/py-polars --python=/usr/bin/python3.6
+virtualenv polars/py-polars --python=/usr/bin/python3.10
 source polars/py-polars/bin/activate
 
-python -m pip install --upgrade psutil polars
+python3 -m pip install --upgrade psutil polars
 
 # build
 deactivate
@@ -16,7 +15,7 @@ deactivate
 
 # check
 source polars/py-polars/bin/activate
-python
+python3
 import polars as pl
 pl.__version__
 quit()

@@ -55,6 +55,7 @@ is.pause()
 is.stop()
 
 # launch script, if not mockup, if not already run, unless forcerun
+dt
 launch(dt, mockup=mockup)
 
 # terminates

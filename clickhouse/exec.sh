@@ -13,9 +13,12 @@ source ./_helpers/helpers.sh
 ch_start
 
 # confirm server working, wait if it crashed in last run
-ch_active || sleep 120
+ch_active || sleep 20
 ch_active || echo 'clickhouse-server should be already running, investigate' >&2
 ch_active || exit 1
+
+
+# tail -n+2 data/G1_1e7_1e2_0_0.csv | clickhouse-client --query="INSERT INTO G1_1e7_1e2_0_0 SELECT * FROM input('id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)') FORMAT CSV"
 
 # tune CH settings and load data
 CH_MEM=107374182400 # 100GB ## old value 128849018880 # 120GB ## now set to 96GB after cache=1 to in-memory temp tables because there was not enough mem for R to parse timings
@@ -26,30 +29,30 @@ if [ $1 == 'groupby' ]; then
   CH_EXT_SORT=53687091200
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
   clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $SRC_DATANAME SELECT id1, id2, id3, id4, id5, id6, v1, v2, v3 FROM file('data/$SRC_DATANAME.csv', 'CSVWithNames', 'id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)')"
+  tail -n+2 data/$SRC_DATANAME.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $SRC_DATANAME SELECT * FROM input('id1 Nullable(String), id2 Nullable(String), id3 Nullable(String), id4 Nullable(Int32), id5 Nullable(Int32), id6 Nullable(Int32), v1 Nullable(Int32), v2 Nullable(Int32), v3 Nullable(Float64)') FORMAT CSV"
   # confirm all data loaded yandex/ClickHouse#4463
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $SRC_DATANAME'\n$(echo $SRC_DATANAME | cut -d'_' -f2)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
 elif [ $1 == 'join' ]; then
   # lhs
   clickhouse-client --query "DROP TABLE IF EXISTS $SRC_DATANAME"
   clickhouse-client --query "CREATE TABLE $SRC_DATANAME (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v1 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $SRC_DATANAME SELECT id1, id2, id3, id4, id5, id6, v1 FROM file('data/$SRC_DATANAME.csv', 'CSVWithNames', 'id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v1 Nullable(Float64)')"
+  tail -n+2 data/$SRC_DATANAME.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $SRC_DATANAME SELECT * FROM input('id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v1 Nullable(Float64)') FORMAT CSV"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $SRC_DATANAME'\n$(echo $SRC_DATANAME | cut -d'_' -f2)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
   RHS=$(join_to_tbls $SRC_DATANAME)
   RHS1=$(echo $RHS | cut -d' ' -f1)
   clickhouse-client --query "DROP TABLE IF EXISTS $RHS1"
   clickhouse-client --query "CREATE TABLE $RHS1 (id1 Nullable(Int32), id4 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS1 SELECT id1, id4, v2 FROM file('data/$RHS1.csv', 'CSVWithNames', 'id1 Nullable(Int32), id4 Nullable(String), v2 Nullable(Float64)')"
+  tail -n+2 data/$RHS1.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS1 SELECT * FROM input('id1 Nullable(Int32), id4 Nullable(String), v2 Nullable(Float64)') FORMAT CSV"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $RHS1'\n$(echo $RHS1 | cut -d'_' -f3)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
   RHS2=$(echo $RHS | cut -d' ' -f2)
   clickhouse-client --query "DROP TABLE IF EXISTS $RHS2"
   clickhouse-client --query "CREATE TABLE $RHS2 (id1 Nullable(Int32), id2 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS2 SELECT id1, id2, id4, id5, v2 FROM file('data/$RHS2.csv', 'CSVWithNames', 'id1 Nullable(Int32), id2 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), v2 Nullable(Float64)')"
+  tail -n+2 data/$RHS2.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS2 SELECT * FROM input('id1 Nullable(Int32), id2 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), v2 Nullable(Float64)') FORMAT CSV"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $RHS2'\n$(echo $RHS2 | cut -d'_' -f3)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
   RHS3=$(echo $RHS | cut -d' ' -f3)
   clickhouse-client --query "DROP TABLE IF EXISTS $RHS3"
   clickhouse-client --query "CREATE TABLE $RHS3 (id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)) ENGINE = MergeTree() ORDER BY tuple();"
-  clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS3 SELECT id1, id2, id3, id4, id5, id6, v2 FROM file('data/$RHS3.csv', 'CSVWithNames', 'id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)')"
+  tail -n+2 data/$RHS3.csv | clickhouse-client --max_memory_usage $CH_MEM --max_insert_threads 1 --query "INSERT INTO $RHS3 SELECT * FROM input('id1 Nullable(Int32), id2 Nullable(Int32), id3 Nullable(Int32), id4 Nullable(String), id5 Nullable(String), id6 Nullable(String), v2 Nullable(Float64)') FORMAT CSV"
   echo -e "clickhouse-client --query 'SELECT count(*) FROM $RHS3'\n$(echo $RHS3 | cut -d'_' -f3)" | Rscript -e 'stdin=readLines(file("stdin")); if ((loaded<-as.numeric(system(stdin[1L], intern=TRUE)))!=as.numeric(stdin[2L])) stop("incomplete data load, expected: ", stdin[2L],", loaded: ", loaded)'
 else
   echo "clickhouse task $1 not implemented" >&2 && exit 1

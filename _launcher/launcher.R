@@ -14,8 +14,8 @@ readret = function(x) {
 file.ext = function(x) {
   ans = switch(
     x,
-    "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", 
-    "pandas"=, "cudf"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
+    "data.table"=, "dplyr"=, "h2o"=, "arrow"=, "duckdb"="R", "duckdb-latest"="R",
+    "pandas"=, "spark"=, "pydatatable"=, "modin"=, "dask"=, "polars"="py",
     "clickhouse"="sql",
     "juliadf"="jl"
   )
@@ -33,8 +33,7 @@ solution.venv = function(x) {
   ext = file.ext(x)
   if (ext=="py") { # https://stackoverflow.com/questions/52779016/conda-command-working-in-command-prompt-but-not-in-bash-script
     ns = solution.path(x)
-    if (x%in%c("cudf")) sprintf("source ~/anaconda3/etc/profile.d/conda.sh && conda activate %s && ", ns)
-    else sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
+    sprintf("source ./%s/py-%s/bin/activate && ", ns, ns)
   } else ""
 }
 
@@ -202,6 +201,7 @@ launch = function(dt, mockup, out_dir="out") {
         }
         cmd = sprintf("%s > %s 2> %s", solution.cmd(s, t, d), out_file, err_file) # ./_launcher/solution.R ... > out 2> err
         shcmd = sprintf("/bin/bash -c \"%s%s\"", venv, cmd) # this is needed to source python venv
+# 	cat(mockup)
         if (!mockup) {
           warn = NULL
           p = proc.time()[[3L]]

@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-virtualenv modin/py-modin --python=/usr/bin/python3.6
+virtualenv modin/py-modin --python=/usr/bin/python3.10
 source modin/py-modin/bin/activate
 
 # install binaries
-python -m pip install --upgrade modin[all]
+python3 -m pip install --upgrade modin[all]
 
 # check
-python
+python3
 import modin
 modin.__version__
 quit()

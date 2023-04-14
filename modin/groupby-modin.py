@@ -7,10 +7,17 @@ import gc
 import timeit
 import modin as modin
 import modin.pandas as pd
+import ray
 
 exec(open("./_helpers/helpers.py").read())
 
 ver = modin.__version__
+
+ray.init(runtime_env={'env_vars': {'__MODIN_AUTOIMPORT_PANDAS__': '1'}})
+warnings.filterwarnings('ignore')
+
+os.environ["MODIN_ENGINE"] = "ray"
+
 git = ""
 task = "groupby"
 solution = "modin"

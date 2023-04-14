@@ -5,4 +5,4 @@ echo 'upgrading pandas...'
 
 source ./pandas/py-pandas/bin/activate
 
-python -m pip install --upgrade pandas > /dev/null
+python3 -m pip install --upgrade pandas > /dev/null

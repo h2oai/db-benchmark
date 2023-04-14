@@ -10,6 +10,8 @@ output:
 # Rscript -e 'rmarkdown::render("./_report/index.Rmd", output_dir="public")' && xdg-open public/index.html
 ```
 
+The code for this benchmark can be found at [https://github.com/duckdblabs/db-benchmark](https://github.com/duckdblabs/db-benchmark) and has been forked from [https://github.com/h2oai/db-benchmark](https://github.com/h2oai/db-benchmark).
+
 This page aims to benchmark various database-like tools popular in open-source data science. It runs regularly against very latest versions of these packages and automatically updates. We provide this as a service to both developers of these packages and to users. You can find out more about the project in [_Efficiency in data processing_ slides](https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf) and [talk made by Matt Dowle on H2OWorld 2019 NYC conference](https://www.youtube.com/watch?v=fZpA_cU0SPg).
 
 We also include the syntax being timed alongside the timing. This way you can immediately see whether you are doing these tasks or not, and if the timing differences matter to you or not. A 10x difference may be irrelevant if that's just 1s vs 0.1s on your data size. The intention is that you click the tab for the size of data you have.
@@ -38,7 +40,8 @@ source("./_benchplot/benchplot.R", chdir=TRUE)
 source("./_benchplot/benchplot-dict.R", chdir=TRUE)
 ld = time_logs()
 lld = ld[script_recent==TRUE]
-lld_nodename = as.character(unique(lld$nodename))
+# lld_nodename = as.character(unique(lld$nodename))
+lld_nodename = "m4.10xlarge"
 if (length(lld_nodename)>1L)
   stop(sprintf("There are multiple different 'nodename' to be presented on single report '%s'", report_name))
 lld_unfinished = lld[is.na(script_time_sec)]
@@ -153,6 +156,7 @@ loop_benchplot(dt_groupby2014, report_name="groupby2014", syntax.dict=groupby201
 
 ![](./join/J1_1e8_NA_0_0_basic.png)
 
+
 <!--
 ##### **advanced questions**
 
@@ -259,21 +263,19 @@ rpivotTable::rpivotTable(
 
 ## Notes
 
+
 - You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in [repository](https://github.com/h2oai/db-benchmark).
 - Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
-- Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 125 GB machine), it will use on-disk data storage if possible. In such a case solution name is denoted by a `*` suffix on the legend.
-- For a cuDF solution _on-disk_ memory actually means main memory because this is where memory spills from GPU memory.
-- ClickHouse queries were made against `mergetree` table engine, see [#91](https://github.com/h2oai/db-benchmark/issues/91) for details.
+- Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 160 GB machine), it will use on-disk data storage if possible. In such a case solution name is denoted by a `*` suffix on the legend.
 - ClickHouse and DuckDB queries are `CREATE TABLE ans AS SELECT ...` to match the functionality provided by other solutions in terms of caching results of queries, see [#151](https://github.com/h2oai/db-benchmark/issues/151).
-- Arrow _groupby_ task has been added but (as of Feb 2021) it is falling back to dplyr computation engine. Once native Arrow implementations will be ready, it will get automatically reflected thanks to automatic upgrades. For _join_ task it is not yet implemented and also not falling back to dplyr either. For details see [arrow#11679](https://issues.apache.org/jira/browse/ARROW-11679).
 - We ensure that calculations are not deferred by solution.
 - Because of the above, as of current moment, join timings of python datatable suffers from an extra deep copy. As a result of that extra overhead it suffers additionally with out of memory error for 1e9 join q5 _big-to-big_ join.
 - We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
 
 ## Environment configuration
 
-- R 4.0.3
-- python 3.6 and 3.7
+- R 4.2.2
+- python 3.10
 - Julia 1.6.1
 
 ```{r environment_hardware}

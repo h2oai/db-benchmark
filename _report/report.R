@@ -1,11 +1,12 @@
 library(data.table)
+suppressPackageStartupMessages(library(dplyr))
 stopifnot(requireNamespace("knitr", quietly=TRUE))
 kk = knitr::kable
 get_report_status_file = function(path=getwd()) {
   file.path(path, "report-done")
 }
 get_report_solutions = function() {
-  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse", "cudf", "polars","arrow","duckdb")
+  c("data.table", "dplyr", "pandas", "pydatatable", "spark", "dask", "juliadf", "clickhouse", "cudf", "polars","arrow","duckdb", "duckdb-latest")
 }
 get_data_levels = function() {
   ## groupby
@@ -77,14 +78,7 @@ clean_time = function(d) {
               ][task=="groupby" & question%in%old_advanced_groupby_questions & batch<1573882448, c("out_rows","out_cols","chk") := list(NA_integer_, NA_integer_, NA_character_)
                 ][task=="groupby" & solution=="dask" & batch>=1609583373 & batch<Inf & question=="regression v1 v2 by id2 id4", c("out_rows","chk") := .(NA_integer_, NA_character_) ## change Inf to batch after upgrading to dask#7024
                 ][solution=="polars" & batch<=1622492790, c("chk","out_rows") := list(NA_character_, NA_integer_) # polars NA handling broken in 0.7.19? #223
-                ][solution=="duckdb" & batch<=1620549597 & task=="groupby" & question=="median v3 sd v3 by id4 id5", ## duckdb median is inaccurate #205
-                  `:=`(chk=NA_character_, time_sec=NA_real_)
-                  ][solution=="duckdb" & batch<Inf & ( ## duckdb NA handling regression in 0.2.6 #206
-                    (task=="join" & data%like%"5_0") | (task=="groupby" & data%like%"5_0" & question=="sum v3 count by id1:id6")
-                  ), `:=`(chk=NA_character_, time_sec=NA_real_)
-                  ][solution=="cudf" & batch==1622464755 & data%in%c("G1_1e7_1e2_5_0","G1_1e8_1e2_5_0","G1_1e9_1e2_5_0"), #221
-                    `:=`(out_rows=NA_integer_, out_cols=NA_integer_, time_sec=NA_real_, chk=NA_character_, chk_time_sec=NA_real_)
-                  ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
+                ][, `:=`(nodename=ft(nodename), in_rows=ft(in_rows), question=ft(question), solution=ft(solution), fun=ft(fun), version=ft(version), git=ft(git), task=ft(task),
                          data=fctr(data, levels=unlist(get_data_levels())))
                     ][]
 }
@@ -105,12 +99,10 @@ clean_questions = function(q) {
 model_time = function(d) {
   if (!nrow(d))
     stop("timings is a 0 row table")
-  # chk tolerance for cudf: https://github.com/rapidsai/cudf/issues/2494
-  #d[!is.na(chk) & solution=="cudf", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L]
-  # and dask #136
   #d[!is.na(chk) & solution=="dask", .(unq_chk=paste(unique(chk), collapse=","), unqn_chk=uniqueN(chk)), .(task, solution, data, question)][unqn_chk>1L] 
-  approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6, cudf needs 1e-3
-    l = lapply(as.list(rbindlist(lapply(strsplit(x, ";", fixed=TRUE), as.list))), type.convert)
+  approxUniqueN1 = function(x, tolerance=1e-3, debug=FALSE) { ## dask is fine on 1e-6,
+    # message(paste('ok made it this far with x=',x))
+    l = lapply(as.list(rbindlist(lapply(strsplit(as.character(x), ";", fixed=TRUE), as.list))), type.convert, as.is = TRUE)
     int = sapply(l, is.integer)
     dbl = sapply(l, is.double)
     if (sum(int, dbl)!=length(l)) stop("chk has elements that were not converted to int or double")
@@ -125,7 +117,7 @@ model_time = function(d) {
     }, t=tolerance, NA)
     all(ans)
   }
-  #d[solution=="polars" & data%like%"G1_1e[7|8]_1e2_5_0" & run==1L & {z=tail(unique(batch, na.rm=TRUE), 3); print(z); batch%in%z}][, dcast(.SD, data+question~batch+version, value.var="chk")]
+  # d[solution=="polars" & data%like%"G1_1e[7|8]_1e2_5_0" & run==1L & {z=tail(unique(batch, na.rm=TRUE), 3); print(z); batch%in%z}][, dcast(.SD, data+question~batch+version, value.var="chk")]
   if (nrow(
     d[!is.na(chk), .(unqn1_chk=approxUniqueN1(chk)), .(task, solution, data, question)][unqn1_chk==FALSE]
     )) stop("Value of 'chk' varies for different runs for single solution+question")
@@ -251,7 +243,8 @@ transform = function(ld) {
 # all ----
 
 time_logs = function(path=getwd()) {
-  d = model_time(clean_time(load_time(path=path)))
+  ct = clean_time(load_time(path=getwd()))
+  d = model_time(ct)
   l = model_logs(clean_logs(load_logs(path=path)))
   q = model_questions(clean_questions(load_questions(path=path)))
   
@@ -261,3 +254,4 @@ time_logs = function(path=getwd()) {
   lld = transform(ld)
   lld
 }
+
