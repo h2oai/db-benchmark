@@ -422,7 +422,7 @@ join.data.exceptions = {list(                                                   
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "arrow" = {list(
-    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")#,
+    "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1", "J1_1e8_NA_0_0", "J1_1e8_NA_5_0", "J1_1e8_NA_0_1" )#,
     # "not yet implemented: #189" = c("J1_1e7_NA_0_0","J1_1e7_NA_5_0","J1_1e7_NA_0_1","J1_1e8_NA_0_0","J1_1e8_NA_5_0","J1_1e8_NA_0_1","J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")
   )},
   "duckdb" = {list(
