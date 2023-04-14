@@ -69,7 +69,7 @@ loop_benchplot = function(dt_task, report_name, syntax.dict, exceptions, solutio
         title.txt.fun = title.txt.fun,
         cutoff = cutoff,
         pending = pending,
-        url.footer = "https://h2oai.github.io/db-benchmark",
+        url.footer = "https://duckdblabs.github.io/db-benchmark",
         interactive = FALSE
       )
     }
@@ -264,13 +264,13 @@ rpivotTable::rpivotTable(
 ## Notes
 
 
-- You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in [repository](https://github.com/h2oai/db-benchmark).
-- Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/h2oai/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
+- You are welcome to run this benchmark yourself! all scripts related to setting up environment, data and benchmark are in the repository [repository](https://github.com/duckdblabs/db-benchmark).
+- Data used to generate benchmark plots on this website can be obtained from [time.csv](./time.csv) (together with [logs.csv](./logs.csv)). See [_report/report.R](https://github.com/duckdblabs/db-benchmark/blob/master/_report/report.R) for quick introduction how to work with those.
 - Solutions are using in-memory data storage to achieve best timing. In case a solution runs out of memory (we use 160 GB machine), it will use on-disk data storage if possible. In such a case solution name is denoted by a `*` suffix on the legend.
 - ClickHouse and DuckDB queries are `CREATE TABLE ans AS SELECT ...` to match the functionality provided by other solutions in terms of caching results of queries, see [#151](https://github.com/h2oai/db-benchmark/issues/151).
 - We ensure that calculations are not deferred by solution.
 - Because of the above, as of current moment, join timings of python datatable suffers from an extra deep copy. As a result of that extra overhead it suffers additionally with out of memory error for 1e9 join q5 _big-to-big_ join.
-- We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/h2oai/db-benchmark/blob/master/_utils/answers-validation.R).
+- We also tested that answers produced from different solutions match each others, for details see [_utils/answers-validation.R](https://github.com/duckdblabs/db-benchmark/blob/master/_utils/answers-validation.R).
 
 ## Environment configuration
 
@@ -296,7 +296,7 @@ We limit the scope to what can be achieved on a single machine. Laptop size memo
 
 ## Why db-benchmark?
 
-Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). In case of questions/feedback, feel free to file an issue there.
+Because we have been asked many times to do so, the first task and initial motivation for this page, was to update the benchmark designed and run by [Matt Dowle](https://twitter.com/MattDowle) (creator of [data.table](https://github.com/Rdatatable/data.table)) in 2014 [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping). The methodology and reproducible code can be obtained there. Exact code of this report and benchmark script can be found at [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark) created by [Jan Gorecki](https://github.com/jangorecki) funded by [H2O.ai](https://www.h2o.ai). H2O.ai stopped supporting the benchmark in 2021. In 2023, DuckdbLabs decided to start maintaining the benchmark, and code can be found at [duckdblabs/db-benchmark](https://github.com/duckdblabs/db-benchmark).
 
 ------
 

@@ -25,7 +25,7 @@ Contribution and feedback are very welcome!
   - [x] [Arrow](https://github.com/apache/arrow)
   - [x] [DuckDB](https://github.com/duckdb/duckdb)
 
-If you would like your solution to be included, you can file an issue and track the status by using a [_new solution_]() issue.
+If you would like your solution to be included, feel free to file a PR with the necessary setup-_solution_/ver-_solution_/groupby-_solution_/join-_solution_ scripts. The team at duckdblabs approves the PR it will be merged.
 
 # Reproduce
 
@@ -63,7 +63,7 @@ If you would like your solution to be included, you can file an issue and track 
 # Example environment
 
 - setting up m4.10xlarge: 160GB RAM, 32 cores: [Amazon link](https://aws.amazon.com/ec2/instance-types/)  
-- Full reproduce script on clean Ubuntu 22.04: [_utils/repro.sh](https://github.com/h2oai/db-benchmark/blob/master/_utils/repro.sh)
+- Full reproduce script on clean Ubuntu 22.04: [_utils/repro.sh](https://github.com/duckdblabs/db-benchmark/blob/master/_utils/repro.sh)
 
 # Acknowledgment
 
