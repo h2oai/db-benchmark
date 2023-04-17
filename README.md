@@ -1,7 +1,7 @@
 # Forked from [h2oai/db-benchmark](https://github.com/h2oai/db-benchmark)
 
 Repository for reproducible benchmarking of database-like operations in single-node environment.  
-Benchmark report is available at [h2oai.github.io/db-benchmark](https://h2oai.github.io/db-benchmark).  
+Benchmark report is available at [duckdblabs.github.io/db-benchmark](https://duckdblabs.github.io/db-benchmark).  
 We focused mainly on portability and reproducibility. Benchmark is routinely re-run to present up-to-date timings. Most of solutions used are automatically upgraded to their stable or development versions.  
 This benchmark is meant to compare scalability both in data volume and data complexity.  
 Contribution and feedback are very welcome!  
