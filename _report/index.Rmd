@@ -276,7 +276,7 @@ rpivotTable::rpivotTable(
 
 - R 4.2.2
 - python 3.10
-- Julia 1.6.1
+- Julia 1.9.0-rc2
 
 ```{r environment_hardware}
 pretty_component = function(x) gsub("_", " ", fixed=TRUE,
