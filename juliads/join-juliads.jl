@@ -6,6 +6,7 @@ using InMemoryDatasets;
 using Printf;
 using DLMReader
 using PooledArrays
+using Arrow
 
 # Force Julia to precompile methods for common patterns
 IMD.warmup()
@@ -20,6 +21,7 @@ solution = "juliads";
 fun = "join";
 cache = true;
 on_disk = false;
+isondisk(indata) = parse(Float64, split(indata, "_")[2])>=10^9
 
 data_name = ENV["SRC_DATANAME"];
 src_jn_x = string("data/", data_name, ".csv");
@@ -31,15 +33,29 @@ end;
 
 println(string("loading datasets ", data_name, ", ", y_data_name[1], ", ", y_data_name[2], ", ", y_data_name[3])); flush(stdout);
 
+# temporary file which will be deleted after the run - usually located at /tmp/
+_tmp_storage = tempname() 
+if isondisk(data_name)
+  on_disk = true
+  big_df = filereader(src_jn_y[3], types=[Int32, Int32, Int32, Characters{6}, Characters{9}, Characters{12}, Float64]);
+  modify!(big_df, [:id4, :id5]=>PooledArray)
+  Arrow.write(_tmp_storage, big_df[!, :])
+  big_df = 0
+  GC.gc(true)
+end
 x_df = filereader(src_jn_x, types=[Int32, Int32, Int32, Characters{6}, Characters{9}, Characters{12}, Float64]);
 small_df = filereader(src_jn_y[1], types=[Int32, Characters{6}, Float64]);
 medium_df = filereader(src_jn_y[2], types=[Int32, Int32, Characters{6}, Characters{9}, Float64]);
-big_df = filereader(src_jn_y[3], types=[Int32, Int32, Int32, Characters{6}, Characters{9}, Characters{12}, Float64]);
+if isondisk(data_name)
+  big_df = Dataset(Arrow.Table(_tmp_storage))
+else
+  big_df = filereader(src_jn_y[3], types=[Int32, Int32, Int32, Characters{6}, Characters{9}, Characters{12}, Float64]);
+  modify!(big_df, [:id4, :id5]=>PooledArray)
+end
 
 modify!(x_df, [:id4, :id5]=>PooledArray)
 modify!(small_df, :id4=>PooledArray)
 modify!(medium_df, [:id4, :id5]=>PooledArray)
-modify!(big_df, [:id4, :id5]=>PooledArray)
 
 in_rows = size(x_df, 1);
 println(in_rows); flush(stdout);
