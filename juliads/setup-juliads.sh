@@ -8,7 +8,7 @@ rm julia-1.9.0-linux-x86_64.tar.gz
 # put to paths
 echo 'export JULIA_HOME=/opt/julia-1.9.0' >> path.env
 echo 'export PATH=$PATH:$JULIA_HOME/bin' >> path.env
-echo 'export JULIA_NUM_THREADS=20' >> path.env
+echo "export JULIA_NUM_THREADS=$(lscpu -p | egrep -v '^#' | sort -u -t, -k 2,4 | wc -l)" >> path.env
 # note that cron job must have path updated as well
 
 source path.env
