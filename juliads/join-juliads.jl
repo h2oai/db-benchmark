@@ -39,7 +39,7 @@ if isondisk(data_name)
   on_disk = true
   big_df = filereader(src_jn_y[3], types=[Int32, Int32, Int32, Characters{6}, Characters{9}, Characters{12}, Float64]);
   modify!(big_df, [:id4, :id5]=>PooledArray)
-  Arrow.write(_tmp_storage, big_df[!, :])
+  Arrow.write(_tmp_storage, big_df[!, :], ntasks=1)
   big_df = 0
   GC.gc(true)
 end
