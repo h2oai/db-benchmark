@@ -38,6 +38,7 @@ solution.dict = {list(
   "spark" = list(name=c(short="spark", long="spark"), color=c(strong="#8000FFFF", light="#CC66FF")),
   "dask" = list(name=c(short="dask", long="dask"), color=c(strong="slategrey", light="lightgrey")),
   "juliadf" = list(name=c(short="DF.jl", long="DataFrames.jl"), color=c(strong="deepskyblue", light="darkturquoise")),
+  "juliads" = list(name=c(short="IMD.jl", long="InMemoryDatasets.jl"), color=c(strong="#b80000", light="#ff1f1f")),
   "clickhouse" = list(name=c(short="clickhouse", long="ClickHouse"), color=c(strong="hotpink4", light="hotpink1")),
   "polars" = list(name=c(short="polars", long="Polars"), color=c(strong="deepskyblue4", light="deepskyblue3")),
   "arrow" = list(name=c(short="arrow", long="Arrow"), color=c(strong="aquamarine3", light="aquamarine1")),
@@ -148,6 +149,18 @@ groupby.syntax.dict = {list(
     "regression v1 v2 by id2 id4" = "combine(groupby(DF, [:id2, :id4]), [:v1, :v2] => ((v1,v2) -> cor(v1, v2)^2) => :r2)",
     "sum v3 count by id1:id6" = "combine(groupby(DF, [:id1, :id2, :id3, :id4, :id5, :id6]), :v3 => sum∘skipmissing => :v3, :v3 => length => :count)"
   )},
+   "juliads" = {c(
+    "sum v1 by id1" = "combine(gatherby(x, :id1, stable = false), :v1 => IMD.sum => :v1)",
+    "sum v1 by id1:id2" = "combine(gatherby(x, [:id1, :id2], stable = false), :v1 => IMD.sum => :v1)",
+    "sum v1 mean v3 by id3" = "combine(gatherby(x, :id3, stable = false), :v1 => IMD.sum => :v1, :v3 => IMD.mean => :v3)",
+    "mean v1:v3 by id4" = "combine(gatherby(x, :id4, stable = false), :v1 => IMD.mean => :v1, :v2 => IMD.mean => :v2, :v3 => IMD.mean => :v3)",
+    "sum v1:v3 by id6" = "combine(groupby(x, :id6, stable=false), :v1 => IMD.sum => :v1, :v2 => IMD.sum => :v2, :v3 => IMD.sum => :v3)",
+    "median v3 sd v3 by id4 id5" = "combine(groupby(x, [:id4, :id5], stable=false), :v3 => median! => :median_v3, :v3 => std => :sd_v3)",
+    "max v1 - min v2 by id3" = "combine(gatherby(x, :id3, stable = false), :v1 => IMD.maximum, :v2 => IMD.minimum, 2:3 => byrow(-) => :range_v1_v2)",
+    "largest two v3 by id6" = "combine(groupby(x, :id6, stable=false), :v3 => q8_fun => :largest2_v3)",
+    "regression v1 v2 by id2 id4" = "combine(groupby(x, [:id2, :id4], stable=false), (:v1, :v2) => cor2 => :r2)",
+    "sum v3 count by id1:id6" = "combine(gatherby(x, [:id1, :id2, :id3, :id4, :id5, :id6], stable=false), :v3 => IMD.sum => :v3, :v3 => length => :count)"
+  )},
   "clickhouse" = {c(
     "sum v1 by id1" = "SELECT id1, sum(v1) AS v1 FROM tbl GROUP BY id1",
     "sum v1 by id1:id2" = "SELECT id1, id2, sum(v1) AS v1 FROM tbl GROUP BY id1, id2",
@@ -217,6 +230,7 @@ groupby.query.exceptions = {list(
   "spark" =       list("not yet implemented: SPARK-26589" = "median v3 sd v3 by id4 id5"),
   "dask" =        list("not yet implemented: dask#4362" = "median v3 sd v3 by id4 id5"),
   "juliadf" =     list(),
+  "juliads" =     list(),
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list("Expression row_number() <= 2L not supported in Arrow; pulling data into R" = "max v1 - min v2 by id3", "Expression cor(v1, v2, ... is not supported in arrow; pulling data into R" = "regression v1 v2 by id2 id4"),
@@ -257,6 +271,8 @@ groupby.data.exceptions = {list(                                                
   "juliadf" = {list(
     "timeout" = "G1_1e8_2e0_0_0",
     "out of memory" = c("G1_1e9_1e2_0_0","G1_1e9_1e1_0_0","G1_1e9_2e0_0_0","G1_1e9_1e2_0_1","G1_1e9_1e2_5_0") # CSV.File
+  )},
+  "juliads" = {list(
   )},
   "clickhouse" = {list(
   )},
@@ -316,6 +332,13 @@ join.syntax.dict = {list(
     "medium outer on int" = "leftjoin(DF, medium, on = :id2, makeunique=true, matchmissing=:equal)",
     "medium inner on factor" = "innerjoin(DF, medium, on = :id5, makeunique=true, matchmissing=:equal)",
     "big inner on int" = "innerjoin(DF, big, on = :id3, makeunique=true, matchmissing=:equal)"
+  )},
+  "juliads" = {c(
+    "small inner on int" = "innerjoin(x_df, small_df, on = :id1, makeunique=true)",
+    "medium inner on int" = "innerjoin(x_df, medium_df, on = :id2, makeunique=true)",
+    "medium outer on int" = "leftjoin(x_df, medium_df, on = :id2, makeunique=true)",
+    "medium inner on factor" = "innerjoin(x_df, medium_df, on = :id5, makeunique=true)",
+    "big inner on int" = "innerjoin(x_df, big_df, on = :id3, makeunique=true)"
   )},
   "pandas" = {c(
     "small inner on int" = "DF.merge(small, on='id1')",
@@ -382,6 +405,7 @@ join.query.exceptions = {list(
   "spark" =       list(),
   "dask" =        list(),
   "juliadf" =     list(),
+  "juliads" =     list(),
   "clickhouse" =  list(),
   "polars"     =  list(),
   "arrow"      =  list(),
@@ -413,6 +437,8 @@ join.data.exceptions = {list(                                                   
   )},
   "juliadf" = {list(
     "out of memory" = c("J1_1e9_NA_0_0","J1_1e9_NA_5_0","J1_1e9_NA_0_1")                  # CSV.File
+  )},
+  "juliads" = {list(
   )},
   "clickhouse" = {list(
     "out of memory" = c("J1_1e9_NA_0_0",                                                  # q1 r2 #169

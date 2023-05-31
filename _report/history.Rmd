@@ -420,6 +420,48 @@ plot(d, "juliadf", 1e8, "join")
 plot(d, "juliadf", 1e9, "join")
 ```
 
+### juliads {.tabset .tabset-fade .tabset-pills}
+
+#### groupby {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r juliads.groupby.1e7}
+plot(d, "juliads", 1e7, "groupby")
+```
+
+##### 5 GB
+
+```{r juliads.groupby.1e8}
+plot(d, "juliads", 1e8, "groupby")
+```
+
+##### 50 GB {.active}
+
+```{r juliads.groupby.1e9}
+plot(d, "juliads", 1e9, "groupby")
+```
+
+#### join {.tabset .tabset-fade .tabset-pills}
+
+##### 0.5 GB
+
+```{r juliads.join.1e7}
+plot(d, "juliads", 1e7, "join")
+```
+
+##### 5 GB {.active}
+
+```{r juliads.join.1e8}
+plot(d, "juliads", 1e8, "join")
+```
+
+##### 50 GB
+
+```{r juliads.join.1e9}
+plot(d, "juliads", 1e9, "join")
+```
+
 ### cudf {.tabset .tabset-fade .tabset-pills}
 
 #### groupby {.tabset .tabset-fade .tabset-pills}
