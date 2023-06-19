@@ -1,0 +1,46 @@
+name: Regression
+on:
+  workflow_dispatch:
+  repository_dispatch:
+  push:
+    branches:
+      - '**'
+      - '!master'
+      - '!feature'
+    tags:
+      - '**'
+  pull_request:
+
+jobs:
+ regression-test-benchmark-runner:
+  name: Regression Tests
+  runs-on: ubuntu-20.04
+  env:
+    CC: gcc-10
+    CXX: g++-10
+    GEN: ninja
+
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Setup Machine and Generate data
+      shell: bash
+      run: ./_utils/setup-small.sh
+
+    - name: Install all solutions
+      shell: bash
+      run: python3 _utils/install_all_solutions.py
+
+    - name: Run mini GroupBy benchmark
+      shell: bash
+      run: python3 _utils/prep_solutions groupby && ./run.sh
+
+    - name: Run mini Join benchmark
+      shell: bash
+      run: python3 _utils/prep_solutions join && ./run.sh
