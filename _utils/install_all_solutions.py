@@ -4,7 +4,6 @@ import csv
 
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 
-
 # based on the name of the solution, run the {{solution}}/min-setup-{{solution}}.sh file.
 # if there is no min-setup-{{solution}}.sh, then run setup-{{solution}}.sh.
 # if error, exit with an error
@@ -12,17 +11,25 @@ SOLUTIONS_FILENAME = "_control/solutions.csv"
 def install_solutions():
     install_solutions = set()
     with open(SOLUTIONS_FILENAME, newline="") as solutions_file:
-        solutions = csv.reader(solutions_file, delimiter=',')
-        for sol in solutions:
-            install_solutions.add(row[0])
+        solutions = csv.DictReader(solutions_file, delimiter=',')
+        for row in solutions:
+            if row['solution'] == "clickhouse":
+                continue
+            elif row['solution'] == "data.table":
+                install_solutions.add("datatable")
+            else:
+                install_solutions.add(row['solution'])
     for solution in install_solutions:
         min_setup_file_name = f"./{solution}/min-setup-{solution}.sh"
         setup_file_name = f"./{solution}/setup-{solution}.sh"
-        if os.fileexists(min_setup_file_name):
-            os.execute(min_setup_file_name)
-        elif os.fileexists(setup_file_name)
-            os.execute(setup_file_name)
+        if os.path.exists(min_setup_file_name):
+            print(f"going to run {min_setup_file_name}")
+            # os.system(min_setup_file_name)
+        elif os.path.exists(setup_file_name):
+            print(f"going to run {setup_file_name}")
+            # os.system(setup_file_name)
         else:
-            raise Exception(f"No script to install {solution}")
+            print(f"no script for {setup_file_name} or {min_setup_file_name}")
+            # raise Exception(f"No script to install {solution}")
 
 install_solutions()

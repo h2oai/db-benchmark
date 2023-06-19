@@ -10,6 +10,15 @@ on:
     tags:
       - '**'
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/**'
+      - '!.github/workflows/Regression.yml'
+      - '.github/config/uncovered_files.csv'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/master' || github.sha }}
+  cancel-in-progress: true
 
 jobs:
  regression-test-benchmark-runner:

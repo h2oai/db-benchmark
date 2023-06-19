@@ -17,9 +17,9 @@ python3 -m pip install --upgrade psutil
 python3 -m pip install --upgrade pyspark
 
 # check
-python3
-import pyspark
-pyspark.__version__
-quit()
+# python3
+# import pyspark
+# pyspark.__version__
+# quit()
 
 deactivate
