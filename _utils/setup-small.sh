@@ -19,7 +19,7 @@ sudo apt-get -qq install -y r-base-dev virtualenv
 sudo chmod o+w /usr/local/lib/R/site-library
 
 
-Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
+Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown", "data.table"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
 
 mkdir -p ~/.R
