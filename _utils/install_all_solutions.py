@@ -23,13 +23,11 @@ def install_solutions():
         min_setup_file_name = f"./{solution}/min-setup-{solution}.sh"
         setup_file_name = f"./{solution}/setup-{solution}.sh"
         if os.path.exists(min_setup_file_name):
-            print(f"going to run {min_setup_file_name}")
-            # os.system(min_setup_file_name)
+            os.system(min_setup_file_name)
         elif os.path.exists(setup_file_name):
-            print(f"going to run {setup_file_name}")
-            # os.system(setup_file_name)
+            os.system(setup_file_name)
         else:
-            print(f"no script for {setup_file_name} or {min_setup_file_name}")
-            # raise Exception(f"No script to install {solution}")
+            # print(f"no script for {setup_file_name} or {min_setup_file_name}")
+            raise Exception(f"No script to install {solution}")
 
 install_solutions()
