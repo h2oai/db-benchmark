@@ -48,8 +48,8 @@ jobs:
 
     - name: Run mini GroupBy benchmark
       shell: bash
-      run: python3 _utils/prep_solutions groupby && ./run.sh
+      run: python3 _utils/prep_solutions --task=groupby && ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
-      run: python3 _utils/prep_solutions join && ./run.sh
+      run: python3 _utils/prep_solutions ---task=join && ./run.sh

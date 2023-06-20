@@ -22,8 +22,7 @@ sudo chmod o+w /usr/local/lib/R/site-library
 Rscript -e 'install.packages(c("jsonlite","bit64","devtools","rmarkdown"), dependecies=TRUE, repos="https://cloud.r-project.org")'
 
 
-cd ~
-mkdir -p .R
+mkdir -p ~/.R
 echo 'CFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 
@@ -34,6 +33,7 @@ mkdir data
 cd data/
 Rscript ../_data/groupby-datagen.R 1e7 1e2 0 0
 Rscript ../_data/join-datagen.R 1e7 0 0 1
+cd ..
 
 # don't publish, we dont even have the keys
 sed -i 's/DO_PUBLISH=true/DO_PUBLISH=false/g' run.conf
