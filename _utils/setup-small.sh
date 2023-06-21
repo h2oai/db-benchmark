@@ -1,4 +1,8 @@
 # full repro on Ubuntu 22.04
+sudo -su 
+swapoff -a
+
+echo "swapoff -a has been called"
 
 ## Install libraries
 sudo apt-get -qq update
@@ -45,5 +49,4 @@ echo "task,data,nrow,k,na,sort,active" > _control/data.csv
 echo "groupby,G1_1e7_1e2_0_0,1e7,1e2,0,0,1" >> _control/data.csv
 echo "join,G1_1e7_NA_0_0,1e7,NA,0,0,1" >> _control/data.csv
 
-echo "swapoff -a has been called"
 
