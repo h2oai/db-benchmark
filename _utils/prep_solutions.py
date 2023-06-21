@@ -5,6 +5,8 @@ import csv
 SOLUTIONS_FILENAME = "_control/solutions.csv"
 RUN_CONF_FILENAME = "run.conf"
 
+SKIPPED_SOLUTIONS = ["clickhouse", "dask"]
+
 
 def print_usage():
     print("Usage: python3 _utils/prep_solutions.py --task=[groupby|join]")
@@ -31,13 +33,12 @@ def update_run_conf_solutions(solution_name_list, task):
     os.system(f"sed 's/export RUN_SOLUTIONS=.*/export RUN_SOLUTIONS=\"{solution_name_list}\"/g' run.conf > tmp_run.conf")
     os.system(f"sed 's/export RUN_TASKS=.*/export RUN_TASKS=\"{task}\"/g' tmp_run.conf > run.conf")
 
-
 def get_solutions(task):
     solutions_for_task = ""
     with open(SOLUTIONS_FILENAME, newline="") as solutions_file:
         solutions = csv.DictReader(solutions_file, delimiter=',')
         for row in solutions:
-            if row['task'] == task and row['solution'] != "clickhouse":
+            if row['task'] == task and row['solution'] not in SKIPPED_SOLUTIONS:
                 solutions_for_task += row['solution'] + " "
     return solutions_for_task.strip()
 

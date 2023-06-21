@@ -12,10 +12,10 @@ source dask/py-dask/bin/activate
 python3 -m pip install --upgrade dask[complete]
 
 # check
-python3
-import dask as dk
-dk.__version__
-dk.__git_revision__
-quit()
+# python3
+# import dask as dk
+# dk.__version__
+# dk.__git_revision__
+# quit()
 
 deactivate
