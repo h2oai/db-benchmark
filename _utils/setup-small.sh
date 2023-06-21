@@ -1,8 +1,4 @@
 # full repro on Ubuntu 22.04
-sudo -su 
-swapoff -a
-
-echo "swapoff -a has been called"
 
 ## Install libraries
 sudo apt-get -qq update

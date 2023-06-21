@@ -38,6 +38,10 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Turn swap off
+      shell: bash
+      run: sudo swapoff -a
+
     - name: Setup Machine and Generate data
       shell: bash
       run: ./_utils/setup-small.sh
