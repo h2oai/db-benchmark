@@ -38,6 +38,10 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Turn Swap off
+      shell: bash
+      run: sudo su swapoff -a
+
     - name: Setup Machine and Generate data
       shell: bash
       run: ./_utils/setup-small.sh
@@ -52,4 +56,4 @@ jobs:
 
     - name: Run mini Join benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py ---task=join && ./run.sh
+      run: python3 _utils/prep_solutions.py --task=join && ./run.sh

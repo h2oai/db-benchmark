@@ -20,8 +20,16 @@ pidof java > /dev/null 2>&1 && echo "# Benchmark run $BATCH aborted. java is run
 source ./clickhouse/ch.sh
 ch_installed && ch_active && echo "# Benchmark run $BATCH aborted. clickhouse-server is running, shut it down before calling 'run.sh'" && exit;
 
-# confirm swap disabled
-Rscript -e 'swap_all<-data.table::fread("free -h | grep Swap", header=FALSE)[, -1L][, as.numeric(gsub("[^0-9.]", "", unlist(.SD)))]; swap_off<-!is.na(s<-sum(swap_all)) && s==0; q("no", status=as.numeric(swap_off))' && echo "# Benchmark run $BATCH aborted. swap is enabled, 'free -h' has to report only 0s for Swap, run 'swapoff -a' before calling 'run.sh'" && exit;
+
+if [[ $IGNORE_SWAP == true ]]
+then
+  # used for github actions. can only disable swap as super user.
+  echo "Ignoring swap"
+  continue
+else
+  # confirm swap is disabled
+  Rscript -e 'swap_all<-data.table::fread("free -h | grep Swap", header=FALSE)[, -1L][, as.numeric(gsub("[^0-9.]", "", unlist(.SD)))]; swap_off<-!is.na(s<-sum(swap_all)) && s==0; q("no", status=as.numeric(swap_off))' && echo "# Benchmark run $BATCH aborted. swap is enabled, 'free -h' has to report only 0s for Swap, run 'swapoff -a' before calling 'run.sh'" && exit;
+fi
 
 # ensure directories exists
 mkdir -p ./out
