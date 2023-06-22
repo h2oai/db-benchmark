@@ -1,6 +1,9 @@
 # full repro on Ubuntu 22.04
 
+# update the key
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
 ## Install libraries
+
 sudo apt-get -qq update
 sudo apt upgrade
 
