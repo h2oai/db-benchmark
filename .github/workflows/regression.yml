@@ -41,12 +41,12 @@ jobs:
 
     - name: Install all solutions
       shell: bash
-      run: python3 _utils/install_all_solutions.py
+      run: source path.env && python3 _utils/install_all_solutions.py
 
     - name: Run mini GroupBy benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=groupby && ./run.sh
+      run: python3 _utils/prep_solutions.py --task=groupby && source path.env && ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=join && ./run.sh
+      run: python3 _utils/prep_solutions.py --task=join && source path.env && ./run.sh
