@@ -12,4 +12,5 @@ python -m pip install --upgrade psutil
 
 # build
 deactivate
+
 ./pydatatable/upg-pydatatable.sh
