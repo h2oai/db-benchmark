@@ -4,7 +4,7 @@ set -e
 # install java8
 sudo apt-get install openjdk-8-jdk
 
-virtualenv spark/py-spark --python=/usr/bin/python3.10
+virtualenv spark/py-spark --python=python3
 source spark/py-spark/bin/activate
 
 # put to paths

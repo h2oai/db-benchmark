@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-virtualenv modin/py-modin --python=/usr/bin/python3.10
+virtualenv modin/py-modin --python=python3
 source modin/py-modin/bin/activate
 
 # install binaries

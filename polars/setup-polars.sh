@@ -4,7 +4,7 @@ set -e
 # install dependencies
 sudo apt-get update -qq
 
-virtualenv polars/py-polars --python=/usr/bin/python3.10
+virtualenv polars/py-polars --python=python3
 source polars/py-polars/bin/activate
 
 python3 -m pip install --upgrade psutil polars

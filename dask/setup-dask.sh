@@ -5,7 +5,7 @@ set -e
 sudo apt-get update
 sudo apt-get install build-essential 
 
-virtualenv dask/py-dask --python=/usr/bin/python3.10
+virtualenv dask/py-dask --python=python3
 source dask/py-dask/bin/activate
 
 # install binaries
