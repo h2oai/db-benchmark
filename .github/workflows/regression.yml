@@ -50,3 +50,19 @@ jobs:
     - name: Run mini Join benchmark
       shell: bash
       run: python3 _utils/prep_solutions.py --task=join && source path.env && ./run.sh
+
+    - name: Validate benchmark results
+      shell: bash
+      run: ./_utils/validate_no_errors.sh
+
+    - name: Create Archive
+      if: always()
+      shell: bash
+      run: zip -r out out.zip
+
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: out
+        path: out.zip
+        if-no-files-found: error
