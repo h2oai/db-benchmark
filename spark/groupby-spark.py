@@ -22,14 +22,18 @@ data_name = os.environ['SRC_DATANAME']
 src_grp = os.path.join("data", data_name+".csv")
 print("loading dataset %s" % data_name, flush=True)
 
+mem_usage = "100g"
+if "TEST_RUN" in os.environ:
+     mem_usage = "2g"
+
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
      .master("local[*]") \
      .appName("groupby-spark") \
-     .config("spark.executor.memory", "100g") \
-     .config("spark.driver.memory", "100g") \
-     .config("spark.python.worker.memory", "100g") \
-     .config("spark.driver.maxResultSize", "100g") \
+     .config("spark.executor.memory", mem_usage) \
+     .config("spark.driver.memory", mem_usage) \
+     .config("spark.python.worker.memory", mem_usage) \
+     .config("spark.driver.maxResultSize", mem_usage) \
      .config("spark.network.timeout", "2400") \
      .config("spark.executor.heartbeatInterval", "1200") \
      .config("spark.ui.showConsoleProgress", "false") \

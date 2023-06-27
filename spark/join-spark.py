@@ -25,14 +25,18 @@ src_jn_y = [os.path.join("data", y_data_name[0]+".csv"), os.path.join("data", y_
 if len(src_jn_y) != 3:
     raise Exception("Something went wrong in preparing files used for join")
 
+mem_usage = "100g"
+if "TEST_RUN" in os.environ:
+     mem_usage = "2g"
+
 from pyspark.conf import SparkConf
 spark = SparkSession.builder \
      .master("local[*]") \
      .appName("join-spark") \
-     .config("spark.executor.memory", "100g") \
-     .config("spark.driver.memory", "100g") \
-     .config("spark.python.worker.memory", "100g") \
-     .config("spark.driver.maxResultSize", "100g") \
+     .config("spark.executor.memory", mem_usage) \
+     .config("spark.driver.memory", mem_usage) \
+     .config("spark.python.worker.memory", mem_usage) \
+     .config("spark.driver.maxResultSize", mem_usage) \
      .config("spark.network.timeout", "2400") \
      .config("spark.executor.heartbeatInterval", "1200") \
      .config("spark.ui.showConsoleProgress", "false") \

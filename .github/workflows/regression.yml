@@ -45,11 +45,11 @@ jobs:
 
     - name: Run mini GroupBy benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=groupby && source path.env && ./run.sh
+      run: python3 _utils/prep_solutions.py --task=groupby && source path.env && TEST_RUN=true ./run.sh
 
     - name: Run mini Join benchmark
       shell: bash
-      run: python3 _utils/prep_solutions.py --task=join && source path.env && ./run.sh
+      run: python3 _utils/prep_solutions.py --task=join && source path.env && TEST_RUN=true ./run.sh
 
     - name: Validate benchmark results
       shell: bash
@@ -58,7 +58,7 @@ jobs:
     - name: Create Archive
       if: always()
       shell: bash
-      run: zip -r out out.zip
+      run: zip -r out.zip out/
 
     - uses: actions/upload-artifact@v3
       if: always()
