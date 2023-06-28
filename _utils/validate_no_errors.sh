@@ -5,5 +5,5 @@ then
 fi
 # errors found
 echo "The following errors have been found. Failing check"
-grep "error" out/*.err
+grep -i "error" out/*.err
 exit 1
