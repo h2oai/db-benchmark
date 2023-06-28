@@ -7,7 +7,7 @@ sudo apt-get update -qq
 virtualenv polars/py-polars --python=python3
 source polars/py-polars/bin/activate
 
-python3 -m pip install --upgrade psutil polars
+python3 -m pip install --upgrade psutil polars numpy
 
 # build
 deactivate
