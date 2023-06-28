@@ -35,7 +35,7 @@ echo 'CXXFLAGS=-O3 -mtune=native' >> ~/.R/Makevars
 mkdir data
 cd data/
 Rscript ../_data/groupby-datagen.R 1e7 1e2 0 0
-Rscript ../_data/join-datagen.R 1e7 0 0 1
+Rscript ../_data/join-datagen.R 1e7 0 0 0
 cd ..
 
 # don't publish, we dont even have the keys
